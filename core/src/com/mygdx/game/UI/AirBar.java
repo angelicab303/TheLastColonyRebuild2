@@ -57,7 +57,11 @@ public class AirBar {
     }
 
     public void draw(GameCanvas canvas) {
-        animator.setFrame((int)aframe);
+        int frame = (int)aframe;
+        if (frame < 0) {
+            frame = 0;
+        }
+        animator.setFrame(frame);
         // System.out.println((int)aframe);
         xPos = canvas.camera.position.x - (canvas.getWidth()*cameraZoom)/2.0f + (30.0f * cameraZoom);
         yPos = canvas.camera.position.y + (canvas.getHeight()*cameraZoom)/2.0f - (30.0f * cameraZoom);

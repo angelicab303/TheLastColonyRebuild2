@@ -144,7 +144,7 @@ public class MainMenuMode implements Screen, InputProcessor, ControllerListener 
     /** Listener that will update the player mode when we are done */
     private ScreenListener listener;
     /** Scaling factor for when the student changes the resolution. */
-    private float scale;
+    private float scale = 1f;
     /** Scaling factor for the text. */
     private float textScale = 0.8f;
     /** The current state of the play button */

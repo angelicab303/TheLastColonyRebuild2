@@ -67,7 +67,7 @@ public abstract class WorldController implements Screen {
 	/** The font for progress bar title */
 	protected BitmapFont displayFontInteract;
 	/** The actual assets to be loaded */
-	private AssetDirectory assets;
+	protected AssetDirectory assets;
 	/** Texture atlas to support a progress bar */
 	private Texture statusBar;
 
@@ -394,7 +394,7 @@ public abstract class WorldController implements Screen {
 	 *
 	 * param obj The object to add
 	 */
-	protected void addObject(Obstacle obj) {
+	public void addObject(Obstacle obj) {
 		assert inBounds(obj) : "Object is not in bounds";
 		objects.add(obj);
 		//obj.activatePhysics(world);

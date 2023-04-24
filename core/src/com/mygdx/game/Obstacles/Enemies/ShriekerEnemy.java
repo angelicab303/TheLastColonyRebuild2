@@ -121,10 +121,6 @@ public class ShriekerEnemy extends Enemy {
     public void update(int action)
     {
 
-        if(toStunTime >= MAX_TO_STUN_TIME){
-            toStunTime = 0;
-            this.setStunned(true);
-        }
         body.setAwake(true);
         // Count down for when the shrieker can wake again after shrieking
         if (justShrieked){
