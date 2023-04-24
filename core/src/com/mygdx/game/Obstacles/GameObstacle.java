@@ -8,17 +8,19 @@ import com.badlogic.gdx.physics.box2d.Filter;
 public interface GameObstacle {
 
     enum ObstacleType {
-        /** The Caravan **/
+        /** The Caravan */
         CARAVAN,
-        /** A obstacle **/
+        /** A obstacle */
         OBSTACLE,
-        /** A smog **/
+        /** A smog */
         SMOG,
-        /** A purified air **/
+        /** A purified air */
         PURIFIED_AIR,
-        /** The Player **/
+        /** A toxic air */
+        TOXIC_AIR,
+        /** The Player */
         PLAYER,
-        /** The Weapon **/
+        /** The Weapon */
         WEAPON,
         /** An enemy */
         ENEMY,
@@ -26,21 +28,23 @@ public interface GameObstacle {
         SURVIVOR
     }
 
-    /** Categories and Masks **/
+    /** Categories and Masks */
     final short CATEGORY_SMOG = 0x0001;  // 0000000000000001 in binary
     final short CATEGORY_PLAYER = 0x0002;
     final short CATEGORY_ENEMY = 0x0004;
     final short CATEGORY_SURVIVOR = 0x0008;
     final short CATEGORY_ENV = 0x0010;
     final short CATEGORY_PURIFIED = 0x0020;
-    final short CATEGORY_CARAVAN = 0x0040;
+    final short CATEGORY_TOXIC = 0x0040;
+    final short CATEGORY_CARAVAN = 0x0080;
     final short MASK_SMOG = CATEGORY_ENEMY;
-    final short MASK_PLAYER = CATEGORY_ENEMY | CATEGORY_SURVIVOR | CATEGORY_ENV;// | CATEGORY_CARAVAN;
+    final short MASK_PLAYER = CATEGORY_ENEMY | CATEGORY_SURVIVOR | CATEGORY_ENV | CATEGORY_TOXIC;// | CATEGORY_CARAVAN;
     final short MASK_ENEMY = CATEGORY_PLAYER | CATEGORY_ENEMY | CATEGORY_ENV |CATEGORY_SMOG | CATEGORY_PURIFIED;// | CATEGORY_CARAVAN ;
-    final short MASK_SURVIVOR = CATEGORY_PLAYER| CATEGORY_ENEMY | CATEGORY_SURVIVOR | CATEGORY_ENV; //| CATEGORY_CARAVAN;
+    final short MASK_SURVIVOR = CATEGORY_PLAYER| CATEGORY_ENEMY | CATEGORY_SURVIVOR | CATEGORY_ENV | CATEGORY_TOXIC; //| CATEGORY_CARAVAN;
     final short MASK_ENV = -1;
 
     final short MASK_PURIFIED = CATEGORY_ENV | CATEGORY_ENEMY;
+    final short MASK_TOXIC = CATEGORY_ENV | CATEGORY_PLAYER | CATEGORY_SURVIVOR;
     //final short MASK_CARAVAN = CATEGORY_SURVIVOR | CATEGORY_PLAYER | CATEGORY_ENEMY;
 
 

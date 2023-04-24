@@ -6,11 +6,13 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.mygdx.game.GameCanvas;
 import com.mygdx.game.Obstacles.GameObstacle;
+import com.mygdx.game.Obstacles.Shadow;
 import obstacle.BoxObstacle;
 import util.FilmStrip;
 
 /** Model class representing an enemy */
-public class Enemy extends BoxObstacle implements GameObstacle {
+
+public class Enemy extends Shadow implements GameObstacle {
     /** Enum to encode the finite state machine
      *
      * Used for determining animation direction
@@ -31,7 +33,9 @@ public class Enemy extends BoxObstacle implements GameObstacle {
     // Constants for the enemy
 
     /** How far forward the enemy can move */
-    private static final float MOVE_SPEED = 105.0f;
+    protected static final float MOVE_SPEED = 105.0f;
+    /** Maximum amount of time an enemy can remain stunned (in frames) */
+    protected final float MAX_TO_STUN_TIME = 5;
     /** Maximum amount of time an enemy can remain stunned (in frames) */
     protected final float MAX_STUN_TIME = 500;
     /** Time enemy must wait before attacking again */
@@ -57,29 +61,31 @@ public class Enemy extends BoxObstacle implements GameObstacle {
     // Enemy variables
 
     /** Enemy position */
-    private Vector2 position;
+    protected Vector2 position;
     /** Enemy velocity */
-    private Vector2 velocity;
+    protected Vector2 velocity;
     /** Last Enemy Velocity **/
-    private Vector2 lastVelocity;
+    protected Vector2 lastVelocity;
     /** The enemy's current direction */
-    private Enemy.Direction direction;
+    protected Enemy.Direction direction;
     /** Whether this enemy is currently stunned */
     protected boolean stunned;
     /** Time this enemy has been stunned (in frames) */
+    protected float toStunTime = 0;
+    /** Time this enemy has been stunned (in frames) */
     protected float stunTime = 0;
     /** Whether this enemy can attack */
-    private boolean canAttack;
+    protected boolean canAttack;
     /** Time that has passed since enemy last attacked */
-    private float attackTime = 0;
+    protected float attackTime = 0;
     /** Whether this enemy has been revealed */
-    private boolean revealed;
+    protected boolean revealed;
     /** The zero vector (used for position updates) */
-    private Vector2 zerovector;
+    protected Vector2 zerovector;
     /** The physics shape of this object */
     private PolygonShape sensorShape;
     /** Scale of the object */
-    private float scale;
+    protected float scale;
     /** How fast we change frames (one frame per 10 calls to update) */
     protected static final float ANIMATION_SPEED = 0.20f;
     /** The number of animation frames in our filmstrip */
@@ -91,6 +97,10 @@ public class Enemy extends BoxObstacle implements GameObstacle {
     /**Filter for filtering */
     private static volatile Filter filter;
 
+
+    public void incToStunTime(){
+        toStunTime++;
+    }
     /**
      * Returns whether this enemy is currently stunned
      *
@@ -105,7 +115,6 @@ public class Enemy extends BoxObstacle implements GameObstacle {
      * @param stunned this enemy's new stun state
      */
     public void setStunned(boolean stunned) { this.stunned = stunned; }
-
     /**
      * Returns whether this enemy can currently attack
      *
@@ -167,7 +176,7 @@ public class Enemy extends BoxObstacle implements GameObstacle {
      */
     public Enemy (float x, float y, Texture up, Texture down, Texture right, Texture left, Texture idle, float scale)
     {
-        super(x, y, idle.getWidth()/NUM_ANIM_FRAMES*scale, idle.getHeight()*scale);
+        super(x, y, idle.getWidth()/NUM_ANIM_FRAMES*scale, idle.getHeight()*scale, ShadowShape.CIRCLE);
         //setTexture(value);
         setDensity(1);
         setFriction(0.1f);
@@ -239,8 +248,8 @@ public class Enemy extends BoxObstacle implements GameObstacle {
      */
     public void update(int action)
     {
-
         body.setAwake(true);
+
         if (isStunned())
         {
             canAttack = false;
@@ -378,6 +387,8 @@ public class Enemy extends BoxObstacle implements GameObstacle {
 
         body.setUserData(this);
 
+        setFilterData(filter);
+
         return true;
     }
 
@@ -388,12 +399,14 @@ public class Enemy extends BoxObstacle implements GameObstacle {
      */
     public void draw(GameCanvas canvas) {
         currentAnimator.setFrame((int)aframe);
+//        System.out.println((body.getWorldCenter().x*drawScale.x - currentAnimator.getRegionWidth()*scale/2) + ", " + (body.getWorldCenter().y*drawScale.y- currentAnimator.getRegionHeight()*scale/2));
         canvas.draw(currentAnimator, Color.WHITE, origin.x, origin.y, body.getWorldCenter().x*drawScale.x - currentAnimator.getRegionWidth()*scale/2, body.getWorldCenter().y*drawScale.y- currentAnimator.getRegionHeight()*scale/2, 0.0f, scale, scale);
     }
 
     public void drawDebug(GameCanvas canvas) {
+        super.drawDebug(canvas);
         //canvas.beginDebug();
-        canvas.drawPhysics(shape, Color.RED, getX()*drawScale.x, getY()*drawScale.y, getAngle(), drawScale.x, drawScale.y);
+        //canvas.drawPhysics(shape, Color.RED, getX()*drawScale.x, getY()*drawScale.y, getAngle(), drawScale.x, drawScale.y);
         //canvas.endDebug();
     }
 

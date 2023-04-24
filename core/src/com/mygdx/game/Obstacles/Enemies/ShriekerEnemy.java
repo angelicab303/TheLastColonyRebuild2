@@ -2,7 +2,6 @@ package com.mygdx.game.Obstacles.Enemies;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.mygdx.game.GameCanvas;
@@ -54,7 +53,6 @@ public class ShriekerEnemy extends Enemy {
         canShriek = false;
         justShrieked = false;
         canWake = true;
-        //bodyinfo.type = BodyDef.BodyType.StaticBody;
 
     }
 
@@ -123,6 +121,10 @@ public class ShriekerEnemy extends Enemy {
     public void update(int action)
     {
 
+        if(toStunTime >= MAX_TO_STUN_TIME){
+            toStunTime = 0;
+            this.setStunned(true);
+        }
         body.setAwake(true);
         // Count down for when the shrieker can wake again after shrieking
         if (justShrieked){
@@ -229,7 +231,8 @@ public class ShriekerEnemy extends Enemy {
     }
     @Override
     public void drawDebug(GameCanvas canvas) {
-        canvas.drawPhysics(shape, Color.RED, getX(), getY(), getAngle(), drawScale.x, drawScale.y);
+        super.drawDebug(canvas);
+        //canvas.drawPhysics(shape, Color.RED, getX(), getY(), getAngle(), drawScale.x, drawScale.y);
         canvas.drawPhysics(sensorShape, Color.BLUE, getX(), getY(), getAngle(), drawScale.x, drawScale.y);
     }
 }

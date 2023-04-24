@@ -1,6 +1,7 @@
 package com.mygdx.game.Obstacles;
 
 import box2dLight.Light;
+import box2dLight.RayHandler;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
@@ -10,13 +11,14 @@ import com.mygdx.game.GameCanvas;
 import com.mygdx.game.InputController;
 import com.mygdx.game.Lights;
 import obstacle.BoxObstacle;
+import obstacle.WheelObstacle;
 import util.FilmStrip;
 
 /**
  * A model class representing the player.
  *
  */
-public class Player extends BoxObstacle implements GameObstacle{
+public class Player extends Shadow implements GameObstacle{
     /** Enum to encode the finite state machine */
     private static enum Direction {
         /** The player is not moving */
@@ -102,7 +104,7 @@ public class Player extends BoxObstacle implements GameObstacle{
      * @param y The initial y-coordinate of the player in box2d units
      */
     public Player(float x, float y, Texture up, Texture down, Texture right, Texture left, InputController input, float scale) {
-        super(x, y, up.getWidth()/NUM_ANIM_FRAMES*scale, up.getHeight()*scale);
+        super(x, y, up.getWidth()/NUM_ANIM_FRAMES*scale, up.getHeight()*scale, ShadowShape.CIRCLE);
         // setTexture(value);
         setDensity(1);
         setFriction(0.1f);
@@ -130,9 +132,8 @@ public class Player extends BoxObstacle implements GameObstacle{
             filter.maskBits = getMaskBits();
         }
 
-        setFilterData(filter);
 
-        shadow = new Shadow(position, 0, -10, 10);
+        //shadow = new Shadow(position, 0, -10, 10);
         animatorUp = new FilmStrip(textureUp,1,NUM_ANIM_FRAMES,NUM_ANIM_FRAMES);
         animatorDown = new FilmStrip(textureDown,1,NUM_ANIM_FRAMES,NUM_ANIM_FRAMES);
         animatorRight = new FilmStrip(textureRight,1,NUM_ANIM_FRAMES,NUM_ANIM_FRAMES);
@@ -334,6 +335,8 @@ public class Player extends BoxObstacle implements GameObstacle{
         if (!super.activatePhysics(world)) {
             return false;
         }
+
+        setFilterData(filter);
         attachLightToPlayer(Lights.createPointLight(Color.WHITE, sightDis, 0,0));
         return true;
     }

@@ -11,6 +11,7 @@ import com.badlogic.gdx.utils.ObjectMap;
 public class TileGraph implements IndexedGraph<Tile> {
 
     TileHeuristic tileHeuristic = new TileHeuristic();
+
     Array<Tile> tiles = new Array<>();
     Array<TileConnection> connections = new Array<>();
 

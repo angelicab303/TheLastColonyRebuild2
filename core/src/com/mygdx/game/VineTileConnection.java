@@ -1,9 +1,8 @@
-package com.mygdx.game.EnemyControllers;
+package com.mygdx.game;
 
 import com.badlogic.gdx.ai.pfa.Connection;
-import com.badlogic.gdx.math.Vector2;
-
-public class TileConnection implements Connection<Tile> {
+import com.mygdx.game.Tile;
+public class VineTileConnection implements Connection<Tile> {
 
     private Tile fromTile;
 
@@ -11,7 +10,7 @@ public class TileConnection implements Connection<Tile> {
 
     private float cost;
 
-    public TileConnection (Tile fromTile, Tile toTile) {
+    public VineTileConnection (Tile fromTile, Tile toTile) {
         this.fromTile = fromTile;
         this.toTile = toTile;
         //cost = Math.abs((fromTile.getX() - toTile.getX()) + (fromTile.getY() - toTile.getY()));
@@ -19,7 +18,7 @@ public class TileConnection implements Connection<Tile> {
         {
             cost = 9999;
         }
-        cost += Vector2.dst(fromTile.getX(), fromTile.getY(), toTile.getX(), toTile.getY());
+        cost += Math.abs((fromTile.getX() - toTile.getX()) + (fromTile.getY() - toTile.getY()));
     }
 
 
@@ -37,4 +36,5 @@ public class TileConnection implements Connection<Tile> {
     public Tile getToNode() {
         return toTile;
     }
+
 }

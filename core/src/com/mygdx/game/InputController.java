@@ -44,6 +44,15 @@ public class InputController {
 	/** How much are we turning? */
 	private float horizontal;
 
+	/** what is the direction are we shooting vertically? */
+	private float verticalshoot;
+
+	/** what is the direction are we shooting horizontally? */
+	private float horizontalshoot;
+
+	/** the returned shooting direction */
+	private Vector2 shootdir;
+
 	/** Did we press the absorb button */
 	private static boolean pressedAbsorb;
 
@@ -55,6 +64,8 @@ public class InputController {
 	private static boolean droppedOffSurvivors;
 	/** Did we press R to restart the level? */
 	private static boolean reset;
+	/** Did we press ESC to pause the game? */
+	private static boolean paused = false;
 	/** Whether the debug toggle was pressed. */
 	private boolean debugPressed;
 	private boolean debugPrevious;
@@ -88,6 +99,12 @@ public class InputController {
 	 * @return Vector2 of the mouse position on the screen
 	 */
 	public Vector2 getMousePos(){return mousePos;}
+
+	/**
+	 * Returns the direction of shooting
+	 * @return Vector2 of the shooting direction on the screen
+	 */
+	public Vector2 getShootDir(){return shootdir;}
 
 	/**
 	 * Returns whether the absorb button was pressed.
@@ -127,12 +144,17 @@ public class InputController {
 	}
 
 	/** Returns whether the reset button was pressed.
-	 * whether the reset button was pressed.
-	 * @return
+	 *
+	 * @return whether the reset button was pressed.
 	 */
 	public boolean didReset() {
 		return reset;
 	}
+	/** Returns whether the pause button was pressed.
+	 *
+	 * @return whether the pause button was pressed.
+	 */
+	public boolean didPause() { return paused; }
 	/**
 	 * Creates a new input controller for the specified player.
 	 *
@@ -143,6 +165,7 @@ public class InputController {
 	public InputController() {
 		player = 0;
 		mousePos = new Vector2();
+		shootdir = new Vector2();
 
 		// Currently game-pads don't work.
 		// If we have a game-pad for id, then use it.
@@ -179,36 +202,68 @@ public class InputController {
 		} else {
 			// Figure out, based on which player we are, which keys
 			// control our actions (depends on player).
-			int up, left, right, down, absorb, shoot, pickUpSurvivor, dropOffSurvivors, restart;;
+			int up, left, right, down, absorb, shoot, upshoot, leftshoot, rightshoot, downshoot,
+					pickUpSurvivor, dropOffSurvivors, restart, pause;
 			up    = Input.Keys.W;
 			down  = Input.Keys.S;
 			left  = Input.Keys.A;
 			right = Input.Keys.D;
 			absorb = Input.Keys.SPACE;
 			shoot = Input.Buttons.LEFT;
+			upshoot = Input.Keys.UP;
+			downshoot  = Input.Keys.DOWN;
+			leftshoot  = Input.Keys.LEFT;
+			rightshoot = Input.Keys.RIGHT;
 			pickUpSurvivor = Input.Keys.E;
 			dropOffSurvivors = Input.Keys.E;
 			restart = Input.Keys.R;
+			pause = Input.Keys.ESCAPE;
 			// Convert keyboard state into game commands
-			vertical = horizontal = 0;
+			vertical = horizontal =verticalshoot = horizontalshoot = 0;
 			pressedAbsorb = false;
 			pressedFire = false;
 			pickedUpSurvivor = false;
 			droppedOffSurvivors = false;
 			reset = false;
+			paused = false;
 			debugPressed = (debugPressed) || (Gdx.input.isKeyPressed(Input.Keys.X));
 			// Movement forward/backward
-			if (Gdx.input.isKeyPressed(up) && !Gdx.input.isKeyPressed(down)) {
+			if (Gdx.input.isKeyPressed(up) && !Gdx.input.isKeyPressed(down) && !Gdx.input.isKeyPressed(pause)) {
 				vertical = 1;
-			} else if (Gdx.input.isKeyPressed(down) && !Gdx.input.isKeyPressed(up)) {
+			} else if (Gdx.input.isKeyPressed(down) && !Gdx.input.isKeyPressed(up) && !Gdx.input.isKeyPressed(pause)) {
 				vertical = -1;
 			}
 
 			// Movement left/right
-			if (Gdx.input.isKeyPressed(left) && !Gdx.input.isKeyPressed(right)) {
+			if (Gdx.input.isKeyPressed(left) && !Gdx.input.isKeyPressed(right) && !Gdx.input.isKeyPressed(pause)) {
 				horizontal = -1;
-			} else if (Gdx.input.isKeyPressed(right) && !Gdx.input.isKeyPressed(left)) {
+			} else if (Gdx.input.isKeyPressed(right) && !Gdx.input.isKeyPressed(left) && !Gdx.input.isKeyPressed(pause)) {
 				horizontal = 1;
+			}
+
+			//shooting buttons pressed
+			// Movement forward/backward
+			if (Gdx.input.isKeyPressed(upshoot) && !Gdx.input.isKeyPressed(downshoot)) {
+				verticalshoot = 1;
+			} else if (Gdx.input.isKeyPressed(downshoot) && !Gdx.input.isKeyPressed(upshoot)) {
+				verticalshoot = -1;
+			}
+
+			// Movement left/right
+			if (Gdx.input.isKeyPressed(leftshoot) && !Gdx.input.isKeyPressed(rightshoot)) {
+				horizontalshoot = -1;
+			} else if (Gdx.input.isKeyPressed(rightshoot) && !Gdx.input.isKeyPressed(leftshoot)) {
+				horizontalshoot = 1;
+			}
+
+			if(horizontalshoot != 0 && shootdir.x != horizontalshoot){
+				shootdir.set(horizontalshoot, 0);
+			}
+			else if(verticalshoot != 0 && shootdir.y != verticalshoot){
+				shootdir.set(0, verticalshoot);
+			}
+			else if(horizontalshoot == 0 && verticalshoot == 0){
+				shootdir.set(0,0);
 			}
 
 			// Mouse Movement
@@ -226,7 +281,7 @@ public class InputController {
 //			}
 
 			// Shooting
-			if (Gdx.input.isButtonPressed(shoot)){
+			if (Gdx.input.isKeyPressed(upshoot)||Gdx.input.isKeyPressed(downshoot)||Gdx.input.isKeyPressed(leftshoot)||Gdx.input.isKeyPressed(rightshoot)){
 				pressedFire = true;
 			}
 
@@ -242,6 +297,11 @@ public class InputController {
 			// Resetting the level
 			if (Gdx.input.isKeyPressed(restart)) {
 				reset = true;
+			}
+			// Pausing the game
+			if (Gdx.input.isKeyPressed(pause))
+			{
+				paused = true;
 			}
 		}
 	}

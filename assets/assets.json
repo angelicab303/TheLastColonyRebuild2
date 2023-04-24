@@ -96,7 +96,21 @@
     "images:maskEnemyDown": "images/MaskDown-Sheet.png",
     "images:maskEnemyRight": "images/MaskMoveRight-Sheet.png",
     "images:maskEnemyLeft": "images/MaskMoveLeft-Sheet.png",
-    "images:survivorSprite": "images/survivorSprite.png"
+    "images:survivorSprite": "images/survivorSprite.png",
+    "images:vineVertical": "images/straightVine-export1.png",
+    "images:vineHorizontal": "images/straightVineLeftRight.png",
+    "images:vineBottomLeft": "images/VineBottomLeft.png",
+    "images:vineBottomRight": "images/VineBottomRight.png",
+    "images:vineTopLeft": "images/VineTopLeft.png",
+    "images:vineTopRight": "images/VineTopRight.png",
+    "images:vineCornerHeadLeftDown": "images/vineCornerHeadLeftDown.png",
+    "images:vineCornerHeadLeftUp": "images/vineCornerHeadLeftUp.png",
+    "images:vineCornerHeadRightDown": "images/vineCornerHeadRightDown.png",
+    "images:vineCornerHeadRightUp": "images/vineCornerHeadRightUp.png",
+    "images:vineStraightHeadDown": "images/vineStraightHeadDown.png",
+    "images:vineStraightHeadLeft": "images/vineStraightHeadLeft.png",
+    "images:vineStraightHeadUp": "images/vineStraightHeadUp.png",
+    "images:vineStraightHeadRight": "images/vineStraightHeadRight.png"
   },
   "levels" : {
     "alphaLevel": "levels/LastColonyAlpha.json"
@@ -135,6 +149,7 @@
     "tiles:tree-2a": "tiles/tree-2a.png",
     "tiles:tree-2a copy":  "tiles/tree-2a copy.png",
     "tiles:ree-2b": "tiles/tree-2b.png"
+
   },
   "jsons"  : {
     "rocket:constants":  "rocket/constants.json",

@@ -1,11 +1,8 @@
 package com.mygdx.game;
 
-import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.mygdx.game.MyGdxGame;
-
-import java.awt.*;
 
 // Please note that on macOS your application needs to be started with the -XstartOnFirstThread JVM argument
 public class DesktopLauncher {
@@ -13,10 +10,7 @@ public class DesktopLauncher {
 		Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
 		config.setForegroundFPS(60);
 		config.setTitle("The Last Colony 2.0");
-		config.setWindowedMode(1440, 900);
-
-
-//		config.setFullscreenMode(config.getDisplayMode());
+		config.setWindowedMode(1250, 800);
 		new Lwjgl3Application(new MyGdxGame(), config);
 	}
 }

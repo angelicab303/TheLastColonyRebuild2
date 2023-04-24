@@ -17,6 +17,7 @@
 package com.mygdx.game;
 
 import assets.AssetDirectory;
+import box2dLight.RayHandler;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
@@ -29,6 +30,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.game.Obstacles.Player;
 import com.mygdx.game.Obstacles.PurifiedQueue;
+import com.mygdx.game.Obstacles.ToxicQueue;
 import com.mygdx.game.UI.AirBar;
 import com.mygdx.game.UI.Heart;
 import obstacle.Obstacle;
@@ -165,6 +167,7 @@ public abstract class WorldController implements Screen {
 
 	/** Shared memory pool for bullets. (MODEL CLASS) */
 	protected PurifiedQueue purifiedAir;
+	protected ToxicQueue toxicAir;
 
 	/** The boundary of the world */
 	protected Rectangle bounds;
@@ -520,6 +523,7 @@ public abstract class WorldController implements Screen {
 				obj.update(dt);
 			}
 		}
+		canvas.updateLights();
 	}
 
 	/**
@@ -581,16 +585,21 @@ public abstract class WorldController implements Screen {
 			obj.draw(canvas);
 		}
 		purifiedAir.draw(canvas);
+		toxicAir.draw(canvas);
+
 		// END remove
 		//drawBar();
 		canvas.end();
 
-		canvas.updateAndRenderLights();
+
+		canvas.renderLights();
 
 		//Top pass
 
 		canvas.begin();
-		player.draw(canvas);
+		for(Obstacle obj : objects) {
+			obj.draw(canvas);
+		}
 		// Draw air bar
 		airBar.draw(canvas);
 
@@ -631,6 +640,7 @@ public abstract class WorldController implements Screen {
 			for(Obstacle obj : objects) {
 				obj.drawDebug(canvas);
 			}
+			toxicAir.drawDebug(canvas);
 
 			weapon.draw(canvas);
 			canvas.endDebug();

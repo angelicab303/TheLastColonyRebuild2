@@ -25,7 +25,7 @@ public class Weapon {
     /** The amount of ammunition units this weapon currently has */
     private int numAmmo;
     /** The amount of purified air pellets fired with each press*/
-    private final int bullets = 10;// must be > 1
+    private final int bullets = 1;// must be odd
 
     /** How far this weapon can shoot purified air from the player's location */
     private float shootingRadius;
@@ -66,6 +66,8 @@ public class Weapon {
 
     private Vector2 relMousePos;
     private Vector2 mousePos;
+
+    private Vector2 shootingDir;
 
     /**
      * Returns true if this weapon is absorbing and false otherwise.
@@ -320,10 +322,14 @@ public class Weapon {
 
     public void calculateImpulses(Vector2 mouseRelPos){
         float angle = mouseRelPos.angleDeg();
-        float angle_change = (absorbRange.y - absorbRange.x)/ ((float) getBullets() - 1);
-        for(int ii = 0; ii < getBullets(); ii++){
-            impulses[ii].setAngleDeg(angle + shootingRange.x + angle_change*((float) ii));
+        impulses[0].setAngleDeg(angle);
+        if (bullets - 1 > 0){
+            float angle_change = (absorbRange.y - absorbRange.x)/ ((float) getBullets() - 1);
+            for(int ii = 1; ii < getBullets(); ii++){
+                impulses[ii].setAngleDeg(angle + shootingRange.x + angle_change*((float) ii));
+            }
         }
+
     }
 
     public Vector2[] getImpulses(){
@@ -381,13 +387,14 @@ public class Weapon {
         return absorbSensor;
     }
 
-    void update(Vector2 playerPos, Vector2 mousePos){
+    void update(Vector2 playerPos, Vector2 mousePos, Vector2 shootingDir){
         position = playerPos;
+        this.shootingDir = shootingDir;
         this.mousePos = mousePos;
         this.relMousePos = mousePos.cpy().sub(playerPos);
 
         calculateAbsorptionRange(relMousePos);
-        calculateImpulses(relMousePos);
+        calculateImpulses(shootingDir);
         absorbSensor.setPosition(position);
         absorbSensor.setDirection(relMousePos.angleDeg());
 

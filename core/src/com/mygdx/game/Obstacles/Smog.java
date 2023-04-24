@@ -96,7 +96,6 @@ public class Smog extends BoxObstacle implements GameObstacle{
             filter.maskBits = getMaskBits();
         }
 
-        setFilterData(filter);
 
         animator = new FilmStrip(value,1,NUM_ANIM_FRAMES,NUM_ANIM_FRAMES);
         aframe = frame;
@@ -171,6 +170,8 @@ public class Smog extends BoxObstacle implements GameObstacle{
 
         setX(body.getWorldCenter().x);
         setY(body.getWorldCenter().y);
+
+        setFilterData(filter);
 
         body.setUserData(this);
         return true;
