@@ -41,6 +41,7 @@ public class MyGdxGame extends Game implements ScreenListener {
 		//img = new Texture("badlogic.jpg");
 
 		canvas  = new GameCanvas();
+		// canvas.setFullscreen(true, true);
 		loading = new LoadingMode("assets.json",canvas,1);
 		mainMenu = new MainMenuMode(canvas);
 

@@ -292,7 +292,9 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 		canvas.draw(background, Color.WHITE, 0, 0, canvas.getWidth(), canvas.getHeight());
 
 		currentAnimator.setFrame((int)aframe);
-		canvas.draw(currentAnimator, Color.WHITE, currentAnimator.getRegionWidth()/2, currentAnimator.getRegionHeight()/2, canvas.getWidth()/2, canvas.getHeight()/2, 0, 0.25f, 0.25f);
+		if (!isFinished){
+			canvas.draw(currentAnimator, Color.WHITE, currentAnimator.getRegionWidth()/2, currentAnimator.getRegionHeight()/2, canvas.getWidth()/2, canvas.getHeight()/2, 0, 0.25f, 0.25f);
+		}
 
 		if (playButton == null) {
 			//drawProgress(canvas);

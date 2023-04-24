@@ -124,15 +124,16 @@ public class PurifiedQueue {
          */
         public PurifiedAir (float scale)
         {
-            super(offscreen.x, offscreen.y, PurifiedQueue.texture.getWidth()*scale/NUM_ANIM_FRAMES, PurifiedQueue.texture.getHeight()*scale);
+            super(offscreen.x, offscreen.y, PurifiedQueue.texture.getWidth()*scale, PurifiedQueue.texture.getHeight()*scale);
             setBodyType(BodyDef.BodyType.DynamicBody);
             // setTexture(PurifiedQueue.texture);
-            //setLinearDamping(1); //arbitrary damping coeff.
+            setLinearDamping(1); //arbitrary damping coeff.
             this.age = -1;
 
             this.fading = false;
             this.faded = false;
 
+            setFilterData(filter);
             setActive(false);
             animator = new FilmStrip(PurifiedQueue.texture,1,NUM_ANIM_FRAMES,NUM_ANIM_FRAMES);
             float maxFrame = 4;
@@ -236,8 +237,6 @@ public class PurifiedQueue {
             geometry.setUserData("purified air");
             body.setUserData(this);
             body.setActive(false);
-
-            setFilterData(filter);
             return true;
         }
 
@@ -303,11 +302,6 @@ public class PurifiedQueue {
      */
     public void setTexture(Texture value) {
         texture = value;
-    }
-
-    public PurifiedAir[] getQueue()
-    {
-        return queue;
     }
 
     /**

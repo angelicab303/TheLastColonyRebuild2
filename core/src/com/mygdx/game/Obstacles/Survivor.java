@@ -13,7 +13,7 @@ import com.mygdx.game.GameCanvas;
 import obstacle.BoxObstacle;
 import util.FilmStrip;
 
-public class Survivor extends Shadow implements GameObstacle {
+public class Survivor extends BoxObstacle implements GameObstacle {
     // Constants for the survivor
     /** How long the survivor must wait until it can lose a life again */
     private static final int   COOLDOWN = 200;
@@ -75,7 +75,7 @@ public class Survivor extends Shadow implements GameObstacle {
      *
      */
     public Survivor(int id, float x, float y, TextureRegion svalue, Texture heart, BitmapFont font, float scale) {
-        super(x, y, svalue.getRegionWidth()*scale, svalue.getRegionHeight()*scale, ShadowShape.CIRCLE);
+        super(x, y, svalue.getRegionWidth()*scale, svalue.getRegionHeight()*scale);
         setDensity(0);
         setFriction(0);
         setRestitution(0.1f);
@@ -96,7 +96,7 @@ public class Survivor extends Shadow implements GameObstacle {
         isAlive = true;
         lives = 3;
         damageCooldown = 0;
-        //shadow = new Shadow(position, 0, -10, 10);
+        shadow = new Shadow(position, 0, -10, 10);
         sensorName = "saveSensor";
         if (filter == null){
             filter = new Filter();
@@ -104,6 +104,7 @@ public class Survivor extends Shadow implements GameObstacle {
             filter.maskBits = getMaskBits();
         }
 
+        setFilterData(filter);
         textureHeart = heart;
         aframe = 0.0f;
     }
@@ -415,8 +416,6 @@ public class Survivor extends Shadow implements GameObstacle {
         }
 
         //geometry.setUserData("survivor");
-        setFilterData(filter);
-
         getBody().setUserData(this);
         return true;
     }
@@ -544,8 +543,7 @@ public class Survivor extends Shadow implements GameObstacle {
 
     @Override
     public void drawDebug(GameCanvas canvas) {
-        super.drawDebug(canvas);
-        //canvas.drawPhysics(shape, Color.RED, getX(), getY(), getAngle(), drawScale.x, drawScale.y);
+        canvas.drawPhysics(shape, Color.RED, getX(), getY(), getAngle(), drawScale.x, drawScale.y);
         canvas.drawPhysics(sensorShape, Color.BLUE, getX(), getY(), getAngle(), drawScale.x, drawScale.y);
     }
 

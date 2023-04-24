@@ -2,15 +2,10 @@ package com.mygdx.game.EnemyControllers;
 
 import com.badlogic.gdx.math.Vector2;
 //import com.mygdx.game.EnemyController;
-
-import com.mygdx.game.Obstacles.Enemies.Enemy;
-import com.mygdx.game.Obstacles.Player;
-
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.game.Obstacles.Enemies.Enemy;
 import com.mygdx.game.Obstacles.Player;
 import com.mygdx.game.Obstacles.Enemies.ShriekerEnemy;
-
 
 public class ChaserEnemyController extends com.mygdx.game.EnemyControllers.EnemyController {
     /** Enum to encode the finite state machine */

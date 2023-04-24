@@ -11,7 +11,6 @@
 package com.mygdx.game;
 
 import assets.AssetDirectory;
-import box2dLight.RayHandler;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -22,15 +21,12 @@ import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.ObjectSet;
 import com.mygdx.game.Obstacles.*;
 import com.mygdx.game.Obstacles.Enemies.Enemy;
-import com.mygdx.game.Obstacles.Enemies.FloatingEnemy;
 import com.mygdx.game.Obstacles.Enemies.ShriekerEnemy;
-
 import com.mygdx.game.UI.AirBar;
 import com.mygdx.game.UI.Heart;
 import obstacle.BoxObstacle;
 import obstacle.Obstacle;
 import com.mygdx.game.EnemyControllers.*;
-import com.mygdx.game.Obstacles.Enemies.*;
 
 /**
  * Gameplay specific controller for the platformer game.
@@ -54,22 +50,6 @@ public class GameplayController extends WorldController{
 	private Texture enemyTextureLeft;
 	private Texture enemyTextureDown;
 	private Texture enemyTextureIdle;
-	private Texture vineTextureVertical;
-	private Texture vineTextureHorizontal;
-	private Texture vineTextureLeftBottom;
-	private Texture vineTextureLeftTop;
-	private Texture vineTextureRightBottom;
-	private Texture vineTextureRightTop;
-	private Texture vineTextureHeadLeft;
-	private Texture vineTextureHeadRight;
-	private Texture vineTextureHeadDown;
-	private Texture vineTextureHeadUp;
-	private Texture vineTextureHeadLeftBottom;
-	private Texture vineTextureHeadLeftTop;
-	private Texture vineTextureHeadRightBottom;
-	private Texture vineTextureHeadRightTop;
-
-	private Texture[] vineTextures;
 	/** Texture asset for survivor avatar */
 	private TextureRegion survivorTexture;
 	/** Texture asset for interactable prompt in survivor avatar */
@@ -80,8 +60,6 @@ public class GameplayController extends WorldController{
 	private Texture airBarTexture;
 	/** Texture asset for the pure air texture */
 	private Texture pureAirTexture;
-	/** Texture asset for the pure air texture */
-	private Texture toxicAirTexture;
 	/** Texture asset for the second smog texture */
 	private TextureRegion smogTexture2;
 	/** Texture asset for the cliff texture */
@@ -156,14 +134,11 @@ public class GameplayController extends WorldController{
 	private Array<SurvivorController> survivorControllers;
 
 	/** Mark set to handle more sophisticated collision callbacks */
-	//protected ObjectSet<Fixture> sensorFixtures;
+	protected ObjectSet<Fixture> sensorFixtures;
 	// Moved the masks to GameObstacle if you are looking for them -V
 	int numRescued;
 	/** Used for playtesting, player is invincible */
 	private boolean isInvincible = false;
-	private boolean pausing = false;
-	private boolean unpausing = false;
-	private boolean paused = false;
 
 
 
@@ -180,12 +155,9 @@ public class GameplayController extends WorldController{
 		//world.setContactListener(this);
 		collisionController = new CollisionController(world, canvas.getWidth(), canvas.getHeight());
 		//
-		//sensorFixtures = new ObjectSet<Fixture>();
+		sensorFixtures = new ObjectSet<Fixture>();
 
 		input = new InputController();
-
-
-
 		canvas.createLights(world);
 
 		enemyControllers = new Array<EnemyController>();
@@ -224,42 +196,12 @@ public class GameplayController extends WorldController{
 		airBarTexture = directory.getEntry("images:airBar", Texture.class);
 		// pureAirTexture = new TextureRegion(directory.getEntry("images:smog1", Texture.class));
 		pureAirTexture = directory.getEntry("images:testSmog", Texture.class);
-		toxicAirTexture = directory.getEntry("images:testSmog", Texture.class);
 		smogTexture2 = new TextureRegion(directory.getEntry("images:smog2", Texture.class));
 		caravanTexture = new TextureRegion(directory.getEntry("images:caravan1", Texture.class));
 		fHeartTexture = directory.getEntry("images:fullHeart", Texture.class);
 		sHeartTexture = directory.getEntry("images:slashedHeart", Texture.class);
 
-		vineTextureVertical = directory.getEntry("images:vineVertical", Texture.class);
-		vineTextureHorizontal = directory.getEntry("images:vineHorizontal", Texture.class);
-		vineTextureLeftBottom = directory.getEntry("images:vineBottomLeft", Texture.class);
-		vineTextureLeftTop = directory.getEntry("images:vineTopLeft", Texture.class);
-		vineTextureRightBottom = directory.getEntry("images:vineBottomRight", Texture.class);
-		vineTextureRightTop = directory.getEntry("images:vineTopRight", Texture.class);
-		vineTextureHeadLeft = directory.getEntry("images:vineStraightHeadLeft", Texture.class);
-		vineTextureHeadRight = directory.getEntry("images:vineStraightHeadRight", Texture.class);
-		vineTextureHeadDown = directory.getEntry("images:vineStraightHeadDown", Texture.class);
-		vineTextureHeadUp = directory.getEntry("images:vineStraightHeadUp", Texture.class);
-		vineTextureHeadLeftBottom = directory.getEntry("images:vineCornerHeadLeftDown", Texture.class);
-		vineTextureHeadLeftTop = directory.getEntry("images:vineCornerHeadLeftUp", Texture.class);
-		vineTextureHeadRightBottom = directory.getEntry("images:vineCornerHeadRightDown", Texture.class);
-		vineTextureHeadRightTop = directory.getEntry("images:vineCornerHeadRightUp", Texture.class);
 
-		vineTextures = new Texture[14];
-		vineTextures[0] = vineTextureVertical;
-		vineTextures[1] = vineTextureHorizontal;
-		vineTextures[2] = vineTextureLeftBottom;
-		vineTextures[3] = vineTextureLeftTop;
-		vineTextures[4] = vineTextureRightBottom;
-		vineTextures[5] = vineTextureRightTop;
-		vineTextures[6] = vineTextureHeadLeft;
-		vineTextures[7] = vineTextureHeadRight;
-		vineTextures[8] = vineTextureHeadDown;
-		vineTextures[9] = vineTextureHeadUp;
-		vineTextures[10] = vineTextureHeadLeftBottom;
-		vineTextures[11] = vineTextureHeadLeftTop;
-		vineTextures[12] = vineTextureHeadRightBottom;
-		vineTextures[13] = vineTextureHeadRightTop;
 
 		fireSound = directory.getEntry( "platform:pew", Sound.class );
 
@@ -291,12 +233,10 @@ public class GameplayController extends WorldController{
 		survivorControllers.clear();
 		objects.clear();
 		addQueue.clear();
-		canvas.disposeLights();
 		world.dispose();
 
 		world = new World(gravity,false);
 		collisionController.setContactListener(world);
-		canvas.createLights(world);
 		setComplete(false);
 		setFailure(false);
 		populateLevel();
@@ -332,8 +272,7 @@ public class GameplayController extends WorldController{
 //		System.out.println("Canvas width: " + canvas.getWidth() + "\tTile Size: " + tileSize + "\tNumTiles: " + canvas.getWidth() / tileSize);
 //		System.out.println("First element of tiles: " + tiles[0][0]);
 
-		//Setting the size of the tiles
-		Shadow.setSize(32f);
+
 
 
 		// Instantiate the cliffs:
@@ -390,7 +329,7 @@ public class GameplayController extends WorldController{
 
 		//TO DO: update visuals for purified smog
 		purifiedAir = new PurifiedQueue(pureAirTexture, world, SCALE);
-		toxicAir = new ToxicQueue(toxicAirTexture, world, SCALE);
+
 
 		// Instantiate the enemies:
 		enemyArr = new Array<Enemy>();
@@ -407,22 +346,11 @@ public class GameplayController extends WorldController{
 		}
 
 		for (int i = 0; i < enemyLocations.length; i++) {
-			if (i%2 == 0) {
-				FloatingEnemy enemyTemp = new FloatingEnemy(enemyLocations[i][0] * tileSize + tileOffset, enemyLocations[i][1] * tileSize + tileOffset, enemyTextureUp, enemyTextureDown, enemyTextureRight, enemyTextureLeft, enemyTextureIdle, SCALE);
-				enemyArr.add(enemyTemp);
-				enemyTemp.activatePhysics(world);
-				addObject(enemyTemp);
-				//enemyControllers.add(new ChaserEnemyController(tileGrid, tileSize, tileOffset, enemyTemp, player, shriekerArr));
-				enemyControllers.add(new FloatingEnemyController(tileGrid, tileSize, tileOffset, enemyTemp, player, shriekerArr, toxicAir));
-			}
-			if (i%2 == 1) {
-				ScoutEnemy enemyTemp = new ScoutEnemy(enemyLocations[i][0] * tileSize + tileOffset, enemyLocations[i][1] * tileSize + tileOffset, enemyTextureUp, enemyTextureDown, enemyTextureRight, enemyTextureLeft, enemyTextureIdle, vineTextures, SCALE, world);
-				enemyArr.add(enemyTemp);
-				enemyTemp.activatePhysics(world);
-				addObject(enemyTemp);
-
-				enemyControllers.add(new ScoutEnemyController(tileGrid, tileSize, tileOffset, enemyTemp, player, shriekerArr));
-			}
+			Enemy enemyTemp = new Enemy(enemyLocations[i][0] * tileSize + tileOffset, enemyLocations[i][1] * tileSize + tileOffset, enemyTextureUp, enemyTextureDown, enemyTextureRight, enemyTextureLeft, enemyTextureIdle, SCALE);
+			enemyArr.add(enemyTemp);
+			enemyTemp.activatePhysics(world);
+			addObject(enemyTemp);
+			enemyControllers.add(new ChaserEnemyController(tileGrid, tileSize, tileOffset, enemyTemp, player, shriekerArr));
 		}
 
 
@@ -484,7 +412,7 @@ public class GameplayController extends WorldController{
 					smogArr.add(smogT);
 					addObject(smogT);
 					smogT.activatePhysics(world);
-					//Secondary Grid
+					// Secondary Grid
 					frameNum = (float)(Math.random()*(maxFrame-minFrame+1)+minFrame);
 					smogTO = new Smog(i * smogTileSize + smogTileSize, j * smogTileSize + smogTileSize, smogTexture, frameNum, SCALE);
 					smogTO.setAwake(true);
@@ -621,61 +549,6 @@ public class GameplayController extends WorldController{
 		// Read input
 		input.readInput();
 
-		if (input.didPause())
-		{
-			if (!paused && !unpausing)
-			{
-				paused = true;
-				pausing = true;
-				for (int i = 0; i < enemyArr.size; i++)
-				{
-					enemyArr.get(i).setBodyType(BodyDef.BodyType.StaticBody);
-				}
-				for (int i = 0; i < survivorArr.size; i++)
-				{
-					survivorArr.get(i).setActive(false);
-				}
-				for (int i = 0; i < purifiedAir.getQueue().length; i++)
-				{
-					purifiedAir.getQueue()[i].setActive(false);
-				}
-				for (int i = 0; i < toxicAir.getQueue().length; i++)
-				{
-					toxicAir.getQueue()[i].setActive(false);
-				}
-				return;
-			}
-			else if (paused && !pausing)
-			{
-				paused = false;
-				unpausing = true;
-				for (int i = 0; i < enemyArr.size; i++)
-				{
-					enemyArr.get(i).setBodyType(BodyDef.BodyType.DynamicBody);
-				}
-				for (int i = 0; i < survivorArr.size; i++)
-				{
-					survivorArr.get(i).setActive(true);
-				}
-				for (int i = 0; i < purifiedAir.getQueue().length; i++)
-				{
-					purifiedAir.getQueue()[i].setActive(true);
-				}
-				for (int i = 0; i < toxicAir.getQueue().length; i++)
-				{
-					toxicAir.getQueue()[i].setActive(true);
-				}
-			}
-		}
-		else
-		{
-			pausing = false;
-			unpausing = false;
-			if (paused) {
-				return;
-			}
-		}
-
 		if (input.didPressAbsorb()) {
 			weapon.setAbsorbing(true);
 		} else {
@@ -689,30 +562,13 @@ public class GameplayController extends WorldController{
 		}
 
 
-
 		// Update player and weapon position
 		player.update();
-		if (player.getX() < 10)
-		{
-			player.setPosition(10, player.getBody().getPosition().y);
-		}
-		if (player.getX() >= canvas.getWidth()-10)
-		{
-			player.setPosition(canvas.getWidth()-10, player.getBody().getPosition().y);
-		}
-		if (player.getY() < 10)
-		{
-			player.setPosition(player.getBody().getPosition().x, 10);
-		}
-		if (player.getY() >= canvas.getHeight()-10)
-		{
-			player.setPosition(player.getBody().getPosition().x, canvas.getHeight()-10);
-		}
 
 		// Update UI elements
 		airBar.update(weapon.getNumAmmo());
 
-		weapon.update(player.getPosition(), canvas.unproject(input.getMousePos()), input.getShootDir());
+		weapon.update(player.getPosition(), canvas.unproject(input.getMousePos()));
 		// Check if the weapon is firing
 
 		if(weapon.fire()){
@@ -720,7 +576,6 @@ public class GameplayController extends WorldController{
 			weapon.incrementAmmo(-weapon.getBullets());
 		}
 		purifiedAir.update();
-		toxicAir.update();
 
 		// Process Collisions
 		collisionController.update(world,player,weapon);
@@ -749,22 +604,7 @@ public class GameplayController extends WorldController{
 		for (int i = 0; i < enemyArr.size; i++)
 		{
 			enemyArr.get(i).update(enemyControllers.get(i).getAction());
-			if (enemyArr.get(i).getX() < 10)
-			{
-				enemyArr.get(i).setPosition(10, enemyArr.get(i).getBody().getPosition().y);
-			}
-			if (enemyArr.get(i).getX() >= canvas.getWidth()-10)
-			{
-				enemyArr.get(i).setPosition(canvas.getWidth()-10, enemyArr.get(i).getBody().getPosition().y);
-			}
-			if (enemyArr.get(i).getY() < 10)
-			{
-				enemyArr.get(i).setPosition(enemyArr.get(i).getBody().getPosition().x, 10);
-			}
-			if (enemyArr.get(i).getY() >= canvas.getHeight()-10)
-			{
-				enemyArr.get(i).setPosition(enemyArr.get(i).getBody().getPosition().x, canvas.getHeight()-10);
-			}
+
 		}
 
 		// This section will be handled by collisionController in the future with the exception of obj.update(..)s and

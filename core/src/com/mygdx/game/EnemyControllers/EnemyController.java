@@ -15,8 +15,7 @@ import com.mygdx.game.TileGraph;
 /** Controller class for enemy AI */
 public class EnemyController {
     /** Enum to encode the finite state machine */
-
-    protected enum FSMState {
+    private static enum FSMState {
         /** The enemy just spawned and is stationary */
         SPAWN,
         /** The enemy is idle and stationary, either not aware of the player or on cooldown */
@@ -242,7 +241,6 @@ public class EnemyController {
         switch(state) {
             case SPAWN:
                 state = FSMState.IDLE;
-                break;
             case IDLE:
                 if (enemy.isStunned())
                 {
@@ -305,7 +303,7 @@ public class EnemyController {
     }
 
     /** Gets the enemy's next move using BFS */
-     protected int getMove() {
+     private int getMove() {
         startTile = tiles[(int) (enemy.getX() / tileSize)][(int) (enemy.getY() / tileSize)];
         goalTile = tiles[(int) (target.x / tileSize)][(int) (target.y / tileSize)];
 
@@ -377,14 +375,14 @@ public class EnemyController {
         return action;
     }
 
-    Vector2 setGoal(Tile t)
+    private Vector2 setGoal(Tile t)
     {
         float x = t.getX() * tileSize + tileOffset;
         float y = t.getY() * tileSize + tileOffset;
         return new Vector2(x, y);
     }
 
-    protected boolean goalReached()
+    private boolean goalReached()
     {
         if (((int)goalLoc.x - (int)enemy.getX() <= 1 && (int)goalLoc.x - (int)enemy.getX() >= -1)
                 && ((int)goalLoc.y - (int)enemy.getY() <= 1 && (int)goalLoc.y - (int)enemy.getY() >= -1))

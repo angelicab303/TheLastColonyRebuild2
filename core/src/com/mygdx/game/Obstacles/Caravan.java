@@ -5,7 +5,10 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.physics.box2d.CircleShape;
+import com.badlogic.gdx.physics.box2d.Filter;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.World;
 import com.mygdx.game.GameCanvas;
 import util.FilmStrip;
 
@@ -68,6 +71,8 @@ public class Caravan extends obstacle.BoxObstacle implements GameObstacle {
             filter.categoryBits = getCatagoricalBits();
             filter.maskBits = getMaskBits();
         }
+
+        setFilterData(filter);
 
         animator = new FilmStrip(ivalue,1,NUM_ANIM_FRAMES,NUM_ANIM_FRAMES);
         aframe = 0.0f;
@@ -174,8 +179,7 @@ public class Caravan extends obstacle.BoxObstacle implements GameObstacle {
         sensorShape.setRadius(65f);
         sensorDef.shape = sensorShape;
 
-
-        setFilterData(filter);
+        body.createFixture(sensorDef);
         //getBody().setUserData(this);
 
         return true;

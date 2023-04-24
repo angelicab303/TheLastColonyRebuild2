@@ -148,18 +148,8 @@ public class GameCanvas {
         lights = new Lights(world);
     }
 
-    public void updateLights(){
-        lights.update(camera);
-    }
-
-    public void renderLights(){
-        lights.render();
-    }
-
-    public void disposeLights(){lights.dispose();}
-
     public void updateAndRenderLights(){
-        //lights.update(camera);
+        lights.update(camera);
         lights.render();
     }
 

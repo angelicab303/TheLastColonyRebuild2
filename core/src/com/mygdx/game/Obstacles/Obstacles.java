@@ -9,7 +9,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.mygdx.game.GameCanvas;
 import obstacle.BoxObstacle;
 
-public class Obstacles extends Shadow implements GameObstacle{
+public class Obstacles extends BoxObstacle implements GameObstacle{
 // Variables for this class
     /** The texture for the cliff. */
     //protected TextureRegion texture;
@@ -29,10 +29,10 @@ public class Obstacles extends Shadow implements GameObstacle{
      * @param y The initial y-coordinate of the tree
      */
     public Obstacles(float x, float y, TextureRegion value, float scale) {
-        super(x, y, value.getRegionWidth()*scale, value.getRegionHeight()*scale, ShadowShape.SQUARE);
+        super(x, y, value.getRegionWidth()*scale, value.getRegionHeight()*scale);
         setTexture(value);
         setBodyType(BodyDef.BodyType.StaticBody);
-        //setDimension(value.getRegionWidth()*scale, value.getRegionHeight()*scale);
+        setDimension(value.getRegionWidth()*scale, value.getRegionHeight()*scale);
         setDensity(1);
         setFriction(0.3f);
         setRestitution(0.1f);
@@ -45,6 +45,8 @@ public class Obstacles extends Shadow implements GameObstacle{
             filter.categoryBits = getCatagoricalBits();
             filter.maskBits = getMaskBits();
         }
+
+        setFilterData(filter);
     }
     /**
      * Returns the x-coordinate of the tree position
@@ -124,8 +126,6 @@ public class Obstacles extends Shadow implements GameObstacle{
         if (!super.activatePhysics(world)) {
             return false;
         }
-
-        setFilterData(filter);
 
         return true;
     }
