@@ -323,7 +323,7 @@ public class MainMenuMode implements Screen, InputProcessor, ControllerListener 
         table.setPosition(startX, startY);
         table.setWidth(600.0f);
         table.setHeight(400.0f);
-        table.setDebug(true);
+        table.setDebug(false);
 
         Gdx.input.setInputProcessor(stage);
 //        buttons = new Array<ImageButton>();
