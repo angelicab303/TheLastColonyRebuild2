@@ -12,7 +12,6 @@ public class DesktopLauncher {
 	public static void main (String[] arg) {
 		Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
 		config.setForegroundFPS(60);
-		config.setResizable(true);
 		config.setTitle("The Last Colony 2.0");
 		config.setWindowedMode(1440, 900);
 

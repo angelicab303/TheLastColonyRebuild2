@@ -37,11 +37,13 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Array;
 import util.ScreenListener;
@@ -207,14 +209,6 @@ public class MainMenuMode implements Screen, InputProcessor, ControllerListener 
     private final float RIGHT_SPACING = 30.0f;
     /** Spacing for text from top of screen */
     private final float TOP_SPACING = 50.0f;
-    /** Spacing for play from title */
-    private final float TITLE_SPACING = 20.0f;
-    /** Spacing for between options */
-    private final float OPTION_SPACING = 10.0f;
-    private float PlAY_Y;
-    private float LEVELS_Y;
-    private float SETTINGS_Y;
-    private float _Y;
     /** Array of text */
     private Array<Text> text;
     /** Array for all clouds */
@@ -227,6 +221,8 @@ public class MainMenuMode implements Screen, InputProcessor, ControllerListener 
     private float centerY;
     /** Font to be used as placeholder for buttons */
     private BitmapFont nullFont;
+    /** Whether or not player pressed play button*/
+    private boolean playPressed;
 
 
     /**
@@ -275,6 +271,7 @@ public class MainMenuMode implements Screen, InputProcessor, ControllerListener 
 
         Gdx.input.setInputProcessor( this );
         stage = new Stage();
+        playPressed = false;
     }
 
     /**
@@ -312,7 +309,7 @@ public class MainMenuMode implements Screen, InputProcessor, ControllerListener 
         // Initialize the buttons/titles to be drawn on screen
         float startX = RIGHT_SPACING + 10;
         float startY = canvas.getHeight()*.05f;
-        text.add(new Text(title, RIGHT_SPACING, canvas.getHeight()*.85f, false));
+        text.add(new Text(title, RIGHT_SPACING, canvas.getHeight()*.95f, false));
         // text.add(new Text(play, startX, startY, false));
 
         // Add skins
@@ -345,7 +342,7 @@ public class MainMenuMode implements Screen, InputProcessor, ControllerListener 
         textButtonStyle.down = new TextureRegionDrawable(play);
         textButtonStyle.checked = new TextureRegionDrawable(play);
         buttons.add(new TextButton("", textButtonStyle));
-        table.add(buttons.get(0)).spaceBottom(20.0f).left();
+        table.add(buttons.get(0)).spaceBottom(20.0f).left().size(play.getWidth()*textScale, play.getHeight()*textScale);
         table.row();
 
         // Levels button
@@ -355,11 +352,42 @@ public class MainMenuMode implements Screen, InputProcessor, ControllerListener 
         textButtonStyle.down = new TextureRegionDrawable(levels);
         textButtonStyle.checked = new TextureRegionDrawable(levels);
         buttons.add(new TextButton("", textButtonStyle));
-        table.add(buttons.get(1));
+        table.add(buttons.get(1)).spaceBottom(20.0f).left().size(levels.getWidth()*textScale, levels.getHeight()*textScale);
+        table.row();
+
+        // Settings button
+        textButtonStyle = new TextButton.TextButtonStyle();
+        textButtonStyle.font = nullFont;
+        textButtonStyle.up   = new TextureRegionDrawable(settings);
+        textButtonStyle.down = new TextureRegionDrawable(settings);
+        textButtonStyle.checked = new TextureRegionDrawable(settings);
+        buttons.add(new TextButton("", textButtonStyle));
+        table.add(buttons.get(2)).spaceBottom(20.0f).left().size(settings.getWidth()*textScale, settings.getHeight()*textScale);
+        table.row();
+
+        // Exit button
+        textButtonStyle = new TextButton.TextButtonStyle();
+        textButtonStyle.font = nullFont;
+        textButtonStyle.up   = new TextureRegionDrawable(exit);
+        textButtonStyle.down = new TextureRegionDrawable(exit);
+        textButtonStyle.checked = new TextureRegionDrawable(exit);
+        buttons.add(new TextButton("", textButtonStyle));
+        table.add(buttons.get(3)).spaceBottom(20.0f).left().size(exit.getWidth()*textScale, exit.getHeight()*textScale);
         table.row();
 
         table.left().top();
         stage.addActor(table);
+
+        // Hook up the buttons
+        // Play button
+        buttons.get(0).addListener( new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                if (buttons.get(0).isChecked()) {
+                    playPressed = true;
+                }
+            };
+        } );
 
 
 
@@ -475,7 +503,7 @@ public class MainMenuMode implements Screen, InputProcessor, ControllerListener 
             draw();
 
             // We are are ready, notify our listener
-            if (isReady() && listener != null) {
+            if (playPressed && listener != null) {
                 listener.exitScreen(this, 0);
             }
         }
