@@ -54,6 +54,7 @@ public class GameplayController extends WorldController {
 	private Texture playerTextureLeft;
 	private Texture playerTextureDown;
 	private Texture[] playerDirectionTextures;
+	private Texture playerTextureIdle;
 	/** Texture asset for enemy avatar */
 	private Texture enemyTextureUp;
 	private Texture enemyTextureRight;
@@ -251,13 +252,14 @@ public class GameplayController extends WorldController {
 		playerTextureDown = directory.getEntry("images:playerDown", Texture.class);
 		playerTextureRight = directory.getEntry("images:playerRight", Texture.class);
 		playerTextureLeft = directory.getEntry("images:playerLeft", Texture.class);
+		playerTextureIdle = directory.getEntry("images:playerIdle", Texture.class);
 		enemyTextureUp = directory.getEntry("images:maskEnemyUp", Texture.class);
 		enemyTextureDown = directory.getEntry("images:maskEnemyDown", Texture.class);
 		enemyTextureRight = directory.getEntry("images:maskEnemyRight", Texture.class);
 		enemyTextureLeft = directory.getEntry("images:maskEnemyLeft", Texture.class);
 		enemyTextureIdle = directory.getEntry("images:maskEnemyIdle", Texture.class);
 		shriekerTexture = directory.getEntry("images:plantEnemy", Texture.class);
-		survivorTexture = new TextureRegion(directory.getEntry("tiles:2_survivor", Texture.class));
+		survivorTexture = new TextureRegion(directory.getEntry("images:survivorSprite", Texture.class));
 		survivorITexture = directory.getEntry("images:sInteract", Texture.class);
 
 		// Smog, Purified Air, and Air Bar Textures
@@ -267,6 +269,7 @@ public class GameplayController extends WorldController {
 		// Texture.class));
 		pureAirTexture = directory.getEntry("images:testSmog", Texture.class);
 		toxicAirTexture = directory.getEntry("images:testSmog", Texture.class);
+		pureAirTexture = directory.getEntry("images:weaponProjectile", Texture.class);
 		smogTexture2 = new TextureRegion(directory.getEntry("images:smog2", Texture.class));
 		airBarTexture = directory.getEntry("images:airBar", Texture.class);
 		// pureAirTexture = new TextureRegion(directory.getEntry("images:smog1",
@@ -726,7 +729,7 @@ public class GameplayController extends WorldController {
 
 		// Instantiate the player:
 		player = new Player(playerLocation[0] * tileSize + tileOffset, playerLocation[1] * tileSize + tileOffset,
-				playerTextureUp, playerTextureDown, playerTextureRight, playerTextureLeft, input, SCALE);
+				playerTextureUp, playerTextureDown, playerTextureRight, playerTextureLeft, playerTextureIdle, input, SCALE);
 		if (isInvincible) {
 			player.setHealth(10000);
 		}
@@ -902,7 +905,7 @@ public class GameplayController extends WorldController {
 		// cameraZoom);
 		// float barY = player.getY() + (canvas.getHeight()*cameraZoom)/2.0f - (30.0f *
 		// cameraZoom);
-		airBar = new AirBar(airBarTexture, weapon.getMaxNumAmmo(), weapon.getNumAmmo());
+		airBar = new AirBar(airBarTexture, weapon.getMaxNumAmmo(), weapon.getNumAmmo(), canvas);
 
 		// Hearts
 		int numLives = player.getHealth();
@@ -913,7 +916,7 @@ public class GameplayController extends WorldController {
 
 		for (int i = 0; i < numLives; i++) {
 			if (i > 0) {
-				spacing += 30.0f;
+				spacing += 13.0f;
 			}
 			Heart tempHeart = new Heart(fHeartTexture, heartX, heartY, spacing);
 			heartArr.add(tempHeart);

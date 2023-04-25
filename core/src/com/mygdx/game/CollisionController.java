@@ -25,7 +25,6 @@ import com.badlogic.gdx.utils.*;
 import com.badlogic.gdx.math.*;
 import com.mygdx.game.Obstacles.*;
 import com.mygdx.game.Obstacles.Enemies.Enemy;
-import com.mygdx.game.Obstacles.Enemies.FloatingEnemy;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -177,10 +176,22 @@ public class CollisionController{
                     Player player;
                     Survivor survivor;
                     if(objA.getType() == GameObstacle.ObstacleType.ENEMY){
-                        ((Enemy) objA).setStunned(true);
+                        // ((Enemy) objA).setStunned(true);
+                        ((Enemy) objA).incToStunTime();
+                        ((PurifiedQueue.PurifiedAir) objB).collide();
                     }
                     else {
-                        ((Enemy) objB).setStunned(true);
+                        // ((Enemy) objB).setStunned(true);
+                        ((Enemy) objB).incToStunTime();
+                        ((PurifiedQueue.PurifiedAir) objA).collide();
+                    }
+                    break;
+                case GameObstacle.CATEGORY_PURIFIED | GameObstacle.CATEGORY_ENV:
+                    if(objA.getType() == GameObstacle.ObstacleType.PURIFIED_AIR){
+                        ((PurifiedQueue.PurifiedAir) objA).collide();
+                    }
+                    else {
+                        ((PurifiedQueue.PurifiedAir) objB).collide();
                     }
                     break;
                 case GameObstacle.CATEGORY_PLAYER | GameObstacle.CATEGORY_ENEMY:
@@ -222,28 +233,40 @@ public class CollisionController{
                         enemy.setAttack(false);
                     }
                     break;
-                case GameObstacle.CATEGORY_TOXIC | GameObstacle.CATEGORY_PLAYER:
-                    if (objA.getType() == GameObstacle.ObstacleType.PLAYER) {
+                case GameObstacle.CATEGORY_PLAYER | GameObstacle.CATEGORY_TOXIC:
+                    if (objA.getType() == GameObstacle.ObstacleType.PLAYER){
                         player = (Player) objA;
+                        ((ToxicQueue.ToxicAir) objB).collide();
                     }
                     else {
                         player = (Player) objB;
+                        ((ToxicQueue.ToxicAir) objA).collide();
                     }
-                    if (player.canLoseLife()) {
-                        player.setHealth(player.getHealth() - 1);
+                    if (player.canLoseLife()){
+                        player.setHealth(player.getHealth()-1);
                         player.coolDown(false);
                     }
                     break;
-                case GameObstacle.CATEGORY_TOXIC | GameObstacle.CATEGORY_SURVIVOR:
-                    if (objA.getType() == GameObstacle.ObstacleType.SURVIVOR) {
+                case GameObstacle.CATEGORY_SURVIVOR | GameObstacle.CATEGORY_TOXIC:
+                    if (objA.getType() == GameObstacle.ObstacleType.SURVIVOR){
                         survivor = (Survivor) objA;
+                        ((ToxicQueue.ToxicAir) objB).collide();
                     }
                     else {
                         survivor = (Survivor) objB;
+                        ((ToxicQueue.ToxicAir) objA).collide();
                     }
-                    if (survivor.canLoseLife()) {
+                    if (survivor.canLoseLife()){
                         survivor.loseLife();
                         survivor.coolDown(false);
+                    }
+                    break;
+                case GameObstacle.CATEGORY_TOXIC | GameObstacle.CATEGORY_ENV:
+                    if(objA.getType() == GameObstacle.ObstacleType.TOXIC_AIR){
+                        ((ToxicQueue.ToxicAir) objA).collide();
+                    }
+                    else {
+                        ((ToxicQueue.ToxicAir) objB).collide();
                     }
                     break;
             }
@@ -273,7 +296,6 @@ public class CollisionController{
                     else {
                         ((Survivor) objB).setInteractable(false);
                     }
-                    break;
             }
         }
 
@@ -289,7 +311,6 @@ public class CollisionController{
                 case GameObstacle.CATEGORY_PURIFIED | GameObstacle.CATEGORY_ENEMY:
                 case GameObstacle.CATEGORY_PLAYER | GameObstacle.CATEGORY_SURVIVOR:
                     contact.setEnabled(false);
-                    break;
             }
         }
 

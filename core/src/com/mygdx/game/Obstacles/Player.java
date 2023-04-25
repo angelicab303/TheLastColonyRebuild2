@@ -48,6 +48,7 @@ public class Player extends Shadow implements GameObstacle{
     protected Texture textureDown;
     protected Texture textureRight;
     protected Texture textureLeft;
+    protected Texture textureIdle;
     /** Current texture to be used for the player */
     protected Texture currentTexture;
 
@@ -85,11 +86,12 @@ public class Player extends Shadow implements GameObstacle{
     protected FilmStrip animatorDown;
     protected FilmStrip animatorRight;
     protected FilmStrip animatorLeft;
+    protected FilmStrip animatorIdle;
     protected FilmStrip currentAnimator;
     /** How fast we change frames (one frame per 10 calls to update) */
     private static final float ANIMATION_SPEED = 0.25f;
     /** The number of animation frames in our filmstrip */
-    private static final int   NUM_ANIM_FRAMES = 10;
+    private static final int   NUM_ANIM_FRAMES = 9;
     /** Current animation frame for this shell */
     private float aframe;
     /** Scale of the object */
@@ -103,7 +105,7 @@ public class Player extends Shadow implements GameObstacle{
      * @param x The initial x-coordinate of the player in box2d units
      * @param y The initial y-coordinate of the player in box2d units
      */
-    public Player(float x, float y, Texture up, Texture down, Texture right, Texture left, InputController input, float scale) {
+    public Player(float x, float y, Texture up, Texture down, Texture right, Texture left, Texture idle, InputController input, float scale) {
         super(x, y, up.getWidth()/NUM_ANIM_FRAMES*scale, up.getHeight()*scale, ShadowShape.CIRCLE);
         // setTexture(value);
         setDensity(1);
@@ -114,17 +116,18 @@ public class Player extends Shadow implements GameObstacle{
         velocity = new Vector2();
         lastVelocity = new Vector2();
         zerovector = new Vector2(0,0);
-        health = 3;
+        health = 5;
         textureUp = up;
         textureDown = down;
         textureRight = right;
         textureLeft = left;
+        textureIdle = idle;
         currentTexture = textureRight;
         isAlive = true;
         controller = input;
         direction = Direction.IDLE;
         prevPosition = position;
-        maxHealth = 3;
+        maxHealth = 5;
 
         if (filter == null){
             filter = new Filter();
@@ -138,7 +141,9 @@ public class Player extends Shadow implements GameObstacle{
         animatorDown = new FilmStrip(textureDown,1,NUM_ANIM_FRAMES,NUM_ANIM_FRAMES);
         animatorRight = new FilmStrip(textureRight,1,NUM_ANIM_FRAMES,NUM_ANIM_FRAMES);
         animatorLeft = new FilmStrip(textureLeft,1,NUM_ANIM_FRAMES,NUM_ANIM_FRAMES);
-        currentAnimator = animatorDown;
+        animatorIdle = new FilmStrip(textureIdle,1,NUM_ANIM_FRAMES,NUM_ANIM_FRAMES);
+
+        currentAnimator = animatorIdle;
         aframe = 0.0f;
         this.scale = scale;
     }
@@ -367,6 +372,7 @@ public class Player extends Shadow implements GameObstacle{
         }
         else{
             direction = Direction.IDLE;
+            currentAnimator = animatorIdle;
         }
     }
 
@@ -453,12 +459,15 @@ public class Player extends Shadow implements GameObstacle{
     public void draw(GameCanvas canvas) {
 //        canvas.draw(texture, Color.WHITE, origin.x, origin.y, body.getWorldCenter().x*drawScale.x, body.getWorldCenter().y*drawScale.y, getAngle(), 1, 1);
 //        canvas.draw(texture, getX(), getY());
-        if (direction == Direction.IDLE){
-            currentAnimator.setFrame(0);
-        }
-        else{
-            currentAnimator.setFrame((int)aframe);
-        }
+//        if (direction == Direction.IDLE){
+//            currentAnimator.setFrame(0);
+//        }
+//        else{
+//            currentAnimator.setFrame((int)aframe);
+//        }
+        
+        currentAnimator.setFrame((int)aframe);
+
         if (isAlive)
         {
             if (damageCooldown > 0 && damageCooldown % 10 == 0) {

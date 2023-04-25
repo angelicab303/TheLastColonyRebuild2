@@ -28,11 +28,17 @@ public class AirBar {
     private float maxAmmo;
     /** Current ammo capacity */
     private float currentAmmo;
+    /** Starting position of UI elements */
+    private float startX;
+    private float startY;
 
 
-    public AirBar(Texture value, float maxAmmo, float currAmmo){
+    public AirBar(Texture value, float maxAmmo, float currAmmo, GameCanvas canvas){
 //        this.xPos = x;
 //        this.yPos = y;
+
+        startX = (canvas.getWidth()*cameraZoom)/2.0f;
+        startY = (canvas.getHeight()*cameraZoom)/2.0f;
 
         animator = new FilmStrip(value,1,NUM_ANIM_FRAMES,NUM_ANIM_FRAMES);
         aframe = 0.0f;
@@ -63,8 +69,8 @@ public class AirBar {
         }
         animator.setFrame(frame);
         // System.out.println((int)aframe);
-        xPos = canvas.camera.position.x - (canvas.getWidth()*cameraZoom)/2.0f + (30.0f * cameraZoom);
-        yPos = canvas.camera.position.y + (canvas.getHeight()*cameraZoom)/2.0f - (30.0f * cameraZoom);
+        xPos = canvas.camera.position.x - startX + (30.0f * cameraZoom);
+        yPos = canvas.camera.position.y + startY - (30.0f * cameraZoom);
         canvas.draw(animator, new Color(255, 255, 255, 0.75f), 0.0f, animator.getRegionHeight(), xPos, yPos, 0.0f, 0.25f, 0.25f) ;
 //        xPos = canvas.camera.position.x - (canvas.getWidth()*cameraZoom)/2.0f + (30.0f * cameraZoom);
 //        yPos = canvas.camera.position.y + (canvas.getHeight()*cameraZoom)/2.0f - (30.0f * cameraZoom);
