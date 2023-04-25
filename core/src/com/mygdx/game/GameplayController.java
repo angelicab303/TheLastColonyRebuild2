@@ -217,7 +217,7 @@ public class GameplayController extends WorldController{
 		smogTexture = directory.getEntry("images:testSmog", Texture.class);
 		airBarTexture = directory.getEntry("images:airBar", Texture.class);
 		// pureAirTexture = new TextureRegion(directory.getEntry("images:smog1", Texture.class));
-		pureAirTexture = directory.getEntry("images:testSmog", Texture.class);
+		pureAirTexture = directory.getEntry("images:weaponProjectile", Texture.class);
 		smogTexture2 = new TextureRegion(directory.getEntry("images:smog2", Texture.class));
 		caravanTexture = new TextureRegion(directory.getEntry("images:caravan1", Texture.class));
 		fHeartTexture = directory.getEntry("images:fullHeart", Texture.class);

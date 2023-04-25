@@ -206,7 +206,6 @@ public class Enemy extends Shadow implements GameObstacle {
         currentAnimator = animatorIdle;
         aframe = 0.0f;
 
-        setFilterData(filter);
 
     }
     /**
@@ -379,6 +378,8 @@ public class Enemy extends Shadow implements GameObstacle {
 
 
         body.setUserData(this);
+        setFilterData(filter);
+
 
         return true;
     }

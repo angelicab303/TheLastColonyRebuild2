@@ -387,7 +387,7 @@ public class PurifiedQueue {
         }
 
         Color tint = Color.ROYAL;
-        tint.a = 0.5f;
+        tint.a = 1.0f;
         // Step through each active photon in the queue.
         for (int ii = 0; ii < size; ii++) {
             // Find the position of this photon.
