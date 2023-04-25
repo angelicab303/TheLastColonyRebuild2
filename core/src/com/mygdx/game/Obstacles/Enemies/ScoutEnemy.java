@@ -361,6 +361,10 @@ public class ScoutEnemy extends Enemy{
 
     public void update(int action)
     {
+        if(toStunTime >= MAX_TO_STUN_TIME){
+            toStunTime = 0;
+            this.setStunned(true);
+        }
         aframevine += VINE_ANIMATION_SPEED;
         vineTick++;
         if(!isExtendingVines) {

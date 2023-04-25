@@ -176,10 +176,12 @@ public class CollisionController{
                     Player player;
                     Survivor survivor;
                     if(objA.getType() == GameObstacle.ObstacleType.ENEMY){
-                        ((Enemy) objA).setStunned(true);
+                        // ((Enemy) objA).setStunned(true);
+                        ((Enemy) objA).incToStunTime();
                     }
                     else {
-                        ((Enemy) objB).setStunned(true);
+                        // ((Enemy) objB).setStunned(true);
+                        ((Enemy) objB).incToStunTime();
                     }
                     break;
                 case GameObstacle.CATEGORY_PLAYER | GameObstacle.CATEGORY_ENEMY:
@@ -191,8 +193,11 @@ public class CollisionController{
                         enemy = (Enemy) objB;
                         player = (Player) objA;
                     }
-                    enemy.setAttack(false);
-                    player.setHealth(player.getHealth() - 1);
+                    if (player.canLoseLife()) {
+                        enemy.setAttack(false);
+                        player.setHealth(player.getHealth() - 1);
+                        player.coolDown(false);
+                    }
                     break;
                 case GameObstacle.CATEGORY_PLAYER | GameObstacle.CATEGORY_SURVIVOR:
                     if(objA.getType() == GameObstacle.ObstacleType.SURVIVOR){
