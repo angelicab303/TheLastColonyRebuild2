@@ -89,6 +89,7 @@
     "images:playerDown": "images/frontWalk2-Sheet.png",
     "images:playerRight": "images/rightSideWalk2-Sheet.png",
     "images:playerLeft": "images/leftSideWalk2-Sheet.png",
+    "images:playerIdle": "images/idel2-Sheet.png",
     "images:fullHeart": "images/Heart.png",
     "images:slashedHeart": "images/SlashedHeart.png",
     "images:plantEnemy": "images/Enemy1Idle.png",
