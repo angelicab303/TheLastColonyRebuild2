@@ -152,7 +152,9 @@ public class ScoutEnemyController extends com.mygdx.game.EnemyControllers.EnemyC
                 }
                 break;
             case EXTENDVINE:
-                if (!enemy.canAttack()) {
+                if (enemy.isStunned()) {
+                    state = FSMState.STUNNED;
+                } else if (!enemy.canAttack()) {
                     enemy.setShrinkVines(true);
                     clearContainsVine();
                     state = FSMState.PATROL;

@@ -167,12 +167,13 @@ public class Caravan extends obstacle.BoxObstacle implements GameObstacle {
         if (!super.activatePhysics(world)) {
             return false;
         }
-//        FixtureDef sensorDef = new FixtureDef();
-//        sensorDef.density = 0;
-//        sensorDef.isSensor = true;
-//        sensorShape = new CircleShape();
-//        sensorShape.setRadius(65f);
-//        sensorDef.shape = sensorShape;
+        FixtureDef sensorDef = new FixtureDef();
+        sensorDef.density = 0;
+        sensorDef.isSensor = true;
+        sensorShape = new CircleShape();
+        sensorShape.setRadius(65f);
+        sensorDef.shape = sensorShape;
+
 
         setFilterData(filter);
         //getBody().setUserData(this);
@@ -209,7 +210,7 @@ public class Caravan extends obstacle.BoxObstacle implements GameObstacle {
      * @param canvas Drawing context
      */
     public void draw(GameCanvas canvas) {
-        canvas.draw(texture, Color.WHITE, texture.getRegionWidth()*scale, texture.getRegionHeight()*scale, getX() - (texture.getRegionWidth()*scale/2), getY() - (texture.getRegionHeight()*scale/2), 0.0f, scale, scale);
+        canvas.draw(texture, Color.WHITE, texture.getRegionWidth()*scale, texture.getRegionHeight()*scale, getX(), getY(), 0.0f, scale, scale);
         if (isInteractable){
             float yspace = 5;
             float xspace = 0; //(origin.x)/2;
@@ -224,16 +225,6 @@ public class Caravan extends obstacle.BoxObstacle implements GameObstacle {
     @Override
     protected void createFixtures() {
         super.createFixtures();
-        FixtureDef sensorDef = new FixtureDef();
-        sensorDef.filter.categoryBits = getCatagoricalBits();
-        sensorDef.filter.maskBits = getMaskBits();
-        sensorDef.density = 0;
-        sensorDef.isSensor = true;
-        sensorShape = new CircleShape();
-        sensorShape.setRadius(65f);
-        sensorDef.shape = sensorShape;
-
-        body.createFixture(sensorDef);
     }
 
     @Override
@@ -243,11 +234,7 @@ public class Caravan extends obstacle.BoxObstacle implements GameObstacle {
 
     @Override
     public void drawDebug(GameCanvas canvas) {
-        if (getBody() != null) {
-            super.drawDebug(canvas);
-            //canvas.drawPhysics(shape, Color.RED, getX(), getY(), getAngle(), drawScale.x, drawScale.y);
-            canvas.drawPhysics(sensorShape, Color.BLUE, getX(), getY(), getAngle(), drawScale.x, drawScale.y);
-        }
+
     }
 
     public ObstacleType getType() {

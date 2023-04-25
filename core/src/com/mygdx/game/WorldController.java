@@ -30,6 +30,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.game.Obstacles.Player;
 import com.mygdx.game.Obstacles.PurifiedQueue;
+import com.mygdx.game.Obstacles.ToxicQueue;
 import com.mygdx.game.UI.AirBar;
 import com.mygdx.game.UI.Heart;
 import obstacle.Obstacle;
@@ -166,6 +167,7 @@ public abstract class WorldController implements Screen {
 
 	/** Shared memory pool for bullets. (MODEL CLASS) */
 	protected PurifiedQueue purifiedAir;
+	protected ToxicQueue toxicAir;
 
 	/** The boundary of the world */
 	protected Rectangle bounds;
@@ -583,6 +585,8 @@ public abstract class WorldController implements Screen {
 			obj.draw(canvas);
 		}
 		purifiedAir.draw(canvas);
+		toxicAir.draw(canvas);
+
 		// END remove
 		//drawBar();
 		canvas.end();
@@ -636,6 +640,7 @@ public abstract class WorldController implements Screen {
 			for(Obstacle obj : objects) {
 				obj.drawDebug(canvas);
 			}
+			toxicAir.drawDebug(canvas);
 
 			weapon.draw(canvas);
 			canvas.endDebug();

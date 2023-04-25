@@ -13,7 +13,8 @@ import util.FilmStrip;
 /** Model class representing an enemy */
 
 public class Enemy extends Shadow implements GameObstacle {
-    /** Enum to encode the finite state machine
+    /**
+     * Enum to encode the finite state machine
      *
      * Used for determining animation direction
      *
@@ -35,8 +36,6 @@ public class Enemy extends Shadow implements GameObstacle {
     /** How far forward the enemy can move */
     protected static final float MOVE_SPEED = 105.0f;
     /** Maximum amount of time an enemy can remain stunned (in frames) */
-    protected final float MAX_TO_STUN_TIME = 5;
-    /** Maximum amount of time an enemy can remain stunned (in frames) */
     protected final float MAX_STUN_TIME = 500;
     /** Time enemy must wait before attacking again */
     protected final float ATTACK_COOLDOWN = 300;
@@ -56,8 +55,6 @@ public class Enemy extends Shadow implements GameObstacle {
     protected FilmStrip animatorIdle;
     protected FilmStrip currentAnimator;
 
-
-
     // Enemy variables
 
     /** Enemy position */
@@ -70,8 +67,6 @@ public class Enemy extends Shadow implements GameObstacle {
     protected Enemy.Direction direction;
     /** Whether this enemy is currently stunned */
     protected boolean stunned;
-    /** Time this enemy has been stunned (in frames) */
-    protected float toStunTime = 0;
     /** Time this enemy has been stunned (in frames) */
     protected float stunTime = 0;
     /** Whether this enemy can attack */
@@ -89,17 +84,12 @@ public class Enemy extends Shadow implements GameObstacle {
     /** How fast we change frames (one frame per 10 calls to update) */
     protected static final float ANIMATION_SPEED = 0.20f;
     /** The number of animation frames in our filmstrip */
-    protected static final int   NUM_ANIM_FRAMES = 12;
+    protected static final int NUM_ANIM_FRAMES = 12;
     /** Current animation frame for this shell */
     protected float aframe;
 
-
-    /**Filter for filtering */
+    /** Filter for filtering */
     private static volatile Filter filter;
-
-    public void incToStunTime(){
-        toStunTime++;
-    }
 
     /**
      * Returns whether this enemy is currently stunned
@@ -107,14 +97,18 @@ public class Enemy extends Shadow implements GameObstacle {
      * @return the stun status of this enemy
      *
      */
-    public boolean isStunned() { return stunned; }
+    public boolean isStunned() {
+        return stunned;
+    }
 
     /**
      * Sets the stun state of this enemy
      *
      * @param stunned this enemy's new stun state
      */
-    public void setStunned(boolean stunned) { this.stunned = stunned; }
+    public void setStunned(boolean stunned) {
+        this.stunned = stunned;
+    }
 
     /**
      * Returns whether this enemy can currently attack
@@ -122,14 +116,18 @@ public class Enemy extends Shadow implements GameObstacle {
      * @return whether this enemy can currently attack
      *
      */
-    public boolean canAttack() { return canAttack; }
+    public boolean canAttack() {
+        return canAttack;
+    }
 
     /**
      * Sets whether this enemy can attack or not
      *
      * @param canAttack whether this enemy can attack or not
      */
-    public void setAttack(boolean canAttack) { this.canAttack = canAttack; }
+    public void setAttack(boolean canAttack) {
+        this.canAttack = canAttack;
+    }
 
     /**
      * Returns whether this enemy is currently under smog
@@ -137,48 +135,52 @@ public class Enemy extends Shadow implements GameObstacle {
      * @return whether this enemy is currently under smog
      *
      */
-    public boolean isRevealed() { return revealed; }
+    public boolean isRevealed() {
+        return revealed;
+    }
 
     /**
      * Sets whether this enemy is under smog
      *
      * @param revealed whether this enemy is under smog
      */
-    public void setRevealed (boolean revealed) { this.revealed = revealed; }
+    public void setRevealed(boolean revealed) {
+        this.revealed = revealed;
+    }
 
     /**
      * Returns the aframe of the animation.
      *
      * @return aframe
      */
-    public float getAframe(){
+    public float getAframe() {
         return aframe;
     }
+
     /**
      * Returns the scale of the animation.
      *
      * @return scale
      */
-    public float getScale(){
+    public float getScale() {
         return scale;
     }
 
     /**
      * Initialize a standard enemy
      *
-     * @param x the x-coordinate of this enemy
-     * @param y the y-coordinate of this enemy
-     * @param up the texture for upwards movement
-     * @param down the texture for downwards movement
+     * @param x     the x-coordinate of this enemy
+     * @param y     the y-coordinate of this enemy
+     * @param up    the texture for upwards movement
+     * @param down  the texture for downwards movement
      * @param right the texture for rightwards movement
-     * @param left the texture for leftwards movement
-     * @param idle the texture for idle movement
+     * @param left  the texture for leftwards movement
+     * @param idle  the texture for idle movement
      * @param scale the scale to be drawn to
      */
-    public Enemy (float x, float y, Texture up, Texture down, Texture right, Texture left, Texture idle, float scale)
-    {
-        super(x, y, idle.getWidth()/NUM_ANIM_FRAMES*scale, idle.getHeight()*scale, ShadowShape.CIRCLE);
-        //setTexture(value);
+    public Enemy(float x, float y, Texture up, Texture down, Texture right, Texture left, Texture idle, float scale) {
+        super(x, y, idle.getWidth() / NUM_ANIM_FRAMES * scale, idle.getHeight() * scale, ShadowShape.CIRCLE);
+        // setTexture(value);
         setDensity(1);
         setFriction(0.1f);
         setRestitution(0.1f);
@@ -186,7 +188,7 @@ public class Enemy extends Shadow implements GameObstacle {
         position = new Vector2(x, y);
         velocity = new Vector2();
         lastVelocity = new Vector2();
-        zerovector = new Vector2(0,0);
+        zerovector = new Vector2(0, 0);
         this.scale = scale;
 
         textureUp = up;
@@ -200,74 +202,68 @@ public class Enemy extends Shadow implements GameObstacle {
         canAttack = true;
         revealed = false;
 
-        if (filter == null){
+        if (filter == null) {
             filter = new Filter();
             filter.categoryBits = getCatagoricalBits();
             filter.maskBits = getMaskBits();
         }
 
-        animatorUp = new FilmStrip(textureUp,1,NUM_ANIM_FRAMES,NUM_ANIM_FRAMES);
-        animatorDown = new FilmStrip(textureDown,1,NUM_ANIM_FRAMES,NUM_ANIM_FRAMES);
-        animatorRight = new FilmStrip(textureRight,1,NUM_ANIM_FRAMES,NUM_ANIM_FRAMES);
-        animatorLeft = new FilmStrip(textureLeft,1,NUM_ANIM_FRAMES,NUM_ANIM_FRAMES);
-        animatorIdle = new FilmStrip(textureIdle,1,NUM_ANIM_FRAMES,NUM_ANIM_FRAMES);
+        animatorUp = new FilmStrip(textureUp, 1, NUM_ANIM_FRAMES, NUM_ANIM_FRAMES);
+        animatorDown = new FilmStrip(textureDown, 1, NUM_ANIM_FRAMES, NUM_ANIM_FRAMES);
+        animatorRight = new FilmStrip(textureRight, 1, NUM_ANIM_FRAMES, NUM_ANIM_FRAMES);
+        animatorLeft = new FilmStrip(textureLeft, 1, NUM_ANIM_FRAMES, NUM_ANIM_FRAMES);
+        animatorIdle = new FilmStrip(textureIdle, 1, NUM_ANIM_FRAMES, NUM_ANIM_FRAMES);
         currentAnimator = animatorIdle;
         aframe = 0.0f;
 
         setFilterData(filter);
 
     }
+
     /**
-     *  Updates the direction that the enemy sprite faces.
+     * Updates the direction that the enemy sprite faces.
      */
-    public void updateDirection(float h, float v){
-        if (h > 0){
+    public void updateDirection(float h, float v) {
+        if (h > 0) {
             direction = Enemy.Direction.RIGHT;
             currentAnimator = animatorRight;
-        }
-        else if (h < 0){
+        } else if (h < 0) {
             direction = Enemy.Direction.LEFT;
             currentAnimator = animatorLeft;
-        }
-        else if (v > 0){
+        } else if (v > 0) {
             direction = Enemy.Direction.UP;
             currentAnimator = animatorUp;
-        }
-        else if (v < 0){
+        } else if (v < 0) {
             direction = Enemy.Direction.DOWN;
             currentAnimator = animatorDown;
-        }
-        else{
+        } else {
             direction = Enemy.Direction.IDLE;
         }
     }
 
     /**
      * Updates the positions of enemies based on their chosen action.
-     * Also updates the stun time of stunned enemies and the attack time of enemies on cooldown.
+     * Also updates the stun time of stunned enemies and the attack time of enemies
+     * on cooldown.
+     * 
      * @param action the action that this enemy will take
      */
-    public void update(int action)
-    {
+    public void update(int action) {
         body.setAwake(true);
-        if (isStunned())
-        {
+        if (isStunned()) {
             canAttack = false;
             stunTime++;
-            if (stunTime >= MAX_STUN_TIME)
-            {
+            if (stunTime >= MAX_STUN_TIME) {
                 canAttack = true;
                 stunned = false;
                 stunTime = 0;
                 body.setActive(true);
             }
         }
-        if (!canAttack())
-        {
+        if (!canAttack()) {
             body.setActive(false);
             attackTime++;
-            if (attackTime >= ATTACK_COOLDOWN && !isStunned())
-            {
+            if (attackTime >= ATTACK_COOLDOWN && !isStunned()) {
                 canAttack = true;
                 attackTime = 0;
                 body.setActive(true);
@@ -277,39 +273,24 @@ public class Enemy extends Shadow implements GameObstacle {
         // Determine how we are moving.
         float hVelocity = 0;
         float vVelocity = 0;
-        if (action == 1)
-        {
+        if (action == 1) {
             hVelocity = 1;
-        }
-        else if (action == 2)
-        {
+        } else if (action == 2) {
             hVelocity = -1;
-        }
-        else if (action == 3)
-        {
+        } else if (action == 3) {
             vVelocity = 1;
-        }
-        else if (action == 4)
-        {
+        } else if (action == 4) {
             vVelocity = -1;
-        }
-        else if (action == 5)
-        {
+        } else if (action == 5) {
             hVelocity = 1;
             vVelocity = 1;
-        }
-        else if (action == 6)
-        {
+        } else if (action == 6) {
             hVelocity = 1;
             vVelocity = -1;
-        }
-        else if (action == 7)
-        {
+        } else if (action == 7) {
             hVelocity = -1;
             vVelocity = 1;
-        }
-        else if (action == 8)
-        {
+        } else if (action == 8) {
             hVelocity = -1;
             vVelocity = -1;
         }
@@ -320,10 +301,10 @@ public class Enemy extends Shadow implements GameObstacle {
         setVY(velocity.y);
 
         if (!velocity.equals(zerovector)) {
-            lastVelocity  = velocity.cpy();
+            lastVelocity = velocity.cpy();
         }
-//        position.add(velocity);
-//        setPosition(position);
+        // position.add(velocity);
+        // setPosition(position);
         body.setLinearVelocity(velocity);
         body.applyLinearImpulse(velocity, body.getWorldCenter(), true);
         setX(body.getWorldCenter().x);
@@ -356,7 +337,8 @@ public class Enemy extends Shadow implements GameObstacle {
         if (!super.activatePhysics(world)) {
             return false;
         }
-        //Create a box to represent the player -- this will later be changed into the shadow but
+        // Create a box to represent the player -- this will later be changed into the
+        // shadow but
 
         // Ground Sensor
         // -------------
@@ -369,24 +351,23 @@ public class Enemy extends Shadow implements GameObstacle {
         Vector2 sensorCenter = new Vector2(0, -getHeight() / 2);
         FixtureDef sensorDef = new FixtureDef();
 
-        //TO DO: Make Json dependant
-        //sensorDef.density = data.getFloat("density",0);
+        // TO DO: Make Json dependant
+        // sensorDef.density = data.getFloat("density",0);
         sensorDef.density = 1;
         sensorDef.isSensor = true;
         sensorShape = new PolygonShape();
-        //TO DO: Make Json dependant
-        //JsonValue sensorjv = data.get("sensor");
-        //sensorShape.setAsBox(sensorjv.getFloat("shrink",0)*getWidth()/2.0f, sensorjv.getFloat("height",0), sensorCenter, 0.0f);
+        // TO DO: Make Json dependant
+        // JsonValue sensorjv = data.get("sensor");
+        // sensorShape.setAsBox(sensorjv.getFloat("shrink",0)*getWidth()/2.0f,
+        // sensorjv.getFloat("height",0), sensorCenter, 0.0f);
         sensorShape.setAsBox(getHeight(), getWidth());
         sensorDef.shape = sensorShape;
 
         // Ground sensor to represent our feet
-        Fixture sensorFixture = body.createFixture( sensorDef );
-//        sensorFixture.setUserData(getSensorName());
-
+        Fixture sensorFixture = body.createFixture(sensorDef);
+        // sensorFixture.setUserData(getSensorName());
 
         body.setUserData(this);
-        setFilterData(filter);
 
         setFilterData(filter);
 
@@ -399,16 +380,23 @@ public class Enemy extends Shadow implements GameObstacle {
      * @param canvas Drawing context
      */
     public void draw(GameCanvas canvas) {
-        currentAnimator.setFrame((int)aframe);
-//        System.out.println((body.getWorldCenter().x*drawScale.x - currentAnimator.getRegionWidth()*scale/2) + ", " + (body.getWorldCenter().y*drawScale.y- currentAnimator.getRegionHeight()*scale/2));
-        canvas.draw(currentAnimator, Color.WHITE, origin.x, origin.y, body.getWorldCenter().x*drawScale.x - currentAnimator.getRegionWidth()*scale/2, body.getWorldCenter().y*drawScale.y- currentAnimator.getRegionHeight()*scale/2, 0.0f, scale, scale);
+        currentAnimator.setFrame((int) aframe);
+        // System.out.println((body.getWorldCenter().x*drawScale.x -
+        // currentAnimator.getRegionWidth()*scale/2) + ", " +
+        // (body.getWorldCenter().y*drawScale.y-
+        // currentAnimator.getRegionHeight()*scale/2));
+        canvas.draw(currentAnimator, Color.WHITE, origin.x, origin.y,
+                body.getWorldCenter().x * drawScale.x - currentAnimator.getRegionWidth() * scale / 2,
+                body.getWorldCenter().y * drawScale.y - currentAnimator.getRegionHeight() * scale / 2, 0.0f, scale,
+                scale);
     }
 
     public void drawDebug(GameCanvas canvas) {
         super.drawDebug(canvas);
-        //canvas.beginDebug();
-        //canvas.drawPhysics(shape, Color.RED, getX()*drawScale.x, getY()*drawScale.y, getAngle(), drawScale.x, drawScale.y);
-        //canvas.endDebug();
+        // canvas.beginDebug();
+        // canvas.drawPhysics(shape, Color.RED, getX()*drawScale.x, getY()*drawScale.y,
+        // getAngle(), drawScale.x, drawScale.y);
+        // canvas.endDebug();
     }
 
     @Override

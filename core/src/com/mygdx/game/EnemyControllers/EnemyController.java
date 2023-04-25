@@ -15,6 +15,7 @@ import com.mygdx.game.TileGraph;
 /** Controller class for enemy AI */
 public class EnemyController {
     /** Enum to encode the finite state machine */
+
     protected enum FSMState {
         /** The enemy just spawned and is stationary */
         SPAWN,
@@ -241,6 +242,7 @@ public class EnemyController {
         switch(state) {
             case SPAWN:
                 state = FSMState.IDLE;
+                break;
             case IDLE:
                 if (enemy.isStunned())
                 {

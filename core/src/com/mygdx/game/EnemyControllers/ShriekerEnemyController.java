@@ -8,7 +8,7 @@ import com.mygdx.game.Obstacles.Enemies.ShriekerEnemy;
 
 public class ShriekerEnemyController extends EnemyController{
     /** Enum to encode the finite state machine */
-    private static enum FSMState {
+    private enum FSMState {
         /** The enemy just spawned and is stationary */
         SPAWN,
         /** The enemy is idle and stationary, either not aware of the player or on cooldown */
@@ -87,7 +87,6 @@ public class ShriekerEnemyController extends EnemyController{
                     state = ShriekerEnemyController.FSMState.WAKE;
                     enemy.setWaking(true);
                 }
-
                 break;
             case WAKE:
                 boolean playerFar = false;
