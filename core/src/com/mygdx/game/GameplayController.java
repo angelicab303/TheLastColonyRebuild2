@@ -22,7 +22,6 @@ import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.ObjectSet;
 import com.mygdx.game.Obstacles.*;
 import com.mygdx.game.Obstacles.Enemies.Enemy;
-import com.mygdx.game.Obstacles.Enemies.FloatingEnemy;
 import com.mygdx.game.Obstacles.Enemies.ShriekerEnemy;
 
 import com.mygdx.game.UI.AirBar;
@@ -80,8 +79,6 @@ public class GameplayController extends WorldController{
 	private Texture airBarTexture;
 	/** Texture asset for the pure air texture */
 	private Texture pureAirTexture;
-	/** Texture asset for the pure air texture */
-	private Texture toxicAirTexture;
 	/** Texture asset for the second smog texture */
 	private TextureRegion smogTexture2;
 	/** Texture asset for the cliff texture */
@@ -161,9 +158,6 @@ public class GameplayController extends WorldController{
 	int numRescued;
 	/** Used for playtesting, player is invincible */
 	private boolean isInvincible = false;
-	private boolean pausing = false;
-	private boolean unpausing = false;
-	private boolean paused = false;
 
 
 
@@ -224,7 +218,6 @@ public class GameplayController extends WorldController{
 		airBarTexture = directory.getEntry("images:airBar", Texture.class);
 		// pureAirTexture = new TextureRegion(directory.getEntry("images:smog1", Texture.class));
 		pureAirTexture = directory.getEntry("images:testSmog", Texture.class);
-		toxicAirTexture = directory.getEntry("images:testSmog", Texture.class);
 		smogTexture2 = new TextureRegion(directory.getEntry("images:smog2", Texture.class));
 		caravanTexture = new TextureRegion(directory.getEntry("images:caravan1", Texture.class));
 		fHeartTexture = directory.getEntry("images:fullHeart", Texture.class);
@@ -390,7 +383,6 @@ public class GameplayController extends WorldController{
 
 		//TO DO: update visuals for purified smog
 		purifiedAir = new PurifiedQueue(pureAirTexture, world, SCALE);
-		toxicAir = new ToxicQueue(toxicAirTexture, world, SCALE);
 
 		// Instantiate the enemies:
 		enemyArr = new Array<Enemy>();
@@ -407,22 +399,12 @@ public class GameplayController extends WorldController{
 		}
 
 		for (int i = 0; i < enemyLocations.length; i++) {
-			if (i%2 == 0) {
-				FloatingEnemy enemyTemp = new FloatingEnemy(enemyLocations[i][0] * tileSize + tileOffset, enemyLocations[i][1] * tileSize + tileOffset, enemyTextureUp, enemyTextureDown, enemyTextureRight, enemyTextureLeft, enemyTextureIdle, SCALE);
-				enemyArr.add(enemyTemp);
-				enemyTemp.activatePhysics(world);
-				addObject(enemyTemp);
-				//enemyControllers.add(new ChaserEnemyController(tileGrid, tileSize, tileOffset, enemyTemp, player, shriekerArr));
-				enemyControllers.add(new FloatingEnemyController(tileGrid, tileSize, tileOffset, enemyTemp, player, shriekerArr, toxicAir));
-			}
-			if (i%2 == 1) {
-				ScoutEnemy enemyTemp = new ScoutEnemy(enemyLocations[i][0] * tileSize + tileOffset, enemyLocations[i][1] * tileSize + tileOffset, enemyTextureUp, enemyTextureDown, enemyTextureRight, enemyTextureLeft, enemyTextureIdle, vineTextures, SCALE, world);
-				enemyArr.add(enemyTemp);
-				enemyTemp.activatePhysics(world);
-				addObject(enemyTemp);
+			ScoutEnemy enemyTemp = new ScoutEnemy(enemyLocations[i][0] * tileSize + tileOffset, enemyLocations[i][1] * tileSize + tileOffset, enemyTextureUp, enemyTextureDown, enemyTextureRight, enemyTextureLeft, enemyTextureIdle, vineTextures,SCALE, world);
+			enemyArr.add(enemyTemp);
+			enemyTemp.activatePhysics(world);
+			addObject(enemyTemp);
 
-				enemyControllers.add(new ScoutEnemyController(tileGrid, tileSize, tileOffset, enemyTemp, player, shriekerArr));
-			}
+			enemyControllers.add(new ScoutEnemyController(tileGrid, tileSize, tileOffset, enemyTemp, player, shriekerArr));
 		}
 
 
@@ -621,61 +603,6 @@ public class GameplayController extends WorldController{
 		// Read input
 		input.readInput();
 
-		if (input.didPause())
-		{
-			if (!paused && !unpausing)
-			{
-				paused = true;
-				pausing = true;
-				for (int i = 0; i < enemyArr.size; i++)
-				{
-					enemyArr.get(i).setBodyType(BodyDef.BodyType.StaticBody);
-				}
-				for (int i = 0; i < survivorArr.size; i++)
-				{
-					survivorArr.get(i).setActive(false);
-				}
-				for (int i = 0; i < purifiedAir.getQueue().length; i++)
-				{
-					purifiedAir.getQueue()[i].setActive(false);
-				}
-				for (int i = 0; i < toxicAir.getQueue().length; i++)
-				{
-					toxicAir.getQueue()[i].setActive(false);
-				}
-				return;
-			}
-			else if (paused && !pausing)
-			{
-				paused = false;
-				unpausing = true;
-				for (int i = 0; i < enemyArr.size; i++)
-				{
-					enemyArr.get(i).setBodyType(BodyDef.BodyType.DynamicBody);
-				}
-				for (int i = 0; i < survivorArr.size; i++)
-				{
-					survivorArr.get(i).setActive(true);
-				}
-				for (int i = 0; i < purifiedAir.getQueue().length; i++)
-				{
-					purifiedAir.getQueue()[i].setActive(true);
-				}
-				for (int i = 0; i < toxicAir.getQueue().length; i++)
-				{
-					toxicAir.getQueue()[i].setActive(true);
-				}
-			}
-		}
-		else
-		{
-			pausing = false;
-			unpausing = false;
-			if (paused) {
-				return;
-			}
-		}
-
 		if (input.didPressAbsorb()) {
 			weapon.setAbsorbing(true);
 		} else {
@@ -692,22 +619,6 @@ public class GameplayController extends WorldController{
 
 		// Update player and weapon position
 		player.update();
-		if (player.getX() < 10)
-		{
-			player.setPosition(10, player.getBody().getPosition().y);
-		}
-		if (player.getX() >= canvas.getWidth()-10)
-		{
-			player.setPosition(canvas.getWidth()-10, player.getBody().getPosition().y);
-		}
-		if (player.getY() < 10)
-		{
-			player.setPosition(player.getBody().getPosition().x, 10);
-		}
-		if (player.getY() >= canvas.getHeight()-10)
-		{
-			player.setPosition(player.getBody().getPosition().x, canvas.getHeight()-10);
-		}
 
 		// Update UI elements
 		airBar.update(weapon.getNumAmmo());
@@ -720,7 +631,6 @@ public class GameplayController extends WorldController{
 			weapon.incrementAmmo(-weapon.getBullets());
 		}
 		purifiedAir.update();
-		toxicAir.update();
 
 		// Process Collisions
 		collisionController.update(world,player,weapon);
@@ -749,22 +659,7 @@ public class GameplayController extends WorldController{
 		for (int i = 0; i < enemyArr.size; i++)
 		{
 			enemyArr.get(i).update(enemyControllers.get(i).getAction());
-			if (enemyArr.get(i).getX() < 10)
-			{
-				enemyArr.get(i).setPosition(10, enemyArr.get(i).getBody().getPosition().y);
-			}
-			if (enemyArr.get(i).getX() >= canvas.getWidth()-10)
-			{
-				enemyArr.get(i).setPosition(canvas.getWidth()-10, enemyArr.get(i).getBody().getPosition().y);
-			}
-			if (enemyArr.get(i).getY() < 10)
-			{
-				enemyArr.get(i).setPosition(enemyArr.get(i).getBody().getPosition().x, 10);
-			}
-			if (enemyArr.get(i).getY() >= canvas.getHeight()-10)
-			{
-				enemyArr.get(i).setPosition(enemyArr.get(i).getBody().getPosition().x, canvas.getHeight()-10);
-			}
+
 		}
 
 		// This section will be handled by collisionController in the future with the exception of obj.update(..)s and

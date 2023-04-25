@@ -35,8 +35,6 @@ public class Enemy extends Shadow implements GameObstacle {
     /** How far forward the enemy can move */
     protected static final float MOVE_SPEED = 105.0f;
     /** Maximum amount of time an enemy can remain stunned (in frames) */
-    protected final float MAX_TO_STUN_TIME = 5;
-    /** Maximum amount of time an enemy can remain stunned (in frames) */
     protected final float MAX_STUN_TIME = 500;
     /** Time enemy must wait before attacking again */
     protected final float ATTACK_COOLDOWN = 300;
@@ -71,8 +69,6 @@ public class Enemy extends Shadow implements GameObstacle {
     /** Whether this enemy is currently stunned */
     protected boolean stunned;
     /** Time this enemy has been stunned (in frames) */
-    protected float toStunTime = 0;
-    /** Time this enemy has been stunned (in frames) */
     protected float stunTime = 0;
     /** Whether this enemy can attack */
     protected boolean canAttack;
@@ -97,10 +93,6 @@ public class Enemy extends Shadow implements GameObstacle {
     /**Filter for filtering */
     private static volatile Filter filter;
 
-
-    public void incToStunTime(){
-        toStunTime++;
-    }
     /**
      * Returns whether this enemy is currently stunned
      *
@@ -115,6 +107,7 @@ public class Enemy extends Shadow implements GameObstacle {
      * @param stunned this enemy's new stun state
      */
     public void setStunned(boolean stunned) { this.stunned = stunned; }
+
     /**
      * Returns whether this enemy can currently attack
      *
@@ -248,8 +241,8 @@ public class Enemy extends Shadow implements GameObstacle {
      */
     public void update(int action)
     {
-        body.setAwake(true);
 
+        body.setAwake(true);
         if (isStunned())
         {
             canAttack = false;
@@ -386,8 +379,6 @@ public class Enemy extends Shadow implements GameObstacle {
 
 
         body.setUserData(this);
-
-        setFilterData(filter);
 
         return true;
     }
