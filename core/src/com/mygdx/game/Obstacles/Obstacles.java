@@ -94,6 +94,8 @@ public class Obstacles extends Shadow implements GameObstacle {
     public Vector2 getPosition() {
         return super.getPosition();
     }
+    public Vector2 getOrigin() { return origin; }
+    public void setOrigin(Vector2 origin) { this.origin = origin; }
 
     /**
      * Updates this ship position (and weapons fire) according to the control code.
