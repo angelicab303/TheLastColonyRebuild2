@@ -328,7 +328,7 @@ public class GameplayController extends WorldController{
 //		System.out.println("First element of tiles: " + tiles[0][0]);
 
 		//Setting the size of the tiles
-		Shadow.setSize(32f);
+		Shadow.setSize(tileSize*2/3);
 
 
 		// Instantiate the cliffs:
