@@ -116,7 +116,7 @@ public class Player extends Shadow implements GameObstacle{
         velocity = new Vector2();
         lastVelocity = new Vector2();
         zerovector = new Vector2(0,0);
-        health = 3;
+        health = 5;
         textureUp = up;
         textureDown = down;
         textureRight = right;
@@ -127,7 +127,7 @@ public class Player extends Shadow implements GameObstacle{
         controller = input;
         direction = Direction.IDLE;
         prevPosition = position;
-        maxHealth = 3;
+        maxHealth = 5;
 
         if (filter == null){
             filter = new Filter();

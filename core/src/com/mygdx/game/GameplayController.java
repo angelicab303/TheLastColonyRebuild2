@@ -493,7 +493,7 @@ public class GameplayController extends WorldController{
 		// AirBar Creation
 		// float barX = player.getX() - (canvas.getWidth()*cameraZoom)/2.0f + (30.0f * cameraZoom);
 		// float barY = player.getY() + (canvas.getHeight()*cameraZoom)/2.0f - (30.0f * cameraZoom);
-		airBar = new AirBar(airBarTexture, weapon.getMaxNumAmmo(), weapon.getNumAmmo());
+		airBar = new AirBar(airBarTexture, weapon.getMaxNumAmmo(), weapon.getNumAmmo(), canvas);
 
 		// Hearts
 		int numLives = player.getHealth();
@@ -504,7 +504,7 @@ public class GameplayController extends WorldController{
 
 		for (int i = 0; i < numLives; i++){
 			if (i > 0){
-				spacing += 30.0f;
+				spacing += 13.0f;
 			}
 			Heart tempHeart = new Heart(fHeartTexture, heartX, heartY, spacing);
 			heartArr.add(tempHeart);
