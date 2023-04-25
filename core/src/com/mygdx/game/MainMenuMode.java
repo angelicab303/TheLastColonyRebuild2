@@ -37,11 +37,13 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Array;
 import util.ScreenListener;
@@ -227,6 +229,8 @@ public class MainMenuMode implements Screen, InputProcessor, ControllerListener 
     private float centerY;
     /** Font to be used as placeholder for buttons */
     private BitmapFont nullFont;
+    /** the state of which button was pressed (0=none, 1=play, 2=levels, 3=settings, 4=exit) */
+    private int buttonState;
 
 
     /**
@@ -275,6 +279,7 @@ public class MainMenuMode implements Screen, InputProcessor, ControllerListener 
 
         Gdx.input.setInputProcessor( this );
         stage = new Stage();
+        buttonState = 0;
     }
 
     /**
@@ -312,7 +317,7 @@ public class MainMenuMode implements Screen, InputProcessor, ControllerListener 
         // Initialize the buttons/titles to be drawn on screen
         float startX = RIGHT_SPACING + 10;
         float startY = canvas.getHeight()*.05f;
-        text.add(new Text(title, RIGHT_SPACING, canvas.getHeight()*.85f, false));
+        text.add(new Text(title, RIGHT_SPACING, canvas.getHeight()*.95f, false));
         // text.add(new Text(play, startX, startY, false));
 
         // Add skins
@@ -326,7 +331,7 @@ public class MainMenuMode implements Screen, InputProcessor, ControllerListener 
         table.setPosition(startX, startY);
         table.setWidth(600.0f);
         table.setHeight(400.0f);
-        table.setDebug(true);
+        table.setDebug(false);
 
         Gdx.input.setInputProcessor(stage);
 //        buttons = new Array<ImageButton>();
@@ -345,7 +350,7 @@ public class MainMenuMode implements Screen, InputProcessor, ControllerListener 
         textButtonStyle.down = new TextureRegionDrawable(play);
         textButtonStyle.checked = new TextureRegionDrawable(play);
         buttons.add(new TextButton("", textButtonStyle));
-        table.add(buttons.get(0)).spaceBottom(20.0f).left();
+        table.add(buttons.get(0)).spaceBottom(20.0f).left().size(play.getWidth()*textScale, play.getHeight()*textScale);
         table.row();
 
         // Levels button
@@ -355,14 +360,42 @@ public class MainMenuMode implements Screen, InputProcessor, ControllerListener 
         textButtonStyle.down = new TextureRegionDrawable(levels);
         textButtonStyle.checked = new TextureRegionDrawable(levels);
         buttons.add(new TextButton("", textButtonStyle));
-        table.add(buttons.get(1));
+        table.add(buttons.get(1)).spaceBottom(20.0f).left().size(levels.getWidth()*textScale, levels.getHeight()*textScale);
         table.row();
+        // Settings button
+        textButtonStyle = new TextButton.TextButtonStyle();
+        textButtonStyle.font = nullFont;
+        textButtonStyle.up   = new TextureRegionDrawable(settings);
+        textButtonStyle.down = new TextureRegionDrawable(settings);
+        textButtonStyle.checked = new TextureRegionDrawable(settings);
+        buttons.add(new TextButton("", textButtonStyle));
+        table.add(buttons.get(2)).spaceBottom(20.0f).left().size(settings.getWidth()*textScale, settings.getHeight()*textScale);
+        table.row();
+        // Exit button
+        textButtonStyle = new TextButton.TextButtonStyle();
+        textButtonStyle.font = nullFont;
+        textButtonStyle.up   = new TextureRegionDrawable(exit);
+        textButtonStyle.down = new TextureRegionDrawable(exit);
+        textButtonStyle.checked = new TextureRegionDrawable(exit);
+        buttons.add(new TextButton("", textButtonStyle));
+        table.add(buttons.get(3)).spaceBottom(20.0f).left().size(exit.getWidth()*textScale, exit.getHeight()*textScale);
+        table.row();
+
+
 
         table.left().top();
         stage.addActor(table);
 
-
-
+        // Hook up the buttons
+        // Play button
+        buttons.get(0).addListener( new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                if (buttons.get(0).isChecked()) {
+                    buttonState = 1;
+                }
+            };
+        } );
 
 
 
@@ -475,7 +508,7 @@ public class MainMenuMode implements Screen, InputProcessor, ControllerListener 
             draw();
 
             // We are are ready, notify our listener
-            if (isReady() && listener != null) {
+            if (buttonState > 0 && listener != null) {
                 listener.exitScreen(this, 0);
             }
         }
