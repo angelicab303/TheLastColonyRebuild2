@@ -127,7 +127,7 @@ public class PurifiedQueue {
             super(offscreen.x, offscreen.y, PurifiedQueue.texture.getWidth()*scale/NUM_ANIM_FRAMES, PurifiedQueue.texture.getHeight()*scale);
             setBodyType(BodyDef.BodyType.DynamicBody);
             // setTexture(PurifiedQueue.texture);
-            // setLinearDamping(1); //arbitrary damping coeff.
+            setLinearDamping(1); //arbitrary damping coeff.
             this.age = -1;
 
             this.fading = false;
@@ -303,11 +303,6 @@ public class PurifiedQueue {
      */
     public void setTexture(Texture value) {
         texture = value;
-    }
-
-    public PurifiedAir[] getQueue()
-    {
-        return queue;
     }
 
     /**

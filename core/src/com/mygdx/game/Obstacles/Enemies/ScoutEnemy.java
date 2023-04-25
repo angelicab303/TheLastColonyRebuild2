@@ -62,7 +62,7 @@ public class ScoutEnemy extends Enemy{
 //        }
 
         public void draw(GameCanvas canvas, float currFrame) {
-            aframe = currFrame;
+            aframe = ((int)currFrame % 2 == 0 ? 0 : 1);
             currentAnimator.setFrame((int)aframe);
             canvas.draw(currentAnimator, Color.WHITE,body.getWorldCenter().x*drawScale.x, body.getWorldCenter().y*drawScale.y,
                     body.getWorldCenter().x*drawScale.x + (body.getWorldCenter().x*drawScale.x/ canvas.getWidth() * 80f),
@@ -90,6 +90,7 @@ public class ScoutEnemy extends Enemy{
             super.drawDebug(canvas);
         }
     }
+    private final float VINE_ANIMATION_SPEED = 0.1f;
     private final int NUM_ANIM_FRAMES_VINE = 2;
     private long vineTick;
     public boolean isExtendingVines;
@@ -142,6 +143,7 @@ public class ScoutEnemy extends Enemy{
         vinesShrinking = value;
     }
     public void shrinkVines() {
+
         if (vines.size > 0) {
             vines.pop();
         }
@@ -363,7 +365,7 @@ public class ScoutEnemy extends Enemy{
             toStunTime = 0;
             this.setStunned(true);
         }
-        aframevine += ANIMATION_SPEED;
+        aframevine += VINE_ANIMATION_SPEED;
         vineTick++;
         if(!isExtendingVines) {
             super.update(action);
