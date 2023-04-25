@@ -156,6 +156,7 @@ public class GameplayController extends WorldController{
 	//protected ObjectSet<Fixture> sensorFixtures;
 	// Moved the masks to GameObstacle if you are looking for them -V
 	int numRescued;
+	int numSurvivorsTotal;
 	/** Used for playtesting, player is invincible */
 	private boolean isInvincible = false;
 
@@ -276,6 +277,7 @@ public class GameplayController extends WorldController{
 	 */
 	public void reset() {
 		Vector2 gravity = new Vector2(world.getGravity() );
+		numRescued = 0;
 
 		for(Obstacle obj : objects) {
 			obj.deactivatePhysics(world);
@@ -424,7 +426,7 @@ public class GameplayController extends WorldController{
 			survivorControllers.add(new SurvivorController(survivorTemp, caravan.getPosition(), player.getPosition(), tileGrid, tileSize, tileOffset));
 		}
 
-
+		numSurvivorsTotal =survivorArr.size;
 		// *************************** SMOG OBSTACLES ***************************
 
 		// Starting Area:
@@ -688,12 +690,14 @@ public class GameplayController extends WorldController{
 			caravan.setInteractable(false);
 		}
 		if(caravan.isInteractable() && input.didDropSurvivors()) {
-			if(numRescued == survivorArr.size) {
+			if(numRescued == numSurvivorsTotal) {
 				setComplete(true);
 			}
 			for(int i = 0; i < survivorArr.size; i++) {
 				if(survivorArr.get(i).isFollowing()) {
 					survivorArr.get(i).rescue();
+					survivorArr.get(i).deactivatePhysics(world);
+					survivorArr.removeIndex(i);
 					numRescued++;
 					caravan.setInteractable(false);
 				}
