@@ -16,6 +16,8 @@ public interface GameObstacle {
         SMOG,
         /** A purified air **/
         PURIFIED_AIR,
+        /** A toxic air */
+        TOXIC_AIR,
         /** The Player **/
         PLAYER,
         /** The Weapon **/
@@ -33,7 +35,8 @@ public interface GameObstacle {
     final short CATEGORY_SURVIVOR = 0x0008;
     final short CATEGORY_ENV = 0x0010;
     final short CATEGORY_PURIFIED = 0x0020;
-    final short CATEGORY_CARAVAN = 0x0040;
+    final short CATEGORY_TOXIC = 0x0040;
+    final short CATEGORY_CARAVAN = 0x0080;
     final short MASK_SMOG = CATEGORY_ENEMY;
     final short MASK_PLAYER = CATEGORY_ENEMY | CATEGORY_SURVIVOR | CATEGORY_ENV;// | CATEGORY_CARAVAN;
     final short MASK_ENEMY = CATEGORY_PLAYER | CATEGORY_ENEMY | CATEGORY_ENV |CATEGORY_SMOG | CATEGORY_PURIFIED;// | CATEGORY_CARAVAN ;
@@ -41,6 +44,7 @@ public interface GameObstacle {
     final short MASK_ENV = -1;
 
     final short MASK_PURIFIED = CATEGORY_ENV | CATEGORY_ENEMY;
+    final short MASK_TOXIC = CATEGORY_ENV | CATEGORY_PLAYER | CATEGORY_SURVIVOR;
     //final short MASK_CARAVAN = CATEGORY_SURVIVOR | CATEGORY_PLAYER | CATEGORY_ENEMY;
 
 

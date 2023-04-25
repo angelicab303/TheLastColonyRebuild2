@@ -387,6 +387,8 @@ public class Enemy extends Shadow implements GameObstacle {
 
         body.setUserData(this);
 
+        setFilterData(filter);
+
         return true;
     }
 
