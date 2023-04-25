@@ -107,6 +107,7 @@ public class Enemy extends Shadow implements GameObstacle {
      * @param stunned this enemy's new stun state
      */
     public void setStunned(boolean stunned) { this.stunned = stunned; }
+
     /**
      * Returns whether this enemy can currently attack
      *
@@ -240,6 +241,7 @@ public class Enemy extends Shadow implements GameObstacle {
      */
     public void update(int action)
     {
+
         body.setAwake(true);
         if (isStunned())
         {
@@ -377,8 +379,6 @@ public class Enemy extends Shadow implements GameObstacle {
 
 
         body.setUserData(this);
-
-        setFilterData(filter);
 
         return true;
     }

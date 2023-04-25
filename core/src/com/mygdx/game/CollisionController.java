@@ -25,7 +25,6 @@ import com.badlogic.gdx.utils.*;
 import com.badlogic.gdx.math.*;
 import com.mygdx.game.Obstacles.*;
 import com.mygdx.game.Obstacles.Enemies.Enemy;
-import com.mygdx.game.Obstacles.Enemies.FloatingEnemy;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -192,11 +191,8 @@ public class CollisionController{
                         enemy = (Enemy) objB;
                         player = (Player) objA;
                     }
-                    if (player.canLoseLife()) {
-                        enemy.setAttack(false);
-                        player.setHealth(player.getHealth() - 1);
-                        player.coolDown(false);
-                    }
+                    enemy.setAttack(false);
+                    player.setHealth(player.getHealth() - 1);
                     break;
                 case GameObstacle.CATEGORY_PLAYER | GameObstacle.CATEGORY_SURVIVOR:
                     if(objA.getType() == GameObstacle.ObstacleType.SURVIVOR){
@@ -218,34 +214,8 @@ public class CollisionController{
                     }
                     if(survivor.canLoseLife()){
                         survivor.loseLife();
-                        survivor.coolDown(false);
                         enemy.setAttack(false);
                     }
-                    break;
-                case GameObstacle.CATEGORY_TOXIC | GameObstacle.CATEGORY_PLAYER:
-                    if (objA.getType() == GameObstacle.ObstacleType.PLAYER) {
-                        player = (Player) objA;
-                    }
-                    else {
-                        player = (Player) objB;
-                    }
-                    if (player.canLoseLife()) {
-                        player.setHealth(player.getHealth() - 1);
-                        player.coolDown(false);
-                    }
-                    break;
-                case GameObstacle.CATEGORY_TOXIC | GameObstacle.CATEGORY_SURVIVOR:
-                    if (objA.getType() == GameObstacle.ObstacleType.SURVIVOR) {
-                        survivor = (Survivor) objA;
-                    }
-                    else {
-                        survivor = (Survivor) objB;
-                    }
-                    if (survivor.canLoseLife()) {
-                        survivor.loseLife();
-                        survivor.coolDown(false);
-                    }
-                    break;
             }
         }
 
@@ -273,7 +243,6 @@ public class CollisionController{
                     else {
                         ((Survivor) objB).setInteractable(false);
                     }
-                    break;
             }
         }
 
@@ -289,7 +258,6 @@ public class CollisionController{
                 case GameObstacle.CATEGORY_PURIFIED | GameObstacle.CATEGORY_ENEMY:
                 case GameObstacle.CATEGORY_PLAYER | GameObstacle.CATEGORY_SURVIVOR:
                     contact.setEnabled(false);
-                    break;
             }
         }
 
