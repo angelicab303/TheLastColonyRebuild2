@@ -1,33 +1,7 @@
-/**
- * PurifiedQueue.cs (An alteration of photonqueue)
- *
- * This class implements a "particle system" that manages the photons fired
- * by either ship in the game.  When a ship fires a photon, it adds it to this
- * particle system.  The particle system is responsible for moving (and drawing)
- * the photon particle.  It also keeps track of the age of the photon.  Photons
- * that are too old are deleted, so that they are not bouncing about the game
- * forever.
- *
- * The PhotonQueue is exactly what it sounds like: a queue. In this implementation
- * we use the circular array implementation of a queue (which you may have learned
- * in CS 2110).  Why do we do this when C# has perfectly good Collection classes?
- * Because in game programming it is considered bad form to have "new" statements
- * in an update or a graphics loop if you can easily avoid it.  Each "new" is
- * a potentially expensive memory allocation.  It is (often) much better to
- * allocate all the memory that you need at start-up, so that all you do is
- * assign variables during game time. If you notice, all the Photon objects
- * are declared and initialized in the constructor; we just reassign the fields
- *
- * Author: Walker M. White (edited by vd95)
- * Based on original GameX Ship Demo by Rama C. Hoetzlein, 2002
- * MonoGame version, 12/30/2013
- */
-
 package com.mygdx.game.Obstacles;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Filter;
@@ -36,7 +10,6 @@ import com.mygdx.game.GameCanvas;
 import obstacle.BoxObstacle;
 import util.FilmStrip;
 
-
 /**
  * Model class representing an "particle system" of photons.
  *
@@ -44,21 +17,21 @@ import util.FilmStrip;
  * is because all photons share the same image file, and it would waste
  * memory to load the same image file for each photon.
  */
-public class PurifiedQueue {
+public class ToxicQueue {
     // Private constants to avoid use of "magic numbers"
     /** Fixed velocity for a photon */
     private static final float PHOTON_VELOCITY = 5.0f;
     /** Number of animation frames a photon lives before deleted */
-    private static final int MAX_AGE = 480;
+    private static final int MAX_AGE = 200;
     /** Maximum number of photons allowed on screen at a time. */
-    private static final int MAX_PHOTONS = 512;
+    private static final int MAX_PHOTONS = 5;
 
     /** Graphic asset representing a single photon. */
     private static Texture texture;
 
     // QUEUE DATA STRUCTURES
     /** Array implementation of a circular queue. */
-    protected PurifiedAir[] queue;
+    protected ToxicAir[] queue;
     /** Index of head element in the queue */
     protected int head;
     /** Index of tail element in the queue */
@@ -73,39 +46,39 @@ public class PurifiedQueue {
     Vector2 offscreen;
 
     /**
-     * An inner class that represents a single Purified air pellet
+     * An inner class that represents a single toxic air pellet
      *
      * To count down on memory references, the photon is "flattened" so that
      * it contains no other objects.
      */
-    public class PurifiedAir extends BoxObstacle implements GameObstacle {
+    public class ToxicAir extends BoxObstacle implements GameObstacle {
 
         /**
-         * Whether this purified air unit is currently fading
+         * Whether this toxic air unit is currently fading
          */
         private boolean fading;
 
         /**
-         * Whether this purified air unit has fully faded
+         * Whether this toxic air unit has fully faded
          */
         private boolean faded;
 
         /**
-         * Age of this purified air tile
+         * Age of this toxic air tile
          */
         private int age;
 
         /**
-         * Maximum time it will take for this purified air unit to fade
+         * Maximum time it will take for this toxic air unit to fade
          */
         private final float MAX_FADE_TIME = 30;
 
         /**
-         * Time this purified air unit has faded
+         * Time this toxic air unit has faded
          */
         private float fadeTime = 0;
         /**
-         * Time this purified air unit starts fading
+         * Time this toxic air unit starts fading
          */
         private float timeToFade = 450;
         /** Filmstrip for smog */
@@ -120,21 +93,23 @@ public class PurifiedQueue {
         private float scale;
 
         /**
-         * Initialize a standard purified air unit
+         * Initialize a standard toxic air unit
          */
-        public PurifiedAir (float scale)
+        public ToxicAir (float scale)
         {
-            super(offscreen.x, offscreen.y, PurifiedQueue.texture.getWidth()*scale/NUM_ANIM_FRAMES, PurifiedQueue.texture.getHeight()*scale);
+            super(offscreen.x, offscreen.y, ToxicQueue.texture.getWidth()*scale, ToxicQueue.texture.getHeight()*scale);
             setBodyType(BodyDef.BodyType.DynamicBody);
-            // setTexture(PurifiedQueue.texture);
+            setDimension(ToxicQueue.texture.getWidth()*scale/5, ToxicQueue.texture.getHeight()*scale);
+            // setTexture(PollutedQueue.texture);
             // setLinearDamping(1); //arbitrary damping coeff.
             this.age = -1;
 
             this.fading = false;
             this.faded = false;
 
+            setFilterData(filter);
             setActive(false);
-            animator = new FilmStrip(PurifiedQueue.texture,1,NUM_ANIM_FRAMES,NUM_ANIM_FRAMES);
+            animator = new FilmStrip(ToxicQueue.texture,1,NUM_ANIM_FRAMES,NUM_ANIM_FRAMES);
             float maxFrame = 4;
             float minFrame = 0;
             float frameNum = (float)(Math.random()*(maxFrame-minFrame+1)+minFrame);
@@ -149,36 +124,36 @@ public class PurifiedQueue {
          *
          * @return the type of this object.
          */
-        public ObstacleType getType() { return ObstacleType.PURIFIED_AIR; }
+        public ObstacleType getType() { return ObstacleType.TOXIC_AIR; }
 
 
         /**
-         * Returns whether this purified air unit is currently fading
+         * Returns whether this polluted air unit is currently fading
          *
-         * @return the fading state of this purified air unit
+         * @return the fading state of this polluted air unit
          *
          */
         public boolean isFading() { return fading; }
 
         /**
-         * Sets the fading state of this purified air unit
+         * Sets the fading state of this polluted air unit
          *
-         * @param fading this purified air unit's new fading state
+         * @param fading this polluted air unit's new fading state
          */
         public void setFading(boolean fading) { this.fading = fading; }
 
         /**
-         * Returns whether this purified air unit is currently faded
+         * Returns whether this toxic air unit is currently faded
          *
-         * @return the faded state of this purified air unit
+         * @return the faded state of this toxic air unit
          *
          */
         public boolean isFaded() { return faded; }
 
         /**
-         * Sets the faded state of this purified air unit
+         * Sets the faded state of this toxic air unit
          *
-         * @param faded this purified air unit's new faded state
+         * @param faded this toxic air unit's new faded state
          */
         public void setFaded(boolean faded) { this.faded = faded; }
 
@@ -190,7 +165,7 @@ public class PurifiedQueue {
         }
 
         public void applyImpulse(Vector2 impulse){
-            body.applyLinearImpulse(impulse, getPosition(), true);
+            body.applyLinearImpulse(impulse, body.getWorldCenter(), true);
         }
 
 
@@ -201,7 +176,7 @@ public class PurifiedQueue {
             //markRemoved(true);
         }
 
-        /** Updates the fade time of fading purified air */
+        /** Updates the fade time of fading toxic air */
         public void update()
         {
             age++;
@@ -233,22 +208,26 @@ public class PurifiedQueue {
             if (!super.activatePhysics(world)) {
                 return false;
             }
-            geometry.setUserData("purified air");
+            geometry.setUserData("toxic air");
             body.setUserData(this);
             body.setActive(false);
-
-            setFilterData(filter);
             return true;
         }
 
         @Override
         public short getCatagoricalBits() {
-            return CATEGORY_PURIFIED;
+            return CATEGORY_TOXIC;
         }
 
         @Override
         public short getMaskBits() {
-            return MASK_PURIFIED;
+            return MASK_TOXIC;
+        }
+
+        public void drawDebug(GameCanvas canvas) {
+            //canvas.beginDebug();
+            canvas.drawPhysics(shape, Color.RED, getX()*drawScale.x, getY()*drawScale.y, getAngle(), drawScale.x, drawScale.y);
+            //canvas.endDebug();
         }
     }
 
@@ -256,19 +235,19 @@ public class PurifiedQueue {
     /**
      *  Constructs a new (empty) PhotonQueue
      */
-    public PurifiedQueue(Texture texture, World world, float scale) {
+    public ToxicQueue(Texture texture, World world, float scale) {
         //Constants
         offscreen = new Vector2(-50, -50);
 
         //Filter
         filter = new Filter();
-        filter.categoryBits = GameObstacle.CATEGORY_PURIFIED;
-        filter.maskBits = GameObstacle.MASK_PURIFIED;
+        filter.categoryBits = GameObstacle.CATEGORY_TOXIC;
+        filter.maskBits = GameObstacle.MASK_TOXIC;
 
         // Construct the queue.
         // this.texture = texture;
         this.texture = texture;
-        queue = new PurifiedAir[MAX_PHOTONS];
+        queue = new ToxicAir[MAX_PHOTONS];
 
         head = 0;
         tail = -1;
@@ -276,7 +255,7 @@ public class PurifiedQueue {
 
         // "Predeclare" all the photons for efficiency
         for (int ii = 0; ii < MAX_PHOTONS; ii++) {
-            queue[ii] = new PurifiedAir(scale);
+            queue[ii] = new ToxicAir(scale);
             queue[ii].activatePhysics(world);
         }
     }
@@ -303,6 +282,11 @@ public class PurifiedQueue {
      */
     public void setTexture(Texture value) {
         texture = value;
+    }
+
+    public ToxicAir[] getQueue()
+    {
+        return queue;
     }
 
     /**
@@ -339,9 +323,9 @@ public class PurifiedQueue {
         size++;
     }
 
-    public void attack(int bullets, Vector2 pos, Vector2[] impulses){
+    public void attack(int bullets, Vector2 pos, Vector2 impulse){
         for(int ii = 0; ii < bullets; ii++){
-            addPhoton(pos, impulses[ii]);
+            addPhoton(pos, impulse.scl(PHOTON_VELOCITY));
         }
     }
 
@@ -386,14 +370,14 @@ public class PurifiedQueue {
             return;
         }
 
-        Color tint = Color.ROYAL;
+        Color tint = Color.CYAN;
         tint.a = 0.5f;
         // Step through each active photon in the queue.
         for (int ii = 0; ii < size; ii++) {
             // Find the position of this photon.
             int idx = ((head + ii) % MAX_PHOTONS);
 
-            PurifiedAir air = queue[idx];
+            ToxicAir air = queue[idx];
 
             // How big to make the photon.  Decreases with age.
             //float scale = (1.25f - (float)queue[idx].age * 0.5f / (float)MAX_AGE)*queue[idx].scale;
@@ -402,13 +386,38 @@ public class PurifiedQueue {
 
             // Use this information to draw.
             air.animator.setFrame((int)air.aframe);
-            canvas.draw(air.animator,tint,air.getOrigin().x,air.getOrigin().y,air.getPosition().x,air.getPosition().y,0,air.scale,air.scale);
+            canvas.draw(air.animator,tint,air.getOrigin().x+air.getWidth()*5,air.getOrigin().y+air.getHeight()*5,air.getPosition().x,air.getPosition().y,0,air.scale,air.scale);
+
+
+        }
+    }
+
+    public void drawDebug(GameCanvas canvas) {
+        if (texture == null) {
+            return;
+        }
+
+        Color tint = Color.CYAN;
+        tint.a = 0.5f;
+        // Step through each active photon in the queue.
+        for (int ii = 0; ii < size; ii++) {
+            // Find the position of this photon.
+            int idx = ((head + ii) % MAX_PHOTONS);
+
+            ToxicAir air = queue[idx];
+
+            // How big to make the photon.  Decreases with age.
+            //float scale = (1.25f - (float)queue[idx].age * 0.5f / (float)MAX_AGE)*queue[idx].scale;
+            //float ratio = (float)queue[idx].age/(float)MAX_AGE;
+            //tint.set((float)100*ratio,(float)250*ratio,(float)250*ratio,(float)1*(1-ratio));
+
+            // Use this information to draw.
+            //air.animator.setFrame((int)air.aframe);
+            //canvas.draw(air.animator,tint,air.getOrigin().x,air.getOrigin().y,air.getPosition().x,air.getPosition().y,0,air.scale,air.scale);
+            air.drawDebug(canvas);
 
 
         }
     }
 }
-
-
-
 
