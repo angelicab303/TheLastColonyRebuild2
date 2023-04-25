@@ -394,7 +394,7 @@ public class Weapon {
         this.relMousePos = mousePos.cpy().sub(playerPos);
 
         calculateAbsorptionRange(relMousePos);
-        calculateImpulses(shootingDir);
+        calculateImpulses(relMousePos);
         absorbSensor.setPosition(position);
         absorbSensor.setDirection(relMousePos.angleDeg());
 

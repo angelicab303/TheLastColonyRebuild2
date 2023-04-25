@@ -201,8 +201,8 @@ public class InputController {
 			down  = Input.Keys.S;
 			left  = Input.Keys.A;
 			right = Input.Keys.D;
-			absorb = Input.Keys.SPACE;
-			shoot = Input.Buttons.LEFT;
+			absorb = Input.Buttons.LEFT;
+			shoot = Input.Buttons.RIGHT;
 			upshoot = Input.Keys.UP;
 			downshoot  = Input.Keys.DOWN;
 			leftshoot  = Input.Keys.LEFT;
@@ -272,12 +272,13 @@ public class InputController {
 //			}
 
 			// Shooting
-			if (Gdx.input.isKeyPressed(upshoot)||Gdx.input.isKeyPressed(downshoot)||Gdx.input.isKeyPressed(leftshoot)||Gdx.input.isKeyPressed(rightshoot)){
+			//if (Gdx.input.isKeyPressed(upshoot)||Gdx.input.isKeyPressed(downshoot)||Gdx.input.isKeyPressed(leftshoot)||Gdx.input.isKeyPressed(rightshoot)){
+			if(Gdx.input.isButtonPressed(shoot)){
 				pressedFire = true;
 			}
 
 			//Absorbing
-			if (Gdx.input.isKeyPressed(absorb)) {
+			if (Gdx.input.isButtonPressed(absorb)) {
 				pressedAbsorb = true;
 			}
 			// Picking up Survivor
