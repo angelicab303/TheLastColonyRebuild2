@@ -168,6 +168,9 @@ public class ToxicQueue {
             body.applyLinearImpulse(impulse, body.getWorldCenter(), true);
         }
 
+        public void collide() {
+            age = MAX_AGE;
+        }
 
         public void reset(){
             this.setPosition(offscreen);
