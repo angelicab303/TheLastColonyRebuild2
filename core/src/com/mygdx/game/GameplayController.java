@@ -311,7 +311,7 @@ public class GameplayController extends WorldController {
 		// Unnecessary atm?
 
 		playerDirectionTextures = new Texture[] { playerTextureUp, playerTextureDown, playerTextureRight,
-				playerTextureLeft };
+				playerTextureLeft, playerTextureIdle };
 		enemyDirectionTextures = new Texture[] { enemyTextureUp, enemyTextureDown, enemyTextureRight, enemyTextureLeft };
 		vineTextureVertical = directory.getEntry("images:vineVertical", Texture.class);
 		vineTextureHorizontal = directory.getEntry("images:vineHorizontal", Texture.class);
