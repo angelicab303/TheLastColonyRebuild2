@@ -169,8 +169,6 @@ public abstract class WorldController implements Screen {
 	protected PurifiedQueue purifiedAir;
 	protected ToxicQueue toxicAir;
 
-	protected ToxicQueue toxicAir;
-
 	/** The boundary of the world */
 	protected Rectangle bounds;
 	/** The world scale */

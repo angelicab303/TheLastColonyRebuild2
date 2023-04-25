@@ -789,7 +789,7 @@ public abstract class SimpleObstacle extends Obstacle {
 	 */
 	public void setTexture(TextureRegion value, float tall) {
 		texture = value;
-		origin.set(texture.getRegionWidth()/tall, texture.getRegionHeight()/tall);
+		origin.set(texture.getRegionWidth()/2.0f, texture.getRegionHeight()/tall);
 	}
 
 
