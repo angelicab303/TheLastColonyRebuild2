@@ -661,7 +661,6 @@ public class GameplayController extends WorldController{
 		for (int i = 0; i < enemyArr.size; i++)
 		{
 			enemyArr.get(i).update(enemyControllers.get(i).getAction());
-
 		}
 
 		// This section will be handled by collisionController in the future with the exception of obj.update(..)s and
