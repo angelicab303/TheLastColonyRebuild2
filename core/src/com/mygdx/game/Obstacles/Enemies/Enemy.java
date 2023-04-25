@@ -375,11 +375,10 @@ public class Enemy extends Shadow implements GameObstacle {
 
         // Ground sensor to represent our feet
         Fixture sensorFixture = body.createFixture( sensorDef );
-//        sensorFixture.setUserData(getSensorName());
+        //sensorFixture.setUserData(getSensorName());
 
 
         body.setUserData(this);
-        setFilterData(filter);
 
         return true;
     }
