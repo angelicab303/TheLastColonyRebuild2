@@ -46,6 +46,7 @@ public class GameplayController extends WorldController{
 	private Texture playerTextureRight;
 	private Texture playerTextureLeft;
 	private Texture playerTextureDown;
+	private Texture playerTextureIdle;
 	/** Texture asset for enemy avatar */
 	/** Texture assets for player avatar */
 	private Texture enemyTextureUp;
@@ -208,6 +209,7 @@ public class GameplayController extends WorldController{
 		playerTextureDown = directory.getEntry("images:playerDown",Texture.class);
 		playerTextureRight = directory.getEntry("images:playerRight",Texture.class);
 		playerTextureLeft = directory.getEntry("images:playerLeft",Texture.class);
+		playerTextureIdle = directory.getEntry("images:playerIdle",Texture.class);
 		enemyTextureUp = directory.getEntry("images:maskEnemyUp",Texture.class);
 		enemyTextureDown = directory.getEntry("images:maskEnemyDown",Texture.class);
 		enemyTextureRight = directory.getEntry("images:maskEnemyRight",Texture.class);
@@ -225,6 +227,7 @@ public class GameplayController extends WorldController{
 		// pureAirTexture = new TextureRegion(directory.getEntry("images:smog1", Texture.class));
 		pureAirTexture = directory.getEntry("images:testSmog", Texture.class);
 		toxicAirTexture = directory.getEntry("images:testSmog", Texture.class);
+		pureAirTexture = directory.getEntry("images:weaponProjectile", Texture.class);
 		smogTexture2 = new TextureRegion(directory.getEntry("images:smog2", Texture.class));
 		caravanTexture = new TextureRegion(directory.getEntry("images:caravan1", Texture.class));
 		fHeartTexture = directory.getEntry("images:fullHeart", Texture.class);
@@ -334,7 +337,7 @@ public class GameplayController extends WorldController{
 //		System.out.println("First element of tiles: " + tiles[0][0]);
 
 		//Setting the size of the tiles
-		Shadow.setSize(32f);
+		Shadow.setSize(tileSize*2/3);
 
 
 		// Instantiate the cliffs:
@@ -369,7 +372,7 @@ public class GameplayController extends WorldController{
 		caravan.activatePhysics(world);
 		// *************************** PLAYER AND WEAPON ***************************
 		// Instantiate the player:
-		player = new Player(playerLocation[0]*tileSize + tileOffset, playerLocation[1]*tileSize + tileOffset, playerTextureUp, playerTextureDown, playerTextureRight, playerTextureLeft, input, SCALE);
+		player = new Player(playerLocation[0]*tileSize + tileOffset, playerLocation[1]*tileSize + tileOffset, playerTextureUp, playerTextureDown, playerTextureRight, playerTextureLeft, playerTextureIdle, input, SCALE);
 		if (isInvincible){
 			player.setHealth(10000);
 		}
@@ -490,7 +493,7 @@ public class GameplayController extends WorldController{
 		// AirBar Creation
 		// float barX = player.getX() - (canvas.getWidth()*cameraZoom)/2.0f + (30.0f * cameraZoom);
 		// float barY = player.getY() + (canvas.getHeight()*cameraZoom)/2.0f - (30.0f * cameraZoom);
-		airBar = new AirBar(airBarTexture, weapon.getMaxNumAmmo(), weapon.getNumAmmo());
+		airBar = new AirBar(airBarTexture, weapon.getMaxNumAmmo(), weapon.getNumAmmo(), canvas);
 
 		// Hearts
 		int numLives = player.getHealth();
@@ -501,7 +504,7 @@ public class GameplayController extends WorldController{
 
 		for (int i = 0; i < numLives; i++){
 			if (i > 0){
-				spacing += 30.0f;
+				spacing += 13.0f;
 			}
 			Heart tempHeart = new Heart(fHeartTexture, heartX, heartY, spacing);
 			heartArr.add(tempHeart);

@@ -383,6 +383,7 @@ public class MainMenuMode implements Screen, InputProcessor, ControllerListener 
 
 
 
+
         table.left().top();
         stage.addActor(table);
 
