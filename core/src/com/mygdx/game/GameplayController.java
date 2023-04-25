@@ -683,7 +683,7 @@ public class GameplayController extends WorldController{
 		}
 		caravan.update();
 		// Update caravan state
-		if(caravan.getBody().getFixtureList().first().testPoint(player.getPosition())) {
+		if(caravan.getBody().getFixtureList().get(1).testPoint(player.getPosition())) {
 			caravan.setInteractable(true);
 		}
 		else {
