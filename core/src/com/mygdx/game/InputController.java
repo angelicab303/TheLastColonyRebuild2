@@ -64,8 +64,6 @@ public class InputController {
 	private static boolean droppedOffSurvivors;
 	/** Did we press R to restart the level? */
 	private static boolean reset;
-	/** Did we press ESC to pause the game? */
-	private static boolean paused = false;
 	/** Whether the debug toggle was pressed. */
 	private boolean debugPressed;
 	private boolean debugPrevious;
@@ -144,17 +142,12 @@ public class InputController {
 	}
 
 	/** Returns whether the reset button was pressed.
-	 *
-	 * @return whether the reset button was pressed.
+	 * whether the reset button was pressed.
+	 * @return
 	 */
 	public boolean didReset() {
 		return reset;
 	}
-	/** Returns whether the pause button was pressed.
-	 *
-	 * @return whether the pause button was pressed.
-	 */
-	public boolean didPause() { return paused; }
 	/**
 	 * Creates a new input controller for the specified player.
 	 *
@@ -203,13 +196,13 @@ public class InputController {
 			// Figure out, based on which player we are, which keys
 			// control our actions (depends on player).
 			int up, left, right, down, absorb, shoot, upshoot, leftshoot, rightshoot, downshoot,
-					pickUpSurvivor, dropOffSurvivors, restart, pause;
+					pickUpSurvivor, dropOffSurvivors, restart;;
 			up    = Input.Keys.W;
 			down  = Input.Keys.S;
 			left  = Input.Keys.A;
 			right = Input.Keys.D;
-			absorb = Input.Keys.SPACE;
-			shoot = Input.Buttons.LEFT;
+			absorb = Input.Buttons.LEFT;
+			shoot = Input.Buttons.RIGHT;
 			upshoot = Input.Keys.UP;
 			downshoot  = Input.Keys.DOWN;
 			leftshoot  = Input.Keys.LEFT;
@@ -217,7 +210,6 @@ public class InputController {
 			pickUpSurvivor = Input.Keys.E;
 			dropOffSurvivors = Input.Keys.E;
 			restart = Input.Keys.R;
-			pause = Input.Keys.ESCAPE;
 			// Convert keyboard state into game commands
 			vertical = horizontal =verticalshoot = horizontalshoot = 0;
 			pressedAbsorb = false;
@@ -225,19 +217,18 @@ public class InputController {
 			pickedUpSurvivor = false;
 			droppedOffSurvivors = false;
 			reset = false;
-			paused = false;
 			debugPressed = (debugPressed) || (Gdx.input.isKeyPressed(Input.Keys.X));
 			// Movement forward/backward
-			if (Gdx.input.isKeyPressed(up) && !Gdx.input.isKeyPressed(down) && !Gdx.input.isKeyPressed(pause)) {
+			if (Gdx.input.isKeyPressed(up) && !Gdx.input.isKeyPressed(down)) {
 				vertical = 1;
-			} else if (Gdx.input.isKeyPressed(down) && !Gdx.input.isKeyPressed(up) && !Gdx.input.isKeyPressed(pause)) {
+			} else if (Gdx.input.isKeyPressed(down) && !Gdx.input.isKeyPressed(up)) {
 				vertical = -1;
 			}
 
 			// Movement left/right
-			if (Gdx.input.isKeyPressed(left) && !Gdx.input.isKeyPressed(right) && !Gdx.input.isKeyPressed(pause)) {
+			if (Gdx.input.isKeyPressed(left) && !Gdx.input.isKeyPressed(right)) {
 				horizontal = -1;
-			} else if (Gdx.input.isKeyPressed(right) && !Gdx.input.isKeyPressed(left) && !Gdx.input.isKeyPressed(pause)) {
+			} else if (Gdx.input.isKeyPressed(right) && !Gdx.input.isKeyPressed(left)) {
 				horizontal = 1;
 			}
 
@@ -281,12 +272,13 @@ public class InputController {
 //			}
 
 			// Shooting
-			if (Gdx.input.isKeyPressed(upshoot)||Gdx.input.isKeyPressed(downshoot)||Gdx.input.isKeyPressed(leftshoot)||Gdx.input.isKeyPressed(rightshoot)){
+			//if (Gdx.input.isKeyPressed(upshoot)||Gdx.input.isKeyPressed(downshoot)||Gdx.input.isKeyPressed(leftshoot)||Gdx.input.isKeyPressed(rightshoot)){
+			if(Gdx.input.isButtonPressed(shoot)){
 				pressedFire = true;
 			}
 
 			//Absorbing
-			if (Gdx.input.isKeyPressed(absorb)) {
+			if (Gdx.input.isButtonPressed(absorb)) {
 				pressedAbsorb = true;
 			}
 			// Picking up Survivor
@@ -297,11 +289,6 @@ public class InputController {
 			// Resetting the level
 			if (Gdx.input.isKeyPressed(restart)) {
 				reset = true;
-			}
-			// Pausing the game
-			if (Gdx.input.isKeyPressed(pause))
-			{
-				paused = true;
 			}
 		}
 	}

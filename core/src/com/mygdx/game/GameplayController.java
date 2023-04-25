@@ -22,7 +22,6 @@ import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.ObjectSet;
 import com.mygdx.game.Obstacles.*;
 import com.mygdx.game.Obstacles.Enemies.Enemy;
-import com.mygdx.game.Obstacles.Enemies.FloatingEnemy;
 import com.mygdx.game.Obstacles.Enemies.ShriekerEnemy;
 
 import com.mygdx.game.UI.AirBar;
@@ -92,8 +91,6 @@ public class GameplayController extends WorldController {
 	private Texture airBarTexture;
 	/** Texture asset for the pure air texture */
 	private Texture pureAirTexture;
-	/** Texture asset for the pure air texture */
-	private Texture toxicAirTexture;
 	/** Texture asset for the second smog texture */
 
 	// *************************** Floor Textures ***************************
@@ -203,11 +200,9 @@ public class GameplayController extends WorldController {
 	// protected ObjectSet<Fixture> sensorFixtures;
 	// Moved the masks to GameObstacle if you are looking for them -V
 	int numRescued;
+	int numSurvivorsTotal;
 	/** Used for playtesting, player is invincible */
 	private boolean isInvincible = false;
-	private boolean pausing = false;
-	private boolean unpausing = false;
-	private boolean paused = false;
 
 	/**
 	 * Creates and initialize a new instance of the platformer game
@@ -266,7 +261,6 @@ public class GameplayController extends WorldController {
 		// pureAirTexture = new TextureRegion(directory.getEntry("images:smog1",
 		// Texture.class));
 		pureAirTexture = directory.getEntry("images:testSmog", Texture.class);
-		toxicAirTexture = directory.getEntry("images:testSmog", Texture.class);
 		smogTexture2 = new TextureRegion(directory.getEntry("images:smog2", Texture.class));
 		airBarTexture = directory.getEntry("images:airBar", Texture.class);
 		// pureAirTexture = new TextureRegion(directory.getEntry("images:smog1",
@@ -363,6 +357,7 @@ public class GameplayController extends WorldController {
 	 */
 	public void reset() {
 		Vector2 gravity = new Vector2(world.getGravity());
+		numRescued = 0;
 
 		for (Obstacle obj : objects) {
 			obj.deactivatePhysics(world);
@@ -453,18 +448,8 @@ public class GameplayController extends WorldController {
 		// tileSize + "\tNumTiles: " + canvas.getWidth() / tileSize);
 		// System.out.println("First element of tiles: " + tiles[0][0]);
 
-		// Here we will instantiate the objects in the level using the JSONLevelReader.
-//		JSONLevelReader reader = new JSONLevelReader(directory, bounds, world, input, objects, SCALE, tileGrid, tileSize, tileOffset, smogTileSize, smogTileOffset, playerDirectionTextures, enemyDirectionTextures, enemyTextureIdle, survivorITexture, displayFontInteract, fHeartTexture, player, weapon);
-
-		// Put this back in assets.json
-//    "tiles:tileset": "tiles/LastColonyTilesetCorrect.json",
-
-		// System.out.println("Canvas width: " + canvas.getWidth() + "\tTile Size: " +
-		// tileSize + "\tNumTiles: " + canvas.getWidth() / tileSize);
-		// System.out.println("First element of tiles: " + tiles[0][0]);
-
-		// Setting the size of the tiles
-		Shadow.setSize(32f);
+		//Setting the size of the tiles
+		Shadow.setSize(tileSize*2/3);
 
 //		caravan = reader.getCaravan();
 //		player = reader.getPlayer();
@@ -645,7 +630,6 @@ public class GameplayController extends WorldController {
 
 		// TO DO: update visuals for purified smog
 		purifiedAir = new PurifiedQueue(pureAirTexture, world, SCALE);
-		toxicAir = new ToxicQueue(toxicAirTexture, world, SCALE);
 
 		// Instantiate the enemies:
 		enemyArr = new Array<Enemy>();
@@ -684,8 +668,7 @@ public class GameplayController extends WorldController {
 				enemyTemp.activatePhysics(world);
 				addObject(enemyTemp);
 
-				enemyControllers.add(new ScoutEnemyController(tileGrid, tileSize, tileOffset, enemyTemp, player, shriekerArr));
-			}
+			enemyControllers.add(new ScoutEnemyController(tileGrid, tileSize, tileOffset, enemyTemp, player, shriekerArr));
 		}
 
 		// *************************** SURVIVORS ***************************
@@ -703,6 +686,7 @@ public class GameplayController extends WorldController {
 			survivorControllers.add(new SurvivorController(survivorTemp, caravan.getPosition(), player.getPosition(), tileGrid, tileSize, tileOffset));
 		}
 
+		numSurvivorsTotal =survivorArr.size;
 		// *************************** SMOG OBSTACLES ***************************
 
 		// Starting Area:
@@ -964,7 +948,6 @@ public class GameplayController extends WorldController {
 			weapon.incrementAmmo(-weapon.getBullets());
 		}
 		purifiedAir.update();
-		toxicAir.update();
 
 		// Process Collisions
 		collisionController.update(world, player, weapon);
@@ -1031,12 +1014,14 @@ public class GameplayController extends WorldController {
 			caravan.setInteractable(false);
 		}
 		if (caravan.isInteractable() && input.didDropSurvivors()) {
-			if (numRescued == survivorArr.size) {
+			if (numRescued == numSurvivorsTotal) {
 				setComplete(true);
 			}
 			for (int i = 0; i < survivorArr.size; i++) {
 				if (survivorArr.get(i).isFollowing()) {
 					survivorArr.get(i).rescue();
+					survivorArr.get(i).deactivatePhysics(world);
+					survivorArr.removeIndex(i);
 					numRescued++;
 					caravan.setInteractable(false);
 				}
