@@ -174,7 +174,7 @@ public class GameplayController extends WorldController{
 	 */
 	public GameplayController(GameCanvas canvas) {
 		super(DEFAULT_WIDTH,DEFAULT_HEIGHT,DEFAULT_GRAVITY);
-		setDebug(true);
+		setDebug(false);
 		setComplete(false);
 		setFailure(false);
 		//world.setContactListener(this);
