@@ -305,6 +305,8 @@ public class PurifiedQueue {
         texture = value;
     }
 
+    public PurifiedAir[] getQueue() { return queue; }
+
     /**
      * Adds a photon to the active queue.
      *
