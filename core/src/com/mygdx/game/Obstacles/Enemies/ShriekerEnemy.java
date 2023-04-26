@@ -234,4 +234,8 @@ public class ShriekerEnemy extends Enemy {
         //canvas.drawPhysics(shape, Color.RED, getX(), getY(), getAngle(), drawScale.x, drawScale.y);
         canvas.drawPhysics(sensorShape, Color.BLUE, getX(), getY(), getAngle(), drawScale.x, drawScale.y);
     }
+
+    public Enemy.EnemyType getEnemyType() {
+        return EnemyType.SHRIEKER;
+    }
 }

@@ -68,7 +68,14 @@ public class GameplayController extends WorldController{
 	private Texture vineTextureHeadLeftTop;
 	private Texture vineTextureHeadRightBottom;
 	private Texture vineTextureHeadRightTop;
-
+	private Texture vineTextureClosedLeft;
+	private Texture vineTextureClosedRight;
+	private Texture vineTextureClosedDown;
+	private Texture vineTextureClosedUp;
+	private Texture vineTextureClosedLeftBottom;
+	private Texture vineTextureClosedLeftTop;
+	private Texture vineTextureClosedRightBottom;
+	private Texture vineTextureClosedRightTop;
 	private Texture[] vineTextures;
 	/** Texture asset for survivor avatar */
 	private TextureRegion survivorTexture;
@@ -248,7 +255,17 @@ public class GameplayController extends WorldController{
 		vineTextureHeadRightBottom = directory.getEntry("images:vineCornerHeadRightDown", Texture.class);
 		vineTextureHeadRightTop = directory.getEntry("images:vineCornerHeadRightUp", Texture.class);
 
-		vineTextures = new Texture[14];
+		vineTextureClosedLeft = directory.getEntry("images:vineStraightClosedLeft", Texture.class);
+		vineTextureClosedRight = directory.getEntry("images:vineStraightClosedRight", Texture.class);
+		vineTextureClosedDown = directory.getEntry("images:vineStraightClosedDown", Texture.class);
+		vineTextureClosedUp = directory.getEntry("images:vineStraightClosedUp", Texture.class);
+		vineTextureClosedLeftBottom = directory.getEntry("images:vineCornerClosedLeftDown", Texture.class);
+		vineTextureClosedLeftTop = directory.getEntry("images:vineCornerClosedLeftUp", Texture.class);
+		vineTextureClosedRightBottom = directory.getEntry("images:vineCornerClosedRightDown", Texture.class);
+		vineTextureClosedRightTop = directory.getEntry("images:vineCornerClosedRightUp", Texture.class);
+
+
+		vineTextures = new Texture[22];
 		vineTextures[0] = vineTextureVertical;
 		vineTextures[1] = vineTextureHorizontal;
 		vineTextures[2] = vineTextureLeftBottom;
@@ -263,6 +280,16 @@ public class GameplayController extends WorldController{
 		vineTextures[11] = vineTextureHeadLeftTop;
 		vineTextures[12] = vineTextureHeadRightBottom;
 		vineTextures[13] = vineTextureHeadRightTop;
+
+		vineTextures[14] = vineTextureClosedLeft;
+		vineTextures[15] = vineTextureClosedRight;
+		vineTextures[16] = vineTextureClosedDown;
+		vineTextures[17] = vineTextureClosedUp;
+
+		vineTextures[18] = vineTextureClosedLeftTop;
+		vineTextures[19] = vineTextureClosedLeftBottom;
+		vineTextures[20] = vineTextureClosedRightTop;
+		vineTextures[21] = vineTextureClosedRightBottom;
 
 		fireSound = directory.getEntry( "platform:pew", Sound.class );
 

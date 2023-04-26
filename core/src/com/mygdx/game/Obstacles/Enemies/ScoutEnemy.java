@@ -90,6 +90,7 @@ public class ScoutEnemy extends Enemy{
             super.drawDebug(canvas);
         }
     }
+    private boolean isChasingSurvivor;
     private final float VINE_ANIMATION_SPEED = 0.1f;
     private final int NUM_ANIM_FRAMES_VINE = 2;
     private long vineTick;
@@ -117,6 +118,15 @@ public class ScoutEnemy extends Enemy{
     private Texture vineTextureHeadLeftTop;
     private Texture vineTextureHeadRightBottom;
     private Texture vineTextureHeadRightTop;
+
+    private Texture vineTextureClosedLeft;
+    private Texture vineTextureClosedRight;
+    private Texture vineTextureClosedDown;
+    private Texture vineTextureClosedUp;
+    private Texture vineTextureClosedLeftTop;
+    private Texture vineTextureClosedLeftBottom;
+    private Texture vineTextureClosedRightTop;
+    private Texture vineTextureClosedRightBottom;
     private FilmStrip currentVineAnimator;
     private FilmStrip vineAnimatorVertical;
     private FilmStrip vineAnimatorHorizontal;
@@ -133,6 +143,15 @@ public class ScoutEnemy extends Enemy{
     private FilmStrip vineAnimatorHeadRightBottom;
     private FilmStrip vineAnimatorHeadRightTop;
 
+    private FilmStrip vineAnimatorClosedLeft;
+    private FilmStrip vineAnimatorClosedRight;
+    private FilmStrip vineAnimatorClosedDown;
+    private FilmStrip vineAnimatorClosedUp;
+    private FilmStrip vineAnimatorClosedLeftBottom;
+    private FilmStrip vineAnimatorClosedLeftTop;
+    private FilmStrip vineAnimatorClosedRightBottom;
+    private FilmStrip vineAnimatorClosedRightTop;
+
     protected float aframevine;
 
     public boolean areVinesShrinking() {
@@ -142,10 +161,42 @@ public class ScoutEnemy extends Enemy{
     public void setShrinkVines(boolean value) {
         vinesShrinking = value;
     }
-    public void shrinkVines() {
 
+    public void shrinkVines() {
         if (vines.size > 0) {
             vines.pop();
+        }
+        if (vines.size > 0) {
+            VineTile.Direction d = vines.peek().direction;
+            switch (d) {
+                case IDLE:
+                    vines.get(vines.size - 1).currentAnimator = vineAnimatorHorizontal;
+                    break;
+                case UP:
+                    vines.get(vines.size - 1).currentAnimator = vineAnimatorClosedUp;
+                    break;
+                case DOWN:
+                    vines.get(vines.size - 1).currentAnimator = vineAnimatorClosedDown;
+                    break;
+                case LEFT:
+                    vines.get(vines.size - 1).currentAnimator = vineAnimatorClosedLeft;
+                    break;
+                case RIGHT:
+                    vines.get(vines.size - 1).currentAnimator = vineAnimatorClosedRight;
+                    break;
+                case RIGHTDOWN:
+                    vines.get(vines.size - 1).currentAnimator = vineAnimatorClosedLeftBottom;
+                    break;
+                case RIGHTUP:
+                    vines.get(vines.size - 1).currentAnimator = vineAnimatorClosedLeftTop;
+                    break;
+                case LEFTDOWN:
+                    vines.get(vines.size - 1).currentAnimator = vineAnimatorClosedRightBottom;
+                    break;
+                case LEFTUP:
+                    vines.get(vines.size - 1).currentAnimator = vineAnimatorClosedRightTop;
+                    break;
+            }
         }
     }
 
@@ -320,6 +371,7 @@ public class ScoutEnemy extends Enemy{
         vines = new Array<>();
         this.world = world;
         vineTick = 0;
+        isChasingSurvivor = false;
         vineTextureVertical = vineTextures[0];
         vineTextureHorizontal = vineTextures[1];
         vineTextureLeftBottom = vineTextures[2];
@@ -334,6 +386,16 @@ public class ScoutEnemy extends Enemy{
         vineTextureHeadLeftTop = vineTextures[11];
         vineTextureHeadRightBottom = vineTextures[12];
         vineTextureHeadRightTop = vineTextures[13];
+
+        vineTextureClosedLeft = vineTextures[14];
+        vineTextureClosedRight = vineTextures[15];
+        vineTextureClosedDown = vineTextures[16];
+        vineTextureClosedUp = vineTextures[17];
+        vineTextureClosedLeftTop = vineTextures[18];
+        vineTextureClosedLeftBottom = vineTextures[19];
+        vineTextureClosedRightTop = vineTextures[20];
+        vineTextureClosedRightBottom = vineTextures[21];
+
         currentVineTexture = vineTextureHorizontal;
 
         vineAnimatorVertical = new FilmStrip(vineTextureVertical,1,NUM_ANIM_FRAMES_VINE,NUM_ANIM_FRAMES_VINE);
@@ -351,6 +413,16 @@ public class ScoutEnemy extends Enemy{
         vineAnimatorHeadRightBottom = new FilmStrip(vineTextureHeadRightBottom,1,NUM_ANIM_FRAMES_VINE,NUM_ANIM_FRAMES_VINE);
         vineAnimatorHeadRightTop = new FilmStrip(vineTextureHeadRightTop,1,NUM_ANIM_FRAMES_VINE,NUM_ANIM_FRAMES_VINE);
         currentVineAnimator = new FilmStrip(currentVineTexture,1,NUM_ANIM_FRAMES_VINE,NUM_ANIM_FRAMES_VINE);
+
+        vineAnimatorClosedLeft = new FilmStrip(vineTextureClosedLeft,NUM_ANIM_FRAMES_VINE,1,NUM_ANIM_FRAMES_VINE);
+        vineAnimatorClosedRight = new FilmStrip(vineTextureClosedRight,NUM_ANIM_FRAMES_VINE,1,NUM_ANIM_FRAMES_VINE);
+        vineAnimatorClosedDown = new FilmStrip(vineTextureClosedDown,1,NUM_ANIM_FRAMES_VINE,NUM_ANIM_FRAMES_VINE);
+        vineAnimatorClosedUp = new FilmStrip(vineTextureClosedUp,1,NUM_ANIM_FRAMES_VINE,NUM_ANIM_FRAMES_VINE);
+        vineAnimatorClosedLeftBottom = new FilmStrip(vineTextureClosedLeftBottom,1,NUM_ANIM_FRAMES_VINE,NUM_ANIM_FRAMES_VINE);
+        vineAnimatorClosedLeftTop = new FilmStrip(vineTextureClosedLeftTop,1,NUM_ANIM_FRAMES_VINE,NUM_ANIM_FRAMES_VINE);
+        vineAnimatorClosedRightBottom = new FilmStrip(vineTextureClosedRightBottom,1,NUM_ANIM_FRAMES_VINE,NUM_ANIM_FRAMES_VINE);
+        vineAnimatorClosedRightTop = new FilmStrip(vineTextureClosedRightTop,1,NUM_ANIM_FRAMES_VINE,NUM_ANIM_FRAMES_VINE);
+
 
         isExtendingVines = false;
         aframevine = 0.0f;
@@ -399,5 +471,9 @@ public class ScoutEnemy extends Enemy{
             }
         }
         super.draw(canvas);
+    }
+
+    public Enemy.EnemyType getEnemyType() {
+        return EnemyType.SCOUT;
     }
 }

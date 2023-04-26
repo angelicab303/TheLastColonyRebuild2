@@ -231,6 +231,7 @@ public class ScoutEnemyController extends com.mygdx.game.EnemyControllers.EnemyC
             enemy.setExtendingVines(true);
             target.x = player.getX();
             target.y = player.getY();
+
             if (firstMove) {
                 action = super.getMove();
                 firstMove = false;
