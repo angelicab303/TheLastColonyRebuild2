@@ -418,6 +418,15 @@ public class GameplayController extends WorldController{
 
 			enemyControllers.add(new ScoutEnemyController(tileGrid, tileSize, tileOffset, enemyTemp, player, shriekerArr));
 		}
+		// Chaser enemies
+//		int numChasers = 1;
+//		for (int i = 0; i < numChasers; i++){
+//			Enemy chaserTemp = new Enemy(player.getX() + 200, player.getY() - 50, enemyTextureUp, enemyTextureDown, enemyTextureRight, enemyTextureLeft, enemyTextureIdle, SCALE);
+//			enemyArr.add(chaserTemp);
+//			chaserTemp.activatePhysics(world);
+//			addObject(chaserTemp);
+//			enemyControllers.add(new EnemyController(tileGrid, tileSize, tileOffset, chaserTemp, player, shriekerArr));
+//		}
 
 
 

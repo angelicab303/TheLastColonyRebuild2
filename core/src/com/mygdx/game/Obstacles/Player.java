@@ -419,7 +419,6 @@ public class Player extends Shadow implements GameObstacle{
         }
         //position.add(velocity);
         //setPosition(position);
-        //System.out.println(body);
         body.setLinearVelocity(velocity);
         body.applyLinearImpulse(velocity, body.getWorldCenter(), true);
         setX(body.getWorldCenter().x);
@@ -437,23 +436,21 @@ public class Player extends Shadow implements GameObstacle{
             aframe += ANIMATION_SPEED_BLINK;
         }
 
-        if (aframe >= NUM_ANIM_FRAMES) {
+        if (aframe >= NUM_ANIM_FRAMES-1) {
             if (currentAnimator != animatorIdle){
-                aframe -= NUM_ANIM_FRAMES;
+                aframe -= NUM_ANIM_FRAMES-1;
             }
             else{
-                aframe = NUM_ANIM_FRAMES;
+                aframe = NUM_ANIM_FRAMES-1;
                 blinkTime++;
-                System.out.println(blinkTime);
                 if (blinkTime >= MAX_BLINK_TIME){
-                    aframe -= NUM_ANIM_FRAMES;
+                    aframe -= NUM_ANIM_FRAMES-1;
                     blinkTime = 0;
                 }
             }
         }
 
 //        Filter filter = body.getFixtureList().get(0).getFilterData();
-//        System.out.println("Player filter- cat bits:" + filter.categoryBits + ", mask bits: " + filter.maskBits);
 
     }
 
@@ -488,7 +485,6 @@ public class Player extends Shadow implements GameObstacle{
 //        else{
 //            currentAnimator.setFrame((int)aframe);
 //        }
-        
         currentAnimator.setFrame((int)aframe);
 
         if (isAlive)
