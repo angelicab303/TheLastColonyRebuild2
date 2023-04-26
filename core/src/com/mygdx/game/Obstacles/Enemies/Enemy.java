@@ -36,6 +36,7 @@ public class Enemy extends Shadow implements GameObstacle {
     protected static final float MOVE_SPEED = 105.0f;
     /** Maximum amount of time an enemy can remain stunned (in frames) */
     protected final float MAX_TO_STUN_TIME = 5;
+    protected final float MAX_STUN_COOLDOWN = 200;
     /** Maximum amount of time an enemy can remain stunned (in frames) */
     protected final float MAX_STUN_TIME = 500;
     /** Time enemy must wait before attacking again */
@@ -72,6 +73,8 @@ public class Enemy extends Shadow implements GameObstacle {
     protected boolean stunned;
     /** Time this enemy has been stunned (in frames) */
     protected float toStunTime = 0;
+    protected int stunCooldown = 0;
+    protected boolean damaged;
     /** Time this enemy has been stunned (in frames) */
     protected float stunTime = 0;
     /** Whether this enemy can attack */
@@ -99,6 +102,7 @@ public class Enemy extends Shadow implements GameObstacle {
 
     public void incToStunTime(){
         toStunTime++;
+        damaged = true;
     }
 
     /**
@@ -249,8 +253,19 @@ public class Enemy extends Shadow implements GameObstacle {
     public void update(int action)
     {
         body.setAwake(true);
+        if (damaged)
+        {
+            stunCooldown++;
+            if (stunCooldown >= MAX_STUN_COOLDOWN)
+            {
+                stunCooldown = 0;
+                damaged = false;
+            }
+        }
         if (isStunned())
         {
+            damaged = false;
+            stunCooldown = 0;
             canAttack = false;
             stunTime++;
             if (stunTime >= MAX_STUN_TIME)
@@ -401,7 +416,17 @@ public class Enemy extends Shadow implements GameObstacle {
     public void draw(GameCanvas canvas) {
         currentAnimator.setFrame((int)aframe);
 //        System.out.println((body.getWorldCenter().x*drawScale.x - currentAnimator.getRegionWidth()*scale/2) + ", " + (body.getWorldCenter().y*drawScale.y- currentAnimator.getRegionHeight()*scale/2));
-        canvas.draw(currentAnimator, Color.WHITE, origin.x, origin.y, body.getWorldCenter().x*drawScale.x - currentAnimator.getRegionWidth()*scale/2, body.getWorldCenter().y*drawScale.y- currentAnimator.getRegionHeight()*scale/2, 0.0f, scale, scale);
+        if (stunCooldown > 0 && stunCooldown % 10 == 0)
+        {
+            canvas.draw(currentAnimator, Color.CLEAR, origin.x, origin.y, body.getWorldCenter().x*drawScale.x - currentAnimator.getRegionWidth()*scale/2, body.getWorldCenter().y*drawScale.y- currentAnimator.getRegionHeight()*scale/2, 0.0f, scale, scale);
+        }
+        else if (isStunned())
+        {
+            canvas.draw(currentAnimator, Color.PINK, origin.x, origin.y, body.getWorldCenter().x*drawScale.x - currentAnimator.getRegionWidth()*scale/2, body.getWorldCenter().y*drawScale.y- currentAnimator.getRegionHeight()*scale/2, 0.0f, scale, scale);
+        }
+        else {
+            canvas.draw(currentAnimator, Color.WHITE, origin.x, origin.y, body.getWorldCenter().x * drawScale.x - currentAnimator.getRegionWidth() * scale / 2, body.getWorldCenter().y * drawScale.y - currentAnimator.getRegionHeight() * scale / 2, 0.0f, scale, scale);
+        }
     }
 
     public void drawDebug(GameCanvas canvas) {

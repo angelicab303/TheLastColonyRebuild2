@@ -128,7 +128,6 @@ public class FloatingEnemy extends Enemy {
      */
     @Override
     public void draw(GameCanvas canvas) {
-        currentAnimator.setFrame((int)getAframe());
-        canvas.draw(currentAnimator, Color.WHITE, origin.x, origin.y, body.getWorldCenter().x*drawScale.x - currentAnimator.getRegionWidth()*getScale()/2, body.getWorldCenter().y*drawScale.y- currentAnimator.getRegionHeight()*getScale()/2, 0.0f, getScale(), getScale());
+        super.draw(canvas);
     }
 }

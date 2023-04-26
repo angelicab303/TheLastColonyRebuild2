@@ -193,6 +193,9 @@ public class PurifiedQueue {
             body.applyLinearImpulse(impulse, getPosition(), true);
         }
 
+        public void collide() {
+            age = MAX_AGE;
+        }
 
         public void reset(){
             this.setPosition(offscreen);
