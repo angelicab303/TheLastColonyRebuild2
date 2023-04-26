@@ -90,6 +90,12 @@ public class Player extends Shadow implements GameObstacle{
     protected FilmStrip currentAnimator;
     /** How fast we change frames (one frame per 10 calls to update) */
     private static final float ANIMATION_SPEED = 0.25f;
+    /** How fast we change frames (one frame per 10 calls to update) */
+    private static final float ANIMATION_SPEED_BLINK = 0.13f;
+    /** Time until blink again */
+    private int blinkTime;
+    /** Time to wait to blink again */
+    private final int MAX_BLINK_TIME = 100;
     /** The number of animation frames in our filmstrip */
     private static final int   NUM_ANIM_FRAMES = 9;
     /** Current animation frame for this shell */
@@ -128,6 +134,7 @@ public class Player extends Shadow implements GameObstacle{
         direction = Direction.IDLE;
         prevPosition = position;
         maxHealth = 5;
+        blinkTime = 0;
 
         if (filter == null){
             filter = new Filter();
@@ -423,10 +430,26 @@ public class Player extends Shadow implements GameObstacle{
 
 
         // Increase animation frame
-        aframe += ANIMATION_SPEED;
+        if (currentAnimator != animatorIdle){
+            aframe += ANIMATION_SPEED;
+        }
+        else{
+            aframe += ANIMATION_SPEED_BLINK;
+        }
 
         if (aframe >= NUM_ANIM_FRAMES) {
-            aframe -= NUM_ANIM_FRAMES;
+            if (currentAnimator != animatorIdle){
+                aframe -= NUM_ANIM_FRAMES;
+            }
+            else{
+                aframe = NUM_ANIM_FRAMES;
+                blinkTime++;
+                System.out.println(blinkTime);
+                if (blinkTime >= MAX_BLINK_TIME){
+                    aframe -= NUM_ANIM_FRAMES;
+                    blinkTime = 0;
+                }
+            }
         }
 
 //        Filter filter = body.getFixtureList().get(0).getFilterData();
