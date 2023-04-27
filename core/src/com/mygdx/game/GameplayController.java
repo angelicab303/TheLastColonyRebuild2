@@ -421,7 +421,7 @@ public class GameplayController extends WorldController{
 		// Chaser enemies
 		int numChasers = 1;
 		for (int i = 0; i < numChasers; i++){
-			Enemy chaserTemp = new Enemy(player.getX() + 200, player.getY() - 200, enemyTextureUp, enemyTextureDown, enemyTextureRight, enemyTextureLeft, enemyTextureIdle, SCALE);
+			Enemy chaserTemp = new Enemy(player.getX() + 200, player.getY() + 100, enemyTextureUp, enemyTextureDown, enemyTextureRight, enemyTextureLeft, enemyTextureIdle, SCALE);
 			enemyArr.add(chaserTemp);
 			chaserTemp.activatePhysics(world);
 			addObject(chaserTemp);

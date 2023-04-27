@@ -156,6 +156,7 @@ public class MainMenuMode implements Screen, InputProcessor, ControllerListener 
     private Texture background;
     /** Stage for UI */
     private Stage stage;
+    private Table table;
     /** The button to click on */
     private Array<TextButton> buttons;
     /** Texture for play option */
@@ -278,6 +279,7 @@ public class MainMenuMode implements Screen, InputProcessor, ControllerListener 
 
         Gdx.input.setInputProcessor( this );
         stage = new Stage();
+        table = new Table();
         buttonState = 0;
     }
 
@@ -308,6 +310,7 @@ public class MainMenuMode implements Screen, InputProcessor, ControllerListener 
     }
     /** Populates the menu with clouds */
     public void populateMenu(){
+        System.out.println("Main Menu populated");
         // Initialize the clouds to be drawn on screen
         // Order: [large, med, med, small, small]
         clouds.add(new Cloud(largeCloud, canvas.getWidth()*0.95f, canvas.getHeight()*0.32f, 0.05f, 50.0f, 0.9f));
@@ -328,7 +331,6 @@ public class MainMenuMode implements Screen, InputProcessor, ControllerListener 
 
         // playSkin.addRegions(new TextureAtlas(play));
 
-        Table table = new Table();
         //table.setFillParent(true);
         table.setPosition(startX, startY);
         table.setWidth(600.0f);
@@ -384,6 +386,7 @@ public class MainMenuMode implements Screen, InputProcessor, ControllerListener 
             public void clicked(InputEvent event, float x, float y) {
                 if (buttons.get(0).isChecked()) {
                     buttonState = 1;
+                    System.out.println("Play buttons pressed");
                 }
             };
         } );
@@ -405,8 +408,15 @@ public class MainMenuMode implements Screen, InputProcessor, ControllerListener 
      * This method disposes of the world and creates a new one.
      */
     public void reset() {
+        stage.clear();
+        table.clearActions();
+        table.clearListeners();
+        table.clear();
+        stage = new Stage();
+        table = new Table();
+        Gdx.input.setInputProcessor(null);
         populateMenu();
-        pressState = 0;
+        buttonState = 0;
     }
 
     /**
@@ -500,6 +510,8 @@ public class MainMenuMode implements Screen, InputProcessor, ControllerListener 
 
             // We are are ready, notify our listener
             if (buttonState > 0 && listener != null) {
+                System.out.println(buttonState);
+                System.out.println("Go to level select screen");
                 listener.exitScreen(this, 0);
             }
         }

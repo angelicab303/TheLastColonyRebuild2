@@ -19,6 +19,8 @@
     "levelSelect:1Down": "images/levelSelect/1Down.png",
     "levelSelect:2Down": "images/levelSelect/2Down.png",
     "levelSelect:title": "images/levelSelect/LevelSelect.png",
+    "levelSelect:back": "images/levelSelect/Back.png",
+    "levelSelect:backDown": "images/levelSelect/BackDown.png",
 
     "shared:earth" : {
       "file":  "shared/earthtile.png",
@@ -105,8 +107,8 @@
     "images:maskEnemyIdle": "images/MaskIdle-Sheet.png",
     "images:maskEnemyUp": "images/MaskUp-Sheet.png",
     "images:maskEnemyDown": "images/MaskDown-Sheet.png",
-    "images:maskEnemyRight": "images/MaskMoveRight-Sheet.png",
-    "images:maskEnemyLeft": "images/MaskMoveLeft-Sheet.png",
+    "images:maskEnemyRight": "images/MaskRight(Corrected).png",
+    "images:maskEnemyLeft": "images/MaskLeft(Corrected).png",
     "images:survivorSprite": "images/survivorSprite.png",
     "images:vineVertical": "images/straightVine-export1.png",
     "images:vineHorizontal": "images/straightVineLeftRight.png",

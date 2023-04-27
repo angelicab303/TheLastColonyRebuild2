@@ -224,15 +224,7 @@ public class Enemy extends Shadow implements GameObstacle {
      *  Updates the direction that the enemy sprite faces.
      */
     public void updateDirection(float h, float v){
-        if (h > 0){
-            direction = Enemy.Direction.RIGHT;
-            currentAnimator = animatorRight;
-        }
-        else if (h < 0){
-            direction = Enemy.Direction.LEFT;
-            currentAnimator = animatorLeft;
-        }
-        else if (v > 0){
+        if (v > 0){
             direction = Enemy.Direction.UP;
             currentAnimator = animatorUp;
         }
@@ -240,8 +232,18 @@ public class Enemy extends Shadow implements GameObstacle {
             direction = Enemy.Direction.DOWN;
             currentAnimator = animatorDown;
         }
+        else if (h > 0){
+            direction = Enemy.Direction.RIGHT;
+            currentAnimator = animatorRight;
+        }
+        else if (h < 0){
+            direction = Enemy.Direction.LEFT;
+            currentAnimator = animatorLeft;
+        }
         else{
             direction = Enemy.Direction.IDLE;
+            currentAnimator = animatorIdle;
+
         }
     }
 
