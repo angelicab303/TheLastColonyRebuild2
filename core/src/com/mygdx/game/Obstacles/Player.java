@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Filter;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.Array;
 import com.mygdx.game.GameCanvas;
 import com.mygdx.game.InputController;
 import com.mygdx.game.Lights;
@@ -99,6 +100,19 @@ public class Player extends Shadow implements GameObstacle{
     /** Max amount of health for the player */
     private int maxHealth;
 
+    private Array<Survivor> survivorsFollowing;
+
+    public void addToFollowing(Survivor survivor) {
+        survivorsFollowing.add(survivor);
+    }
+
+    public void removeFromFollowing(Survivor survivor) {
+        survivorsFollowing.removeValue(survivor, false);
+    }
+
+    public Array<Survivor> getSurvivorsFollowing() {
+        return survivorsFollowing;
+    }
     /**
      * Create player at the given position.
      *
@@ -134,7 +148,7 @@ public class Player extends Shadow implements GameObstacle{
             filter.categoryBits = getCatagoricalBits();
             filter.maskBits = getMaskBits();
         }
-
+        survivorsFollowing = new Array<>();
 
         //shadow = new Shadow(position, 0, -10, 10);
         animatorUp = new FilmStrip(textureUp,1,NUM_ANIM_FRAMES,NUM_ANIM_FRAMES);
@@ -428,7 +442,6 @@ public class Player extends Shadow implements GameObstacle{
         if (aframe >= NUM_ANIM_FRAMES) {
             aframe -= NUM_ANIM_FRAMES;
         }
-
 //        Filter filter = body.getFixtureList().get(0).getFilterData();
 //        System.out.println("Player filter- cat bits:" + filter.categoryBits + ", mask bits: " + filter.maskBits);
 

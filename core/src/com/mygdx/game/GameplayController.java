@@ -799,9 +799,13 @@ public class GameplayController extends WorldController{
 			survivorArr.get(i).update();
 			if(survivorArr.get(i).isInteractable() && input.didCollectSurvivor()) {
 				survivorArr.get(i).setInteractable(false);
+				if (!survivorArr.get(i).isFollowing()) {
+					player.addToFollowing(survivorArr.get(i));
+				}
 				survivorArr.get(i).follow();
 			}
 			if (!survivorArr.get(i).isAlive()){
+				player.removeFromFollowing(survivorArr.get(i));
 				setFailure(true);
 			}
 		}
@@ -820,6 +824,7 @@ public class GameplayController extends WorldController{
 			for(int i = 0; i < survivorArr.size; i++) {
 				if(survivorArr.get(i).isFollowing()) {
 					survivorArr.get(i).rescue();
+					player.removeFromFollowing(survivorArr.get(i));
 					survivorArr.get(i).deactivatePhysics(world);
 					survivorArr.removeIndex(i);
 					numRescued++;

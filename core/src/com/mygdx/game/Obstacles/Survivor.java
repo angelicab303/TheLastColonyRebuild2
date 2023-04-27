@@ -65,6 +65,8 @@ public class Survivor extends Shadow implements GameObstacle {
     Filter filter;
     private float scale;
 
+    private boolean isTargetOfEnemy;
+
     /**
      * Create survivor at the given position.
      *
@@ -94,6 +96,7 @@ public class Survivor extends Shadow implements GameObstacle {
         isInteractable = false;
         isRescued = false;
         isAlive = true;
+        isTargetOfEnemy = false;
         lives = 3;
         damageCooldown = 0;
         //shadow = new Shadow(position, 0, -10, 10);
@@ -307,6 +310,10 @@ public class Survivor extends Shadow implements GameObstacle {
     public boolean isRescued() {
         return isRescued;
     }
+
+    public boolean isTargetOfEnemy() {return isTargetOfEnemy;}
+
+    public void setTargetOfEnemy(boolean value) {isTargetOfEnemy = value;}
 
     /**
      * Sets the survivor to be rescued and isFollowing to false.
@@ -568,7 +575,6 @@ public class Survivor extends Shadow implements GameObstacle {
 
     @Override
     protected void releaseFixtures() {
-
     }
 
     @Override

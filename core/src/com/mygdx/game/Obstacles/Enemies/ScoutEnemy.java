@@ -446,7 +446,7 @@ public class ScoutEnemy extends Enemy{
             super.update(0);
 //            updateVines();
         }
-        if(vinesShrinking && vineTick>20) {
+        if(vinesShrinking && vineTick>10) {
             vineTick = 0;
             shrinkVines();
         }

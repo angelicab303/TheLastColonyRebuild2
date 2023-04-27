@@ -4,12 +4,14 @@ import com.badlogic.gdx.ai.pfa.GraphPath;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.Obstacles.Enemies.*;
 import com.mygdx.game.Obstacles.Player;
+import com.mygdx.game.Obstacles.Survivor;
 import com.mygdx.game.Tile;
 import com.mygdx.game.TileGraph;
 import com.mygdx.game.VineTileGraph;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.game.Obstacles.Enemies.Enemy;
 import com.mygdx.game.Obstacles.Player;
+import com.mygdx.game.Obstacles.Survivor;
 import com.mygdx.game.Obstacles.Enemies.ShriekerEnemy;
 
 public class ScoutEnemyController extends com.mygdx.game.EnemyControllers.EnemyController {
@@ -30,6 +32,10 @@ public class ScoutEnemyController extends com.mygdx.game.EnemyControllers.EnemyC
     protected long directionalTick;
 
     private final float SHOOT_VINE_RADIUS = 20f;
+
+    Survivor survivorTarget;
+
+    boolean followingSurvivor;
 
     private enum FSMState {
         /**
@@ -88,6 +94,8 @@ public class ScoutEnemyController extends com.mygdx.game.EnemyControllers.EnemyC
                 containsVine[r][c] = false;
             }
         }
+        followingSurvivor = false;
+        survivorTarget = null;
     }
 
     protected void initVineTiles(Vector2 enemyTarget) {
@@ -191,6 +199,22 @@ public class ScoutEnemyController extends com.mygdx.game.EnemyControllers.EnemyC
         }
     }
 
+    private void selectTarget() {
+        target.x = player.getX();
+        target.y = player.getY();
+        if (!player.getSurvivorsFollowing().isEmpty()) {
+            for (int i = 0; i < player.getSurvivorsFollowing().size; i++) {
+                if (!player.getSurvivorsFollowing().get(i).isTargetOfEnemy()) {
+                    target.x = player.getSurvivorsFollowing().get(i).getX();
+                    target.y = player.getSurvivorsFollowing().get(i).getY();
+                    survivorTarget = player.getSurvivorsFollowing().get(i);
+                    followingSurvivor = true;
+                    player.getSurvivorsFollowing().get(i).setTargetOfEnemy(true);
+                }
+            }
+        }
+    }
+
     public int getAction() {
         ticks++;
         moveTime++;
@@ -202,21 +226,6 @@ public class ScoutEnemyController extends com.mygdx.game.EnemyControllers.EnemyC
 
         int action = 0;
         if (state == FSMState.PATROL) {
-//            target.x = (float)Math.floor(Math.random() * (patrolPointsHor[1] - patrolPointsHor[0] + 1)) + patrolPointsHor[0];
-//            target.y = (float)Math.floor(Math.random() * (patrolPointsVert[1] - patrolPointsVert[0] + 1)) + patrolPointsVert[0];
-//            if (firstMove)
-//            {
-//                action = super.getMove();
-//                firstMove = false;
-//            }
-//            else {
-//                if (goalReached() || moveTime > 30) {
-//                    moveTime = 0;
-//                    action = super.getMove();
-//                } else {
-//                    action = prevAction;
-//                }
-//            }
             if (directionalTick > 250) {
                 if (prevAction == 1) {
                     action = 2;
@@ -229,8 +238,7 @@ public class ScoutEnemyController extends com.mygdx.game.EnemyControllers.EnemyC
             }
         } else if (state == FSMState.EXTENDVINE) {
             enemy.setExtendingVines(true);
-            target.x = player.getX();
-            target.y = player.getY();
+            selectTarget();
 
             if (firstMove) {
                 action = super.getMove();
@@ -245,8 +253,18 @@ public class ScoutEnemyController extends com.mygdx.game.EnemyControllers.EnemyC
             }
         } else if (state == FSMState.ATTACK) {
             if (enemy.canAttack()) {
-                player.setHealth(player.getHealth() - 1);
-                player.coolDown(false);
+                if (!followingSurvivor) {
+                    player.setHealth(player.getHealth() - 1);
+                    player.coolDown(false);
+                }
+                else {
+                    if (survivorTarget.canLoseLife()) {
+                        survivorTarget.loseLife();
+                        survivorTarget.setTargetOfEnemy(false);
+                        followingSurvivor = false;
+                    }
+//                    survivorTarget.coolDown(false);
+                }
                 enemy.setAttack(false);
             }
             if (!enemy.areVinesShrinking()) {
