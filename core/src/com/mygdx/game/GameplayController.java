@@ -68,7 +68,14 @@ public class GameplayController extends WorldController{
 	private Texture vineTextureHeadLeftTop;
 	private Texture vineTextureHeadRightBottom;
 	private Texture vineTextureHeadRightTop;
-
+	private Texture vineTextureClosedLeft;
+	private Texture vineTextureClosedRight;
+	private Texture vineTextureClosedDown;
+	private Texture vineTextureClosedUp;
+	private Texture vineTextureClosedLeftBottom;
+	private Texture vineTextureClosedLeftTop;
+	private Texture vineTextureClosedRightBottom;
+	private Texture vineTextureClosedRightTop;
 	private Texture[] vineTextures;
 	/** Texture asset for survivor avatar */
 	private TextureRegion survivorTexture;
@@ -269,7 +276,17 @@ public class GameplayController extends WorldController{
 		vineTextureHeadRightBottom = directory.getEntry("images:vineCornerHeadRightDown", Texture.class);
 		vineTextureHeadRightTop = directory.getEntry("images:vineCornerHeadRightUp", Texture.class);
 
-		vineTextures = new Texture[14];
+		vineTextureClosedLeft = directory.getEntry("images:vineStraightClosedLeft", Texture.class);
+		vineTextureClosedRight = directory.getEntry("images:vineStraightClosedRight", Texture.class);
+		vineTextureClosedDown = directory.getEntry("images:vineStraightClosedDown", Texture.class);
+		vineTextureClosedUp = directory.getEntry("images:vineStraightClosedUp", Texture.class);
+		vineTextureClosedLeftBottom = directory.getEntry("images:vineCornerClosedLeftDown", Texture.class);
+		vineTextureClosedLeftTop = directory.getEntry("images:vineCornerClosedLeftUp", Texture.class);
+		vineTextureClosedRightBottom = directory.getEntry("images:vineCornerClosedRightDown", Texture.class);
+		vineTextureClosedRightTop = directory.getEntry("images:vineCornerClosedRightUp", Texture.class);
+
+
+		vineTextures = new Texture[22];
 		vineTextures[0] = vineTextureVertical;
 		vineTextures[1] = vineTextureHorizontal;
 		vineTextures[2] = vineTextureLeftBottom;
@@ -284,6 +301,16 @@ public class GameplayController extends WorldController{
 		vineTextures[11] = vineTextureHeadLeftTop;
 		vineTextures[12] = vineTextureHeadRightBottom;
 		vineTextures[13] = vineTextureHeadRightTop;
+
+		vineTextures[14] = vineTextureClosedLeft;
+		vineTextures[15] = vineTextureClosedRight;
+		vineTextures[16] = vineTextureClosedDown;
+		vineTextures[17] = vineTextureClosedUp;
+
+		vineTextures[18] = vineTextureClosedLeftTop;
+		vineTextures[19] = vineTextureClosedLeftBottom;
+		vineTextures[20] = vineTextureClosedRightTop;
+		vineTextures[21] = vineTextureClosedRightBottom;
 
 		// Floor Textures
 		grassTexture = new TextureRegion(directory.getEntry("tiles:4a_grass1", Texture.class));
@@ -1427,9 +1454,13 @@ public class GameplayController extends WorldController{
 			survivorArr.get(i).update();
 			if(survivorArr.get(i).isInteractable() && input.didCollectSurvivor()) {
 				survivorArr.get(i).setInteractable(false);
+				if (!survivorArr.get(i).isFollowing()) {
+					player.addToFollowing(survivorArr.get(i));
+				}
 				survivorArr.get(i).follow();
 			}
 			if (!survivorArr.get(i).isAlive()){
+				player.removeFromFollowing(survivorArr.get(i));
 				setFailure(true);
 			}
 		}
@@ -1448,6 +1479,7 @@ public class GameplayController extends WorldController{
 			for(int i = 0; i < survivorArr.size; i++) {
 				if(survivorArr.get(i).isFollowing()) {
 					survivorArr.get(i).rescue();
+					player.removeFromFollowing(survivorArr.get(i));
 					survivorArr.get(i).deactivatePhysics(world);
 					survivorArr.removeIndex(i);
 					numRescued++;

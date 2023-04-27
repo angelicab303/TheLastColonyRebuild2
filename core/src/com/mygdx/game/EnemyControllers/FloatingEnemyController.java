@@ -5,10 +5,14 @@ import com.badlogic.gdx.utils.Array;
 import com.mygdx.game.Obstacles.Enemies.FloatingEnemy;
 import com.mygdx.game.Obstacles.Enemies.ShriekerEnemy;
 import com.mygdx.game.Obstacles.Player;
+import com.mygdx.game.Obstacles.Survivor;
 import com.mygdx.game.Obstacles.ToxicQueue;
 import com.mygdx.game.Tile;
 
 public class FloatingEnemyController extends EnemyController {
+    Survivor survivorTarget;
+
+    boolean shootingSurvivor;
 
     private ToxicQueue toxicQueue;
 
@@ -19,13 +23,32 @@ public class FloatingEnemyController extends EnemyController {
         this.toxicQueue = toxicQueue;
         target = new Vector2(player.getX(), player.getY());
         super.initTiles(target);
+        shootingSurvivor = false;
+        survivorTarget = null;
     }
 
     @Override
     public int getAction()
     {
-        target = new Vector2(player.getX(), player.getY());
+        selectTarget();
+//        target = new Vector2(player.getX(), player.getY());
         return super.getAction();
+    }
+
+    private void selectTarget() {
+        target.x = player.getX();
+        target.y = player.getY();
+        if (!player.getSurvivorsFollowing().isEmpty()) {
+            for (int i = 0; i < player.getSurvivorsFollowing().size; i++) {
+                if (!player.getSurvivorsFollowing().get(i).isTargetOfEnemy()) {
+                    target.x = player.getSurvivorsFollowing().get(i).getX();
+                    target.y = player.getSurvivorsFollowing().get(i).getY();
+                    survivorTarget = player.getSurvivorsFollowing().get(i);
+                    shootingSurvivor = true;
+                    player.getSurvivorsFollowing().get(i).setTargetOfEnemy(true);
+                }
+            }
+        }
     }
 
     @Override

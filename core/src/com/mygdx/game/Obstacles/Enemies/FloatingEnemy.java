@@ -130,4 +130,8 @@ public class FloatingEnemy extends Enemy {
     public void draw(GameCanvas canvas) {
         super.draw(canvas);
     }
+
+    public Enemy.EnemyType getEnemyType() {
+        return EnemyType.FLOATING;
+    }
 }

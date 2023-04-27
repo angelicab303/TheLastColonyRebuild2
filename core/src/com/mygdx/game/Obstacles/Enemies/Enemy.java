@@ -18,6 +18,16 @@ public class Enemy extends Shadow implements GameObstacle {
      * Used for determining animation direction
      *
      */
+    protected static enum EnemyType {
+        /** Scout enemy */
+        SCOUT,
+        /** Chaser enemy */
+        CHASER,
+        /** Floating enemy */
+        FLOATING,
+        /** Shrieker enemy */
+        SHRIEKER
+    }
     private static enum Direction {
         /** The enemy is not moving */
         IDLE,
