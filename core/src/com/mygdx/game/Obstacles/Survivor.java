@@ -471,6 +471,7 @@ public class Survivor extends Shadow implements GameObstacle {
             String message = "(E) Rescue";
             canvas.drawText(message, displayFontInteract, position.x - 16.0f, position.y + 38.0f);
 
+
             //canvas.draw(animator, Color.WHITE, animator.getRegionWidth()/2, 0, getX()+xspace, getY()+yspace, animator.getRegionWidth(), animator.getRegionHeight()) ;
         }
         if (isFollowing){

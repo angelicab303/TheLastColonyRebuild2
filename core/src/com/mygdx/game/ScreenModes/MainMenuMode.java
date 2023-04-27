@@ -20,7 +20,7 @@
  * Based on original PhysicsDemo Lab by Don Holden, 2007
  * Updated asset version, 2/6/2021
  */
-package com.mygdx.game;
+package com.mygdx.game.ScreenModes;
 
 import assets.*;
 import com.badlogic.gdx.Gdx;
@@ -31,21 +31,15 @@ import com.badlogic.gdx.controllers.ControllerListener;
 import com.badlogic.gdx.controllers.ControllerMapping;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Array;
+import com.mygdx.game.GameCanvas;
 import util.ScreenListener;
 
 
@@ -145,11 +139,11 @@ public class MainMenuMode implements Screen, InputProcessor, ControllerListener 
         private void draw(GameCanvas canvas){
             Color color = Color.WHITE;
             if (!pressable) {
-                canvas.draw(bTexture, Color.WHITE, 0, bTexture.getHeight(), x, y, 0, textScale, textScale);
+                canvas.draw(bTexture, Color.WHITE, 0, bTexture.getHeight(), x, y, 0, titleScale, titleScale);
             }
             else{
                 Color tint = (pressState == 1 ? Color.GRAY : color);
-                canvas.draw(bTexture, tint, 0, bTexture.getHeight(), x, y, 0, textScale, textScale);
+                canvas.draw(bTexture, tint, 0, bTexture.getHeight(), x, y, 0, titleScale, titleScale);
 
             }
         }
@@ -166,12 +160,15 @@ public class MainMenuMode implements Screen, InputProcessor, ControllerListener 
     private Array<TextButton> buttons;
     /** Texture for play option */
     private Texture play;
+    private Texture playDown;
     /** Texture for levels option */
     private Texture levels;
     /** Texture for settings option */
     private Texture settings;
+    private Texture settingsDown;
     /** Texture for exit option */
     private Texture exit;
+    private Texture exitDown;
     /** Texture for small cloud */
     private Texture smallCloud;
     /** Texture for medium cloud */
@@ -199,8 +196,10 @@ public class MainMenuMode implements Screen, InputProcessor, ControllerListener 
     private ScreenListener listener;
     /** Scaling factor for when the student changes the resolution. */
     private float scale;
+    /** Scaling factor for the title. */
+    private float titleScale = 0.8f;
     /** Scaling factor for the text. */
-    private float textScale = 0.8f;
+    private float textScale = 0.6f;
     /** The current state of the play button */
     private int   pressState;
     /** Whether or not this player mode is still active */
@@ -295,6 +294,9 @@ public class MainMenuMode implements Screen, InputProcessor, ControllerListener 
         background = directory.getEntry("mainMenu:background", Texture.class);
         title = directory.getEntry("mainMenu:title", Texture.class);
         play = directory.getEntry("mainMenu:play", Texture.class);
+        playDown = directory.getEntry("mainMenu:playDown", Texture.class);
+        settingsDown = directory.getEntry("mainMenu:settingsDown", Texture.class);
+        exitDown = directory.getEntry("mainMenu:exitDown", Texture.class);
         levels = directory.getEntry("mainMenu:levels", Texture.class);
         settings = directory.getEntry("mainMenu:settings", Texture.class);
         cursor = directory.getEntry("mainMenu:cursor", Texture.class);
@@ -347,41 +349,29 @@ public class MainMenuMode implements Screen, InputProcessor, ControllerListener 
         TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
         textButtonStyle.font = nullFont;
         textButtonStyle.up   = new TextureRegionDrawable(play);
-        textButtonStyle.down = new TextureRegionDrawable(play);
+        textButtonStyle.down = new TextureRegionDrawable(playDown);
         textButtonStyle.checked = new TextureRegionDrawable(play);
+        // textButtonStyle.over = new TextureRegionDrawable(playDown);
         buttons.add(new TextButton("", textButtonStyle));
-        table.add(buttons.get(0)).spaceBottom(20.0f).left().size(play.getWidth()*textScale, play.getHeight()*textScale);
-        table.row();
-
-        // Levels button
-        textButtonStyle = new TextButton.TextButtonStyle();
-        textButtonStyle.font = nullFont;
-        textButtonStyle.up   = new TextureRegionDrawable(levels);
-        textButtonStyle.down = new TextureRegionDrawable(levels);
-        textButtonStyle.checked = new TextureRegionDrawable(levels);
-        buttons.add(new TextButton("", textButtonStyle));
-        table.add(buttons.get(1)).spaceBottom(20.0f).left().size(levels.getWidth()*textScale, levels.getHeight()*textScale);
+        table.add(buttons.get(0)).spaceBottom(40.0f).left().size(play.getWidth()*textScale, play.getHeight()*textScale);
         table.row();
         // Settings button
         textButtonStyle = new TextButton.TextButtonStyle();
         textButtonStyle.font = nullFont;
         textButtonStyle.up   = new TextureRegionDrawable(settings);
-        textButtonStyle.down = new TextureRegionDrawable(settings);
+        textButtonStyle.down = new TextureRegionDrawable(settingsDown);
         textButtonStyle.checked = new TextureRegionDrawable(settings);
         buttons.add(new TextButton("", textButtonStyle));
-        table.add(buttons.get(2)).spaceBottom(20.0f).left().size(settings.getWidth()*textScale, settings.getHeight()*textScale);
+        table.add(buttons.get(1)).spaceBottom(40.0f).left().size(settings.getWidth()*textScale, settings.getHeight()*textScale);
         table.row();
         // Exit button
         textButtonStyle = new TextButton.TextButtonStyle();
         textButtonStyle.font = nullFont;
         textButtonStyle.up   = new TextureRegionDrawable(exit);
-        textButtonStyle.down = new TextureRegionDrawable(exit);
+        textButtonStyle.down = new TextureRegionDrawable(exitDown);
         textButtonStyle.checked = new TextureRegionDrawable(exit);
         buttons.add(new TextButton("", textButtonStyle));
-        table.add(buttons.get(3)).spaceBottom(20.0f).left().size(exit.getWidth()*textScale, exit.getHeight()*textScale);
-        table.row();
-
-
+        table.add(buttons.get(2)).spaceBottom(40.0f).left().size(exit.getWidth()*textScale, exit.getHeight()*textScale);
 
 
         table.left().top();
