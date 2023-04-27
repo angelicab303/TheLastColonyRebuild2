@@ -176,12 +176,12 @@ public class CollisionController{
                     Player player;
                     Survivor survivor;
                     if(objA.getType() == GameObstacle.ObstacleType.ENEMY){
-                        // ((Enemy) objA).setStunned(true);
+                         ((Enemy) objA).setStunned(true);
                         ((Enemy) objA).incToStunTime();
                         ((PurifiedQueue.PurifiedAir) objB).collide();
                     }
                     else {
-                        // ((Enemy) objB).setStunned(true);
+                        ((Enemy) objB).setStunned(true);
                         ((Enemy) objB).incToStunTime();
                         ((PurifiedQueue.PurifiedAir) objA).collide();
                     }
