@@ -124,7 +124,6 @@
     "images:vineStraightHeadLeft": "images/vineStraightHeadLeft.png",
     "images:vineStraightHeadUp": "images/vineStraightHeadUp.png",
     "images:vineStraightHeadRight": "images/vineStraightHeadRight.png",
-<<<<<<< HEAD
 
     "images:vineCornerClosedLeftDown": "images/vineCornerClosedLeftDown.png",
     "images:vineCornerClosedLeftUp": "images/vineCornerClosedLeftUp.png",
@@ -134,8 +133,8 @@
     "images:vineStraightClosedDown": "images/vineStraightClosedDown.png",
     "images:vineStraightClosedLeft": "images/vineStraightClosedLeft.png",
     "images:vineStraightClosedUp": "images/vineStraightClosedUp.png",
-    "images:vineStraightClosedRight": "images/vineStraightClosedRight.png"
-=======
+    "images:vineStraightClosedRight": "images/vineStraightClosedRight.png",
+
     "tiles:0_caravan": "tiles/0_caravan.png",
     "tiles:1_player": "tiles/1_player.png",
     "tiles:2_survivor": "tiles/2_survivor.png",
@@ -194,7 +193,6 @@
     "tiles:tree-2a": "tiles/tree-2a.png",
     "tiles:tree-2a copy": "tiles/tree-2a copy.png",
     "tiles:tree-2b": "tiles/tree-2b.png"
->>>>>>> e7c3eb8a7befb1a62b7ff8232b988c503133c793
   },
   "levels" : {
     "alphaLevel": "levels/LastColonyAlpha.json"
