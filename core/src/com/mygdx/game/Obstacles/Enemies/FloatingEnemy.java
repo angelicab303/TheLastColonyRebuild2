@@ -30,6 +30,15 @@ public class FloatingEnemy extends Enemy {
             this.setStunned(true);
         }
         body.setAwake(true);
+        if (damaged)
+        {
+            stunCooldown++;
+            if (stunCooldown >= MAX_STUN_COOLDOWN)
+            {
+                stunCooldown = 0;
+                damaged = false;
+            }
+        }
         if (isStunned())
         {
             body.setActive(false);
