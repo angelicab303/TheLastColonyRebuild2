@@ -209,7 +209,7 @@ public class Caravan extends obstacle.BoxObstacle implements GameObstacle {
      * @param canvas Drawing context
      */
     public void draw(GameCanvas canvas) {
-        canvas.draw(texture, Color.WHITE, texture.getRegionWidth()*scale, texture.getRegionHeight()*scale, getX() - (texture.getRegionWidth()*scale/2), getY() - (texture.getRegionHeight()*scale/2), 0.0f, scale, scale);
+        canvas.draw(texture, Color.WHITE, origin.x, origin.y, getX()*drawScale.x, getY()*drawScale.y, 0.0f, scale, scale);
         if (isInteractable){
             float yspace = 5;
             float xspace = 0; //(origin.x)/2;

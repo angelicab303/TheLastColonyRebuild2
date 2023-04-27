@@ -439,7 +439,7 @@ public class GameplayController extends WorldController{
 			tileGrid[treeLocations[i][0]][treeLocations[i][1]] = true;
 		}
 		// Instantiate the caravan:
-		caravan = new Caravan(caravanLocation[0] * tileSize + tileOffset, caravanLocation[1] * tileSize + tileOffset, 2, caravanTexture, survivorITexture, SCALE, displayFontInteract);
+		caravan = new Caravan(caravanLocation[0] * tileSize + tileOffset, caravanLocation[1] * tileSize + tileOffset, 2, caravanTexture, survivorITexture, 0.2f, displayFontInteract);
 
 		addObject(caravan);
 		caravan.activatePhysics(world);
