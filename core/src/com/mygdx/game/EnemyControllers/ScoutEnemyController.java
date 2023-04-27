@@ -141,6 +141,7 @@ public class ScoutEnemyController extends com.mygdx.game.EnemyControllers.EnemyC
         switch (state) {
             case SPAWN:
                 state = FSMState.IDLE;
+                break;
             case IDLE:
                 if (enemy.isStunned()) {
                     state = FSMState.STUNNED;
@@ -149,7 +150,7 @@ public class ScoutEnemyController extends com.mygdx.game.EnemyControllers.EnemyC
                 }
                 break;
             case PATROL:
-                if (enemy.isStunned()) {
+                if (enemy.isStunned() && !enemy.isExtendingVines()) {
                     state = FSMState.STUNNED;
                 } else if (enemy.canAttack() && dist < VINE_CHASE_DIST)
                         /*(player.getX() <= patrolPointsHor[1] && player.getX() >= patrolPointsHor[0] &&
@@ -204,7 +205,7 @@ public class ScoutEnemyController extends com.mygdx.game.EnemyControllers.EnemyC
         target.y = player.getY();
         if (!player.getSurvivorsFollowing().isEmpty()) {
             for (int i = 0; i < player.getSurvivorsFollowing().size; i++) {
-                if (!player.getSurvivorsFollowing().get(i).isTargetOfEnemy()) {
+                if (!player.getSurvivorsFollowing().get(i).isTargetOfEnemy() && player.getSurvivorsFollowing().get(i).canLoseLife()) {
                     target.x = player.getSurvivorsFollowing().get(i).getX();
                     target.y = player.getSurvivorsFollowing().get(i).getY();
                     survivorTarget = player.getSurvivorsFollowing().get(i);
