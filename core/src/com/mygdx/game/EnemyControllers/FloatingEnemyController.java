@@ -38,17 +38,17 @@ public class FloatingEnemyController extends EnemyController {
     private void selectTarget() {
         target.x = player.getX();
         target.y = player.getY();
-        if (!player.getSurvivorsFollowing().isEmpty()) {
-            for (int i = 0; i < player.getSurvivorsFollowing().size; i++) {
-                if (!player.getSurvivorsFollowing().get(i).isTargetOfEnemy()) {
-                    target.x = player.getSurvivorsFollowing().get(i).getX();
-                    target.y = player.getSurvivorsFollowing().get(i).getY();
-                    survivorTarget = player.getSurvivorsFollowing().get(i);
-                    shootingSurvivor = true;
-                    player.getSurvivorsFollowing().get(i).setTargetOfEnemy(true);
-                }
-            }
-        }
+//        if (!player.getSurvivorsFollowing().isEmpty()) {
+//            for (int i = 0; i < player.getSurvivorsFollowing().size; i++) {
+//                if (!player.getSurvivorsFollowing().get(i).isTargetOfEnemy()) {
+//                    target.x = player.getSurvivorsFollowing().get(i).getX();
+//                    target.y = player.getSurvivorsFollowing().get(i).getY();
+//                    survivorTarget = player.getSurvivorsFollowing().get(i);
+//                    shootingSurvivor = true;
+//                    player.getSurvivorsFollowing().get(i).setTargetOfEnemy(true);
+//                }
+//            }
+//        }
     }
 
     @Override
