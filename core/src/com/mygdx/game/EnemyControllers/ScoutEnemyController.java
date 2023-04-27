@@ -205,7 +205,7 @@ public class ScoutEnemyController extends com.mygdx.game.EnemyControllers.EnemyC
         target.y = player.getY();
         if (!player.getSurvivorsFollowing().isEmpty()) {
             for (int i = 0; i < player.getSurvivorsFollowing().size; i++) {
-                if (!player.getSurvivorsFollowing().get(i).isTargetOfEnemy() && player.getSurvivorsFollowing().get(i).canLoseLife()) {
+                if (!player.getSurvivorsFollowing().get(i).isTargetOfEnemy() /*&& player.getSurvivorsFollowing().get(i).canLoseLife()*/) {
                     target.x = player.getSurvivorsFollowing().get(i).getX();
                     target.y = player.getSurvivorsFollowing().get(i).getY();
                     survivorTarget = player.getSurvivorsFollowing().get(i);
