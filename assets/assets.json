@@ -124,6 +124,17 @@
     "images:vineStraightHeadLeft": "images/vineStraightHeadLeft.png",
     "images:vineStraightHeadUp": "images/vineStraightHeadUp.png",
     "images:vineStraightHeadRight": "images/vineStraightHeadRight.png",
+
+    "images:vineCornerClosedLeftDown": "images/vineCornerClosedLeftDown.png",
+    "images:vineCornerClosedLeftUp": "images/vineCornerClosedLeftUp.png",
+    "images:vineCornerClosedRightDown": "images/vineCornerClosedRightDown.png",
+    "images:vineCornerClosedRightUp": "images/vineCornerClosedRightUp.png",
+
+    "images:vineStraightClosedDown": "images/vineStraightClosedDown.png",
+    "images:vineStraightClosedLeft": "images/vineStraightClosedLeft.png",
+    "images:vineStraightClosedUp": "images/vineStraightClosedUp.png",
+    "images:vineStraightClosedRight": "images/vineStraightClosedRight.png",
+
     "tiles:0_caravan": "tiles/0_caravan.png",
     "tiles:1_player": "tiles/1_player.png",
     "tiles:2_survivor": "tiles/2_survivor.png",
