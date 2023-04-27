@@ -412,7 +412,7 @@ public class GameplayController extends WorldController{
 			tileGrid[treeLocations[i][0]][treeLocations[i][1]] = true;
 		}
 		// Instantiate the caravan:
-		caravan = new Caravan(caravanLocation[0] * tileSize + tileOffset, caravanLocation[1] * tileSize + tileOffset, 5, caravanTexture, survivorITexture, SCALE, displayFontInteract);
+		caravan = new Caravan(caravanLocation[0] * tileSize + tileOffset, caravanLocation[1] * tileSize + tileOffset, 5, caravanTexture, survivorITexture, SCALE*2, displayFontInteract);
 		addObject(caravan);
 		caravan.activatePhysics(world);
 		// *************************** PLAYER AND WEAPON ***************************
@@ -1341,21 +1341,21 @@ public class GameplayController extends WorldController{
 
 		// Update player and weapon position
 		player.update();
-		if (player.getX() < 10)
+		if (player.getX() < 20)
 		{
-			player.setPosition(10, player.getBody().getPosition().y);
+			player.setPosition(20, player.getBody().getPosition().y);
 		}
-		if (player.getX() >= canvas.getWidth()-10)
+		if (player.getX() >= canvas.getWidth()-20)
 		{
-			player.setPosition(canvas.getWidth()-10, player.getBody().getPosition().y);
+			player.setPosition(canvas.getWidth()-20, player.getBody().getPosition().y);
 		}
-		if (player.getY() < 10)
+		if (player.getY() < 20)
 		{
-			player.setPosition(player.getBody().getPosition().x, 10);
+			player.setPosition(player.getBody().getPosition().x, 20);
 		}
-		if (player.getY() >= canvas.getHeight()-10)
+		if (player.getY() >= canvas.getHeight()-20)
 		{
-			player.setPosition(player.getBody().getPosition().x, canvas.getHeight()-10);
+			player.setPosition(player.getBody().getPosition().x, canvas.getHeight()-20);
 		}
 
 		// Update UI elements
@@ -1398,21 +1398,21 @@ public class GameplayController extends WorldController{
 		for (int i = 0; i < enemyArr.size; i++)
 		{
 			enemyArr.get(i).update(enemyControllers.get(i).getAction());
-			if (enemyArr.get(i).getX() < 10)
+			if (enemyArr.get(i).getX() < 20)
 			{
-				enemyArr.get(i).setPosition(10, enemyArr.get(i).getBody().getPosition().y);
+				enemyArr.get(i).setPosition(20, enemyArr.get(i).getBody().getPosition().y);
 			}
-			if (enemyArr.get(i).getX() >= canvas.getWidth()-10)
+			if (enemyArr.get(i).getX() >= canvas.getWidth()-20)
 			{
-				enemyArr.get(i).setPosition(canvas.getWidth()-10, enemyArr.get(i).getBody().getPosition().y);
+				enemyArr.get(i).setPosition(canvas.getWidth()-20, enemyArr.get(i).getBody().getPosition().y);
 			}
-			if (enemyArr.get(i).getY() < 10)
+			if (enemyArr.get(i).getY() < 20)
 			{
-				enemyArr.get(i).setPosition(enemyArr.get(i).getBody().getPosition().x, 10);
+				enemyArr.get(i).setPosition(enemyArr.get(i).getBody().getPosition().x, 20);
 			}
-			if (enemyArr.get(i).getY() >= canvas.getHeight()-10)
+			if (enemyArr.get(i).getY() >= canvas.getHeight()-20)
 			{
-				enemyArr.get(i).setPosition(enemyArr.get(i).getBody().getPosition().x, canvas.getHeight()-10);
+				enemyArr.get(i).setPosition(enemyArr.get(i).getBody().getPosition().x, canvas.getHeight()-20);
 			}
 		}
 
