@@ -26,6 +26,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.game.Obstacles.Player;
@@ -183,6 +184,7 @@ public abstract class WorldController implements Screen {
 	private boolean failed;
 	/** Whether or not debug mode is active */
 	private boolean debug;
+	protected boolean paused = false;
 	/** Countdown active for winning or losing */
 	private int countdown;
 
@@ -642,6 +644,10 @@ public abstract class WorldController implements Screen {
 
 			weapon.draw(canvas);
 			canvas.endDebug();
+		}
+		if (paused){
+			displayFont.setColor(Color.GRAY);
+			canvas.drawText("PAUSED", displayFont, player.getX()-150f, player.getY()+25f);
 		}
 		canvas.end();
 

@@ -457,7 +457,7 @@ public class Survivor extends Shadow implements GameObstacle {
             }
             //canvas.draw(stexture, Color.YELLOW, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), 1, 1);
         }
-        if (isInteractable){
+        if (isInteractable && !isFollowing){
             float yspace = origin.x + 10;
             float xspace = 0; //(origin.x)/2;
 
@@ -470,7 +470,7 @@ public class Survivor extends Shadow implements GameObstacle {
         if (isFollowing){
             float spacing = 0.0f;
             for (int i = 0; i < lives; i++){
-                canvas.draw(textureHeart, Color.BLUE, 0.0f, 0.0f, (getX() * drawScale.x - 10) + spacing, getY() * drawScale.y + texture.getRegionHeight()*scale/2 - 2, getAngle(), 0.05f, 0.05f);
+                canvas.draw(textureHeart, Color.BLUE, 0.0f, 0.0f, (getX() * drawScale.x - 10) + spacing, getY() * drawScale.y + texture.getRegionHeight()*scale/2 - 2, getAngle(), 0.1f, 0.1f);
                 spacing += 8.0f;
             }
         }

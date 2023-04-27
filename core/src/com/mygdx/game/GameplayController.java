@@ -164,7 +164,7 @@ public class GameplayController extends WorldController{
 	private boolean isInvincible = false;
 	private boolean pausing = false;
 	private boolean unpausing = false;
-	private boolean paused = false;
+
 
 
 
@@ -367,7 +367,7 @@ public class GameplayController extends WorldController{
 			tileGrid[treeLocations[i][0]][treeLocations[i][1]] = true;
 		}
 		// Instantiate the caravan:
-		caravan = new Caravan(caravanLocation[0] * tileSize + tileOffset, caravanLocation[1] * tileSize + tileOffset, 5, caravanTexture, survivorITexture, SCALE, displayFontInteract);
+		caravan = new Caravan(caravanLocation[0] * tileSize + tileOffset, caravanLocation[1] * tileSize + tileOffset, 2, caravanTexture, survivorITexture, SCALE, displayFontInteract);
 		addObject(caravan);
 		caravan.activatePhysics(world);
 		// *************************** PLAYER AND WEAPON ***************************
@@ -419,14 +419,14 @@ public class GameplayController extends WorldController{
 			enemyControllers.add(new ScoutEnemyController(tileGrid, tileSize, tileOffset, enemyTemp, player, shriekerArr));
 		}
 		// Chaser enemies
-		int numChasers = 1;
-		for (int i = 0; i < numChasers; i++){
-			Enemy chaserTemp = new Enemy(player.getX() + 200, player.getY() + 100, enemyTextureUp, enemyTextureDown, enemyTextureRight, enemyTextureLeft, enemyTextureIdle, SCALE);
-			enemyArr.add(chaserTemp);
-			chaserTemp.activatePhysics(world);
-			addObject(chaserTemp);
-			enemyControllers.add(new ChaserEnemyController(tileGrid, tileSize, tileOffset, chaserTemp, player, shriekerArr));
-		}
+//		int numChasers = 1;
+//		for (int i = 0; i < numChasers; i++){
+//			Enemy chaserTemp = new Enemy(player.getX() + 200, player.getY() + 100, enemyTextureUp, enemyTextureDown, enemyTextureRight, enemyTextureLeft, enemyTextureIdle, SCALE);
+//			enemyArr.add(chaserTemp);
+//			chaserTemp.activatePhysics(world);
+//			addObject(chaserTemp);
+//			enemyControllers.add(new ChaserEnemyController(tileGrid, tileSize, tileOffset, chaserTemp, player, shriekerArr));
+//		}
 
 
 
@@ -805,6 +805,7 @@ public class GameplayController extends WorldController{
 					survivorArr.get(i).deactivatePhysics(world);
 					survivorArr.removeIndex(i);
 					numRescued++;
+					caravan.incrCap();
 					caravan.setInteractable(false);
 				}
 			}
