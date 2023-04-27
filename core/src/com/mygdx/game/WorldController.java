@@ -585,7 +585,7 @@ public abstract class WorldController implements Screen {
 		for(Obstacle obj : objects) {
 			obj.draw(canvas);
 		}
-		purifiedAir.draw(canvas);
+
 		// END remove
 		//drawBar();
 		canvas.end();
@@ -599,6 +599,10 @@ public abstract class WorldController implements Screen {
 		for(Obstacle obj : objects) {
 			obj.draw(canvas);
 		}
+
+		purifiedAir.draw(canvas);
+		toxicAir.draw(canvas);
+
 		// Draw air bar
 		airBar.draw(canvas);
 
