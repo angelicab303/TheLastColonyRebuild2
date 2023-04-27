@@ -161,7 +161,7 @@ public class ScoutEnemyController extends com.mygdx.game.EnemyControllers.EnemyC
                 }
                 break;
             case EXTENDVINE:
-                if (!enemy.canAttack()) {
+                if (!enemy.canAttack() && !enemy.isExtendingVines) {
                     enemy.setShrinkVines(true);
                     clearContainsVine();
                     state = FSMState.PATROL;
@@ -217,6 +217,9 @@ public class ScoutEnemyController extends com.mygdx.game.EnemyControllers.EnemyC
     }
 
     public int getAction() {
+//        if (enemy.isExtendingVines) {
+//            System.out.println(state);
+//        }
         ticks++;
         moveTime++;
         directionalTick++;
@@ -247,7 +250,9 @@ public class ScoutEnemyController extends com.mygdx.game.EnemyControllers.EnemyC
             } else {
                 if (goalReached() || moveTime > 30) {
                     moveTime = 0;
-                    action = getMoveVine();
+                    if (!enemy.isStunned()) {
+                        action = getMoveVine();
+                    }
                 } else {
                     action = prevAction;
                 }
@@ -273,6 +278,9 @@ public class ScoutEnemyController extends com.mygdx.game.EnemyControllers.EnemyC
 //                    survivorTarget.coolDown(false);
                 }
                 enemy.setAttack(false);
+            }
+            else {
+                enemy.setExtendingVines(false);
             }
             if (!enemy.areVinesShrinking()) {
                 enemy.setExtendingVines(false);
