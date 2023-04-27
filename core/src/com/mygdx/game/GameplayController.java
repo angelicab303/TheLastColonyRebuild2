@@ -1360,6 +1360,7 @@ public class GameplayController extends WorldController{
 			weapon.incrementAmmo(-weapon.getBullets());
 		}
 		purifiedAir.update();
+		toxicAir.update();
 
 		// Process Collisions
 		collisionController.update(world,player,weapon);
