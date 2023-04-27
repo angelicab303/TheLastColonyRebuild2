@@ -203,11 +203,11 @@ public class CollisionController{
                         enemy = (Enemy) objB;
                         player = (Player) objA;
                     }
-                    if (player.canLoseLife()) {
-                        enemy.setAttack(false);
-                        player.setHealth(player.getHealth() - 1);
-                        player.coolDown(false);
-                    }
+//                    if (player.canLoseLife()) {
+//                        enemy.setAttack(false);
+//                        player.setHealth(player.getHealth() - 1);
+//                        player.coolDown(false);
+//                    }
                     break;
                 case GameObstacle.CATEGORY_PLAYER | GameObstacle.CATEGORY_SURVIVOR:
                     if(objA.getType() == GameObstacle.ObstacleType.SURVIVOR){

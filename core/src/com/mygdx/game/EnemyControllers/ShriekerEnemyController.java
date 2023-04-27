@@ -5,6 +5,7 @@ import com.badlogic.gdx.utils.Array;
 import com.mygdx.game.Obstacles.Enemies.Enemy;
 import com.mygdx.game.Obstacles.Player;
 import com.mygdx.game.Obstacles.Enemies.ShriekerEnemy;
+import com.mygdx.game.Obstacles.Survivor;
 
 public class ShriekerEnemyController extends EnemyController{
     /** Enum to encode the finite state machine */
@@ -28,7 +29,6 @@ public class ShriekerEnemyController extends EnemyController{
     private final float WAKE_DISTANCE = 100.0f;
     /** Minimum distance the player must be at order for the shrieker to re-enter IDLE during WAKE */
     private final float MIN_DISTANCE = 200.0f;
-
     /**
      * Initialize an EnemyController
      *
