@@ -226,7 +226,7 @@ public class EnemyController {
     /** Changes the state encoding of this enemy */
     protected void changeStateIfApplicable()
     {
-
+        System.out.println(tiles[(int) (enemy.getX() / tileSize)][(int) (enemy.getY() / tileSize)].getX());
         Tile enemyTile = tiles[(int) (enemy.getX() / tileSize)][(int) (enemy.getY() / tileSize)];
         Tile targetTile = tiles[(int) (target.x / tileSize)][(int) (target.y / tileSize)];
         alertAllEnemies = false;

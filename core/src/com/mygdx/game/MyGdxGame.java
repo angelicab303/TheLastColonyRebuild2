@@ -1,17 +1,14 @@
 package com.mygdx.game;
 
-import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.GL20;
+import com.mygdx.game.ScreenModes.LevelSelectMode;
+import com.mygdx.game.ScreenModes.LoadingMode;
+import com.mygdx.game.ScreenModes.MainMenuMode;
 import util.*;
 import assets.*;
-import audio.*;
-import math.*;
-import obstacle.*;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.utils.ScreenUtils;
 
 public class MyGdxGame extends Game implements ScreenListener {
 	//SpriteBatch batch;
@@ -26,6 +23,8 @@ public class MyGdxGame extends Game implements ScreenListener {
 	/** Player mode for the game proper (CONTROLLER CLASS) */
 	/** Player mode for the main menu */
 	private MainMenuMode mainMenu;
+	/** Player mode for the level select menu */
+	private LevelSelectMode levelSelect;
 	private int current;
 	/** List of all WorldControllers */
 	private WorldController[] controllers;
@@ -43,6 +42,7 @@ public class MyGdxGame extends Game implements ScreenListener {
 		canvas  = new GameCanvas();
 		loading = new LoadingMode("assets.json",canvas,1);
 		mainMenu = new MainMenuMode(canvas);
+		levelSelect = new LevelSelectMode(canvas);
 
 		 //Initialize the three game worlds
 		 controllers = new WorldController[1];
@@ -118,12 +118,19 @@ public class MyGdxGame extends Game implements ScreenListener {
 	 * @param exitCode The state of the screen upon exit
 	 */
 	public void exitScreen(Screen screen, int exitCode) {
+		Gdx.gl20.glClearColor(0, 0, 0, 1);
+		Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		if (screen == loading) {
 			directory = loading.getAssets();
+			// gather assets for game level
 			controllers[0].gatherAssets(directory);
 			controllers[0].setScreenListener(this);
 			controllers[0].setCanvas(canvas);
-			System.out.println("Gather assets for main menu");
+			// gather assets for level select menu
+			levelSelect.gatherAssets(directory);
+			levelSelect.setScreenListener(this);
+			levelSelect.setCanvas(canvas);
+			// gather assets for main menu
 			mainMenu.gatherAssets(directory);
 			mainMenu.setScreenListener(this);
 
@@ -134,21 +141,34 @@ public class MyGdxGame extends Game implements ScreenListener {
 			loading.dispose();
 			loading = null;
 		} else if (screen == mainMenu){
-			controllers[0].reset();
-			setScreen(controllers[0]);
+			// Need exit codes for main menu
+			levelSelect.reset();
+			setScreen(levelSelect);
 		}
-		else if (exitCode == WorldController.EXIT_NEXT) {
-			current = (current+1) % controllers.length;
-			controllers[current].reset();
-			setScreen(controllers[current]);
-		} else if (exitCode == WorldController.EXIT_PREV) {
-			current = (current+controllers.length-1) % controllers.length;
-			controllers[current].reset();
-			setScreen(controllers[current]);
-		} else if (exitCode == WorldController.EXIT_QUIT) {
-			// We quit the main application
-			Gdx.app.exit();
+		else if (screen == levelSelect){
+			// Need exit codes for level select
+			if (exitCode == levelSelect.EXIT_MAIN){
+				System.out.println("main menu repopulate from exit");
+				mainMenu.reset();
+				setScreen(mainMenu);
+			}
+			else if (exitCode == levelSelect.EXIT_1){
+				controllers[0].reset();
+				setScreen(controllers[0]);
+			}
 		}
+//		else if (exitCode == WorldController.EXIT_NEXT) {
+//			current = (current+1) % controllers.length;
+//			controllers[current].reset();
+//			setScreen(controllers[current]);
+//		} else if (exitCode == WorldController.EXIT_PREV) {
+//			current = (current+controllers.length-1) % controllers.length;
+//			controllers[current].reset();
+//			setScreen(controllers[current]);
+//		} else if (exitCode == WorldController.EXIT_QUIT) {
+//			// We quit the main application
+//			Gdx.app.exit();
+//		}
 	}
 
 }
