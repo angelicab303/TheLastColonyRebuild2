@@ -482,6 +482,14 @@ public class GameplayController extends WorldController{
 			addObject(shriekTemp);
 			enemyControllers.add(new ShriekerEnemyController(tileGrid, tileSize, tileOffset, shriekTemp, player, shriekerArr));
 		}
+		int numFloaters = 1;
+		for (int i = 0; i < numFloaters; i++){
+			FloatingEnemy floatTemp = new FloatingEnemy(player.getX() - 230, player.getY() + 50, enemyTextureUp, enemyTextureDown, enemyTextureRight, enemyTextureLeft, enemyTextureIdle, SCALE);
+			enemyArr.add(floatTemp);
+			floatTemp.activatePhysics(world);
+			addObject(floatTemp);
+			enemyControllers.add(new FloatingEnemyController(tileGrid, tileSize, tileOffset, floatTemp, player, shriekerArr, toxicAir));
+		}
 
 		for (int i = 0; i < enemyLocations.length; i++) {
 			ScoutEnemy enemyTemp = new ScoutEnemy(enemyLocations[i][0] * tileSize + tileOffset, enemyLocations[i][1] * tileSize + tileOffset, enemyTextureUp, enemyTextureDown, enemyTextureRight, enemyTextureLeft, enemyTextureIdle, vineTextures,SCALE, world);
@@ -492,14 +500,14 @@ public class GameplayController extends WorldController{
 			enemyControllers.add(new ScoutEnemyController(tileGrid, tileSize, tileOffset, enemyTemp, player, shriekerArr));
 		}
 		// Chaser enemies
-//		int numChasers = 1;
-//		for (int i = 0; i < numChasers; i++){
-//			Enemy chaserTemp = new Enemy(player.getX() + 200, player.getY() + 100, enemyTextureUp, enemyTextureDown, enemyTextureRight, enemyTextureLeft, enemyTextureIdle, SCALE);
-//			enemyArr.add(chaserTemp);
-//			chaserTemp.activatePhysics(world);
-//			addObject(chaserTemp);
-//			enemyControllers.add(new ChaserEnemyController(tileGrid, tileSize, tileOffset, chaserTemp, player, shriekerArr));
-//		}
+		int numChasers = 1;
+		for (int i = 0; i < numChasers; i++){
+			Enemy chaserTemp = new Enemy(player.getX() + 200, player.getY() + 100, enemyTextureUp, enemyTextureDown, enemyTextureRight, enemyTextureLeft, enemyTextureIdle, SCALE);
+			enemyArr.add(chaserTemp);
+			chaserTemp.activatePhysics(world);
+			addObject(chaserTemp);
+			enemyControllers.add(new ChaserEnemyController(tileGrid, tileSize, tileOffset, chaserTemp, player, shriekerArr));
+		}
 
 
 
