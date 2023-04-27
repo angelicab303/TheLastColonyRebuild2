@@ -205,7 +205,7 @@ public class ScoutEnemyController extends com.mygdx.game.EnemyControllers.EnemyC
         target.y = player.getY();
         if (!player.getSurvivorsFollowing().isEmpty()) {
             for (int i = 0; i < player.getSurvivorsFollowing().size; i++) {
-                if (!player.getSurvivorsFollowing().get(i).isTargetOfEnemy() /*&& player.getSurvivorsFollowing().get(i).canLoseLife()*/) {
+                if (!player.getSurvivorsFollowing().get(i).isTargetOfEnemy() && player.getSurvivorsFollowing().get(i).canLoseLife()) {
                     target.x = player.getSurvivorsFollowing().get(i).getX();
                     target.y = player.getSurvivorsFollowing().get(i).getY();
                     survivorTarget = player.getSurvivorsFollowing().get(i);
@@ -252,6 +252,10 @@ public class ScoutEnemyController extends com.mygdx.game.EnemyControllers.EnemyC
                     action = prevAction;
                 }
             }
+            if (enemy.areVinesShrinking() && followingSurvivor) {
+                survivorTarget.setTargetOfEnemy(false);
+                followingSurvivor = false;
+            }
         } else if (state == FSMState.ATTACK) {
             if (enemy.canAttack()) {
                 if (!followingSurvivor) {
@@ -261,9 +265,11 @@ public class ScoutEnemyController extends com.mygdx.game.EnemyControllers.EnemyC
                 else {
                     if (survivorTarget.canLoseLife()) {
                         survivorTarget.loseLife();
-                        survivorTarget.setTargetOfEnemy(false);
-                        followingSurvivor = false;
+//                        survivorTarget.setTargetOfEnemy(false);
+//                        followingSurvivor = false;
                     }
+                    survivorTarget.setTargetOfEnemy(false);
+                    followingSurvivor = false;
 //                    survivorTarget.coolDown(false);
                 }
                 enemy.setAttack(false);

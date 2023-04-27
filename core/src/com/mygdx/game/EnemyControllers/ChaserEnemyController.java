@@ -37,17 +37,17 @@ public class ChaserEnemyController extends com.mygdx.game.EnemyControllers.Enemy
     private void selectTarget() {
         target.x = player.getX();
         target.y = player.getY();
-//        if (!player.getSurvivorsFollowing().isEmpty()) {
-//            for (int i = 0; i < player.getSurvivorsFollowing().size; i++) {
-//                if (!player.getSurvivorsFollowing().get(i).isTargetOfEnemy()) {
-//                    target.x = player.getSurvivorsFollowing().get(i).getX();
-//                    target.y = player.getSurvivorsFollowing().get(i).getY();
-//                    survivorTarget = player.getSurvivorsFollowing().get(i);
-//                    followingSurvivor = true;
-//                    player.getSurvivorsFollowing().get(i).setTargetOfEnemy(true);
-//                }
-//            }
-//        }
+        if (!player.getSurvivorsFollowing().isEmpty()) {
+            for (int i = 0; i < player.getSurvivorsFollowing().size; i++) {
+                if (!player.getSurvivorsFollowing().get(i).isTargetOfEnemy() && player.getSurvivorsFollowing().get(i).canLoseLife()) {
+                    target.x = player.getSurvivorsFollowing().get(i).getX();
+                    target.y = player.getSurvivorsFollowing().get(i).getY();
+                    survivorTarget = player.getSurvivorsFollowing().get(i);
+                    followingSurvivor = true;
+                    player.getSurvivorsFollowing().get(i).setTargetOfEnemy(true);
+                }
+            }
+        }
     }
 
     /**
@@ -56,7 +56,9 @@ public class ChaserEnemyController extends com.mygdx.game.EnemyControllers.Enemy
      * 5 = up + right, 6 = down + right, 7 = up + left, 8 = down + left
      */
     public int getAction() {
-        selectTarget();
+        if (state == FSMState.CHASE) {
+            selectTarget();
+        }
         return super.getAction();
 
     }
@@ -88,9 +90,11 @@ public class ChaserEnemyController extends com.mygdx.game.EnemyControllers.Enemy
                     else {
                         if (survivorTarget.canLoseLife()) {
                             survivorTarget.loseLife();
-                            survivorTarget.setTargetOfEnemy(false);
-                            followingSurvivor = false;
+//                            survivorTarget.setTargetOfEnemy(false);
+//                            followingSurvivor = false;
                         }
+                        survivorTarget.setTargetOfEnemy(false);
+                        followingSurvivor = false;
 //                    survivorTarget.coolDown(false);
                     }
                     enemy.setAttack(false);
