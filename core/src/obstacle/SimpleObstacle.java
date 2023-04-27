@@ -780,6 +780,19 @@ public abstract class SimpleObstacle extends Obstacle {
 	}
 
 	/**
+	 * Sets the object texture for drawing purposes.
+	 *
+	 * In order for drawing to work properly, you MUST set the drawScale.
+	 * The drawScale converts the physics units to pixels.
+	 *
+	 * @param value  the object texture for drawing purposes.
+	 */
+	public void setTexture(TextureRegion value, float tall) {
+		texture = value;
+		origin.set(texture.getRegionWidth()/2.0f, texture.getRegionHeight()/tall);
+	}
+
+	/**
 	 * Draws the physics object.
 	 *
 	 * @param canvas Drawing context

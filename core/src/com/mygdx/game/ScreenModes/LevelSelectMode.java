@@ -74,6 +74,8 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
     /** The button to click on */
     private Array<TextButton> buttons;
     /** Texture for level buttons */
+    private Texture back;
+    private Texture backDown;
     private Texture level1;
     private Texture level2;
     private Texture level1Down;
@@ -203,6 +205,8 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
         level2 = directory.getEntry("levelSelect:2", Texture.class);
         level1Down = directory.getEntry("levelSelect:1Down", Texture.class);
         level2Down = directory.getEntry("levelSelect:2Down", Texture.class);
+        back = directory.getEntry("levelSelect:back", Texture.class);
+        backDown = directory.getEntry("levelSelect:backDown", Texture.class);
         nullFont = directory.getEntry("shared:retro" ,BitmapFont.class);
     }
     /** Populates the menu with clouds */
@@ -212,49 +216,78 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
         float startY = canvas.getHeight()*.05f;
 
         // Title
-        text.add(new Text(title, RIGHT_SPACING, canvas.getHeight()*.95f, false));
+        text.add(new Text(title, RIGHT_SPACING, canvas.getHeight()*.85f, false));
 
-        Table table = new Table();
+        // Table for back button
+        Table backTable = new Table();
+        backTable.setPosition(startX-10, canvas.getHeight()*0.90f);
+        backTable.setWidth(back.getWidth());
+        backTable.setHeight(back.getHeight());
+        backTable.setDebug(false);
+
+        // Table for level select buttons
+        Table tableLevels = new Table();
         //table.setFillParent(true);
-        table.setPosition(startX, startY);
-        table.setWidth(600.0f);
-        table.setHeight(400.0f);
-        table.setDebug(false);
+        tableLevels.setPosition(startX, startY);
+        tableLevels.setWidth(600.0f);
+        tableLevels.setHeight(400.0f);
+        tableLevels.setDebug(false);
 
         Gdx.input.setInputProcessor(stage);
 
         buttons = new Array<TextButton>();
-        // Level 1
+        // Back button to return to main menu
         TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
         textButtonStyle.font = nullFont;
-        System.out.println(level1.getWidth());
+        textButtonStyle.up   = new TextureRegionDrawable(back);
+        textButtonStyle.down = new TextureRegionDrawable(backDown);
+        textButtonStyle.checked = new TextureRegionDrawable(back);
+        buttons.add(new TextButton("", textButtonStyle));
+        backTable.add(buttons.get(0)).left().size(back.getWidth()*textScale, back.getHeight()*textScale);
+
+
+
+        // Level 1
+        textButtonStyle = new TextButton.TextButtonStyle();
+        textButtonStyle.font = nullFont;
         textButtonStyle.up   = new TextureRegionDrawable(level1);
         textButtonStyle.down = new TextureRegionDrawable(level1Down);
         textButtonStyle.checked = new TextureRegionDrawable(level1);
         buttons.add(new TextButton("", textButtonStyle));
-        table.add(buttons.get(0)).spaceBottom(20.0f).left().size(level1.getWidth()*textScale, level1.getHeight()*textScale);
-        table.row();
+        tableLevels.add(buttons.get(1)).spaceBottom(20.0f).left().size(level1.getWidth()*textScale, level1.getHeight()*textScale);
+        tableLevels.row();
 
         // Level 2
         textButtonStyle = new TextButton.TextButtonStyle();
         textButtonStyle.font = nullFont;
-        System.out.println(level1.getWidth());
         textButtonStyle.up   = new TextureRegionDrawable(level2);
         textButtonStyle.down = new TextureRegionDrawable(level2Down);
         textButtonStyle.checked = new TextureRegionDrawable(level2);
         buttons.add(new TextButton("", textButtonStyle));
-        table.add(buttons.get(1)).spaceBottom(20.0f).left().size(level2.getWidth()*textScale, level2.getHeight()*textScale);
-        table.row();
+        tableLevels.add(buttons.get(2)).spaceBottom(20.0f).left().size(level2.getWidth()*textScale, level2.getHeight()*textScale);
+        tableLevels.row();
 
-        table.left().top();
-        stage.addActor(table);
+        tableLevels.left().top();
+        backTable.left().top();
+        stage.addActor(tableLevels);
+        stage.addActor(backTable);
+
 
         // Hook up the buttons
-        // Level 1 button
+        // Back button
         buttons.get(0).addListener( new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 if (buttons.get(0).isChecked()) {
+                    buttonState = EXIT_MAIN;
+                }
+            };
+        } );
+        // Level 1 button
+        buttons.get(1).addListener( new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                if (buttons.get(1).isChecked()) {
                     buttonState = EXIT_1;
                 }
             };
@@ -276,7 +309,7 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
      */
     public void reset() {
         populateMenu();
-        pressState = 0;
+        buttonState = -1;
     }
 
     /**
@@ -332,6 +365,7 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
 
             // We are are ready, notify our listener
             if (buttonState > -1 && listener != null) {
+                System.out.println("exit from level select");
                 listener.exitScreen(this, buttonState);
             }
         }

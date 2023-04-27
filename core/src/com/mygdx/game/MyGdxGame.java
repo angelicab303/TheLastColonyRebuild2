@@ -3,6 +3,7 @@ package com.mygdx.game;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.GL20;
 import com.mygdx.game.ScreenModes.LevelSelectMode;
 import com.mygdx.game.ScreenModes.LoadingMode;
 import com.mygdx.game.ScreenModes.MainMenuMode;
@@ -117,6 +118,8 @@ public class MyGdxGame extends Game implements ScreenListener {
 	 * @param exitCode The state of the screen upon exit
 	 */
 	public void exitScreen(Screen screen, int exitCode) {
+		Gdx.gl20.glClearColor(0, 0, 0, 1);
+		Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		if (screen == loading) {
 			directory = loading.getAssets();
 			// gather assets for game level
@@ -144,23 +147,28 @@ public class MyGdxGame extends Game implements ScreenListener {
 		}
 		else if (screen == levelSelect){
 			// Need exit codes for level select
-			if (exitCode == levelSelect.EXIT_1){
+			if (exitCode == levelSelect.EXIT_MAIN){
+				System.out.println("main menu repopulate from exit");
+				mainMenu.reset();
+				setScreen(mainMenu);
+			}
+			else if (exitCode == levelSelect.EXIT_1){
 				controllers[0].reset();
 				setScreen(controllers[0]);
 			}
 		}
-		else if (exitCode == WorldController.EXIT_NEXT) {
-			current = (current+1) % controllers.length;
-			controllers[current].reset();
-			setScreen(controllers[current]);
-		} else if (exitCode == WorldController.EXIT_PREV) {
-			current = (current+controllers.length-1) % controllers.length;
-			controllers[current].reset();
-			setScreen(controllers[current]);
-		} else if (exitCode == WorldController.EXIT_QUIT) {
-			// We quit the main application
-			Gdx.app.exit();
-		}
+//		else if (exitCode == WorldController.EXIT_NEXT) {
+//			current = (current+1) % controllers.length;
+//			controllers[current].reset();
+//			setScreen(controllers[current]);
+//		} else if (exitCode == WorldController.EXIT_PREV) {
+//			current = (current+controllers.length-1) % controllers.length;
+//			controllers[current].reset();
+//			setScreen(controllers[current]);
+//		} else if (exitCode == WorldController.EXIT_QUIT) {
+//			// We quit the main application
+//			Gdx.app.exit();
+//		}
 	}
 
 }
