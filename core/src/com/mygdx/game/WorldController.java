@@ -571,6 +571,7 @@ public abstract class WorldController implements Screen {
 	 * @param dt	Number of seconds since last animation frame
 	 */
 	public void draw(float dt) {
+		System.out.println("Started Drawing");
 		canvas.clear();
 
 		if (isActive())
@@ -580,6 +581,7 @@ public abstract class WorldController implements Screen {
 		else {
 			canvas.begin();
 		}
+		System.out.println("Started canvas");
 		canvas.draw(backgroundTexture, Color.BROWN, 0, 0, canvas.getWidth(), canvas.getHeight());
 		for(Obstacle obj : objects) {
 			obj.draw(canvas);
@@ -591,6 +593,8 @@ public abstract class WorldController implements Screen {
 		//drawBar();
 		canvas.end();
 
+
+		System.out.println("Finished drawing objects");
 
 		canvas.renderLights();
 
@@ -665,6 +669,7 @@ public abstract class WorldController implements Screen {
 
 			canvas.end();
 		}
+		System.out.println("Finished first draw");
 	}
 
 	/**

@@ -209,6 +209,7 @@ public class GameplayController extends WorldController {
 	private boolean pausing = false;
 	private boolean unpausing = false;
 	private boolean paused = false;
+	private int curLevel = 0;
 
 	/**
 	 * Creates and initialize a new instance of the platformer game
@@ -382,7 +383,185 @@ public class GameplayController extends WorldController {
 		canvas.createLights(world);
 		setComplete(false);
 		setFailure(false);
-		populateLevel();
+		System.out.println(1);
+		populateLevel(curLevel);
+		System.out.println(2);
+	}
+
+	/**
+	 * Resets the status of the game so that we can play again.
+	 *
+	 * This method disposes of the world and creates a new one.
+	 */
+	public void nextLevel() {
+		Vector2 gravity = new Vector2(world.getGravity());
+
+		for (Obstacle obj : objects) {
+			obj.deactivatePhysics(world);
+		}
+		enemyControllers.clear();
+		survivorControllers.clear();
+		objects.clear();
+		addQueue.clear();
+		canvas.disposeLights();
+		world.dispose();
+
+		world = new World(gravity, false);
+		collisionController.setContactListener(world);
+		canvas.createLights(world);
+		setComplete(false);
+		setFailure(false);
+
+		populateLevel(curLevel + 1);
+		curLevel++;
+	}
+
+	private void populateLevel(int lvl) {
+		// Populate the level using the JSON Reader
+
+		staticsAndPlayer = new Array<Obstacle>();
+
+		// *************************** STATIC OBSTACLES ***************************
+		int[] startingBox = { 6, 4 };
+
+		// Arrays used to find tiles to place smog at
+		boolean[][] tiles = new boolean[canvas.getWidth() / tileSize][canvas.getHeight() / tileSize];
+		boolean[][] smogLocations = new boolean[canvas.getWidth() / smogTileSize][canvas.getHeight() / smogTileSize];
+
+		// Testing tiles array:
+		// System.out.println("Canvas width: " + canvas.getWidth() + "\tTile Size: " +
+		// tileSize + "\tNumTiles: " + canvas.getWidth() / tileSize);
+		// System.out.println("First element of tiles: " + tiles[0][0]);
+
+		// Here we will instantiate the objects in the level using the JSONLevelReader.
+		JSONLevelReader reader = new JSONLevelReader(directory, bounds, world, input,
+				objects, SCALE, tileGrid, tileSize, tileOffset, smogTileSize, smogTileOffset,
+				playerDirectionTextures, enemyDirectionTextures, enemyTextureIdle,
+				survivorITexture, displayFontInteract, fHeartTexture, player, weapon);
+
+
+		// System.out.println("Canvas width: " + canvas.getWidth() + "\tTile Size: " +
+		// tileSize + "\tNumTiles: " + canvas.getWidth() / tileSize);
+		// System.out.println("First element of tiles: " + tiles[0][0]);
+
+		// Setting the size of the tiles
+		Shadow.setSize(32f);
+
+		objects = reader.getObjects();
+		 caravan = reader.getCaravan();
+		 player = reader.getPlayer();
+		 weapon = reader.getWeapon();
+		 survivorArr = reader.getSurvivors();
+		 enemyArr = reader.getEnemies();
+		 survivorControllers = reader.getSurvivorControllers();
+		 enemyControllers = reader.getEnemyControllers();
+
+		// *************************** CARAVAN, PLAYER, AND WEAPON ***************************
+		// Instantiate the caravan:
+//		caravan = new Caravan(caravanLocation[0] * tileSize + tileOffset, caravanLocation[1] * tileSize + tileOffset,
+//				5, caravanTexture, survivorITexture, SCALE * 2, displayFontInteract);
+//		addObject(caravan);
+//		caravan.activatePhysics(world);
+
+		// Instantiate the player:
+//		player = new Player(playerLocation[0] * tileSize + tileOffset, playerLocation[1] * tileSize + tileOffset, playerTextureUp, playerTextureDown, playerTextureRight, playerTextureLeft, playerTextureIdle, input, SCALE);
+		if (isInvincible) {
+			player.setHealth(10000);
+		}
+//		addObject(player);
+//		player.activatePhysics(world);
+//		player.setAwake(true);
+
+		// Instantiate the weapon:
+//		weapon = new Weapon(player.getPosition().x, player.getPosition().y);
+
+		// Gives ammo in debug mode
+		if (isDebug()) {
+			weapon.setNumAmmo(1000);
+		}
+
+		// TO DO: update visuals for purified smog
+		purifiedAir = new PurifiedQueue(pureAirTexture, world, SCALE);
+		toxicAir = new ToxicQueue(toxicAirTexture, world, SCALE);
+
+		// *************************** SMOG OBSTACLES ***************************
+
+		// Starting Area:
+//		for (int i = playerLocation[0] - startingBox[0]; i < playerLocation[0] + startingBox[0]; i++) {
+//			for (int j = playerLocation[1] - startingBox[1]; j < playerLocation[1] + startingBox[1]; j++) {
+//				tiles[i][j] = true;
+//			}
+//		}
+
+		// Instantiate the smog array:
+		smogArr = new Array<Smog>();
+		// Determine where the smog is and log it in smogLocations:
+		for (int i = 0; i < tiles.length; i++) {
+			for (int j = 0; j < tiles[0].length; j++) {
+				if (!tiles[i][j]) {
+					smogLocations[2 * i][2 * j] = true;
+					smogLocations[2 * i + 1][2 * j] = true;
+					smogLocations[2 * i][2 * j + 1] = true;
+					smogLocations[2 * i + 1][2 * j + 1] = true;
+				}
+			}
+		}
+
+		// Instantiate smog at tile locations with primary and secondary grid offsets:
+		Smog smogT;
+		Smog smogTO; // Smog Temp Offset
+		// For categories and masking:
+		for (int i = 0; i < smogLocations.length; i++) {
+			for (int j = 0; j < smogLocations[0].length; j++) {
+				if (smogLocations[i][j]) {
+					// Primary Grid
+					// Later get data from json file
+					float maxFrame = 4;
+					float minFrame = 0;
+					float frameNum = (float) (Math.random() * (maxFrame - minFrame + 1) + minFrame);
+					smogT = new Smog(i * smogTileSize + smogTileOffset, j * smogTileSize + smogTileOffset, smogTexture, frameNum,
+							SCALE);
+					smogT.setAwake(true);
+					smogT.setBodyType(BodyDef.BodyType.StaticBody);
+					smogArr.add(smogT);
+					addObject(smogT);
+					smogT.activatePhysics(world);
+					// Secondary Grid
+					frameNum = (float) (Math.random() * (maxFrame - minFrame + 1) + minFrame);
+					smogTO = new Smog(i * smogTileSize + smogTileSize, j * smogTileSize + smogTileSize, smogTexture, frameNum,
+							SCALE);
+					smogTO.setAwake(true);
+					smogTO.setBodyType(BodyDef.BodyType.StaticBody);
+					smogArr.add(smogTO);
+					addObject(smogTO);
+					smogTO.activatePhysics(world);
+				}
+			}
+		}
+		System.out.println("Finished smog instantiation");
+
+		// AirBar Creation
+		// float barX = player.getX() - (canvas.getWidth()*cameraZoom)/2.0f + (30.0f *
+		// cameraZoom);
+		// float barY = player.getY() + (canvas.getHeight()*cameraZoom)/2.0f - (30.0f *
+		// cameraZoom);
+		airBar = new AirBar(airBarTexture, weapon.getMaxNumAmmo(), weapon.getNumAmmo(), canvas);
+
+		// Hearts
+		int numLives = player.getHealth();
+		heartArr = new Array<Heart>(numLives);
+		float heartX = canvas.camera.position.x + (canvas.getWidth() * cameraZoom) / 2.0f - (30.0f * cameraZoom);
+		float heartY = canvas.camera.position.y + (canvas.getHeight() * cameraZoom) / 2.0f - (30.0f * cameraZoom);
+		float spacing = 0.0f;
+
+		for (int i = 0; i < numLives; i++) {
+			if (i > 0) {
+				spacing += 13.0f;
+			}
+			Heart tempHeart = new Heart(fHeartTexture, heartX, heartY, spacing);
+			heartArr.add(tempHeart);
+		}
+		System.out.println("Finished Populating Level");
 	}
 
 	/**
@@ -536,13 +715,11 @@ public class GameplayController extends WorldController {
 		// System.out.println("First element of tiles: " + tiles[0][0]);
 
 		// Here we will instantiate the objects in the level using the JSONLevelReader.
-		// JSONLevelReader reader = new JSONLevelReader(directory, bounds, world, input,
-		// objects, SCALE, tileGrid, tileSize, tileOffset, smogTileSize, smogTileOffset,
-		// playerDirectionTextures, enemyDirectionTextures, enemyTextureIdle,
-		// survivorITexture, displayFontInteract, fHeartTexture, player, weapon);
+		 JSONLevelReader reader = new JSONLevelReader(directory, bounds, world, input,
+				 objects, SCALE, tileGrid, tileSize, tileOffset, smogTileSize, smogTileOffset,
+				 playerDirectionTextures, enemyDirectionTextures, enemyTextureIdle,
+				 survivorITexture, displayFontInteract, fHeartTexture, player, weapon);
 
-		// Put this back in assets.json
-		// "tiles:tileset": "tiles/LastColonyTilesetCorrect.json",
 
 		// System.out.println("Canvas width: " + canvas.getWidth() + "\tTile Size: " +
 		// tileSize + "\tNumTiles: " + canvas.getWidth() / tileSize);

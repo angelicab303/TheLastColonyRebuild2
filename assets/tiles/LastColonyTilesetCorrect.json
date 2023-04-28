@@ -32,139 +32,139 @@
         }, 
         {
          "id":3,
-         "image":"3a_MaskEnemy.png",
+         "image":"3a_maskEnemy.png",
          "imageheight":32,
          "imagewidth":32
         }, 
         {
          "id":4,
-         "image":"3b_PlantEnemy.png",
+         "image":"3b_plantEnemy.png",
          "imageheight":53,
          "imagewidth":32
         }, 
         {
          "id":5,
-         "image":"4a_Grass1.png",
+         "image":"4a_grass1.png",
          "imageheight":32,
          "imagewidth":32
         }, 
         {
          "id":6,
-         "image":"4b_Rocks.png",
+         "image":"4b_rocks.png",
          "imageheight":32,
          "imagewidth":32
         }, 
         {
          "id":7,
-         "image":"4c_Dirt1.png",
+         "image":"4c_dirt1.png",
          "imageheight":32,
          "imagewidth":32
         }, 
         {
          "id":8,
-         "image":"4c_Dirt2.png",
+         "image":"4c_dirt2.png",
          "imageheight":32,
          "imagewidth":32
         }, 
         {
          "id":9,
-         "image":"4d_Brick1.png",
+         "image":"4d_brick1.png",
          "imageheight":32,
          "imagewidth":32
         }, 
         {
          "id":10,
-         "image":"4d_Brick2.png",
+         "image":"4d_brick2.png",
          "imageheight":32,
          "imagewidth":32
         }, 
         {
          "id":11,
-         "image":"4d_Brick3.png",
+         "image":"4d_brick3.png",
          "imageheight":32,
          "imagewidth":32
         }, 
         {
          "id":12,
-         "image":"4e_MutatedFloor.png",
+         "image":"4e_mutatedFloor.png",
          "imageheight":32,
          "imagewidth":32
         }, 
         {
          "id":13,
-         "image":"5a_Brick1.png",
+         "image":"5a_brick1.png",
          "imageheight":64,
          "imagewidth":32
         }, 
         {
          "id":14,
-         "image":"5a_Brick2.png",
+         "image":"5a_brick2.png",
          "imageheight":64,
          "imagewidth":32
         }, 
         {
          "id":15,
-         "image":"5a_Brick3.png",
+         "image":"5a_brick3.png",
          "imageheight":64,
          "imagewidth":32
         }, 
         {
          "id":16,
-         "image":"5a_Brick4.png",
+         "image":"5a_brick4.png",
          "imageheight":64,
          "imagewidth":32
         }, 
         {
          "id":17,
-         "image":"5a_Brick5.png",
+         "image":"5a_brick5.png",
          "imageheight":32,
          "imagewidth":32
         }, 
         {
          "id":18,
-         "image":"5b_Steel1.png",
+         "image":"5b_steel1.png",
          "imageheight":32,
          "imagewidth":64
         }, 
         {
          "id":19,
-         "image":"5b_Steel2.png",
+         "image":"5b_steel2.png",
          "imageheight":32,
          "imagewidth":64
         }, 
         {
          "id":20,
-         "image":"5b_Steel3.png",
+         "image":"5b_steel3.png",
          "imageheight":32,
          "imagewidth":64
         }, 
         {
          "id":21,
-         "image":"5b_Steel4.png",
+         "image":"5b_steel4.png",
          "imageheight":32,
          "imagewidth":64
         }, 
         {
          "id":22,
-         "image":"5c_BorderSmog.png",
+         "image":"5c_borderSmog.png",
          "imageheight":35,
          "imagewidth":35
         }, 
         {
          "id":23,
-         "image":"6a_MediumTree.png",
+         "image":"6a_mediumTree.png",
          "imageheight":38,
          "imagewidth":32
         }, 
         {
          "id":24,
-         "image":"6b_TallTree.png",
+         "image":"6b_tallTree.png",
          "imageheight":44,
          "imagewidth":32
         }, 
         {
          "id":25,
-         "image":"6c_ShortTree.png",
+         "image":"6c_shortTree.png",
          "imageheight":32,
          "imagewidth":32
         }],

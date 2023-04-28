@@ -223,6 +223,8 @@ public class JSONLevelReader {
                 }
             }
 
+            System.out.println("Finished loading JSON Level");
+
             // Close the map reader
             mapReader.close();
         } catch (Exception e) {
@@ -280,11 +282,18 @@ public class JSONLevelReader {
     }
 
     public TextureRegion getTextureRegionKey(int textReg) {
-        return new TextureRegion(directory.getEntry("tiles:" + tileIDs.get(textReg).getString("image"), Texture.class));
+        String textureName = tileIDs.get(textReg).getString("image");
+//        System.out.println(textureName);
+        return new TextureRegion(directory.getEntry("tiles:" + textureName.substring(0, textureName.length() - 4), Texture.class));
     }
 
     public Texture getTextureKey(int textReg) {
-        return directory.getEntry("tiles:" + tileIDs.get(textReg).getString("image"), Texture.class);
+        String textureName = tileIDs.get(textReg).getString("image");
+        return directory.getEntry("tiles:" + textureName.substring(0, textureName.length() - 4), Texture.class);
+    }
+
+    public PooledList<Obstacle> getObjects() {
+        return objects;
     }
 
     public void createCaravan(float x, float y, float scale) {
@@ -306,6 +315,7 @@ public class JSONLevelReader {
 
         // Instantiate the weapon:
         weapon = new Weapon(player.getPosition().x, player.getPosition().y);
+        player.attachLightToPlayer(weapon.getAbsorbSensor());
     }
 
     public Player getPlayer() {
@@ -382,6 +392,10 @@ public class JSONLevelReader {
     }
 
     public void createSmog(float x, float y, int id, float scale) {
+
+    }
+
+    public void dispose(){
 
     }
 
