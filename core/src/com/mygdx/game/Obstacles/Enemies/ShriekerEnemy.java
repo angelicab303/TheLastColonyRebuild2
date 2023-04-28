@@ -6,6 +6,7 @@ import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.mygdx.game.GameCanvas;
 import com.mygdx.game.Obstacles.Enemies.Enemy;
+import util.FilmStrip;
 
 public class ShriekerEnemy extends Enemy {
     // Constants
@@ -34,25 +35,49 @@ public class ShriekerEnemy extends Enemy {
     private int postShriekTime = 0;
     /** Time shrieker must wait to wake after shrieking */
     private float POST_SHRIEK_COOLDOWN = 1000;
+    /** The number of animation frames in our filmstrip */
+    private static final int   NUM_ANIM_FRAMES = 9;
+    /** The textures for the enemy. */
+    protected Texture textureIdle;
+    protected Texture textureAlert;
+    protected Texture textureShriek;
+    /** Current texture to be used for the enemy */
+    protected Texture currentTexture;
+    /** Filmstrip for the enemy */
+    protected FilmStrip animatorIdle;
+    protected FilmStrip animatorAlert;
+    protected FilmStrip animatorShriek;
+    protected FilmStrip currentAnimator;
 
     /**
      * Initialize a shrieker enemy: enemy that alerts other enemies to player location.
      *
      * @param x the x-coordinate of this enemy
      * @param y the y-coordinate of this enemy
-     * @param up the texture used for this enemy
-     * @param down the texture used for this enemy
-     * @param right the texture used for this enemy
-     * @param left the texture used for this enemy
+     * @param alert the texture used for this enemy
+     * @param shriek the texture used for this enemy
      * @param idle the texture used for this enemy
      * @param scale the scale used to draw for this enemy
      */
-    public ShriekerEnemy(float x, float y, Texture up, Texture down, Texture right, Texture left, Texture idle, float scale){
-        super(x, y, up, down, right, left, idle, scale);
+    public ShriekerEnemy(float x, float y, Texture alert, Texture shriek, Texture idle, float scale){
+        super(x, y, idle, scale);
         isShrieking = false;
         canShriek = false;
         justShrieked = false;
         canWake = true;
+
+        textureAlert = alert;
+        textureShriek = shriek;
+        textureIdle = idle;
+        currentTexture = textureIdle;
+
+        animatorAlert = new FilmStrip(textureAlert,1,NUM_ANIM_FRAMES,NUM_ANIM_FRAMES);
+        animatorShriek = new FilmStrip(textureShriek,1,NUM_ANIM_FRAMES,NUM_ANIM_FRAMES);
+        animatorIdle = new FilmStrip(textureIdle,1,NUM_ANIM_FRAMES,NUM_ANIM_FRAMES);
+        currentAnimator = animatorIdle;
+        aframe = 0.0f;
+
+
 
     }
 
@@ -111,6 +136,20 @@ public class ShriekerEnemy extends Enemy {
      */
     public boolean canWake(){
         return canWake;
+    }
+
+    /**
+     * Updates the animation state of the Shrieker.
+     *
+     */
+    public void updateAnimator(){
+        if (isWaking){
+            currentAnimator = animatorAlert;
+        }
+        else if (isShrieking){
+            currentAnimator = animatorShriek;
+        }
+        else currentAnimator = animatorIdle;
     }
 
     /**
@@ -186,6 +225,9 @@ public class ShriekerEnemy extends Enemy {
             // updateDirection(hVelocity, vVelocity);
         }
 
+        // Update animator
+        updateAnimator();
+
         // Increase animation frame
         aframe += ANIMATION_SPEED;
 
@@ -224,22 +266,32 @@ public class ShriekerEnemy extends Enemy {
         {
             canvas.draw(currentAnimator, Color.CLEAR, origin.x, origin.y, body.getWorldCenter().x*drawScale.x - currentAnimator.getRegionWidth()*scale/2, body.getWorldCenter().y*drawScale.y- currentAnimator.getRegionHeight()*scale/2, 0.0f, scale, scale);
         }
-        else if (isShrieking) {
-            canvas.draw(currentAnimator, Color.RED, origin.x, origin.y, body.getWorldCenter().x * drawScale.x - currentAnimator.getRegionWidth() * getScale() / 2, body.getWorldCenter().y * drawScale.y - currentAnimator.getRegionHeight() * getScale() / 2, 0.0f, getScale(), getScale());
-        }
         else if (isStunned()){
             canvas.draw(currentAnimator, Color.PINK, origin.x, origin.y, body.getWorldCenter().x * drawScale.x - currentAnimator.getRegionWidth() * getScale() / 2, body.getWorldCenter().y * drawScale.y - currentAnimator.getRegionHeight() * getScale() / 2, 0.0f, getScale(), getScale());
-        }
-        else if (isWaking){
-            canvas.draw(currentAnimator, Color.ORANGE, origin.x, origin.y, body.getWorldCenter().x * drawScale.x - currentAnimator.getRegionWidth() * getScale() / 2, body.getWorldCenter().y * drawScale.y - currentAnimator.getRegionHeight() * getScale() / 2, 0.0f, getScale(), getScale());
         }
         else if (justShrieked){
             canvas.draw(currentAnimator, Color.GRAY, origin.x, origin.y, body.getWorldCenter().x * drawScale.x - currentAnimator.getRegionWidth() * getScale() / 2, body.getWorldCenter().y * drawScale.y - currentAnimator.getRegionHeight() * getScale() / 2, 0.0f, getScale(), getScale());
 
         }
-        else{
-            canvas.draw(currentAnimator, Color.BLUE, origin.x, origin.y, body.getWorldCenter().x * drawScale.x - currentAnimator.getRegionWidth() * getScale() / 2, body.getWorldCenter().y * drawScale.y - currentAnimator.getRegionHeight() * getScale() / 2, 0.0f, getScale(), getScale());
+        else {
+            canvas.draw(currentAnimator, Color.WHITE, origin.x, origin.y, body.getWorldCenter().x*drawScale.x - currentAnimator.getRegionWidth()*scale/2, body.getWorldCenter().y*drawScale.y- currentAnimator.getRegionHeight()*scale/2, 0.0f, scale, scale);
         }
+//        else if (isShrieking) {
+//            canvas.draw(currentAnimator, Color.RED, origin.x, origin.y, body.getWorldCenter().x * drawScale.x - currentAnimator.getRegionWidth() * getScale() / 2, body.getWorldCenter().y * drawScale.y - currentAnimator.getRegionHeight() * getScale() / 2, 0.0f, getScale(), getScale());
+//        }
+//        else if (isStunned()){
+//            canvas.draw(currentAnimator, Color.PINK, origin.x, origin.y, body.getWorldCenter().x * drawScale.x - currentAnimator.getRegionWidth() * getScale() / 2, body.getWorldCenter().y * drawScale.y - currentAnimator.getRegionHeight() * getScale() / 2, 0.0f, getScale(), getScale());
+//        }
+//        else if (isWaking){
+//            canvas.draw(currentAnimator, Color.ORANGE, origin.x, origin.y, body.getWorldCenter().x * drawScale.x - currentAnimator.getRegionWidth() * getScale() / 2, body.getWorldCenter().y * drawScale.y - currentAnimator.getRegionHeight() * getScale() / 2, 0.0f, getScale(), getScale());
+//        }
+//        else if (justShrieked){
+//            canvas.draw(currentAnimator, Color.GRAY, origin.x, origin.y, body.getWorldCenter().x * drawScale.x - currentAnimator.getRegionWidth() * getScale() / 2, body.getWorldCenter().y * drawScale.y - currentAnimator.getRegionHeight() * getScale() / 2, 0.0f, getScale(), getScale());
+//
+//        }
+//        else{
+//            canvas.draw(currentAnimator, Color.BLUE, origin.x, origin.y, body.getWorldCenter().x * drawScale.x - currentAnimator.getRegionWidth() * getScale() / 2, body.getWorldCenter().y * drawScale.y - currentAnimator.getRegionHeight() * getScale() / 2, 0.0f, getScale(), getScale());
+//        }
     }
     @Override
     public void drawDebug(GameCanvas canvas) {

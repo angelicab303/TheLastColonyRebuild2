@@ -106,7 +106,9 @@ public class GameplayController extends WorldController{
 	/** Texture asset for the slashed heart texture */
 	private Texture sHeartTexture;
 	/** Texture for shrieker enemy */
-	private Texture shriekerTexture;
+	private Texture shriekerIdle;
+	private Texture shriekerAlert;
+	private Texture shriekerShriek;
 	/** How zoomed in the camera is - for placing UI elements */
 	private float cameraZoom;
 
@@ -243,7 +245,9 @@ public class GameplayController extends WorldController{
 		enemyTextureRight = directory.getEntry("images:maskEnemyRight",Texture.class);
 		enemyTextureLeft = directory.getEntry("images:maskEnemyLeft",Texture.class);
 		enemyTextureIdle = directory.getEntry("images:maskEnemyIdle",Texture.class);
-		shriekerTexture = directory.getEntry("images:plantEnemy",Texture.class);
+		shriekerIdle = directory.getEntry("images:shriekerIdle",Texture.class);
+		shriekerAlert = directory.getEntry("images:shriekerAlert",Texture.class);
+		shriekerShriek = directory.getEntry("images:shriekerShriek",Texture.class);
 		survivorTexture = new TextureRegion(directory.getEntry("images:survivorSprite", Texture.class));
 		survivorITexture = directory.getEntry("images:sInteract", Texture.class);
 		cliffTexture = new TextureRegion(directory.getEntry("images:cliff3",Texture.class));
@@ -475,7 +479,7 @@ public class GameplayController extends WorldController{
 		// Shrieker enemies
 		int numShriekers = 1;
 		for (int i = 0; i < numShriekers; i++){
-			ShriekerEnemy shriekTemp = new ShriekerEnemy(player.getX() + 200, player.getY() - 50, enemyTextureUp, enemyTextureDown, enemyTextureRight, enemyTextureLeft, enemyTextureIdle, SCALE);
+			ShriekerEnemy shriekTemp = new ShriekerEnemy(player.getX() + 200, player.getY() - 50, shriekerAlert, shriekerShriek, shriekerIdle, SCALE);
 			enemyArr.add(shriekTemp);
 			shriekerArr.add(shriekTemp);
 			shriekTemp.activatePhysics(world);

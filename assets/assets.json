@@ -125,15 +125,19 @@
     "images:vineStraightHeadUp": "images/enemies/vineStraightHeadUp.png",
     "images:vineStraightHeadRight": "images/enemies/vineStraightHeadRight.png",
 
-    "images:vineCornerClosedLeftDown": "images/Enemies/vineCornerClosedLeftDown.png",
-    "images:vineCornerClosedLeftUp": "images/Enemies/vineCornerClosedLeftUp.png",
-    "images:vineCornerClosedRightDown": "images/Enemies/vineCornerClosedRightDown.png",
-    "images:vineCornerClosedRightUp": "images/Enemies/vineCornerClosedRightUp.png",
+    "images:vineCornerClosedLeftDown": "images/enemies/vineCornerClosedLeftDown.png",
+    "images:vineCornerClosedLeftUp": "images/enemies/vineCornerClosedLeftUp.png",
+    "images:vineCornerClosedRightDown": "images/enemies/vineCornerClosedRightDown.png",
+    "images:vineCornerClosedRightUp": "images/enemies/vineCornerClosedRightUp.png",
 
-    "images:vineStraightClosedDown": "images/Enemies/vineStraightClosedDown.png",
-    "images:vineStraightClosedLeft": "images/Enemies/vineStraightClosedLeft.png",
-    "images:vineStraightClosedUp": "images/Enemies/vineStraightClosedUp.png",
-    "images:vineStraightClosedRight": "images/Enemies/vineStraightClosedRight.png",
+    "images:vineStraightClosedDown": "images/enemies/vineStraightClosedDown.png",
+    "images:vineStraightClosedLeft": "images/enemies/vineStraightClosedLeft.png",
+    "images:vineStraightClosedUp": "images/enemies/vineStraightClosedUp.png",
+    "images:vineStraightClosedRight": "images/enemies/vineStraightClosedRight.png",
+
+    "images:shriekerIdle": "images/enemies/sunflowerIdle-Sheet.png",
+    "images:shriekerAlert": "images/enemies/sunflowerAlert-Sheet.png",
+    "images:shriekerShriek": "images/enemies/sunflowerShriek-Sheet.png",
 
     "tiles:0_caravan": "tiles/0_caravan.png",
     "tiles:1_player": "tiles/1_player.png",
