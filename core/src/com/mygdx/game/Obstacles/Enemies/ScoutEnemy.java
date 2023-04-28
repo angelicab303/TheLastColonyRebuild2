@@ -65,8 +65,8 @@ public class ScoutEnemy extends Enemy{
             aframe = ((int)currFrame % 2 == 0 ? 0 : 1);
             currentAnimator.setFrame((int)aframe);
             canvas.draw(currentAnimator, Color.WHITE,body.getWorldCenter().x*drawScale.x, body.getWorldCenter().y*drawScale.y,
-                    body.getWorldCenter().x*drawScale.x + (body.getWorldCenter().x*drawScale.x/ canvas.getWidth() * 80f),
-                    body.getWorldCenter().y*drawScale.y + (body.getWorldCenter().y*drawScale.y/ canvas.getHeight() * 50f),
+                    body.getWorldCenter().x/* *drawScale.x /*+ (body.getWorldCenter().x*drawScale.x/ canvas.getWidth() * 80f)*/,
+                    body.getWorldCenter().y/* *drawScale.y /*+ (body.getWorldCenter().y*drawScale.y/ canvas.getHeight() * 50f)*/,
                     0.0f, scale, scale);
         }
 

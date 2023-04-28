@@ -344,6 +344,17 @@ public class ScoutEnemyController extends com.mygdx.game.EnemyControllers.EnemyC
                 action = 4;
             }
         }
+        if(enemy.vines.isEmpty()) {
+            System.out.println("vine tile location: " + nextTile.getX() + ", " + nextTile.getY());
+            System.out.println("enemy tile location: " + ((int)(enemy.getX()/tileSize)) + ", " + ((int)(enemy.getY()/tileSize)));
+            System.out.println("enemy location: " + (enemy.getX() + ", " + (enemy.getY())));
+            System.out.println("enemy tile range should be X: [" + (((int)(enemy.getX()/tileSize)) * tileSize) + ", " + ((((int)(enemy.getX()/tileSize)) + 1) * tileSize + "]"));
+            System.out.println("enemy tile range should be Y: [" + (((int)(enemy.getY()/tileSize)) * tileSize) + ", " + ((((int)(enemy.getY()/tileSize)) + 1) * tileSize + "]"));
+            System.out.println("vine tile range should be X: [" + (nextTile.getX() * tileSize) + ", " + ((nextTile.getX() + 1) * tileSize) + "]");
+            System.out.println("vine tile range should be Y: [" + (nextTile.getY() * tileSize) + ", " + ((nextTile.getY() + 1) * tileSize) + "]");
+            System.out.println("vine location: " + (nextTile.getX() * tileSize + (tileSize / 2)) + ", " + (nextTile.getY() * tileSize + (tileSize / 2)));
+            System.out.println("---");
+        }
         if (!containsVine[(int) nextTile.getX()][(int) nextTile.getY()]) {
             enemy.addVineTile(nextTile.getX() * tileSize + (tileSize / 2), nextTile.getY() * tileSize + (tileSize / 2), action);
             containsVine[(int) nextTile.getX()][(int) nextTile.getY()] = true;
