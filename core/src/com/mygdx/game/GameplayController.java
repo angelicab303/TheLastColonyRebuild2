@@ -1460,6 +1460,22 @@ public class GameplayController extends WorldController{
 		{
 			// This will be handled by collisionController in the future
 			survivorArr.get(i).update(survivorControllers.get(i).getAction());
+			if (survivorArr.get(i).getX() < 20)
+			{
+				survivorArr.get(i).setPosition(20, survivorArr.get(i).getBody().getPosition().y);
+			}
+			if (survivorArr.get(i).getX() >= canvas.getWidth()-20)
+			{
+				survivorArr.get(i).setPosition(canvas.getWidth()-20, survivorArr.get(i).getBody().getPosition().y);
+			}
+			if (survivorArr.get(i).getY() < 20)
+			{
+				survivorArr.get(i).setPosition(survivorArr.get(i).getBody().getPosition().x, 20);
+			}
+			if (survivorArr.get(i).getY() >= canvas.getHeight()-20)
+			{
+				survivorArr.get(i).setPosition(survivorArr.get(i).getBody().getPosition().x, canvas.getHeight()-20);
+			}
 			survivorArr.get(i).update();
 			if(survivorArr.get(i).isInteractable() && input.didCollectSurvivor()) {
 				survivorArr.get(i).setInteractable(false);
