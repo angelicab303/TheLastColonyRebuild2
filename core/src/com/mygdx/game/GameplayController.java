@@ -383,9 +383,9 @@ public class GameplayController extends WorldController {
 		canvas.createLights(world);
 		setComplete(false);
 		setFailure(false);
-		System.out.println(1);
+//		System.out.println(1);
 		populateLevel(curLevel);
-		System.out.println(2);
+//		System.out.println(2);
 	}
 
 	/**
@@ -538,7 +538,7 @@ public class GameplayController extends WorldController {
 				}
 			}
 		}
-		System.out.println("Finished smog instantiation");
+//		System.out.println("Finished smog instantiation");
 
 		// AirBar Creation
 		// float barX = player.getX() - (canvas.getWidth()*cameraZoom)/2.0f + (30.0f *

@@ -60,7 +60,9 @@ public class JSONLevelReader {
 
     // Declare variables for entities that are stored in GameplayController and passed in
     private Caravan caravan;
+    private boolean didCreateCaravan = false;
     private Player player;
+    private boolean didCreatePlayer = false;
     private Weapon weapon;
     /** Survivor list **/
     private Array<Survivor> survivorArr;
@@ -255,7 +257,7 @@ public class JSONLevelReader {
     public void addObject(Obstacle obj) {
         assert inBounds(obj) : "Object is not in bounds";
         objects.add(obj);
-        //obj.activatePhysics(world);
+        obj.activatePhysics(world);
     }
 
     public void createObject(float x, float y, int id) {
@@ -297,9 +299,12 @@ public class JSONLevelReader {
     }
 
     public void createCaravan(float x, float y, float scale) {
+        if (didCreateCaravan) {
+            return;
+        }
         caravan = new Caravan(x * tileSize + tileOffset, y * tileSize + tileOffset, 5, getTextureRegionKey(0), survivorITexture, scale, displayFontInteract);
         addObject(caravan);
-        caravan.activatePhysics(world);
+//        caravan.activatePhysics(world);
     }
 
     public Caravan getCaravan() {
@@ -308,9 +313,12 @@ public class JSONLevelReader {
 
     public void createPlayer(float x, float y, float scale) {
         // Instantiate the player:
+        if (didCreatePlayer) {
+            return;
+        }
         player = new Player(x * tileSize + tileOffset, y * tileSize + tileOffset, playerDirectionTextures[0], playerDirectionTextures[1], playerDirectionTextures[2], playerDirectionTextures[3], playerDirectionTextures[4], input, scale);
         addObject(player);
-        player.activatePhysics(world);
+//        player.activatePhysics(world);
         player.setAwake(true);
 
         // Instantiate the weapon:
@@ -331,7 +339,7 @@ public class JSONLevelReader {
         // Instantiate a survivor:
         //Survivor survivorTemp = new Survivor(i, survivorLocations[i][0] * tileSize, survivorLocations[i][1] * tileSize, survivorTexture);
         survivorTemp = new Survivor(survivorArr.size, x * tileSize + tileOffset, y * tileSize + tileOffset, getTextureRegionKey(id), heart, displayFontInteract, scale);
-        survivorTemp.activatePhysics(world);
+//        survivorTemp.activatePhysics(world);
 
         survivorArr.add(survivorTemp);
         addObject(survivorTemp);
@@ -348,7 +356,7 @@ public class JSONLevelReader {
     public void createEnemy(float x, float y, int id, float scale) {
         Enemy enemyTemp;
         enemyTemp = new Enemy(x * tileSize + tileOffset, y * tileSize + tileOffset, enemyDirectionTextures[0], enemyDirectionTextures[1], enemyDirectionTextures[2], enemyDirectionTextures[3], enemyTextureIdle, scale);
-        enemyTemp.activatePhysics(world);
+//        enemyTemp.activatePhysics(world);
 
         enemyArr.add(enemyTemp);
         addObject(enemyTemp);
@@ -377,7 +385,7 @@ public class JSONLevelReader {
         //cliffTemp.setAwake(true);
         wallTemp.setBodyType(BodyDef.BodyType.StaticBody);
         addObject(wallTemp);
-        wallTemp.activatePhysics(world);
+//        wallTemp.activatePhysics(world);
 //        tiles[wallLocations[i][0]][wallLocations[i][1]] = true;
 //        tileGrid[wallLocations[i][0]][wallLocations[i][1]] = true;
     }
@@ -388,7 +396,7 @@ public class JSONLevelReader {
         //cliffTemp.setAwake(true);
         treeTemp.setBodyType(BodyDef.BodyType.StaticBody);
         addObject(treeTemp);
-        treeTemp.activatePhysics(world);
+//        treeTemp.activatePhysics(world);
     }
 
     public void createSmog(float x, float y, int id, float scale) {
