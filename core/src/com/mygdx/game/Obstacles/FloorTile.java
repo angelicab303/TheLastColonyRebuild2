@@ -19,6 +19,7 @@ public class FloorTile {
 
 
     public FloorTile(float x, float y, TextureRegion value, float scale) {
+        origin = new Vector2(0, 0);
         position = new Vector2(x, y);
         setTexture(value);
         position = new Vector2(x, y);

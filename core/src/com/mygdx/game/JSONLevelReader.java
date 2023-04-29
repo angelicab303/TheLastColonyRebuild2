@@ -228,7 +228,7 @@ public class JSONLevelReader {
                     int dataValue = layerData.getInt(j) - 1;
                     // Do something with the data value...
                     if (dataValue > 0) {
-                        createObject(j % width, j / (width - 1), dataValue);
+                        createObject(j % width, height - (j / width), dataValue);
                     }
                 }
             }
