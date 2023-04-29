@@ -4,6 +4,7 @@ import java.io.FileReader;
 import java.util.Objects;
 
 import assets.AssetDirectory;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -27,6 +28,8 @@ import util.PooledList;
 
 public class JSONLevelReader {
     private World world;
+    private int level;
+    private OrthographicCamera camera;
     private InputController input;
     private PooledList<Obstacle> objects;
     private float scale;
@@ -95,10 +98,12 @@ public class JSONLevelReader {
     // Texture Stuff
     JsonValue tileIDs;
 
-    public JSONLevelReader(AssetDirectory directory, Rectangle bounds, World world, InputController input, PooledList<Obstacle> objects, Array<FloorTile> floorArr, float scale, boolean[][] tileGrid, int tileSize, int tileOffset, int smogTileSize, int smogTileOffset, Texture[] playerDirectionTextures, Texture[] enemyDirectionTextures, Texture enemyTextureIdle, ToxicQueue toxicAir, Texture survivorITexture, BitmapFont displayFontInteractive, Texture heart, Player player, Weapon weapon) {
+    public JSONLevelReader(AssetDirectory directory, Rectangle bounds, World world, int level, OrthographicCamera camera, InputController input, PooledList<Obstacle> objects, Array<FloorTile> floorArr, float scale, boolean[][] tileGrid, int tileSize, int tileOffset, int smogTileSize, int smogTileOffset, Texture[] playerDirectionTextures, Texture[] enemyDirectionTextures, Texture enemyTextureIdle, ToxicQueue toxicAir, Texture survivorITexture, BitmapFont displayFontInteractive, Texture heart, Player player, Weapon weapon) {
         this.directory = directory;
         this.bounds = bounds;
         this.world = world;
+        this.level = level;
+        this.camera = camera;
         this.input = input;
         this.objects = objects;
         this.floorArr = floorArr;
@@ -120,7 +125,22 @@ public class JSONLevelReader {
         try {
             // Read the JSON file into a FileReader object
             FileReader tilesReader = new FileReader("assets/tiles/LastColonyTilesetCorrect.json");
-            FileReader mapReader = new FileReader("assets/levels/LastColonyAlphaCorrect.json");
+            String levelStr = "assets/levels/";
+            if (level == 0) {
+                levelStr += "LastColonyEasyLevel.json";
+            } else if (level == 1) {
+                levelStr += "LastColonyMediumLevel.json";
+            } else if (level == 2) {
+                levelStr += "LastColonyAlphaCorrect.json";
+            } else if (level == 3) {
+                levelStr += "LastColonySymmetricalMap.json";
+            } else if (level == 5) {
+                levelStr += "LastColonyApartmentLevel.json";
+            } else if (level == 6) {
+                levelStr += "LastColonyMAZELevel.json";
+            }
+
+            FileReader mapReader = new FileReader(levelStr);
 
             // Send the fileReader to a new JsonReader object
             JsonReader tilesJSONReader = new JsonReader();
@@ -196,6 +216,10 @@ public class JSONLevelReader {
             JsonValue layers = mapJSON.get("layers");
             width = layers.get(0).getInt("width");
             height = layers.get(0).getInt("height");
+            System.out.println("Width: " + width + "\t\tHeight: " + height);
+
+//            this.camera.setToOrtho(false, width * tileSize, height * tileSize);
+            this.tileGrid = new boolean[width][height];
 
             // Loop through each of the layers and first simply instantiate the caravan and player, in that order.
             float caravanX = 0;
@@ -210,15 +234,18 @@ public class JSONLevelReader {
                     // Do something with the data value...
                     if (dataValue == 0) {
                         caravanX = j % width;
-                        caravanY = j / (width - 1);
+                        caravanY = height - (j / width);
                     } else if (dataValue == 1) {
+//                        System.out.println("Found player");
                         playerX = j % width;
-                        playerY = j / (width - 1);
+                        playerY = height - (j / width);
                     }
                 }
             }
             createObject(caravanX, caravanY, 0);
             createObject(playerX, playerY, 1);
+            didCreateCaravan = true;
+            didCreatePlayer = true;
 
             // Loop through each of the layers and instantiate each object from the id
             for (int i = 0; i < layers.size; i++) {
@@ -316,6 +343,12 @@ public class JSONLevelReader {
     public PooledList<Obstacle> getObjects() {
         return objects;
     }
+    public boolean[][] getTileGrid() {
+        return tileGrid;
+    }
+    public OrthographicCamera getCamera() {
+        return camera;
+    }
 
     public void createCaravan(float x, float y, float scale) {
         if (didCreateCaravan) {
@@ -379,6 +412,7 @@ public class JSONLevelReader {
 
         enemyArr.add(enemyTemp);
         addObject(enemyTemp);
+//        System.out.println("Width: " + tileGrid.length + "\t\tHeight: " + tileGrid[0].length);
         enemyControllers.add(new FloatingEnemyController(tileGrid, tileSize, tileOffset, enemyTemp, player, shriekerArr, toxicAir));
     }
 
