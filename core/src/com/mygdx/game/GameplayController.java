@@ -440,8 +440,8 @@ public class GameplayController extends WorldController {
 		setComplete(false);
 		setFailure(false);
 
-		if (curLevel > maxLevels) {
-			curLevel = 0;
+		if (curLevel >= maxLevels-1) {
+			curLevel = -1;
 		}
 		populateLevel(curLevel + 1);
 		curLevel++;

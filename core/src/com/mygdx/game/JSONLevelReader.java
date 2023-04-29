@@ -134,9 +134,9 @@ public class JSONLevelReader {
                 levelStr += "LastColonyAlphaCorrect.json";
             } else if (level == 3) {
                 levelStr += "LastColonySymmetricalMap.json";
-            } else if (level == 5) {
+            } else if (level == 4) {
                 levelStr += "LastColonyApartmentLevel.json";
-            } else if (level == 6) {
+            } else if (level == 5) {
                 levelStr += "LastColonyMAZELevel.json";
             }
 
