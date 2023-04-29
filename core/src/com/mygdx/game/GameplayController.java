@@ -158,24 +158,6 @@ public class GameplayController extends WorldController {
 	private Sound fireSound;
 	private long fireId = -1;//
 
-	// *************************** Floor Textures ***************************
-	private TextureRegion grassTexture;
-	private TextureRegion dirtTexture;
-	private TextureRegion dirtMushroomTexture;
-	private TextureRegion rockTexture;
-	private TextureRegion brickFloorTexture;
-	private TextureRegion brickFloorCrackedTexture;
-	private TextureRegion brickFloorCrackedTopTexture;
-
-	private TextureRegion brickWallTexture;
-	private TextureRegion brickWallTopOpenTexture;
-	private TextureRegion brickWallSidesOpenTexture;
-	private TextureRegion brickWallCrackedTexture;
-	private TextureRegion brickWallTopTexture;
-	private TextureRegion borderSmogTexture;
-
-	private TextureRegion treeTallTexture;
-	private TextureRegion treeBallTexture;
 
 	/** The default sound volume */
 	private float volume;
@@ -476,10 +458,14 @@ public class GameplayController extends WorldController {
 		// tileSize + "\tNumTiles: " + canvas.getWidth() / tileSize);
 		// System.out.println("First element of tiles: " + tiles[0][0]);
 
+		// TO DO: update visuals for purified smog
+		purifiedAir = new PurifiedQueue(pureAirTexture, world, SCALE);
+		toxicAir = new ToxicQueue(toxicAirTexture, world, SCALE);
+
 		// Here we will instantiate the objects in the level using the JSONLevelReader.
 		JSONLevelReader reader = new JSONLevelReader(directory, bounds, world, input,
-				objects, SCALE, tileGrid, tileSize, tileOffset, smogTileSize, smogTileOffset,
-				playerDirectionTextures, enemyDirectionTextures, enemyTextureIdle,
+				objects, floorArr, SCALE, tileGrid, tileSize, tileOffset, smogTileSize, smogTileOffset,
+				playerDirectionTextures, enemyDirectionTextures, enemyTextureIdle, toxicAir,
 				survivorITexture, displayFontInteract, fHeartTexture, player, weapon);
 
 		// System.out.println("Canvas width: " + canvas.getWidth() + "\tTile Size: " +
@@ -526,10 +512,6 @@ public class GameplayController extends WorldController {
 		if (isDebug()) {
 			weapon.setNumAmmo(1000);
 		}
-
-		// TO DO: update visuals for purified smog
-		purifiedAir = new PurifiedQueue(pureAirTexture, world, SCALE);
-		toxicAir = new ToxicQueue(toxicAirTexture, world, SCALE);
 
 		// *************************** SMOG OBSTACLES ***************************
 
@@ -770,8 +752,8 @@ public class GameplayController extends WorldController {
 
 		// Here we will instantiate the objects in the level using the JSONLevelReader.
 		JSONLevelReader reader = new JSONLevelReader(directory, bounds, world, input,
-				objects, SCALE, tileGrid, tileSize, tileOffset, smogTileSize, smogTileOffset,
-				playerDirectionTextures, enemyDirectionTextures, enemyTextureIdle,
+				objects, floorArr, SCALE, tileGrid, tileSize, tileOffset, smogTileSize, smogTileOffset,
+				playerDirectionTextures, enemyDirectionTextures, enemyTextureIdle, toxicAir,
 				survivorITexture, displayFontInteract, fHeartTexture, player, weapon);
 
 		// System.out.println("Canvas width: " + canvas.getWidth() + "\tTile Size: " +
@@ -1015,65 +997,65 @@ public class GameplayController extends WorldController {
 		toxicAir = new ToxicQueue(toxicAirTexture, world, SCALE);
 
 		// Instantiate the enemies:
-		enemyArr = new Array<Enemy>();
-		// shriekerArr = new Array<ShriekerEnemy>();
-		// Shrieker enemies
-		int numShriekers = 1;
-		for (int i = 0; i < numShriekers; i++) {
-			ShriekerEnemy shriekTemp = new ShriekerEnemy(player.getX() + 200, player.getY() - 50, enemyTextureUp,
-					enemyTextureDown, enemyTextureRight, enemyTextureLeft, enemyTextureIdle, SCALE);
-			enemyArr.add(shriekTemp);
-			shriekerArr.add(shriekTemp);
-			shriekTemp.activatePhysics(world);
-			addObject(shriekTemp);
-			enemyControllers
-					.add(new ShriekerEnemyController(tileGrid, tileSize, tileOffset, shriekTemp, player, shriekerArr));
-		}
-		int numFloaters = 1;
-		for (int i = 0; i < numFloaters; i++) {
-			FloatingEnemy floatTemp = new FloatingEnemy(player.getX() - 230, player.getY() + 50, enemyTextureUp,
-					enemyTextureDown, enemyTextureRight, enemyTextureLeft, enemyTextureIdle, SCALE);
-			enemyArr.add(floatTemp);
-			floatTemp.activatePhysics(world);
-			addObject(floatTemp);
-			enemyControllers
-					.add(new FloatingEnemyController(tileGrid, tileSize, tileOffset, floatTemp, player, shriekerArr, toxicAir));
-		}
-
-		for (int i = 0; i < enemyLocations.length; i++) {
-			if (i % 2 == 0) {
-				FloatingEnemy enemyTemp = new FloatingEnemy(enemyLocations[i][0] * tileSize + tileOffset,
-						enemyLocations[i][1] * tileSize + tileOffset, enemyTextureUp, enemyTextureDown, enemyTextureRight,
-						enemyTextureLeft, enemyTextureIdle, SCALE);
-				enemyArr.add(enemyTemp);
-				enemyTemp.activatePhysics(world);
-				addObject(enemyTemp);
-				// enemyControllers.add(new ChaserEnemyController(tileGrid, tileSize,
-				// tileOffset, enemyTemp, player, shriekerArr));
-				enemyControllers
-						.add(new FloatingEnemyController(tileGrid, tileSize, tileOffset, enemyTemp, player, shriekerArr, toxicAir));
-			}
-			if (i % 2 == 1) {
-				ScoutEnemy enemyTemp = new ScoutEnemy(enemyLocations[i][0] * tileSize + tileOffset,
-						enemyLocations[i][1] * tileSize + tileOffset, enemyTextureUp, enemyTextureDown, enemyTextureRight,
-						enemyTextureLeft, enemyTextureIdle, vineTextures, SCALE, world);
-				enemyArr.add(enemyTemp);
-				enemyTemp.activatePhysics(world);
-				addObject(enemyTemp);
-
-				enemyControllers.add(new ScoutEnemyController(tileGrid, tileSize, tileOffset, enemyTemp, player, shriekerArr));
-			}
-		}
-		// Chaser enemies
-		int numChasers = 1;
-		for (int i = 0; i < numChasers; i++) {
-			Enemy chaserTemp = new Enemy(player.getX() + 200, player.getY() + 100, enemyTextureUp, enemyTextureDown,
-					enemyTextureRight, enemyTextureLeft, enemyTextureIdle, SCALE);
-			enemyArr.add(chaserTemp);
-			chaserTemp.activatePhysics(world);
-			addObject(chaserTemp);
-			enemyControllers.add(new ChaserEnemyController(tileGrid, tileSize, tileOffset, chaserTemp, player, shriekerArr));
-		}
+//		enemyArr = new Array<Enemy>();
+//		 shriekerArr = new Array<ShriekerEnemy>();
+//		// Shrieker enemies
+//		int numShriekers = 1;
+//		for (int i = 0; i < numShriekers; i++) {
+//			ShriekerEnemy shriekTemp = new ShriekerEnemy(player.getX() + 200, player.getY() - 50, enemyTextureUp,
+//					enemyTextureDown, enemyTextureRight, enemyTextureLeft, enemyTextureIdle, SCALE);
+//			enemyArr.add(shriekTemp);
+//			shriekerArr.add(shriekTemp);
+//			shriekTemp.activatePhysics(world);
+//			addObject(shriekTemp);
+//			enemyControllers
+//					.add(new ShriekerEnemyController(tileGrid, tileSize, tileOffset, shriekTemp, player, shriekerArr));
+//		}
+//		int numFloaters = 1;
+//		for (int i = 0; i < numFloaters; i++) {
+//			FloatingEnemy floatTemp = new FloatingEnemy(player.getX() - 230, player.getY() + 50, enemyTextureUp,
+//					enemyTextureDown, enemyTextureRight, enemyTextureLeft, enemyTextureIdle, SCALE);
+//			enemyArr.add(floatTemp);
+//			floatTemp.activatePhysics(world);
+//			addObject(floatTemp);
+//			enemyControllers
+//					.add(new FloatingEnemyController(tileGrid, tileSize, tileOffset, floatTemp, player, shriekerArr, toxicAir));
+//		}
+//
+//		for (int i = 0; i < enemyLocations.length; i++) {
+//			if (i % 2 == 0) {
+//				FloatingEnemy enemyTemp = new FloatingEnemy(enemyLocations[i][0] * tileSize + tileOffset,
+//						enemyLocations[i][1] * tileSize + tileOffset, enemyTextureUp, enemyTextureDown, enemyTextureRight,
+//						enemyTextureLeft, enemyTextureIdle, SCALE);
+//				enemyArr.add(enemyTemp);
+//				enemyTemp.activatePhysics(world);
+//				addObject(enemyTemp);
+//				// enemyControllers.add(new ChaserEnemyController(tileGrid, tileSize,
+//				// tileOffset, enemyTemp, player, shriekerArr));
+//				enemyControllers
+//						.add(new FloatingEnemyController(tileGrid, tileSize, tileOffset, enemyTemp, player, shriekerArr, toxicAir));
+//			}
+//			if (i % 2 == 1) {
+//				ScoutEnemy enemyTemp = new ScoutEnemy(enemyLocations[i][0] * tileSize + tileOffset,
+//						enemyLocations[i][1] * tileSize + tileOffset, enemyTextureUp, enemyTextureDown, enemyTextureRight,
+//						enemyTextureLeft, enemyTextureIdle, vineTextures, SCALE, world);
+//				enemyArr.add(enemyTemp);
+//				enemyTemp.activatePhysics(world);
+//				addObject(enemyTemp);
+//
+//				enemyControllers.add(new ScoutEnemyController(tileGrid, tileSize, tileOffset, enemyTemp, player, shriekerArr));
+//			}
+//		}
+//		// Chaser enemies
+//		int numChasers = 1;
+//		for (int i = 0; i < numChasers; i++) {
+//			Enemy chaserTemp = new Enemy(player.getX() + 200, player.getY() + 100, enemyTextureUp, enemyTextureDown,
+//					enemyTextureRight, enemyTextureLeft, enemyTextureIdle, SCALE);
+//			enemyArr.add(chaserTemp);
+//			chaserTemp.activatePhysics(world);
+//			addObject(chaserTemp);
+//			enemyControllers.add(new ChaserEnemyController(tileGrid, tileSize, tileOffset, chaserTemp, player, shriekerArr));
+//		}
 
 		// *************************** SURVIVORS ***************************
 		survivorArr = new Array<>();

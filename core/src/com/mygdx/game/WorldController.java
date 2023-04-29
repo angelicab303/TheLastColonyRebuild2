@@ -29,6 +29,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
+import com.mygdx.game.Obstacles.FloorTile;
 import com.mygdx.game.Obstacles.Player;
 import com.mygdx.game.Obstacles.PurifiedQueue;
 import com.mygdx.game.Obstacles.ToxicQueue;
@@ -159,6 +160,7 @@ public abstract class WorldController implements Screen {
 	protected GameCanvas canvas;
 	/** All the objects in the world. */
 	protected PooledList<Obstacle> objects = new PooledList<Obstacle>();
+	protected Array<FloorTile> floorArr = new Array<FloorTile>();
 	/** Queue for adding objects */
 	protected PooledList<Obstacle> addQueue = new PooledList<Obstacle>();
 	/**
@@ -591,7 +593,7 @@ public abstract class WorldController implements Screen {
 	 * @param dt Number of seconds since last animation frame
 	 */
 	public void draw(float dt) {
-		System.out.println("Started Drawing");
+//		System.out.println("Started Drawing");
 		canvas.clear();
 
 		if (isActive()) {
@@ -599,8 +601,12 @@ public abstract class WorldController implements Screen {
 		} else {
 			canvas.begin();
 		}
-		System.out.println("Started canvas");
+//		System.out.println("Started canvas");
 		canvas.draw(backgroundTexture, Color.BROWN, 0, 0, canvas.getWidth(), canvas.getHeight());
+
+		for (FloorTile flr : floorArr) {
+			flr.draw(canvas);
+		}
 		for (Obstacle obj : objects) {
 			obj.draw(canvas);
 		}
@@ -609,7 +615,7 @@ public abstract class WorldController implements Screen {
 		// drawBar();
 		canvas.end();
 
-		System.out.println("Finished drawing objects");
+//		System.out.println("Finished drawing objects");
 
 		canvas.renderLights();
 
@@ -687,7 +693,7 @@ public abstract class WorldController implements Screen {
 
 			canvas.end();
 		}
-		System.out.println("Finished first draw");
+//		System.out.println("Finished first draw");
 	}
 
 	/**

@@ -14,9 +14,13 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.Pool;
+import com.mygdx.game.EnemyControllers.FloatingEnemyController;
+import com.mygdx.game.EnemyControllers.ScoutEnemyController;
 import com.mygdx.game.Obstacles.*;
 import com.mygdx.game.Obstacles.Enemies.Enemy;
 import com.mygdx.game.EnemyControllers.EnemyController;
+import com.mygdx.game.Obstacles.Enemies.FloatingEnemy;
+import com.mygdx.game.Obstacles.Enemies.ScoutEnemy;
 import com.mygdx.game.Obstacles.Enemies.ShriekerEnemy;
 import obstacle.Obstacle;
 import util.PooledList;
@@ -46,6 +50,7 @@ public class JSONLevelReader {
     private int numBeforeFloors = 2 + numSurvivorIDs + numEnemyIDs;
     private int numFloorIDs = 8;
     private int[] floorIDs = new int[numFloorIDs];
+    private Array<FloorTile> floorArr = new Array<>();
     private int numWallIDs = 10;
     private int[] wallIDs = new int[numWallIDs];
     private Array<Obstacles> wallArr = new Array<Obstacles>();
@@ -76,12 +81,13 @@ public class JSONLevelReader {
     private Array<EnemyController> enemyControllers;
 
     // Declare variables for each entity that has a lot of instantiations
-    private Obstacles floorTemp;
+    private FloorTile floorTemp;
     private Obstacles wallTemp;
     private Obstacles treeTemp;
     private Texture[] playerDirectionTextures;
     private Texture[] enemyDirectionTextures;
     private Texture enemyTextureIdle;
+    private ToxicQueue toxicAir;
     private Texture survivorITexture;
     private BitmapFont displayFontInteract;
     private Texture heart;
@@ -89,12 +95,13 @@ public class JSONLevelReader {
     // Texture Stuff
     JsonValue tileIDs;
 
-    public JSONLevelReader(AssetDirectory directory, Rectangle bounds, World world, InputController input, PooledList<Obstacle> objects, float scale, boolean[][] tileGrid, int tileSize, int tileOffset, int smogTileSize, int smogTileOffset, Texture[] playerDirectionTextures, Texture[] enemyDirectionTextures, Texture enemyTextureIdle, Texture survivorITexture, BitmapFont displayFontInteractive, Texture heart, Player player, Weapon weapon) {
+    public JSONLevelReader(AssetDirectory directory, Rectangle bounds, World world, InputController input, PooledList<Obstacle> objects, Array<FloorTile> floorArr, float scale, boolean[][] tileGrid, int tileSize, int tileOffset, int smogTileSize, int smogTileOffset, Texture[] playerDirectionTextures, Texture[] enemyDirectionTextures, Texture enemyTextureIdle, ToxicQueue toxicAir, Texture survivorITexture, BitmapFont displayFontInteractive, Texture heart, Player player, Weapon weapon) {
         this.directory = directory;
         this.bounds = bounds;
         this.world = world;
         this.input = input;
         this.objects = objects;
+        this.floorArr = floorArr;
         this.scale = scale;
         this.tileGrid = tileGrid;
         this.tileSize = tileSize;
@@ -104,6 +111,7 @@ public class JSONLevelReader {
         this.playerDirectionTextures = playerDirectionTextures;
         this.enemyDirectionTextures = enemyDirectionTextures;
         this.enemyTextureIdle = enemyTextureIdle;
+        this.toxicAir = toxicAir;
         this.survivorITexture = survivorITexture;
         this.displayFontInteract = displayFontInteractive;
         this.heart = heart;
@@ -260,6 +268,17 @@ public class JSONLevelReader {
         obj.activatePhysics(world);
     }
 
+    /**
+     * Immediately adds the object to the physics world
+     *
+     * param obj The object to add
+     */
+    public void addFloor(FloorTile obj) {
+//        assert inBounds(obj) : "Object is not in bounds";
+        floorArr.add(obj);
+//        obj.activatePhysics(world);
+    }
+
     public void createObject(float x, float y, int id) {
         if (id == 0) {
             createCaravan(x, y, scale);
@@ -354,13 +373,13 @@ public class JSONLevelReader {
     }
 
     public void createEnemy(float x, float y, int id, float scale) {
-        Enemy enemyTemp;
-        enemyTemp = new Enemy(x * tileSize + tileOffset, y * tileSize + tileOffset, enemyDirectionTextures[0], enemyDirectionTextures[1], enemyDirectionTextures[2], enemyDirectionTextures[3], enemyTextureIdle, scale);
+        FloatingEnemy enemyTemp;
+        enemyTemp = new FloatingEnemy(x * tileSize + tileOffset, y * tileSize + tileOffset, enemyDirectionTextures[0], enemyDirectionTextures[1], enemyDirectionTextures[2], enemyDirectionTextures[3], enemyTextureIdle, scale);
 //        enemyTemp.activatePhysics(world);
 
         enemyArr.add(enemyTemp);
         addObject(enemyTemp);
-        enemyControllers.add(new EnemyController(tileGrid, tileSize, tileOffset, enemyTemp, player, shriekerArr));
+        enemyControllers.add(new FloatingEnemyController(tileGrid, tileSize, tileOffset, enemyTemp, player, shriekerArr, toxicAir));
     }
 
     public Array<Enemy> getEnemies() {
@@ -371,11 +390,11 @@ public class JSONLevelReader {
     }
 
     public void createFloor(float x, float y, int id, float scale) {
-        wallTemp = new Obstacles(x * tileSize + (tileSize / 2), y * tileSize + (tileSize / 2), getTextureRegionKey(id), scale);
-        wallArr.add(wallTemp);
+        floorTemp = new FloorTile(x * tileSize + (tileSize / 2), y * tileSize + (tileSize / 2), getTextureRegionKey(id), scale);
+        floorArr.add(floorTemp);
         //cliffTemp.setAwake(true);
-        wallTemp.setBodyType(BodyDef.BodyType.StaticBody);
-        addObject(wallTemp);
+//        floorTemp.setBodyType(BodyDef.BodyType.StaticBody);
+        addFloor(floorTemp);
 //        wallTemp.activatePhysics(world);
     }
 
