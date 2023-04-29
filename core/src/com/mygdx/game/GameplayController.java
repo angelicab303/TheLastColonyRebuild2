@@ -218,6 +218,7 @@ public class GameplayController extends WorldController {
 	private boolean unpausing = false;
 	private boolean paused = false;
 	private int curLevel = 0;
+	private int maxLevels = 6;
 	private int level;
 
 	/**
@@ -439,11 +440,14 @@ public class GameplayController extends WorldController {
 		setComplete(false);
 		setFailure(false);
 
+		if (curLevel > maxLevels) {
+			curLevel = 0;
+		}
 		populateLevel(curLevel + 1);
 		curLevel++;
 	}
 
-	private void populateLevel(int lvl) {
+	private void populateLevel(int level) {
 		// Populate the level using the JSON Reader
 
 		staticsAndPlayer = new Array<Obstacle>();
@@ -468,9 +472,9 @@ public class GameplayController extends WorldController {
 		Shadow.setSize(32f);
 
 //		canvas.setSize(32 * tileSize, 26 * tileSize);
-		System.out.println("Width: " + canvas.getWidth() / tileSize + "\t\tHeight: " + canvas.getHeight() / tileSize);
+//		System.out.println("Width: " + canvas.getWidth() + "\t\tHeight: " + canvas.getHeight());
 		// Here we will instantiate the objects in the level using the JSONLevelReader.
-		JSONLevelReader reader = new JSONLevelReader(directory, bounds, world, input,
+		JSONLevelReader reader = new JSONLevelReader(directory, bounds, world, level, canvas.camera, input,
 				objects, floorArr, SCALE, tileGrid, tileSize, tileOffset, smogTileSize, smogTileOffset,
 				playerDirectionTextures, enemyDirectionTextures, enemyTextureIdle, toxicAir,
 				survivorITexture, displayFontInteract, fHeartTexture, player, weapon);
@@ -482,6 +486,8 @@ public class GameplayController extends WorldController {
 
 
 		objects = reader.getObjects();
+		tileGrid = reader.getTileGrid();
+//		canvas.camera = reader.getCamera();
 		caravan = reader.getCaravan();
 		player = reader.getPlayer();
 		weapon = reader.getWeapon();
@@ -490,9 +496,7 @@ public class GameplayController extends WorldController {
 		survivorControllers = reader.getSurvivorControllers();
 		enemyControllers = reader.getEnemyControllers();
 
-
-		// *************************** CARAVAN, PLAYER, AND WEAPON
-		// ***************************
+		// *************************** CARAVAN, PLAYER, AND WEAPON ***************************
 		// Instantiate the caravan:
 		// caravan = new Caravan(caravanLocation[0] * tileSize + tileOffset,
 		// caravanLocation[1] * tileSize + tileOffset,
@@ -629,6 +633,11 @@ public class GameplayController extends WorldController {
 		// Handle resets
 		if (input.didReset()) {
 			reset();
+		}
+
+		// Handle NextLevel input
+		if (input.isNextLevel()) {
+			nextLevel();
 		}
 
 		return true;
