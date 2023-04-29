@@ -145,11 +145,17 @@ public class ShriekerEnemy extends Enemy {
     public void updateAnimator(){
         if (isWaking){
             currentAnimator = animatorAlert;
+            if (aframe > 3){
+                aframe -= aframe;
+            }
         }
         else if (isShrieking){
             currentAnimator = animatorShriek;
         }
         else currentAnimator = animatorIdle;
+        if (aframe >= NUM_ANIM_FRAMES) {
+            aframe -= NUM_ANIM_FRAMES;
+        }
     }
 
     /**
@@ -224,16 +230,14 @@ public class ShriekerEnemy extends Enemy {
         if (!isStunned()) {
             // updateDirection(hVelocity, vVelocity);
         }
+        // Increase animation frame
+        aframe += ANIMATION_SPEED;
 
         // Update animator
         updateAnimator();
 
-        // Increase animation frame
-        aframe += ANIMATION_SPEED;
 
-        if (aframe >= NUM_ANIM_FRAMES) {
-            aframe -= NUM_ANIM_FRAMES;
-        }
+
     }
     /**
      * Returns whether the shrieker is shrieking.
