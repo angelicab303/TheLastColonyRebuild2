@@ -8,19 +8,19 @@ import com.badlogic.gdx.physics.box2d.Filter;
 public interface GameObstacle {
 
     enum ObstacleType {
-        /** The Caravan **/
+        /** The Caravan */
         CARAVAN,
-        /** A obstacle **/
+        /** A obstacle */
         OBSTACLE,
-        /** A smog **/
+        /** A smog */
         SMOG,
-        /** A purified air **/
+        /** A purified air */
         PURIFIED_AIR,
         /** A toxic air */
         TOXIC_AIR,
-        /** The Player **/
+        /** The Player */
         PLAYER,
-        /** The Weapon **/
+        /** The Weapon */
         WEAPON,
         /** An enemy */
         ENEMY,
@@ -28,7 +28,7 @@ public interface GameObstacle {
         SURVIVOR
     }
 
-    /** Categories and Masks **/
+    /** Categories and Masks */
     final short CATEGORY_SMOG = 0x0001;  // 0000000000000001 in binary
     final short CATEGORY_PLAYER = 0x0002;
     final short CATEGORY_ENEMY = 0x0004;

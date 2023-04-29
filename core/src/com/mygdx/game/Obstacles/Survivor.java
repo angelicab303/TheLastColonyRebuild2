@@ -552,11 +552,9 @@ public class Survivor extends Shadow implements GameObstacle {
 
     @Override
     public void drawDebug(GameCanvas canvas) {
-        if (getBody() != null) {
-            super.drawDebug(canvas);
-            //canvas.drawPhysics(shape, Color.RED, getX(), getY(), getAngle(), drawScale.x, drawScale.y);
-            canvas.drawPhysics(sensorShape, Color.BLUE, getX(), getY(), getAngle(), drawScale.x, drawScale.y);
-        }
+        super.drawDebug(canvas);
+        //canvas.drawPhysics(shape, Color.RED, getX(), getY(), getAngle(), drawScale.x, drawScale.y);
+        canvas.drawPhysics(sensorShape, Color.BLUE, getX(), getY(), getAngle(), drawScale.x, drawScale.y);
     }
 
     @Override
