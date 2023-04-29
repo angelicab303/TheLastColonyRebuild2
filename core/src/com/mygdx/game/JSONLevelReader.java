@@ -342,7 +342,7 @@ public class JSONLevelReader {
 
         // Instantiate the weapon:
         weapon = new Weapon(player.getPosition().x, player.getPosition().y);
-        player.attachLightToPlayer(weapon.getAbsorbSensor());
+        //player.attachLightToPlayer(weapon.getAbsorbSensor());
     }
 
     public Player getPlayer() {
@@ -395,6 +395,9 @@ public class JSONLevelReader {
         //cliffTemp.setAwake(true);
 //        floorTemp.setBodyType(BodyDef.BodyType.StaticBody);
         addFloor(floorTemp);
+        if (id == 8){ //tile w/ mushroom
+            Lights.createMushroomLight(x,y);
+        }
 //        wallTemp.activatePhysics(world);
     }
 

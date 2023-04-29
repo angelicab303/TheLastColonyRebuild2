@@ -9,7 +9,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.mygdx.game.GameCanvas;
 import obstacle.BoxObstacle;
 
-public class Obstacles extends BoxObstacle implements GameObstacle {
+public class Obstacles extends Shadow implements GameObstacle {
     // Variables for this class
     /** The texture for the cliff. */
     // protected TextureRegion texture;
@@ -29,7 +29,7 @@ public class Obstacles extends BoxObstacle implements GameObstacle {
      * @param y The initial y-coordinate of the tree
      */
     public Obstacles(float x, float y, TextureRegion value, float scale) {
-        super(x, y, value.getRegionWidth() * scale, value.getRegionHeight() * scale);
+        super(x, y, value.getRegionWidth() * scale, value.getRegionHeight() * scale, ShadowShape.SQUARE);
         setTexture(value);
         setBodyType(BodyDef.BodyType.StaticBody);
         // setDimension(value.getRegionWidth()*scale, value.getRegionHeight()*scale);

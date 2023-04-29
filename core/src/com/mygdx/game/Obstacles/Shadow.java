@@ -39,15 +39,6 @@ public class Shadow extends SimpleObstacle {
         origin = new Vector2(0,(size-height)/2);
         geometry = null;
         this.shape = shape;
-
-        circleShape = new CircleShape();
-        boxShape = new PolygonShape();
-
-        circleFixture = new FixtureDef();
-        boxFixture = new FixtureDef();
-
-        circleFixture.shape = circleShape;
-        boxFixture.shape = boxShape;
     }
 
     /** Sets the default tile size, will be the diameter if circular or the side length if square

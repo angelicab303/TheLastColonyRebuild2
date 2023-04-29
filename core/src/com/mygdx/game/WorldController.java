@@ -607,6 +607,7 @@ public abstract class WorldController implements Screen {
 		for (FloorTile flr : floorArr) {
 			flr.draw(canvas);
 		}
+
 		for (Obstacle obj : objects) {
 			obj.draw(canvas);
 		}
@@ -622,9 +623,6 @@ public abstract class WorldController implements Screen {
 		// Top pass
 
 		canvas.begin();
-		for (Obstacle obj : objects) {
-			obj.draw(canvas);
-		}
 
 		purifiedAir.draw(canvas);
 		toxicAir.draw(canvas);
