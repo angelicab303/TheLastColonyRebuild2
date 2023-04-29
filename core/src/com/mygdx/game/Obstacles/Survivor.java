@@ -65,6 +65,8 @@ public class Survivor extends Shadow implements GameObstacle {
     Filter filter;
     private float scale;
 
+    private boolean isTargetOfEnemy;
+
     /**
      * Create survivor at the given position.
      *
@@ -94,6 +96,7 @@ public class Survivor extends Shadow implements GameObstacle {
         isInteractable = false;
         isRescued = false;
         isAlive = true;
+        isTargetOfEnemy = false;
         lives = 3;
         damageCooldown = 0;
         //shadow = new Shadow(position, 0, -10, 10);
@@ -308,6 +311,10 @@ public class Survivor extends Shadow implements GameObstacle {
         return isRescued;
     }
 
+    public boolean isTargetOfEnemy() {return isTargetOfEnemy;}
+
+    public void setTargetOfEnemy(boolean value) {isTargetOfEnemy = value;}
+
     /**
      * Sets the survivor to be rescued and isFollowing to false.
      */
@@ -457,19 +464,20 @@ public class Survivor extends Shadow implements GameObstacle {
             }
             //canvas.draw(stexture, Color.YELLOW, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), 1, 1);
         }
-        if (isInteractable){
+        if (isInteractable && !isFollowing){
             float yspace = origin.x + 10;
             float xspace = 0; //(origin.x)/2;
 
             String message = "(E) Rescue";
             canvas.drawText(message, displayFontInteract, position.x - 16.0f, position.y + 38.0f);
 
+
             //canvas.draw(animator, Color.WHITE, animator.getRegionWidth()/2, 0, getX()+xspace, getY()+yspace, animator.getRegionWidth(), animator.getRegionHeight()) ;
         }
         if (isFollowing){
             float spacing = 0.0f;
             for (int i = 0; i < lives; i++){
-                canvas.draw(textureHeart, Color.BLUE, 0.0f, 0.0f, (getX() * drawScale.x - 10) + spacing, getY() * drawScale.y + texture.getRegionHeight()*scale/2 - 2, getAngle(), 0.05f, 0.05f);
+                canvas.draw(textureHeart, Color.BLUE, 0.0f, 0.0f, (getX() * drawScale.x - 10) + spacing, getY() * drawScale.y + texture.getRegionHeight()*scale/2 - 2, getAngle(), 0.1f, 0.1f);
                 spacing += 8.0f;
             }
         }
@@ -566,7 +574,6 @@ public class Survivor extends Shadow implements GameObstacle {
 
     @Override
     protected void releaseFixtures() {
-
     }
 
     @Override

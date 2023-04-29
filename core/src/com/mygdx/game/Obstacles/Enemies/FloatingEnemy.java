@@ -10,7 +10,7 @@ public class FloatingEnemy extends Enemy {
     /** How far forward the enemy can move */
     private static final float MOVE_SPEED = 70.0f;
     /** Time enemy must wait before attacking again */
-    private final float ATTACK_COOLDOWN = 200;
+    private final float ATTACK_COOLDOWN = 100;
 
     public FloatingEnemy (float x, float y, Texture up, Texture down, Texture right, Texture left, Texture idle, float scale)
     {
@@ -26,6 +26,15 @@ public class FloatingEnemy extends Enemy {
     public void update(int action)
     {
         body.setAwake(true);
+        if (damaged)
+        {
+            stunCooldown++;
+            if (stunCooldown >= MAX_STUN_COOLDOWN)
+            {
+                stunCooldown = 0;
+                damaged = false;
+            }
+        }
         if (isStunned())
         {
             body.setActive(false);
@@ -125,5 +134,9 @@ public class FloatingEnemy extends Enemy {
     @Override
     public void draw(GameCanvas canvas) {
         super.draw(canvas);
+    }
+
+    public Enemy.EnemyType getEnemyType() {
+        return EnemyType.FLOATING;
     }
 }

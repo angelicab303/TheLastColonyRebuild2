@@ -13,7 +13,7 @@ public class Weapon {
     private float DEFAULT_SHOOT_RADIUS = 200f;
     private Vector2 DEFAULT_ANGLE_RANGE = new Vector2(-35f, 35f);
     private float DEFAULT_ABSORB_RADIUS = 100f;
-    private int ABSORB_FREQUENCY = 4;
+    private float ABSORB_FREQUENCY = 4;
 
     // constants for the weapon
     /** True if this weapon is absorbing */
@@ -23,7 +23,7 @@ public class Weapon {
     private boolean firing;
     /** The position of the weapon on the game screen */
     private Vector2 position;
-    private int absorbCounter = 0;
+    private int absorbCounter;
     /** The amount of ammunition units this weapon currently has */
     private int numAmmo;
     /** The amount of purified air pellets fired with each press*/
@@ -44,7 +44,7 @@ public class Weapon {
     private Vector2[] shootingVertices;
 
     /** The number of frames until we can fire again */
-    private static final int   RELOAD_RATE = 10;
+    private static final int   RELOAD_RATE = 60;
 
     /** Countdown to limit refire rate */
     protected int refire;
@@ -408,7 +408,7 @@ public class Weapon {
         this.relMousePos = mousePos.cpy().sub(playerPos);
 
         calculateAbsorptionRange(relMousePos);
-        calculateImpulses(shootingDir);
+        calculateImpulses(relMousePos);
         absorbSensor.setPosition(position);
         absorbSensor.setDirection(relMousePos.angleDeg());
 

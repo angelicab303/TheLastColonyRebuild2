@@ -176,12 +176,12 @@ public class CollisionController{
                     Player player;
                     Survivor survivor;
                     if(objA.getType() == GameObstacle.ObstacleType.ENEMY){
-                        // ((Enemy) objA).setStunned(true);
+                         ((Enemy) objA).setStunned(true);
                         ((Enemy) objA).incToStunTime();
                         ((PurifiedQueue.PurifiedAir) objB).collide();
                     }
                     else {
-                        // ((Enemy) objB).setStunned(true);
+                        ((Enemy) objB).setStunned(true);
                         ((Enemy) objB).incToStunTime();
                         ((PurifiedQueue.PurifiedAir) objA).collide();
                     }
@@ -203,11 +203,11 @@ public class CollisionController{
                         enemy = (Enemy) objB;
                         player = (Player) objA;
                     }
-                    if (player.canLoseLife()) {
-                        enemy.setAttack(false);
-                        player.setHealth(player.getHealth() - 1);
-                        player.coolDown(false);
-                    }
+//                    if (player.canLoseLife()) {
+//                        enemy.setAttack(false);
+//                        player.setHealth(player.getHealth() - 1);
+//                        player.coolDown(false);
+//                    }
                     break;
                 case GameObstacle.CATEGORY_PLAYER | GameObstacle.CATEGORY_SURVIVOR:
                     if(objA.getType() == GameObstacle.ObstacleType.SURVIVOR){

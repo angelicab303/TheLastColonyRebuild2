@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Filter;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.Array;
 import com.mygdx.game.GameCanvas;
 import com.mygdx.game.InputController;
 import com.mygdx.game.Lights;
@@ -90,6 +91,12 @@ public class Player extends Shadow implements GameObstacle{
     protected FilmStrip currentAnimator;
     /** How fast we change frames (one frame per 10 calls to update) */
     private static final float ANIMATION_SPEED = 0.25f;
+    /** How fast we change frames (one frame per 10 calls to update) */
+    private static final float ANIMATION_SPEED_BLINK = 0.13f;
+    /** Time until blink again */
+    private int blinkTime;
+    /** Time to wait to blink again */
+    private final int MAX_BLINK_TIME = 100;
     /** The number of animation frames in our filmstrip */
     private static final int   NUM_ANIM_FRAMES = 9;
     /** Current animation frame for this shell */
@@ -99,6 +106,19 @@ public class Player extends Shadow implements GameObstacle{
     /** Max amount of health for the player */
     private int maxHealth;
 
+    private Array<Survivor> survivorsFollowing;
+
+    public void addToFollowing(Survivor survivor) {
+        survivorsFollowing.add(survivor);
+    }
+
+    public void removeFromFollowing(Survivor survivor) {
+        survivorsFollowing.removeValue(survivor, false);
+    }
+
+    public Array<Survivor> getSurvivorsFollowing() {
+        return survivorsFollowing;
+    }
     /**
      * Create player at the given position.
      *
@@ -128,13 +148,14 @@ public class Player extends Shadow implements GameObstacle{
         direction = Direction.IDLE;
         prevPosition = position;
         maxHealth = 5;
+        blinkTime = 0;
 
         if (filter == null){
             filter = new Filter();
             filter.categoryBits = getCatagoricalBits();
             filter.maskBits = getMaskBits();
         }
-
+        survivorsFollowing = new Array<>();
 
         //shadow = new Shadow(position, 0, -10, 10);
         animatorUp = new FilmStrip(textureUp,1,NUM_ANIM_FRAMES,NUM_ANIM_FRAMES);
@@ -412,7 +433,6 @@ public class Player extends Shadow implements GameObstacle{
         }
         //position.add(velocity);
         //setPosition(position);
-        //System.out.println(body);
         body.setLinearVelocity(velocity);
         body.applyLinearImpulse(velocity, body.getWorldCenter(), true);
         setX(body.getWorldCenter().x);
@@ -423,14 +443,27 @@ public class Player extends Shadow implements GameObstacle{
 
 
         // Increase animation frame
-        aframe += ANIMATION_SPEED;
-
-        if (aframe >= NUM_ANIM_FRAMES) {
-            aframe -= NUM_ANIM_FRAMES;
+        if (currentAnimator != animatorIdle){
+            aframe += ANIMATION_SPEED;
+        }
+        else{
+            aframe += ANIMATION_SPEED_BLINK;
         }
 
+        if (aframe >= NUM_ANIM_FRAMES-1) {
+            if (currentAnimator != animatorIdle){
+                aframe -= NUM_ANIM_FRAMES-1;
+            }
+            else{
+                aframe = NUM_ANIM_FRAMES-1;
+                blinkTime++;
+                if (blinkTime >= MAX_BLINK_TIME){
+                    aframe -= NUM_ANIM_FRAMES-1;
+                    blinkTime = 0;
+                }
+            }
+        }
 //        Filter filter = body.getFixtureList().get(0).getFilterData();
-//        System.out.println("Player filter- cat bits:" + filter.categoryBits + ", mask bits: " + filter.maskBits);
 
     }
 
@@ -465,7 +498,6 @@ public class Player extends Shadow implements GameObstacle{
 //        else{
 //            currentAnimator.setFrame((int)aframe);
 //        }
-        
         currentAnimator.setFrame((int)aframe);
 
         if (isAlive)

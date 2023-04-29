@@ -216,7 +216,7 @@ public class EnemyController {
 
         if (state == FSMState.ATTACK)
         {
-            enemy.setAttack(false);
+//            enemy.setAttack(false);
         }
 
         prevAction = action;
@@ -227,7 +227,6 @@ public class EnemyController {
     /** Changes the state encoding of this enemy */
     protected void changeStateIfApplicable()
     {
-
         Tile enemyTile = tiles[(int) (enemy.getX() / tileSize)][(int) (enemy.getY() / tileSize)];
         Tile targetTile = tiles[(int) (target.x / tileSize)][(int) (target.y / tileSize)];
         alertAllEnemies = false;

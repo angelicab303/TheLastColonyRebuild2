@@ -167,13 +167,12 @@ public class Caravan extends obstacle.BoxObstacle implements GameObstacle {
         if (!super.activatePhysics(world)) {
             return false;
         }
-        FixtureDef sensorDef = new FixtureDef();
-        sensorDef.density = 0;
-        sensorDef.isSensor = true;
-        sensorShape = new CircleShape();
-        sensorShape.setRadius(65f);
-        sensorDef.shape = sensorShape;
-
+//        FixtureDef sensorDef = new FixtureDef();
+//        sensorDef.density = 0;
+//        sensorDef.isSensor = true;
+//        sensorShape = new CircleShape();
+//        sensorShape.setRadius(65f);
+//        sensorDef.shape = sensorShape;
 
         setFilterData(filter);
         //getBody().setUserData(this);
@@ -210,14 +209,16 @@ public class Caravan extends obstacle.BoxObstacle implements GameObstacle {
      * @param canvas Drawing context
      */
     public void draw(GameCanvas canvas) {
-        canvas.draw(texture, Color.WHITE, texture.getRegionWidth()*scale, texture.getRegionHeight()*scale, getX(), getY(), 0.0f, scale, scale);
+        canvas.draw(texture, Color.WHITE, origin.x, origin.y, getX()*drawScale.x, getY()*drawScale.y, 0.0f, scale, scale);
         if (isInteractable){
             float yspace = 5;
             float xspace = 0; //(origin.x)/2;
             animator.setFrame((int)aframe);
 
             String message = "(E) Dropoff";
-            canvas.drawText(message, displayFontInteract, position.x, position.y + texture.getRegionHeight()*scale+5);
+            canvas.drawText(message, displayFontInteract, position.x-texture.getRegionWidth()*scale/2, position.y + texture.getRegionHeight()*scale+5);
+            message = currentCapacity + " of " + maxCapacity + " collected";
+            canvas.drawText(message, displayFontInteract, position.x-texture.getRegionWidth()*scale/2, position.y + texture.getRegionHeight()*scale+5-10);
             //canvas.draw(animator, Color.WHITE, animator.getRegionWidth()/2, 0, getX()+xspace, getY()+yspace, animator.getRegionWidth(), animator.getRegionHeight()) ;
         }
     }
@@ -225,6 +226,16 @@ public class Caravan extends obstacle.BoxObstacle implements GameObstacle {
     @Override
     protected void createFixtures() {
         super.createFixtures();
+        FixtureDef sensorDef = new FixtureDef();
+        sensorDef.filter.categoryBits = getCatagoricalBits();
+        sensorDef.filter.maskBits = getMaskBits();
+        sensorDef.density = 0;
+        sensorDef.isSensor = true;
+        sensorShape = new CircleShape();
+        sensorShape.setRadius(65f);
+        sensorDef.shape = sensorShape;
+
+        body.createFixture(sensorDef);
     }
 
     @Override
@@ -234,7 +245,11 @@ public class Caravan extends obstacle.BoxObstacle implements GameObstacle {
 
     @Override
     public void drawDebug(GameCanvas canvas) {
-
+        if (getBody() != null) {
+            super.drawDebug(canvas);
+            //canvas.drawPhysics(shape, Color.RED, getX(), getY(), getAngle(), drawScale.x, drawScale.y);
+            canvas.drawPhysics(sensorShape, Color.BLUE, getX(), getY(), getAngle(), drawScale.x, drawScale.y);
+        }
     }
 
     public ObstacleType getType() {

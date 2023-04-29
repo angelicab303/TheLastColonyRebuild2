@@ -66,6 +66,8 @@ public class InputController {
 	private static boolean reset;
 	/** Did we press ESC to pause the game? */
 	private static boolean paused = false;
+	/** Did we press N to move on to the next level? (temporary for beta grading) */
+	private static boolean nextLevel;
 	/** Whether the debug toggle was pressed. */
 	private boolean debugPressed;
 	private boolean debugPrevious;
@@ -157,6 +159,12 @@ public class InputController {
 	 */
 	public boolean didPause() { return paused; }
 
+	/** Returns whether the player should advance to the next level.
+	 *
+	 * @return whether the next level button was pressed.
+	 */
+	public boolean isNextLevel() { return nextLevel; }
+
 	/**
 	 * Creates a new input controller for the specified player.
 	 *
@@ -205,7 +213,7 @@ public class InputController {
 			// Figure out, based on which player we are, which keys
 			// control our actions (depends on player).
 			int up, left, right, down, absorb, shoot, upshoot, leftshoot, rightshoot, downshoot,
-					pickUpSurvivor, dropOffSurvivors, restart, pause;
+					pickUpSurvivor, dropOffSurvivors, restart, pause, next;
 			up    = Input.Keys.W;
 			down  = Input.Keys.S;
 			left  = Input.Keys.A;
@@ -220,6 +228,7 @@ public class InputController {
 			dropOffSurvivors = Input.Keys.E;
 			restart = Input.Keys.R;
 			pause = Input.Keys.ESCAPE;
+			next = Input.Keys.N;
 			// Convert keyboard state into game commands
 			vertical = horizontal =verticalshoot = horizontalshoot = 0;
 			pressedAbsorb = false;
@@ -228,6 +237,7 @@ public class InputController {
 			droppedOffSurvivors = false;
 			reset = false;
 			paused = false;
+			nextLevel = false;
 			debugPressed = (debugPressed) || (Gdx.input.isKeyPressed(Input.Keys.X));
 			// Movement forward/backward
 			if (Gdx.input.isKeyPressed(up) && !Gdx.input.isKeyPressed(down) && !Gdx.input.isKeyPressed(pause)) {
@@ -305,6 +315,10 @@ public class InputController {
 			if (Gdx.input.isKeyPressed(pause))
 			{
 				paused = true;
+			}
+			// Advancing to the next level
+			if (Gdx.input.isKeyPressed(next)) {
+				nextLevel = true;
 			}
 		}
 	}

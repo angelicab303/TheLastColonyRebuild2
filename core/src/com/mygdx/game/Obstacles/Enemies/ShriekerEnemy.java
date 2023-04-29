@@ -122,6 +122,15 @@ public class ShriekerEnemy extends Enemy {
     {
 
         body.setAwake(true);
+        if (damaged)
+        {
+            stunCooldown++;
+            if (stunCooldown >= MAX_STUN_COOLDOWN)
+            {
+                stunCooldown = 0;
+                damaged = false;
+            }
+        }
         // Count down for when the shrieker can wake again after shrieking
         if (justShrieked){
             postShriekTime++;
@@ -208,7 +217,11 @@ public class ShriekerEnemy extends Enemy {
      */
     public void draw(GameCanvas canvas){
         currentAnimator.setFrame((int)getAframe());
-        if (isShrieking) {
+        if (stunCooldown > 0 && stunCooldown % 10 == 0)
+        {
+            canvas.draw(currentAnimator, Color.CLEAR, origin.x, origin.y, body.getWorldCenter().x*drawScale.x - currentAnimator.getRegionWidth()*scale/2, body.getWorldCenter().y*drawScale.y- currentAnimator.getRegionHeight()*scale/2, 0.0f, scale, scale);
+        }
+        else if (isShrieking) {
             canvas.draw(currentAnimator, Color.RED, origin.x, origin.y, body.getWorldCenter().x * drawScale.x - currentAnimator.getRegionWidth() * getScale() / 2, body.getWorldCenter().y * drawScale.y - currentAnimator.getRegionHeight() * getScale() / 2, 0.0f, getScale(), getScale());
         }
         else if (isStunned()){
@@ -230,5 +243,9 @@ public class ShriekerEnemy extends Enemy {
         super.drawDebug(canvas);
         //canvas.drawPhysics(shape, Color.RED, getX(), getY(), getAngle(), drawScale.x, drawScale.y);
         canvas.drawPhysics(sensorShape, Color.BLUE, getX(), getY(), getAngle(), drawScale.x, drawScale.y);
+    }
+
+    public Enemy.EnemyType getEnemyType() {
+        return EnemyType.SHRIEKER;
     }
 }
