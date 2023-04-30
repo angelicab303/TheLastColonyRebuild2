@@ -127,8 +127,8 @@ public class Player extends Shadow implements GameObstacle{
      */
     public Player(float x, float y, FilmStrip[] player, InputController input, float scale, float tileSize) {
         super(x, y, tileSize*scale, tileSize*2*scale, ShadowShape.CIRCLE);
-        this.height = 2*tileSize;
-        this.width = 2*tileSize;
+        this.height = 4.0f/3.0f*tileSize;
+        this.width = 4.0f/3.0f*tileSize;
         // setTexture(value);
         setDensity(1);
         setFriction(0.1f);
