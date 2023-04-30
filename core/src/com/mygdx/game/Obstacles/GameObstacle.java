@@ -48,6 +48,13 @@ public interface GameObstacle {
     //final short MASK_CARAVAN = CATEGORY_SURVIVOR | CATEGORY_PLAYER | CATEGORY_ENEMY;
 
 
+    /** Filmstrip consts */
+    final int UP = 0;
+    final int DOWN = 1;
+    final int RIGHT = 2;
+    final int LEFT = 3;
+    final int IDLE = 4;
+
     /** Returns the type of an obstacle */
     ObstacleType getType();
 

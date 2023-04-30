@@ -1,10 +1,11 @@
 {
   "textures": {
     "background": {
-      "file":     "images/LastColonyLoading.png",
+      "file":     "images/mainMenu/EmptyMainMenu.png",
       "minFilter": "linear",
       "magFilter": "linear"
     },
+    "loadingIcon": "images/loadingIcon-Sheet.png",
     "title": "images/mainMenu/TheLastColony.png",
     "play": {
       "file":     "images/playButton.png",

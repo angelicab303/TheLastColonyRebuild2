@@ -11,7 +11,7 @@
     "mainMenu:mediumCloud": "images/mainMenu/MedCloud.png",
     "mainMenu:settings": "images/mainMenu/Settings.png",
     "mainMenu:cursor": "images/mainMenu/SimpleCursor.png",
-    "mainMenu:smallCloud": "images/mainMenu/smallCloud.png",
+    "mainMenu:smallCloud": "images/mainMenu/SmallCloud.png",
     "mainMenu:levels": "images/mainMenu/Levels.png",
     "levelSelect:1": "images/levelSelect/1.png",
     "levelSelect:2": "images/levelSelect/2.png",
@@ -90,6 +90,98 @@
         50
       ]
     ],
+    "images:playerUp": {
+      "file" : "images/backwalk2-Sheet.png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 9
+        }
+      }
+    },
+    "images:playerDown": {
+      "file" : "images/frontWalk2-Sheet.png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 9
+        }
+      }
+    },
+    "images:playerRight": {
+      "file" : "images/rightSideWalk2-Sheet.png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 9
+        }
+      }
+    },
+    "images:playerLeft": {
+      "file" : "images/leftSideWalk2-Sheet.png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 9
+        }
+      }
+    },
+    "images:playerIdle": {
+      "file" : "images/idel2-Sheet.png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 9
+        }
+      }
+    },
+
+    "images:maskEnemyUp": {
+      "file" : "images/MaskUp-Sheet.png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 12
+        }
+      }
+    },
+    "images:maskEnemyDown": {
+      "file" : "images/MaskDown-Sheet.png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 12
+        }
+      }
+    },
+    "images:maskEnemyRight": {
+      "file" : "images/MaskRight(Corrected).png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 12
+        }
+      }
+    },
+    "images:maskEnemyLeft": {
+      "file" : "images/MaskLeft(Corrected).png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 12
+        }
+      }
+    },
+    "images:maskEnemyIdle": {
+      "file" : "images/MaskIdle-Sheet.png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 12
+        }
+      }
+    },
+
     "images:cliff": "images/updatedCliff.png",
     "images:cliffLeft": "images/cliffLeft.png",
     "images:cliffRight": "images/cliffRight.png",
@@ -109,19 +201,9 @@
     "images:testSmog": "images/test_green_smog-sheet2.png",
     "images:weaponProjectile": "images/weaponProjectile-Sheet.png",
     "images:airBar": "images/AirMeterFilling-Sheet-export2.png",
-    "images:playerUp": "images/backwalk2-Sheet.png",
-    "images:playerDown": "images/frontWalk2-Sheet.png",
-    "images:playerRight": "images/rightSideWalk2-Sheet.png",
-    "images:playerLeft": "images/leftSideWalk2-Sheet.png",
-    "images:playerIdle": "images/idel2-Sheet.png",
     "images:fullHeart": "images/NewHeart.png",
     "images:slashedHeart": "images/EmptyHeart.png",
     "images:plantEnemy": "images/Enemy1Idle.png",
-    "images:maskEnemyIdle": "images/MaskIdle-Sheet.png",
-    "images:maskEnemyUp": "images/MaskUp-Sheet.png",
-    "images:maskEnemyDown": "images/MaskDown-Sheet.png",
-    "images:maskEnemyRight": "images/MaskRight(Corrected).png",
-    "images:maskEnemyLeft": "images/MaskLeft(Corrected).png",
     "images:survivorSprite": "images/survivorSprite.png",
     "images:vineVertical": "images/straightVine-export1.png",
     "images:vineHorizontal": "images/straightVineLeftRight.png",
@@ -213,7 +295,14 @@
   "jsons": {
     "rocket:constants": "rocket/constants.json",
     "platform:constants": "platform/constants.json",
-    "ragdoll:constants": "ragdoll/constants.json"
+    "ragdoll:constants": "ragdoll/constants.json",
+    "tileset": "tiles/LastColonyTilesetCorrect.json",
+    "easyLevel": "levels/LastColonyEasyLevel.json",
+    "mediumLevel": "levels/LastColonyMediumLevel.json",
+    "alphaLevel": "levels/LastColonyAlphaCorrect.json",
+    "symmetricalLevel": "levels/LastColonySymmetricalMap.json",
+    "apartmentLevel": "levels/LastColonyApartmentLevel.json",
+    "mazeLevel": "levels/LastColonyMAZELevel.json"
   },
   "sounds": {
     "rocket:bump": "rocket/bump.mp3",
