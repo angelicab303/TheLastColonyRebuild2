@@ -11,27 +11,32 @@
 package com.mygdx.game;
 
 import assets.AssetDirectory;
-import box2dLight.RayHandler;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.JsonValue;
-import com.badlogic.gdx.utils.ObjectSet;
+import com.mygdx.game.EnemyControllers.EnemyController;
 import com.mygdx.game.Obstacles.*;
-import com.mygdx.game.Obstacles.Enemies.Enemy;
-import com.mygdx.game.Obstacles.Enemies.FloatingEnemy;
-import com.mygdx.game.Obstacles.Enemies.ShriekerEnemy;
-
+import com.mygdx.game.Obstacles.Enemies.*;
+import com.badlogic.gdx.Screen;
 import com.mygdx.game.UI.AirBar;
 import com.mygdx.game.UI.Heart;
 import obstacle.BoxObstacle;
 import obstacle.Obstacle;
-import org.w3c.dom.Text;
-import com.mygdx.game.EnemyControllers.*;
-import com.mygdx.game.Obstacles.Enemies.*;
+import util.PooledList;
+import util.ScreenListener;
+
+import java.util.Iterator;
+
+
+
 
 /**
  * Gameplay specific controller for the platformer game.
@@ -45,7 +50,7 @@ import com.mygdx.game.Obstacles.Enemies.*;
  * instances
  * place nicely with the static assets.
  */
-public class GameplayController extends WorldController {
+public class GameplayController implements Screen {
 	// *************************** Player, Enemy, and Survivor Textures
 	// ***************************
 	/** Texture assets for player avatar */
@@ -169,8 +174,8 @@ public class GameplayController extends WorldController {
 	private AssetDirectory directory;
 
 	/** Reference to the player avatar */
-	// private Player player;
-	private Weapon weapon;
+	protected Player player;
+	protected Weapon weapon;
 	/** Reference to the caravan avatar */
 	private Caravan caravan;
 	// /** Reference to the smog bar asset */
@@ -221,13 +226,170 @@ public class GameplayController extends WorldController {
 	private int maxLevels = 6;
 	private int level;
 
+
+	//************* From world controller ******************
+
+	/** The texture for the background */
+	protected TextureRegion backgroundTexture;
+	/** The texture for walls and platforms */
+	protected TextureRegion earthTile;
+	/** The texture for the exit condition */
+	protected TextureRegion goalTile;
+	/** The font for giving messages to the player */
+	protected BitmapFont displayFont;
+	/** The font for giving sub-messages to the player */
+	protected BitmapFont displayFontSub;
+	/** The font for progress bar title */
+	protected BitmapFont displayFontInteract;
+	/** The actual assets to be loaded */
+	protected AssetDirectory assets;
+	/** Texture atlas to support a progress bar */
+	private Texture statusBar;
+
+	// statusBar is a "texture atlas." Break it up into parts.
+	/** Left cap to the status background (grey region) */
+	private TextureRegion statusBkgLeft;
+	/** Middle portion of the status background (grey region) */
+	private TextureRegion statusBkgMiddle;
+	/** Right cap to the status background (grey region) */
+	private TextureRegion statusBkgRight;
+	/** Left cap to the status forground (colored region) */
+	private TextureRegion statusFrgLeft;
+	/** Middle portion of the status forground (colored region) */
+	private TextureRegion statusFrgMiddle;
+	/** Right cap to the status forground (colored region) */
+	private TextureRegion statusFrgRight;
+	/** The width of the progress bar */
+	private int width;
+	/** The y-coordinate of the center of the progress bar */
+	private int centerY;
+	/** The x-coordinate of the center of the progress bar */
+	private int centerX;
+	/**
+	 * The height of the canvas window (necessary since sprite origin != screen
+	 * origin)
+	 */
+	private int heightY;
+	/** The x position of the progress bar */
+	private int BAR_X = 120;
+	/** The y position of the progress bar */
+	private int BAR_Y = 420;
+	/** The amount of padding from right edge of screen */
+	private int BAR_PAD_X = 15;
+	/** The amount of padding from upper edge of screen */
+	private int BAR_PAD_Y = 50;
+	/**
+	 * The conversion from pixels to box2d units. 1 box2d meter = 16 pixels.
+	 * Use meter units when calculating physics and handling box2d bodies.
+	 * Use pixel units when drawing to screen!
+	 */
+	protected final float PTM = 1.0f;
+
+	/** Reference to the air bar asset */
+	protected AirBar airBar;
+	/** Heart list **/
+	protected Array<Heart> heartArr;
+
+	/** Amount of progress made in bar */
+	protected float progress;
+	/** Testing variable for progress */
+	private boolean isIncrementing;
+	/** Exit code for quitting the game */
+	public static final int EXIT_QUIT = 0;
+	/** Exit code for advancing to next level */
+	public static final int EXIT_NEXT = 1;
+	/** Exit code for jumping back to previous level */
+	public static final int EXIT_PREV = 2;
+	/** How many frames after winning/losing do we continue? */
+	public static final int EXIT_COUNT = 120;
+
+	/** The amount of time for a physics engine step. */
+	public static final float WORLD_STEP = 1 / 60.0f;
+	/** Number of velocity iterations for the constrain solvers */
+	public static final int WORLD_VELOC = 6;
+	/** Number of position iterations for the constrain solvers */
+	public static final int WORLD_POSIT = 2;
+
+	/** Width of the game world in Box2d units */
+	protected static final float DEFAULT_WIDTH = 32.0f;
+	/** Height of the game world in Box2d units */
+	protected static final float DEFAULT_HEIGHT = 18.0f;
+	/** The default value of gravity (going down) */
+	// WHO THE FRICK FORGOT TO TURN OFF GRAVITY YOU HAD ONE JOB
+	protected static final float DEFAULT_GRAVITY = 0;
+
+	/** Reference to the game canvas */
+	protected GameCanvas canvas;
+	/** All the objects in the world. */
+	protected PooledList<Obstacle> objects = new PooledList<Obstacle>();
+	protected Array<FloorTile> floorArr = new Array<FloorTile>();
+	/** Queue for adding objects */
+	protected PooledList<Obstacle> addQueue = new PooledList<Obstacle>();
+	/**
+	 * Array for the objects that need to be drawn in order of y value (for
+	 * perspective)
+	 **/
+	protected Array<Obstacle> staticsAndPlayer;
+	/** Input Controller **/
+	public InputController input;
+	/** Listener that will update the player mode when we are done */
+	private ScreenListener listener;
+
+	/** The Box2D world */
+	protected World world;
+
+	/** Collision Controller **/
+	protected CollisionController collisionController;
+
+	/** Shared memory pool for bullets. (MODEL CLASS) */
+	protected PurifiedQueue purifiedAir;
+	protected ToxicQueue toxicAir;
+
+	/** The boundary of the world */
+	protected Rectangle bounds;
+	/** The world scale */
+	protected Vector2 scale;
+
+	/** Whether or not this is an active controller */
+	private boolean active;
+	/** Whether we have completed this level */
+	private boolean complete;
+	/** Whether we have failed at this world (and need a reset) */
+	private boolean failed;
+	/** Whether or not debug mode is active */
+	private boolean debug;
+	/** Countdown active for winning or losing */
+	private int countdown;
+
+
+	/**
+	 * Creates a new game world
+	 *
+	 * The game world is scaled so that the screen coordinates do not agree
+	 * with the Box2d coordinates. The bounds are in terms of the Box2d
+	 * world, not the screen.
+	 *
+	 * @param bounds  The game bounds in Box2d coordinates
+	 * @param gravity The gravitational force on this Box2d world
+	 */
+	protected GameplayController(Rectangle bounds, Vector2 gravity) {
+		world = new World(gravity, false);
+		this.bounds = new Rectangle(bounds);
+		this.scale = new Vector2(1, 1);
+		complete = false;
+		failed = false;
+		debug = false;
+		active = false;
+		countdown = -1;
+	}
+
 	/**
 	 * Creates and initialize a new instance of the platformer game
 	 *
 	 * The game has default gravity and other settings
 	 */
 	public GameplayController(GameCanvas canvas) {
-		super(DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_GRAVITY);
+		this(new Rectangle(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT), new Vector2(0, DEFAULT_GRAVITY));
 		setDebug(false);
 		setComplete(false);
 		setFailure(false);
@@ -383,7 +545,7 @@ public class GameplayController extends WorldController {
 			treePos.add(tPos);
 		}
 
-		super.gatherAssets(directory);
+		//gatherAssets(directory);
 	}
 
 	/**
@@ -622,14 +784,15 @@ public class GameplayController extends WorldController {
 	 * @return whether to process the update loop
 	 */
 	public boolean preUpdate(float dt) {
-		// if (!super.preUpdate(dt)) {
-		// return false;
+		input.readInput();
+		// if (listener == null) {
+		// return true;
 		// }
-		//
-		// if (!isFailure() && player.getY() < -1) {
-		// setFailure(true);
-		// return false;
-		// }
+
+		// // Toggle debug
+		if (input.didDebug()) {
+			debug = !debug;
+		}
 
 		if (player.getHealth() <= 0) {
 			setFailure(true);
@@ -882,52 +1045,477 @@ public class GameplayController extends WorldController {
 
 	}
 
-	/**
-	 * Add a new bullet to the world and send it in the right direction.
-	 */
-	// private void createBullet() {
-	// JsonValue bulletjv = constants.get("bullet");
-	// float offset = bulletjv.getFloat("offset",0);
-	// offset *= (player.isFacingRight() ? 1 : -1);
-	// float radius = bulletTexture.getRegionWidth()/(2.0f*scale.x);
-	// WheelObstacle bullet = new WheelObstacle(player.getX()+offset, player.getY(),
-	// radius);
-	//
-	// bullet.setName("bullet");
-	// bullet.setDensity(bulletjv.getFloat("density", 0));
-	// bullet.setDrawScale(scale);
-	// bullet.setTexture(bulletTexture);
-	// bullet.setBullet(true);
-	// bullet.setGravityScale(0);
-	//
-	// // Compute position and velocity
-	// float speed = bulletjv.getFloat( "speed", 0 );
-	// speed *= (player.isFacingRight() ? 1 : -1);
-	// bullet.setVX(speed);
-	// addQueuedObject(bullet);
-	//
-	// fireId = playSound( fireSound, fireId );
-	// }
+	//*** from worldcontroller **//
+
+
 
 	/**
-	 * Remove a new bullet from the world.
+	 * Returns true if debug mode is active.
 	 *
-	 * @param bullet the bullet to remove
+	 * If true, all objects will display their physics bodies.
+	 *
+	 * @return true if debug mode is active.
 	 */
-	// public void removeBullet(Obstacle bullet) {
-	// bullet.markRemoved(true);
-	// plopId = playSound( plopSound, plopId );
-	// }
+	public boolean isDebug() {
+		return debug;
+	}
+
+	/**
+	 * Sets whether debug mode is active.
+	 *
+	 * If true, all objects will display their physics bodies.
+	 *
+	 * @param value whether debug mode is active.
+	 */
+	public void setDebug(boolean value) {
+		debug = value;
+	}
+
+	/**
+	 * Returns true if the level is completed.
+	 *
+	 * If true, the level will advance after a countdown
+	 *
+	 * @return true if the level is completed.
+	 */
+	public boolean isComplete() {
+		return complete;
+	}
+
+	/**
+	 * Sets whether the level is completed.
+	 *
+	 * If true, the level will advance after a countdown
+	 *
+	 * @param value whether the level is completed.
+	 */
+	public void setComplete(boolean value) {
+		if (value) {
+			countdown = EXIT_COUNT;
+		}
+		complete = value;
+	}
+
+	/**
+	 * Returns true if the level is failed.
+	 *
+	 * If true, the level will reset after a countdown
+	 *
+	 * @return true if the level is failed.
+	 */
+	public boolean isFailure() {
+		return failed;
+	}
+
+	/**
+	 * Sets whether the level is failed.
+	 *
+	 * If true, the level will reset after a countdown
+	 *
+	 * @param value whether the level is failed.
+	 */
+	public void setFailure(boolean value) {
+		if (value) {
+			countdown = EXIT_COUNT;
+		}
+		failed = value;
+	}
+
+	/**
+	 * Returns true if this is the active screen
+	 *
+	 * @return true if this is the active screen
+	 */
+	public boolean isActive() {
+		return active;
+	}
+
+	/**
+	 * Returns the canvas associated with this controller
+	 *
+	 * The canvas is shared across all controllers
+	 *
+	 * @return the canvas associated with this controller
+	 */
+	public GameCanvas getCanvas() {
+		return canvas;
+	}
+
+	/**
+	 * Sets the canvas associated with this controller
+	 *
+	 * The canvas is shared across all controllers. Setting this value will compute
+	 * the drawing scale from the canvas size.
+	 *
+	 * @param canvas the canvas associated with this controller
+	 */
+	public void setCanvas(GameCanvas canvas) {
+		this.canvas = canvas;
+		this.scale.x = canvas.getWidth() / bounds.getWidth();
+		this.scale.y = canvas.getHeight() / bounds.getHeight();
+	}
+
+	/**
+	 * Dispose of all (non-static) resources allocated to this mode.
+	 */
+	public void dispose() {
+		for (Obstacle obj : objects) {
+			obj.deactivatePhysics(world);
+		}
+		objects.clear();
+		addQueue.clear();
+		world.dispose();
+		objects = null;
+		addQueue = null;
+		bounds = null;
+		scale = null;
+		world = null;
+		canvas = null;
+	}
+
+	/**
+	 *
+	 * Adds a physics object in to the insertion queue.
+	 *
+	 * Objects on the queue are added just before collision processing. We do this
+	 * to
+	 * control object creation.
+	 *
+	 * param obj The object to add
+	 */
+	public void addQueuedObject(Obstacle obj) {
+		assert inBounds(obj) : "Object is not in bounds";
+		addQueue.add(obj);
+	}
+
+	/**
+	 * Immediately adds the object to the physics world
+	 *
+	 * param obj The object to add
+	 */
+	public void addObject(Obstacle obj) {
+		assert inBounds(obj) : "Object is not in bounds";
+		objects.add(obj);
+		// obj.activatePhysics(world);
+	}
+
+	/**
+	 * Returns true if the object is in bounds.
+	 *
+	 * This assertion is useful for debugging the physics.
+	 *
+	 * @param obj The object to check.
+	 *
+	 * @return true if the object is in bounds.
+	 */
+	public boolean inBounds(Obstacle obj) {
+		boolean horiz = (bounds.x <= obj.getX() && obj.getX() <= bounds.x + bounds.width);
+		boolean vert = (bounds.y <= obj.getY() && obj.getY() <= bounds.y + bounds.height);
+		return horiz && vert;
+	}
+
+
+
+
+	/**
+	 * Processes physics
+	 *
+	 * Once the update phase is over, but before we draw, we are ready to handle
+	 * physics. The primary method is the step() method in world. This
+	 * implementation
+	 * works for all applications and should not need to be overwritten.
+	 *
+	 * @param dt Number of seconds since last animation frame
+	 */
+	public void postUpdate(float dt) {
+		// Add any objects created by actions
+		while (!addQueue.isEmpty()) {
+			addObject(addQueue.poll());
+		}
+
+		// Turn the physics engine crank.
+		world.step(WORLD_STEP, WORLD_VELOC, WORLD_POSIT);
+
+		// Garbage collect the deleted objects.
+		// Note how we use the linked list nodes to delete O(1) in place.
+		// This is O(n) without copying.
+		Iterator<PooledList<Obstacle>.Entry> iterator = objects.entryIterator();
+		while (iterator.hasNext()) {
+			PooledList<Obstacle>.Entry entry = iterator.next();
+			Obstacle obj = entry.getValue();
+			if (obj.isRemoved()) {
+				obj.deactivatePhysics(world);
+				entry.remove();
+			} else {
+				// Note that update is called last!
+				obj.update(dt);
+			}
+		}
+		canvas.updateLights();
+	}
+
+	/**
+	 * Draw the progress bar for the smog ammo.
+	 */
+	public void drawBar() {
+		// Figure out how to place bar appropriately on the screen
+		width = (int) (0.50f * canvas.getWidth()) / 2;
+		centerY = canvas.getHeight() - statusBar.getHeight();
+		BAR_Y = centerY;
+		centerX = width / 2 + BAR_PAD_X;
+		BAR_X = centerX;
+		heightY = canvas.getHeight();
+		float scale = 0.5f;
+		// Progress should be between 0.0f and 1.0f
+		// progress = 0.25f;
+
+		canvas.draw(statusBkgLeft, Color.WHITE, centerX - width / 2, centerY,
+				scale * statusBkgLeft.getRegionWidth(), scale * statusBkgLeft.getRegionHeight());
+		canvas.draw(statusBkgMiddle, Color.WHITE, centerX - width / 2 + scale * statusBkgLeft.getRegionWidth(), centerY,
+				width - scale * (statusBkgRight.getRegionWidth() + statusBkgLeft.getRegionWidth()),
+				scale * statusBkgMiddle.getRegionHeight());
+		canvas.draw(statusBkgRight, Color.WHITE, centerX + width / 2 - scale * statusBkgRight.getRegionWidth(), centerY,
+				scale * statusBkgRight.getRegionWidth(), scale * statusBkgRight.getRegionHeight());
+
+		if (progress > 0) {
+			canvas.draw(statusFrgLeft, Color.CYAN, centerX - width / 2, centerY,
+					scale * statusFrgLeft.getRegionWidth(), scale * statusFrgLeft.getRegionHeight());
+			float span = (progress * 2) * (width - scale * (statusFrgLeft.getRegionWidth() + statusFrgRight.getRegionWidth()))
+					/ 2.0f;
+			canvas.draw(statusFrgMiddle, Color.CYAN, centerX - width / 2 + scale * statusFrgLeft.getRegionWidth(), centerY,
+					span, scale * statusFrgMiddle.getRegionHeight());
+			canvas.draw(statusFrgRight, Color.CYAN, centerX - width / 2 + scale * statusFrgLeft.getRegionWidth() + span,
+					centerY,
+					scale * statusFrgRight.getRegionWidth(), scale * statusFrgRight.getRegionHeight());
+		}
+	}
+
+	/**
+	 * Draw the physics objects to the canvas
+	 *
+	 * For simple worlds, this method is enough by itself. It will need
+	 * to be overriden if the world needs fancy backgrounds or the like.
+	 *
+	 * The method draws all objects in the order that they were added.
+	 *
+	 * @param dt Number of seconds since last animation frame
+	 */
+	public void draw(float dt) {
+//		System.out.println("Started Drawing");
+		canvas.clear();
+
+		if (isActive()) {
+			canvas.begin(player.getX(), player.getY());
+		} else {
+			canvas.begin();
+		}
+//		System.out.println("Started canvas");
+		//canvas.draw(backgroundTexture, Color.BROWN, 0, 0, canvas.getWidth(), canvas.getHeight());
+
+		for (FloorTile flr : floorArr) {
+			flr.draw(canvas);
+		}
+
+		for (Obstacle obj : objects) {
+			obj.draw(canvas);
+		}
+
+		// END remove
+		// drawBar();
+		canvas.end();
+
+//		System.out.println("Finished drawing objects");
+
+		canvas.renderLights();
+
+		// Top pass
+
+		canvas.begin();
+
+		purifiedAir.draw(canvas);
+		toxicAir.draw(canvas);
+
+		// Draw air bar
+		airBar.draw(canvas);
+
+		// Draw hearts
+		for (int i = 0; i < heartArr.size; i++) {
+			heartArr.get(i).draw(canvas);
+		}
+
+		// Draw statics and the player in order of when they appear
+		// for (Obstacle obj : staticsAndPlayer) {
+		// obj.draw(canvas);
+		// }
+
+		// Get amount of ammo from weapon
+		// for(Obstacle obj : objects) {
+		// if obj.getType() == Obstacle
+		// }
+		String message = "ÆIR: ";
+		// canvas.drawText(message, displayFontBar, BAR_X - (width/2) + 5, BAR_Y + 38);
+		// Remove later, testing progress movement for now
+		if (isIncrementing) {
+			progress += 0.01;
+			if (progress > 1.0) {
+				isIncrementing = false;
+			}
+		} else {
+			progress -= 0.01;
+			if (progress < 0) {
+				isIncrementing = true;
+			}
+		}
+
+		if (debug) {
+			canvas.beginDebug();
+			for (Obstacle obj : objects) {
+				obj.drawDebug(canvas);
+			}
+			toxicAir.drawDebug(canvas);
+
+			weapon.draw(canvas);
+			canvas.endDebug();
+		}
+		if (paused) {
+			displayFont.setColor(Color.GRAY);
+			canvas.drawText("PAUSED", displayFont, player.getX() - 150f, player.getY() + 25f);
+		}
+		canvas.end();
+
+		// Final message
+		if (complete && !failed) {
+			displayFont.setColor(Color.YELLOW);
+			canvas.begin(); // DO NOT SCALE
+			canvas.drawText("VICTORY!", displayFont, player.getX() - 195, player.getY());
+
+			canvas.drawText("Press 'R' to restart", displayFontSub, player.getX() - 120, player.getY() - 100);
+			canvas.end();
+		} else if (failed) {
+			displayFont.setColor(Color.RED);
+			canvas.begin(); // DO NOT SCALE
+			canvas.drawText("FAILURE!", displayFont, player.getX() - 195, player.getY());
+			canvas.drawText("Press 'R' to restart", displayFontSub, player.getX() - 120, player.getY() - 100);
+
+			canvas.end();
+		}
+//		System.out.println("Finished first draw");
+	}
+
+	/**
+	 * Method to ensure that a sound asset is only played once.
+	 *
+	 * Every time you play a sound asset, it makes a new instance of that sound.
+	 * If you play the sounds to close together, you will have overlapping copies.
+	 * To prevent that, you must stop the sound before you play it again. That
+	 * is the purpose of this method. It stops the current instance playing (if
+	 * any) and then returns the id of the new instance for tracking.
+	 *
+	 * @param sound   The sound asset to play
+	 * @param soundId The previously playing sound instance
+	 *
+	 * @return the new sound instance for this asset.
+	 */
+	public long playSound(Sound sound, long soundId) {
+		return playSound(sound, soundId, 1.0f);
+	}
+
+	/**
+	 * Method to ensure that a sound asset is only played once.
+	 *
+	 * Every time you play a sound asset, it makes a new instance of that sound.
+	 * If you play the sounds to close together, you will have overlapping copies.
+	 * To prevent that, you must stop the sound before you play it again. That
+	 * is the purpose of this method. It stops the current instance playing (if
+	 * any) and then returns the id of the new instance for tracking.
+	 *
+	 * @param sound   The sound asset to play
+	 * @param soundId The previously playing sound instance
+	 * @param volume  The sound volume
+	 *
+	 * @return the new sound instance for this asset.
+	 */
+	public long playSound(Sound sound, long soundId, float volume) {
+		if (soundId != -1) {
+			sound.stop(soundId);
+		}
+		return sound.play(volume);
+	}
+
+	/**
+	 * Called when the Screen is resized.
+	 *
+	 * This can happen at any point during a non-paused state but will never happen
+	 * before a call to show().
+	 *
+	 * @param width  The new width in pixels
+	 * @param height The new height in pixels
+	 */
+	public void resize(int width, int height) {
+		// IGNORE FOR NOW
+	}
+
+	/**
+	 * Called when the Screen should render itself.
+	 *
+	 * We defer to the other methods update() and draw(). However, it is VERY
+	 * important
+	 * that we only quit AFTER a draw.
+	 *
+	 * @param delta Number of seconds since last animation frame
+	 */
+	public void render(float delta) {
+		if (active) {
+			if (preUpdate(delta)) {
+				update(delta); // This is the one that must be defined.
+				postUpdate(delta);
+			}
+			draw(delta);
+		}
+	}
 
 	/**
 	 * Called when the Screen is paused.
 	 *
-	 * We need this method to stop all sounds when we pause.
-	 * Pausing happens when we switch game modes.
+	 * This is usually when it's not active or visible on screen. An Application is
+	 * also paused before it is destroyed.
 	 */
-	// public void pause() {
-	// jumpSound.stop(jumpId);
-	// plopSound.stop(plopId);
-	// fireSound.stop(fireId);
-	// }
+	public void pause() {
+		// TODO Auto-generated method stub
+	}
+
+	/**
+	 * Called when the Screen is resumed from a paused state.
+	 *
+	 * This is usually when it regains focus.
+	 */
+	public void resume() {
+		// TODO Auto-generated method stub
+	}
+
+	/**
+	 * Called when this screen becomes the current screen for a Game.
+	 */
+	public void show() {
+		// Useless if called in outside animation loop
+		active = true;
+	}
+
+	/**
+	 * Called when this screen is no longer the current screen for a Game.
+	 */
+	public void hide() {
+		// Useless if called in outside animation loop
+		active = false;
+	}
+
+	/**
+	 * Sets the ScreenListener for this mode
+	 *
+	 * The ScreenListener will respond to requests to quit.
+	 */
+	public void setScreenListener(ScreenListener listener) {
+		this.listener = listener;
+	}
+
 }
