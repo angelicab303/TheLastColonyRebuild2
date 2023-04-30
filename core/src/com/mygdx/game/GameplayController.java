@@ -417,6 +417,11 @@ public class GameplayController extends WorldController {
 		// System.out.println(2);
 	}
 
+	public void reset(int level){
+		this.level = level;
+		reset();
+	}
+
 	/**
 	 * Resets the status of the game so that we can play again.
 	 *
@@ -703,13 +708,7 @@ public class GameplayController extends WorldController {
 		}
 
 		if (input.isNextLevel()) {
-			if (level == 1) {
-				level = 2;
-				reset();
-			} else {
-				level = 1;
-				reset();
-			}
+			reset(level + 1 % 2);
 		}
 
 		if (input.didPressAbsorb()) {
