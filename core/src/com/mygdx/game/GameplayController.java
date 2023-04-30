@@ -552,6 +552,7 @@ public class GameplayController implements Screen {
 		setFailure(false);
 		// System.out.println(1);
 		populateLevel(curLevel);
+		numRescued = 0;
 
 
 		// System.out.println(2);
@@ -973,7 +974,7 @@ public class GameplayController implements Screen {
 			caravan.setInteractable(false);
 		}
 		if (caravan.isInteractable() && input.didDropSurvivors()) {
-			if (numRescued == survivorArr.size) {
+			if (caravan.getCurrentCapacity() == caravan.getMaxCapacity()) {
 				setComplete(true);
 			}
 			for (int i = 0; i < survivorArr.size; i++) {

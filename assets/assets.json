@@ -195,6 +195,8 @@
     "images:smog1": "images/SmogSprite2.png",
     "images:smog2": "images/SmogSprite3.png",
     "images:caravan1": "images/caravan-1.png",
+    "images:caravanClosed": "images/caravan-1000.png",
+    "images:caravanOpen": "images/caravan-open-1000.png",
     "images:sInteract": "images/sInteractable_sheet2.png",
     "images:testSmog": "images/test_green_smog-sheet2.png",
     "images:weaponProjectile": "images/weaponProjectile-Sheet.png",

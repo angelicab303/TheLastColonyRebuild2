@@ -266,7 +266,7 @@ public class JSONLevelReader {
                     }
                 }
             }
-
+            caravan.setMaxCapacity(survivorArr.size);
             System.out.println("Finished loading JSON Level");
 
             // Close the map reader
@@ -361,7 +361,7 @@ public class JSONLevelReader {
         if (didCreateCaravan) {
             return;
         }
-        caravan = new Caravan(x * tileSize + tileOffset, y * tileSize + tileOffset, 5, getTextureRegionKey(0), survivorITexture, scale, displayFontInteract);
+        caravan = new Caravan(x * tileSize + tileOffset, y * tileSize + tileOffset, getSurvivors().size, getTextureRegionKey(0), survivorITexture, scale, displayFontInteract);
         addObject(caravan);
 //        caravan.activatePhysics(world);
     }
