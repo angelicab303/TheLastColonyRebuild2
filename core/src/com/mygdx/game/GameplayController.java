@@ -833,7 +833,7 @@ public class GameplayController extends WorldController {
 			caravan.setInteractable(false);
 		}
 		if (caravan.isInteractable() && input.didDropSurvivors()) {
-			if (numRescued == caravan.getMaxCapacity()) {
+			if (caravan.getCurrentCapacity() == caravan.getMaxCapacity()) {
 				setComplete(true);
 			}
 			for (int i = 0; i < survivorArr.size; i++) {
