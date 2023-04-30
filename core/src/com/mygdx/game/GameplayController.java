@@ -537,6 +537,10 @@ public class GameplayController implements Screen {
 
 		constants = directory.getEntry("platform:constants", JsonValue.class);
 
+		displayFont = directory.getEntry("shared:retro", BitmapFont.class);
+		displayFontSub = directory.getEntry("shared:retroSub", BitmapFont.class);
+		displayFontInteract = directory.getEntry("shared:light", BitmapFont.class);
+
 		treePos = new Array<Vector2>();
 		float[][] treePositions = { { 2, 10 }, { 450, 125 }, { 80, 50 } };
 		treePos = new Array<Vector2>(treePositions.length);
