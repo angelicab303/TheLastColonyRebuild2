@@ -167,7 +167,7 @@ public class ScoutEnemyController extends com.mygdx.game.EnemyControllers.EnemyC
                     state = FSMState.PATROL;
                 } //else if (enemyTile.equals(targetTile) && enemy.canAttack() && player.canLoseLife()) {
                 else if (containsVine[(int) (player.getX() / tileSize)][(int) (player.getY() / tileSize)] && enemy.canAttack() && player.canLoseLife()) {
-                    enemy.setShrinkVines(true);
+//                    enemy.setShrinkVines(true);
                     state = FSMState.ATTACK;
                 }
                 break;
@@ -250,9 +250,7 @@ public class ScoutEnemyController extends com.mygdx.game.EnemyControllers.EnemyC
             } else {
                 if (goalReached() || moveTime > 30) {
                     moveTime = 0;
-                    if (!enemy.isStunned()) {
-                        action = getMoveVine();
-                    }
+                    action = getMoveVine();
                 } else {
                     action = prevAction;
                 }
@@ -277,16 +275,16 @@ public class ScoutEnemyController extends com.mygdx.game.EnemyControllers.EnemyC
                     followingSurvivor = false;
 //                    survivorTarget.coolDown(false);
                 }
+//                enemy.setShrinkVines(true);
                 enemy.setAttack(false);
-            }
-            else {
-                enemy.setExtendingVines(false);
-            }
-            if (!enemy.areVinesShrinking()) {
-                enemy.setExtendingVines(false);
-            } else {
+                enemy.setShrinkVines(true);
                 clearContainsVine();
             }
+//            if (!enemy.areVinesShrinking()) {
+//                enemy.setExtendingVines(false);
+//            } else {
+//                clearContainsVine();
+//            }
         }
         prevAction = action;
         return action;

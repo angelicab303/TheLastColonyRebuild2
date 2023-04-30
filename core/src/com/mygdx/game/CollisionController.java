@@ -25,6 +25,7 @@ import com.badlogic.gdx.utils.*;
 import com.badlogic.gdx.math.*;
 import com.mygdx.game.Obstacles.*;
 import com.mygdx.game.Obstacles.Enemies.Enemy;
+import com.mygdx.game.Obstacles.Enemies.ScoutEnemy;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -186,6 +187,19 @@ public class CollisionController{
                         ((PurifiedQueue.PurifiedAir) objA).collide();
                     }
                     break;
+                case GameObstacle.CATEGORY_PURIFIED | GameObstacle.CATEGORY_VINE:
+//                    System.out.println("VINE COLLISION");
+//                    if(objA.getType() == GameObstacle.ObstacleType.VINE){
+//                        ((ScoutEnemy.VineTile) objA).setStunned(true);
+////                        ((ScoutEnemy.VineTile) objA).incToStunTime();
+//                        ((PurifiedQueue.PurifiedAir) objB).collide();
+//                    }
+//                    else {
+//                        ((ScoutEnemy.VineTile) objB).setStunned(true);
+////                        ((ScoutEnemy.VineTile) objB).incToStunTime();
+//                        ((PurifiedQueue.PurifiedAir) objA).collide();
+//                    }
+//                    break;
                 case GameObstacle.CATEGORY_PURIFIED | GameObstacle.CATEGORY_ENV:
                     if(objA.getType() == GameObstacle.ObstacleType.PURIFIED_AIR){
                         ((PurifiedQueue.PurifiedAir) objA).collide();
