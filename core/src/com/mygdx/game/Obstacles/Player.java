@@ -363,7 +363,7 @@ public class Player extends Shadow implements GameObstacle{
         }
 
         setFilterData(filter);
-        attachLightToPlayer(Lights.createPointLight(Color.WHITE, sightDis, 0,0));
+        //attachLightToPlayer(Lights.createPointLight(Color.WHITE, sightDis, 0,0));
         return true;
     }
 

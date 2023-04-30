@@ -209,14 +209,16 @@ public class Caravan extends obstacle.BoxObstacle implements GameObstacle {
      * @param canvas Drawing context
      */
     public void draw(GameCanvas canvas) {
-        canvas.draw(texture, Color.WHITE, texture.getRegionWidth()*scale, texture.getRegionHeight()*scale, getX() - (texture.getRegionWidth()*scale/2), getY() - (texture.getRegionHeight()*scale/2), 0.0f, scale, scale);
+        canvas.draw(texture, Color.WHITE, origin.x, origin.y, getX()*drawScale.x, getY()*drawScale.y, 0.0f, scale, scale);
         if (isInteractable){
             float yspace = 5;
             float xspace = 0; //(origin.x)/2;
             animator.setFrame((int)aframe);
 
             String message = "(E) Dropoff";
-            canvas.drawText(message, displayFontInteract, position.x, position.y + texture.getRegionHeight()*scale+5);
+            canvas.drawText(message, displayFontInteract, position.x-texture.getRegionWidth()*scale/2, position.y + texture.getRegionHeight()*scale+5);
+            message = currentCapacity + " of " + maxCapacity + " collected";
+            canvas.drawText(message, displayFontInteract, position.x-texture.getRegionWidth()*scale/2, position.y + texture.getRegionHeight()*scale+5-10);
             //canvas.draw(animator, Color.WHITE, animator.getRegionWidth()/2, 0, getX()+xspace, getY()+yspace, animator.getRegionWidth(), animator.getRegionHeight()) ;
         }
     }

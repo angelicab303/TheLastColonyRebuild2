@@ -89,6 +89,7 @@ public class FloatingEnemyController extends EnemyController {
                 angle.set(target.cpy().sub(enemyPos));
                 Vector2 attackPos = angle.cpy().scl(2);
                 toxicQueue.attack(1, enemy.getBody().getWorldCenter(), attackPos);
+                enemy.setAttack(false);
                 state = FSMState.CHASE;
                 break;
             case STUNNED:
@@ -104,5 +105,5 @@ public class FloatingEnemyController extends EnemyController {
                 break;
         }
     }
-
+    
 }

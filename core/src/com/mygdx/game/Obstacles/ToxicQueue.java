@@ -101,7 +101,7 @@ public class ToxicQueue {
             setBodyType(BodyDef.BodyType.DynamicBody);
             setDimension(ToxicQueue.texture.getWidth()*scale/5, ToxicQueue.texture.getHeight()*scale);
             // setTexture(PollutedQueue.texture);
-            // setLinearDamping(1); //arbitrary damping coeff.
+            setLinearDamping(1); //arbitrary damping coeff.
             this.age = -1;
 
             this.fading = false;

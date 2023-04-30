@@ -64,7 +64,6 @@ public class Shadow extends SimpleObstacle {
     private static void resize(float size){
         circleShape.setRadius(size/2.0f);
         resize(size, size);
-
     }
 
     /**
