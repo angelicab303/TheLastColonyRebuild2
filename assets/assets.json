@@ -11,7 +11,7 @@
     "mainMenu:mediumCloud": "images/mainMenu/MedCloud.png",
     "mainMenu:settings": "images/mainMenu/Settings.png",
     "mainMenu:cursor": "images/mainMenu/SimpleCursor.png",
-    "mainMenu:smallCloud": "images/mainMenu/smallCloud.png",
+    "mainMenu:smallCloud": "images/mainMenu/SmallCloud.png",
     "mainMenu:levels": "images/mainMenu/Levels.png",
     "levelSelect:1": "images/levelSelect/1.png",
     "levelSelect:2": "images/levelSelect/2.png",
@@ -211,7 +211,14 @@
   "jsons": {
     "rocket:constants": "rocket/constants.json",
     "platform:constants": "platform/constants.json",
-    "ragdoll:constants": "ragdoll/constants.json"
+    "ragdoll:constants": "ragdoll/constants.json",
+    "tileset": "tiles/LastColonyTilesetCorrect.json",
+    "easyLevel": "levels/LastColonyEasyLevel.json",
+    "mediumLevel": "levels/LastColonyMediumLevel.json",
+    "alphaLevel": "levels/LastColonyAlphaCorrect.json",
+    "symmetricalLevel": "levels/LastColonySymmetricalMap.json",
+    "apartmentLevel": "levels/LastColonyApartmentLevel.json",
+    "mazeLevel": "levels/LastColonyMAZELevel.json"
   },
   "sounds": {
     "rocket:bump": "rocket/bump.mp3",

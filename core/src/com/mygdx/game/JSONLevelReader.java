@@ -1,6 +1,6 @@
 package com.mygdx.game;
 
-import java.io.FileReader;
+import java.io.*;
 import java.util.Objects;
 
 import assets.AssetDirectory;
@@ -124,27 +124,31 @@ public class JSONLevelReader {
         this.weapon = weapon;
         try {
             // Read the JSON file into a FileReader object
-            FileReader tilesReader = new FileReader("assets/tiles/LastColonyTilesetCorrect.json");
-            String levelStr = "assets/levels/";
+            //InputStream inputStream = getClass().getResourceAsStream("assets/tiles/LastColonyTilesetCorrect.json");
+            //BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+            //FileReader tilesReader = new FileReader(directory.getAssetFileName(directory.getEntry("tileset", JsonValue.class)));
+
+            JsonValue levelStr = new JsonValue(false);
             if (level == 0) {
-                levelStr += "LastColonyEasyLevel.json";
+                levelStr = directory.getEntry("easyLevel", JsonValue.class);
             } else if (level == 1) {
-                levelStr += "LastColonyMediumLevel.json";
+                levelStr = directory.getEntry("mediumLevel", JsonValue.class);
             } else if (level == 2) {
-                levelStr += "LastColonyAlphaCorrect.json";
+                levelStr = directory.getEntry("alphaLevel", JsonValue.class);
             } else if (level == 3) {
-                levelStr += "LastColonySymmetricalMap.json";
+                levelStr = directory.getEntry("symmetricalLevel", JsonValue.class);
             } else if (level == 4) {
-                levelStr += "LastColonyApartmentLevel.json";
+                levelStr = directory.getEntry("apartmentLevel", JsonValue.class);
             } else if (level == 5) {
-                levelStr += "LastColonyMAZELevel.json";
+                levelStr = directory.getEntry("mazeLevel", JsonValue.class);
             }
 
-            FileReader mapReader = new FileReader(levelStr);
+            //FileReader mapReader = new FileReader(levelStr);
 
             // Send the fileReader to a new JsonReader object
-            JsonReader tilesJSONReader = new JsonReader();
-            JsonValue tilesJSON = tilesJSONReader.parse(tilesReader);
+            //JsonReader tilesJSONReader = new JsonReader();
+            //JsonValue tilesJSON = tilesJSONReader.parse(tilesReader);
+            JsonValue tilesJSON = directory.getEntry("tileset", JsonValue.class);
 
             tileIDs = tilesJSON.get("tiles");
 
@@ -205,12 +209,13 @@ public class JSONLevelReader {
             }
 
             // Close the tile reader
-            tilesReader.close();
+            //tilesReader.close();
             // ******************************************* END OF TILEREADER *******************************************
 
             // Send the fileReader to a new JsonReader object
-            JsonReader mapJSONReader = new JsonReader();
-            JsonValue mapJSON = mapJSONReader.parse(mapReader);
+            //JsonReader mapJSONReader = new JsonReader();
+            //JsonValue mapJSON = mapJSONReader.parse(mapReader);
+            JsonValue mapJSON = levelStr;
 
             // Get JSON layers of the map
             JsonValue layers = mapJSON.get("layers");
@@ -263,7 +268,7 @@ public class JSONLevelReader {
             System.out.println("Finished loading JSON Level");
 
             // Close the map reader
-            mapReader.close();
+            //mapReader.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
