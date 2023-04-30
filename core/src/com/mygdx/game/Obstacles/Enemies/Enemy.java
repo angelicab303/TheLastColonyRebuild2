@@ -51,20 +51,9 @@ public class Enemy extends Shadow implements GameObstacle {
     protected final float MAX_STUN_TIME = 500;
     /** Time enemy must wait before attacking again */
     protected final float ATTACK_COOLDOWN = 300;
-    /** The textures for the enemy. */
-    protected Texture textureIdle;
-    protected Texture textureUp;
-    protected Texture textureDown;
-    protected Texture textureRight;
-    protected Texture textureLeft;
-    /** Current texture to be used for the enemy */
-    protected Texture currentTexture;
+
     /** Filmstrip for the enemy */
-    protected FilmStrip animatorUp;
-    protected FilmStrip animatorDown;
-    protected FilmStrip animatorRight;
-    protected FilmStrip animatorLeft;
-    protected FilmStrip animatorIdle;
+    protected FilmStrip[] animator;
     protected FilmStrip currentAnimator;
 
 
@@ -105,6 +94,9 @@ public class Enemy extends Shadow implements GameObstacle {
     protected static final int   NUM_ANIM_FRAMES = 12;
     /** Current animation frame for this shell */
     protected float aframe;
+
+    float height;
+    float width;
 
 
     /**Filter for filtering */
@@ -182,16 +174,14 @@ public class Enemy extends Shadow implements GameObstacle {
      *
      * @param x the x-coordinate of this enemy
      * @param y the y-coordinate of this enemy
-     * @param up the texture for upwards movement
-     * @param down the texture for downwards movement
-     * @param right the texture for rightwards movement
-     * @param left the texture for leftwards movement
-     * @param idle the texture for idle movement
+     * @param animator the collection of filmstrips (up, down, right, left, idle)
      * @param scale the scale to be drawn to
      */
-    public Enemy (float x, float y, Texture up, Texture down, Texture right, Texture left, Texture idle, float scale)
+    public Enemy (float x, float y, FilmStrip[] animator, float scale, float tileSize)
     {
-        super(x, y, idle.getWidth()/NUM_ANIM_FRAMES*scale, idle.getHeight()*scale, ShadowShape.CIRCLE);
+        super(x, y, tileSize*scale, tileSize*scale, ShadowShape.CIRCLE);
+        this.height = tileSize;
+        this.width = tileSize;
         //setTexture(value);
         setDensity(1);
         setFriction(0.1f);
@@ -203,12 +193,7 @@ public class Enemy extends Shadow implements GameObstacle {
         zerovector = new Vector2(0,0);
         this.scale = scale;
 
-        textureUp = up;
-        textureDown = down;
-        textureRight = right;
-        textureLeft = left;
-        textureIdle = idle;
-        currentTexture = textureIdle;
+        this.animator = animator;
 
         stunned = false;
         canAttack = true;
@@ -220,12 +205,7 @@ public class Enemy extends Shadow implements GameObstacle {
             filter.maskBits = getMaskBits();
         }
 
-        animatorUp = new FilmStrip(textureUp,1,NUM_ANIM_FRAMES,NUM_ANIM_FRAMES);
-        animatorDown = new FilmStrip(textureDown,1,NUM_ANIM_FRAMES,NUM_ANIM_FRAMES);
-        animatorRight = new FilmStrip(textureRight,1,NUM_ANIM_FRAMES,NUM_ANIM_FRAMES);
-        animatorLeft = new FilmStrip(textureLeft,1,NUM_ANIM_FRAMES,NUM_ANIM_FRAMES);
-        animatorIdle = new FilmStrip(textureIdle,1,NUM_ANIM_FRAMES,NUM_ANIM_FRAMES);
-        currentAnimator = animatorIdle;
+        currentAnimator = animator[IDLE];
         aframe = 0.0f;
 
 
@@ -236,23 +216,23 @@ public class Enemy extends Shadow implements GameObstacle {
     public void updateDirection(float h, float v){
         if (v > 0){
             direction = Enemy.Direction.UP;
-            currentAnimator = animatorUp;
+            currentAnimator = animator[UP];
         }
         else if (v < 0){
             direction = Enemy.Direction.DOWN;
-            currentAnimator = animatorDown;
+            currentAnimator = animator[DOWN];
         }
         else if (h > 0){
             direction = Enemy.Direction.RIGHT;
-            currentAnimator = animatorRight;
+            currentAnimator = animator[RIGHT];
         }
         else if (h < 0){
             direction = Enemy.Direction.LEFT;
-            currentAnimator = animatorLeft;
+            currentAnimator = animator[LEFT];
         }
         else{
             direction = Enemy.Direction.IDLE;
-            currentAnimator = animatorIdle;
+            currentAnimator = animator[IDLE];
 
         }
     }
@@ -434,14 +414,14 @@ public class Enemy extends Shadow implements GameObstacle {
 //        System.out.println((body.getWorldCenter().x*drawScale.x - currentAnimator.getRegionWidth()*scale/2) + ", " + (body.getWorldCenter().y*drawScale.y- currentAnimator.getRegionHeight()*scale/2));
         if (stunCooldown > 0 && stunCooldown % 10 == 0)
         {
-            canvas.draw(currentAnimator, Color.CLEAR, origin.x, origin.y, body.getWorldCenter().x*drawScale.x - currentAnimator.getRegionWidth()*scale/2, body.getWorldCenter().y*drawScale.y- currentAnimator.getRegionHeight()*scale/2, 0.0f, scale, scale);
+            canvas.draw(currentAnimator, Color.CLEAR, origin.x, origin.y, body.getWorldCenter().x*drawScale.x - width*scale/2, body.getWorldCenter().y*drawScale.y- height*scale/2, 0.0f, scale, scale);
         }
         else if (isStunned())
         {
-            canvas.draw(currentAnimator, Color.PINK, origin.x, origin.y, body.getWorldCenter().x*drawScale.x - currentAnimator.getRegionWidth()*scale/2, body.getWorldCenter().y*drawScale.y- currentAnimator.getRegionHeight()*scale/2, 0.0f, scale, scale);
+            canvas.draw(currentAnimator, Color.PINK, origin.x, origin.y, body.getWorldCenter().x*drawScale.x - width*scale/2, body.getWorldCenter().y*drawScale.y- height*scale/2, 0.0f, scale, scale);
         }
         else {
-            canvas.draw(currentAnimator, Color.WHITE, origin.x, origin.y, body.getWorldCenter().x * drawScale.x - currentAnimator.getRegionWidth() * scale / 2, body.getWorldCenter().y * drawScale.y - currentAnimator.getRegionHeight() * scale / 2, 0.0f, scale, scale);
+            canvas.draw(currentAnimator, Color.WHITE, origin.x, origin.y, body.getWorldCenter().x * drawScale.x - width * scale / 2, body.getWorldCenter().y * drawScale.y - height * scale / 2, 0.0f, scale, scale);
         }
     }
 
