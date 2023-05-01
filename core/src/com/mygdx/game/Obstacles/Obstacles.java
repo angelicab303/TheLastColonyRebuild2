@@ -3,9 +3,7 @@ package com.mygdx.game.Obstacles;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.Filter;
-import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.physics.box2d.*;
 import com.mygdx.game.GameCanvas;
 import obstacle.BoxObstacle;
 
@@ -21,6 +19,8 @@ public class Obstacles extends Shadow implements GameObstacle {
     /** Filter for filtering */
     private static volatile Filter filter;
     private float scale;
+
+    PolygonShape sensorShape;
 
     /**
      * Create a cliff at the given position.
@@ -133,6 +133,27 @@ public class Obstacles extends Shadow implements GameObstacle {
             return false;
         }
 
+        Vector2 sensorCenter = new Vector2(0, -getHeight() / 2);
+        FixtureDef sensorDef = new FixtureDef();
+
+        //TO DO: Make Json dependant
+        //sensorDef.density = data.getFloat("density",0);
+        sensorDef.density = 1;
+        sensorDef.isSensor = true;
+        sensorShape = new PolygonShape();
+        //TO DO: Make Json dependant
+        //JsonValue sensorjv = data.get("sensor");
+        //sensorShape.setAsBox(sensorjv.getFloat("shrink",0)*getWidth()/2.0f, sensorjv.getFloat("height",0), sensorCenter, 0.0f);
+        sensorShape.setAsBox(getWidth()/2, getHeight());
+        sensorDef.shape = sensorShape;
+
+        // Ground sensor to represent our feet
+        Fixture sensorFixture = body.createFixture( sensorDef );
+//        sensorFixture.setUserData(getSensorName());
+
+
+        body.setUserData(this);
+
         setFilterData(filter);
 
         return true;
@@ -149,6 +170,13 @@ public class Obstacles extends Shadow implements GameObstacle {
         float height = texture.getRegionHeight() * scale;
         canvas.draw(texture, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, 0.0f, scale,
                 scale);
+    }
+
+    public void drawDebug(GameCanvas canvas) {
+        super.drawDebug(canvas);
+        //canvas.beginDebug();
+        canvas.drawPhysics(sensorShape, Color.RED, getX()*drawScale.x, getY()*drawScale.y, getAngle(), drawScale.x, drawScale.y);
+        //canvas.endDebug();
     }
 
     @Override

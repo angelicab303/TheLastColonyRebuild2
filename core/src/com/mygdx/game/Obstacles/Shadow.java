@@ -16,8 +16,8 @@ public class Shadow extends SimpleObstacle {
     static CircleShape circleShape;
     static PolygonShape boxShape;
 
-    static FixtureDef circleFixture;
-    static FixtureDef boxFixture;
+    FixtureDef fixture;
+    //FixtureDef boxFixture;
 
     /** A cache value for the fixture (for resizing) */
     private Fixture geometry;
@@ -26,6 +26,8 @@ public class Shadow extends SimpleObstacle {
     private static float[] vertices;
 
     ShadowShape shape;
+
+    private Vector2 temp;
 
     public enum ShadowShape{
         SQUARE,
@@ -39,6 +41,8 @@ public class Shadow extends SimpleObstacle {
         origin = new Vector2(0,(size-height)/2);
         geometry = null;
         this.shape = shape;
+        this.fixture = new FixtureDef();
+        temp = new Vector2();
     }
 
     /** Sets the default tile size, will be the diameter if circular or the side length if square
@@ -53,18 +57,27 @@ public class Shadow extends SimpleObstacle {
         boxShape = new PolygonShape();
 
         resize(size);
-
-        circleFixture = new FixtureDef();
-        boxFixture = new FixtureDef();
-
-        circleFixture.shape = circleShape;
-        boxFixture.shape = boxShape;
     }
 
     private static void resize(float size){
         circleShape.setRadius(size/2.0f);
         resize(size, size);
     }
+
+    /**
+     * Helper function for resizing the box
+     *
+     * Reset the polygon vertices in the shape to match the dimension.
+     */
+    private static void transform(float offset) {
+        // Make the box with the center in the center
+        vertices[1] += offset;
+        vertices[3] +=  offset;
+        vertices[5] +=  offset;
+        vertices[7] += offset;
+        boxShape.set(vertices);
+    }
+
 
     /**
      * Helper function for resizing the box
@@ -121,12 +134,19 @@ public class Shadow extends SimpleObstacle {
 
         releaseFixtures();
 
+        //dimension.y is width
+        float offset = size/2 - dimension.y;
+        temp.set(0,offset);
 
         if (shape.equals(ShadowShape.CIRCLE)){
-            fixture = circleFixture;
+            circleShape.setPosition(temp);
+            fixture.shape = circleShape;
         }
         else {
-            fixture = boxFixture;
+
+            transform(offset);
+            fixture.shape = boxShape;
+            transform(-offset); // resets the global box position
         }
 
         // Create the fixture
@@ -165,11 +185,12 @@ public class Shadow extends SimpleObstacle {
      * @param canvas Drawing context
      */
     public void drawDebug(GameCanvas canvas) {
+        float offset = size/2 - dimension.y;
         if(shape.equals(ShadowShape.CIRCLE)){
-            canvas.drawPhysics(circleShape, Color.YELLOW,getX(),getY(),drawScale.x,drawScale.y);
+            canvas.drawPhysics(circleShape, Color.YELLOW,getX(),getY()+offset,drawScale.x,drawScale.y);
         }
         else if(shape.equals(ShadowShape.SQUARE)){
-            canvas.drawPhysics(boxShape,Color.YELLOW,getX(),getY(),getAngle(),drawScale.x,drawScale.y);
+            canvas.drawPhysics(boxShape,Color.YELLOW,getX(),getY()+offset,getAngle(),drawScale.x,drawScale.y);
         }
 
     };

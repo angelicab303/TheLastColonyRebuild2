@@ -92,13 +92,15 @@ public class CollisionController{
         RayCastCallback callback = new RayCastCallback() {
             @Override
             public float reportRayFixture(Fixture fixture, Vector2 point, Vector2 normal, float fraction) {
-                Object obstacle = fixture.getBody().getUserData();
-                if(obstacle instanceof Obstacles){
-                    //System.out.println("Well at least something is working");
-                    tempSmog = null;
-                    curr_fraction = fraction;
-                    //System.out.println(fraction);
-                    return fraction;
+                if (!fixture.isSensor()) {
+                    Object obstacle = fixture.getBody().getUserData();
+                    if (obstacle instanceof Obstacles) {
+                        //System.out.println("Well at least something is working");
+                        tempSmog = null;
+                        curr_fraction = fraction + 0.06f;
+                        //System.out.println(fraction);
+                        return curr_fraction;
+                    }
                 }
 
                 return -1;
@@ -310,6 +312,7 @@ public class CollisionController{
                 case GameObstacle.CATEGORY_SMOG | GameObstacle.CATEGORY_ENEMY:
                 case GameObstacle.CATEGORY_PURIFIED | GameObstacle.CATEGORY_ENEMY:
                 case GameObstacle.CATEGORY_PLAYER | GameObstacle.CATEGORY_SURVIVOR:
+                case GameObstacle.CATEGORY_SMOG | GameObstacle.CATEGORY_ENV:
                     contact.setEnabled(false);
             }
         }

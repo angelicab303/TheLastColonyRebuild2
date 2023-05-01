@@ -310,6 +310,10 @@ public class GameplayController implements Screen {
 	protected GameCanvas canvas;
 	/** All the objects in the world. */
 	protected PooledList<Obstacle> objects = new PooledList<Obstacle>();
+	/** All the movable objects in the world. */
+	protected PooledList<Obstacle> movObjects = new PooledList<Obstacle>();
+	/** All of the smog objects in the world **DO NOT COMBINE, NEEDED FOR CORRECT RENDERING */
+	protected PooledList<Smog> smogs = new PooledList<Smog>();
 	protected Array<FloorTile> floorArr = new Array<FloorTile>();
 	/** Queue for adding objects */
 	protected PooledList<Obstacle> addQueue = new PooledList<Obstacle>();
@@ -366,7 +370,7 @@ public class GameplayController implements Screen {
 		this.scale = new Vector2(1, 1);
 		complete = false;
 		failed = false;
-		debug = false;
+		debug = true;
 		active = false;
 		countdown = -1;
 	}
@@ -378,7 +382,6 @@ public class GameplayController implements Screen {
 	 */
 	public GameplayController(GameCanvas canvas) {
 		this(new Rectangle(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT), new Vector2(0, DEFAULT_GRAVITY));
-		setDebug(false);
 		setComplete(false);
 		setFailure(false);
 		// world.setContactListener(this);
@@ -538,8 +541,15 @@ public class GameplayController implements Screen {
 		for (Obstacle obj : objects) {
 			obj.deactivatePhysics(world);
 		}
+		for (Obstacle obj : smogs) {
+			obj.deactivatePhysics(world);
+		}
+		for (Obstacle obj : movObjects) {
+			obj.deactivatePhysics(world);
+		}
 		enemyControllers.clear();
 		survivorControllers.clear();
+		smogs.clear();
 		objects.clear();
 		addQueue.clear();
 		canvas.disposeLights();
@@ -568,29 +578,11 @@ public class GameplayController implements Screen {
 	 * This method disposes of the world and creates a new one.
 	 */
 	public void nextLevel() {
-		Vector2 gravity = new Vector2(world.getGravity());
-
-		for (Obstacle obj : objects) {
-			obj.deactivatePhysics(world);
-		}
-		enemyControllers.clear();
-		survivorControllers.clear();
-		objects.clear();
-		addQueue.clear();
-		canvas.disposeLights();
-		world.dispose();
-
-		world = new World(gravity, false);
-		collisionController.setContactListener(world);
-		canvas.createLights(world);
-		setComplete(false);
-		setFailure(false);
-
 		if (curLevel >= maxLevels-1) {
 			curLevel = -1;
 		}
-		populateLevel(curLevel + 1);
 		curLevel++;
+		reset(curLevel);
 	}
 
 	private void populateLevel(int level) {
@@ -621,7 +613,7 @@ public class GameplayController implements Screen {
 //		System.out.println("Width: " + canvas.getWidth() + "\t\tHeight: " + canvas.getHeight());
 		// Here we will instantiate the objects in the level using the JSONLevelReader.
 		JSONLevelReader reader = new JSONLevelReader(directory, bounds, world, level, canvas.camera, input,
-				objects, floorArr, SCALE, tileGrid, tileSize, tileOffset, smogTileSize, smogTileOffset,
+				objects, movObjects, floorArr, SCALE, tileGrid, tileSize, tileOffset, smogTileSize, smogTileOffset,
 				playerDirectionTextures, enemyDirectionTextures, toxicAir,
 				survivorITexture, displayFontInteract, fHeartTexture, player, weapon);
 
@@ -642,29 +634,9 @@ public class GameplayController implements Screen {
 		survivorControllers = reader.getSurvivorControllers();
 		enemyControllers = reader.getEnemyControllers();
 
-		// *************************** CARAVAN, PLAYER, AND WEAPON ***************************
-		// Instantiate the caravan:
-		// caravan = new Caravan(caravanLocation[0] * tileSize + tileOffset,
-		// caravanLocation[1] * tileSize + tileOffset,
-		// 5, caravanTexture, survivorITexture, SCALE * 2, displayFontInteract);
-		// addObject(caravan);
-		// caravan.activatePhysics(world);
-
-		// Instantiate the player:
-		// player = new Player(playerLocation[0] * tileSize + tileOffset,
-		// playerLocation[1] * tileSize + tileOffset, playerTextureUp,
-		// playerTextureDown, playerTextureRight, playerTextureLeft, playerTextureIdle,
-		// input, SCALE);
 		if (isInvincible) {
 			player.setHealth(10000);
 		}
-		// addObject(player);
-		// player.activatePhysics(world);
-		// player.setAwake(true);
-
-		// Instantiate the weapon:
-		// weapon = new Weapon(player.getPosition().x, player.getPosition().y);
-
 		// Gives ammo in debug mode
 		if (isDebug()) {
 			weapon.setNumAmmo(1000);
@@ -712,8 +684,7 @@ public class GameplayController implements Screen {
 					smogT.setAwake(true);
 					smogT.setBodyType(BodyDef.BodyType.StaticBody);
 					smogArr.add(smogT);
-					addObject(smogT);
-					smogT.activatePhysics(world);
+					addSmog(smogT);
 					// Secondary Grid
 					frameNum = (float) (Math.random() * (maxFrame - minFrame + 1) + minFrame);
 					smogTO = new Smog(i * smogTileSize + smogTileSize, j * smogTileSize + smogTileSize, smogTexture, frameNum,
@@ -721,18 +692,10 @@ public class GameplayController implements Screen {
 					smogTO.setAwake(true);
 					smogTO.setBodyType(BodyDef.BodyType.StaticBody);
 					smogArr.add(smogTO);
-					addObject(smogTO);
-					smogTO.activatePhysics(world);
+					addSmog(smogTO);
 				}
 			}
 		}
-		// System.out.println("Finished smog instantiation");
-
-		// AirBar Creation
-		// float barX = player.getX() - (canvas.getWidth()*cameraZoom)/2.0f + (30.0f *
-		// cameraZoom);
-		// float barY = player.getY() + (canvas.getHeight()*cameraZoom)/2.0f - (30.0f *
-		// cameraZoom);
 		airBar = new AirBar(airBarTexture, weapon.getMaxNumAmmo(), weapon.getNumAmmo(), canvas);
 
 		// Hearts
@@ -902,7 +865,7 @@ public class GameplayController implements Screen {
 		// collisionController.processCollisions(player,weapon,smogArr);
 
 		// Update smog animations
-		for (Smog obj : smogArr) {
+		for (Smog obj : smogs) {
 			obj.update();
 			if (obj.isFaded()) {
 				obj.markRemoved(true);
@@ -1141,10 +1104,17 @@ public class GameplayController implements Screen {
 		for (Obstacle obj : objects) {
 			obj.deactivatePhysics(world);
 		}
+		for (Obstacle obj : smogs) {
+			obj.deactivatePhysics(world);
+		}
+		smogs.clear();
 		objects.clear();
+		movObjects.clear();
 		addQueue.clear();
 		world.dispose();
+		smogs = null;
 		objects = null;
+		movObjects = null;
 		addQueue = null;
 		bounds = null;
 		scale = null;
@@ -1175,7 +1145,18 @@ public class GameplayController implements Screen {
 	public void addObject(Obstacle obj) {
 		assert inBounds(obj) : "Object is not in bounds";
 		objects.add(obj);
-		// obj.activatePhysics(world);
+		obj.activatePhysics(world);
+	}
+
+	/**
+	 * Immediately adds the object to the physics world
+	 *
+	 * param obj The object to add
+	 */
+	public void addSmog(Smog obj) {
+		assert inBounds(obj) : "Object is not in bounds";
+		smogs.add(obj);
+		obj.activatePhysics(world);
 	}
 
 	/**
@@ -1230,43 +1211,31 @@ public class GameplayController implements Screen {
 				obj.update(dt);
 			}
 		}
-		canvas.updateLights();
-	}
-
-	/**
-	 * Draw the progress bar for the smog ammo.
-	 */
-	public void drawBar() {
-		// Figure out how to place bar appropriately on the screen
-		width = (int) (0.50f * canvas.getWidth()) / 2;
-		centerY = canvas.getHeight() - statusBar.getHeight();
-		BAR_Y = centerY;
-		centerX = width / 2 + BAR_PAD_X;
-		BAR_X = centerX;
-		heightY = canvas.getHeight();
-		float scale = 0.5f;
-		// Progress should be between 0.0f and 1.0f
-		// progress = 0.25f;
-
-		canvas.draw(statusBkgLeft, Color.WHITE, centerX - width / 2, centerY,
-				scale * statusBkgLeft.getRegionWidth(), scale * statusBkgLeft.getRegionHeight());
-		canvas.draw(statusBkgMiddle, Color.WHITE, centerX - width / 2 + scale * statusBkgLeft.getRegionWidth(), centerY,
-				width - scale * (statusBkgRight.getRegionWidth() + statusBkgLeft.getRegionWidth()),
-				scale * statusBkgMiddle.getRegionHeight());
-		canvas.draw(statusBkgRight, Color.WHITE, centerX + width / 2 - scale * statusBkgRight.getRegionWidth(), centerY,
-				scale * statusBkgRight.getRegionWidth(), scale * statusBkgRight.getRegionHeight());
-
-		if (progress > 0) {
-			canvas.draw(statusFrgLeft, Color.CYAN, centerX - width / 2, centerY,
-					scale * statusFrgLeft.getRegionWidth(), scale * statusFrgLeft.getRegionHeight());
-			float span = (progress * 2) * (width - scale * (statusFrgLeft.getRegionWidth() + statusFrgRight.getRegionWidth()))
-					/ 2.0f;
-			canvas.draw(statusFrgMiddle, Color.CYAN, centerX - width / 2 + scale * statusFrgLeft.getRegionWidth(), centerY,
-					span, scale * statusFrgMiddle.getRegionHeight());
-			canvas.draw(statusFrgRight, Color.CYAN, centerX - width / 2 + scale * statusFrgLeft.getRegionWidth() + span,
-					centerY,
-					scale * statusFrgRight.getRegionWidth(), scale * statusFrgRight.getRegionHeight());
+		iterator = movObjects.entryIterator();
+		while (iterator.hasNext()) {
+			PooledList<Obstacle>.Entry entry = iterator.next();
+			Obstacle obj = entry.getValue();
+			if (obj.isRemoved()) {
+				obj.deactivatePhysics(world);
+				entry.remove();
+			} else {
+				// Note that update is called last!
+				obj.update(dt);
+			}
 		}
+		Iterator<PooledList<Smog>.Entry>iterator2 = smogs.entryIterator();
+		while (iterator2.hasNext()) {
+			PooledList<Smog>.Entry entry = iterator2.next();
+			Smog obj = entry.getValue();
+			if (obj.isRemoved()) {
+				obj.deactivatePhysics(world);
+				entry.remove();
+			} else {
+				// Note that update is called last!
+				obj.update(dt);
+			}
+		}
+		canvas.updateLights();
 	}
 
 	/**
@@ -1298,12 +1267,18 @@ public class GameplayController implements Screen {
 		for (Obstacle obj : objects) {
 			obj.draw(canvas);
 		}
+		for(Obstacle obj : movObjects){
+			//obj.draw(canvas);
+		}
+
+		for (Obstacle obj : smogs){
+			obj.draw(canvas);
+		}
 
 		// END remove
 		// drawBar();
 		canvas.end();
 
-//		System.out.println("Finished drawing objects");
 
 		canvas.renderLights();
 
@@ -1322,15 +1297,6 @@ public class GameplayController implements Screen {
 			heartArr.get(i).draw(canvas);
 		}
 
-		// Draw statics and the player in order of when they appear
-		// for (Obstacle obj : staticsAndPlayer) {
-		// obj.draw(canvas);
-		// }
-
-		// Get amount of ammo from weapon
-		// for(Obstacle obj : objects) {
-		// if obj.getType() == Obstacle
-		// }
 		String message = "ÆIR: ";
 		// canvas.drawText(message, displayFontBar, BAR_X - (width/2) + 5, BAR_Y + 38);
 		// Remove later, testing progress movement for now
@@ -1349,6 +1315,12 @@ public class GameplayController implements Screen {
 		if (debug) {
 			canvas.beginDebug();
 			for (Obstacle obj : objects) {
+				obj.drawDebug(canvas);
+			}
+			for (Obstacle obj : movObjects) {
+				obj.drawDebug(canvas);
+			}
+			for (Obstacle obj : smogs) {
 				obj.drawDebug(canvas);
 			}
 			toxicAir.drawDebug(canvas);

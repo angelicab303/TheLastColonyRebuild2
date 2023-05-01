@@ -37,7 +37,7 @@ public interface GameObstacle {
     final short CATEGORY_PURIFIED = 0x0020;
     final short CATEGORY_TOXIC = 0x0040;
     final short CATEGORY_CARAVAN = 0x0080;
-    final short MASK_SMOG = CATEGORY_ENEMY;
+    final short MASK_SMOG = CATEGORY_ENEMY | CATEGORY_ENV;
     final short MASK_PLAYER = CATEGORY_ENEMY | CATEGORY_SURVIVOR | CATEGORY_ENV | CATEGORY_TOXIC;// | CATEGORY_CARAVAN;
     final short MASK_ENEMY = CATEGORY_PLAYER | CATEGORY_ENEMY | CATEGORY_ENV |CATEGORY_SMOG | CATEGORY_PURIFIED;// | CATEGORY_CARAVAN ;
     final short MASK_SURVIVOR = CATEGORY_PLAYER| CATEGORY_ENEMY | CATEGORY_SURVIVOR | CATEGORY_ENV | CATEGORY_TOXIC; //| CATEGORY_CARAVAN;
@@ -54,6 +54,8 @@ public interface GameObstacle {
     final int RIGHT = 2;
     final int LEFT = 3;
     final int IDLE = 4;
+    
+    boolean isBelow = false;
 
     /** Returns the type of an obstacle */
     ObstacleType getType();

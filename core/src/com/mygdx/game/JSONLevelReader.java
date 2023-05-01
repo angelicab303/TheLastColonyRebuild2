@@ -33,6 +33,8 @@ public class JSONLevelReader {
     private OrthographicCamera camera;
     private InputController input;
     private PooledList<Obstacle> objects;
+
+    private PooledList<Obstacle> movObjects;
     private float scale;
     private int width;
     private int height;
@@ -100,7 +102,15 @@ public class JSONLevelReader {
     // Texture Stuff
     JsonValue tileIDs;
 
-    public JSONLevelReader(AssetDirectory directory, Rectangle bounds, World world, int level, OrthographicCamera camera, InputController input, PooledList<Obstacle> objects, Array<FloorTile> floorArr, float scale, boolean[][] tileGrid, int tileSize, int tileOffset, int smogTileSize, int smogTileOffset, FilmStrip[] playerDirectionTextures, FilmStrip[] enemyDirectionTextures, ToxicQueue toxicAir, Texture survivorITexture, BitmapFont displayFontInteractive, Texture heart, Player player, Weapon weapon) {
+    public JSONLevelReader(AssetDirectory directory, Rectangle bounds,
+                           World world, int level, OrthographicCamera camera,
+                           InputController input, PooledList<Obstacle> objects, PooledList<Obstacle> movObjects,
+                           Array<FloorTile> floorArr, float scale, boolean[][] tileGrid,
+                           int tileSize, int tileOffset, int smogTileSize, int smogTileOffset,
+                           FilmStrip[] playerDirectionTextures, FilmStrip[] enemyDirectionTextures,
+                           ToxicQueue toxicAir, Texture survivorITexture,
+                           BitmapFont displayFontInteractive, Texture heart, Player player,
+                           Weapon weapon) {
         this.directory = directory;
         this.bounds = bounds;
         this.world = world;
@@ -108,6 +118,7 @@ public class JSONLevelReader {
         this.camera = camera;
         this.input = input;
         this.objects = objects;
+        this.movObjects = movObjects;
         this.floorArr = floorArr;
         this.scale = scale;
         this.tileGrid = tileGrid;
@@ -244,6 +255,8 @@ public class JSONLevelReader {
                     }
                 }
             }
+
+
             createObject(caravanX, caravanY, 0);
             createObject(playerX, playerY, 1);
             didCreateCaravan = true;
@@ -262,7 +275,7 @@ public class JSONLevelReader {
                 }
             }
 
-            System.out.println("Finished loading JSON Level");
+
 
             // Close the map reader
             mapReader.close();
@@ -294,6 +307,17 @@ public class JSONLevelReader {
     public void addObject(Obstacle obj) {
         assert inBounds(obj) : "Object is not in bounds";
         objects.add(obj);
+        obj.activatePhysics(world);
+    }
+
+    /**
+     * Immediately adds the object to the physics world
+     *
+     * param obj The object to add
+     */
+    public void addMovObject(Obstacle obj) {
+        assert inBounds(obj) : "Object is not in bounds";
+        movObjects.add(obj);
         obj.activatePhysics(world);
     }
 
@@ -371,7 +395,7 @@ public class JSONLevelReader {
             return;
         }
         player = new Player(x * tileSize + tileOffset, y * tileSize + tileOffset, playerDirectionTextures, input, scale, imageTileSize);
-        addObject(player);
+        addMovObject(player);
 //        player.activatePhysics(world);
         player.setAwake(true);
 
@@ -396,7 +420,7 @@ public class JSONLevelReader {
 //        survivorTemp.activatePhysics(world);
 
         survivorArr.add(survivorTemp);
-        addObject(survivorTemp);
+        addMovObject(survivorTemp);
         survivorControllers.add(new SurvivorController(survivorTemp, caravan.getPosition(), player.getPosition(), tileGrid, tileSize, tileOffset));
     }
 
@@ -410,11 +434,8 @@ public class JSONLevelReader {
     public void createEnemy(float x, float y, int id, float scale) {
         FloatingEnemy enemyTemp;
         enemyTemp = new FloatingEnemy(x * tileSize + tileOffset, y * tileSize + tileOffset, enemyDirectionTextures, scale, imageTileSize );
-//        enemyTemp.activatePhysics(world);
-
         enemyArr.add(enemyTemp);
-        addObject(enemyTemp);
-//        System.out.println("Width: " + tileGrid.length + "\t\tHeight: " + tileGrid[0].length);
+        addMovObject(enemyTemp);
         enemyControllers.add(new FloatingEnemyController(tileGrid, tileSize, tileOffset, enemyTemp, player, shriekerArr, toxicAir));
     }
 
