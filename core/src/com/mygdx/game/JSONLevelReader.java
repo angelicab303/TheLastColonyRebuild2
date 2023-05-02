@@ -37,7 +37,7 @@ public class JSONLevelReader {
     private int width;
     private int height;
     private boolean[][] tileGrid;
-
+    private boolean[][] smogGrid;
     private int imageTileSize;
     private int tileSize;
     private int tileOffset;
@@ -123,7 +123,7 @@ public class JSONLevelReader {
     // Texture Stuff
     JsonValue tileIDs;
 
-    public JSONLevelReader(AssetDirectory directory, Rectangle bounds, World world, int level, OrthographicCamera camera, InputController input, PooledList<Obstacle> objects, Array<FloorTile> floorArr, float scale, boolean[][] tileGrid, int tileSize, int tileOffset, int smogTileSize, int smogTileOffset, FilmStrip[] playerDirectionTextures, FilmStrip[] enemyDirectionTextures, ToxicQueue toxicAir, Texture survivorITexture, BitmapFont displayFontInteractive, Texture heart, Player player, Weapon weapon) {
+    public JSONLevelReader(AssetDirectory directory, Rectangle bounds, World world, int level, OrthographicCamera camera, InputController input, PooledList<Obstacle> objects, Array<FloorTile> floorArr, float scale, boolean[][] tileGrid, boolean[][] smogGrid, int tileSize, int tileOffset, int smogTileSize, int smogTileOffset, FilmStrip[] playerDirectionTextures, FilmStrip[] enemyDirectionTextures, ToxicQueue toxicAir, Texture survivorITexture, BitmapFont displayFontInteractive, Texture heart, Player player, Weapon weapon) {
         this.directory = directory;
         this.bounds = bounds;
         this.world = world;
@@ -134,6 +134,7 @@ public class JSONLevelReader {
         this.floorArr = floorArr;
         this.scale = scale;
         this.tileGrid = tileGrid;
+        this.smogGrid = smogGrid;
         this.tileSize = tileSize;
         this.imageTileSize = tileSize * 10;
         this.tileOffset = tileOffset;
@@ -297,7 +298,7 @@ public class JSONLevelReader {
             System.out.println("Width: " + width + "\t\tHeight: " + height);
 
 //            this.camera.setToOrtho(false, width * tileSize, height * tileSize);
-            this.tileGrid = new boolean[width][height];
+//            this.tileGrid = new boolean[width][height];
 
             // Loop through each of the layers and first simply instantiate the caravan and player, in that order.
             float caravanX = 0;
@@ -424,6 +425,7 @@ public class JSONLevelReader {
     public boolean[][] getTileGrid() {
         return tileGrid;
     }
+    public boolean[][] getSmogGrid() {return smogGrid;}
     public OrthographicCamera getCamera() {
         return camera;
     }
@@ -473,7 +475,7 @@ public class JSONLevelReader {
 
         survivorArr.add(survivorTemp);
         addObject(survivorTemp);
-        survivorControllers.add(new SurvivorController(survivorTemp, caravan.getPosition(), player.getPosition(), tileGrid, tileSize, tileOffset));
+        survivorControllers.add(new SurvivorController(survivorTemp, caravan.getPosition(), player.getPosition(), tileGrid, smogGrid, tileSize, tileOffset));
     }
 
     public Array<Survivor> getSurvivors() {
@@ -518,8 +520,9 @@ public class JSONLevelReader {
         wallArr.add(wallTemp);
         //cliffTemp.setAwake(true);
         wallTemp.setBodyType(BodyDef.BodyType.StaticBody);
-        addObject(wallTemp);
-//        wallTemp.activatePhysics(world);
+//        addObject(wallTemp);
+        wallTemp.activatePhysics(world);
+//        tileGrid[(int)x][(int)y] = true;
 //        tiles[wallLocations[i][0]][wallLocations[i][1]] = true;
 //        tileGrid[wallLocations[i][0]][wallLocations[i][1]] = true;
     }
@@ -534,7 +537,7 @@ public class JSONLevelReader {
     }
 
     public void createSmog(float x, float y, int id, float scale) {
-
+        smogGrid[(int)y][(int)x] = true;
     }
 
     public void dispose(){

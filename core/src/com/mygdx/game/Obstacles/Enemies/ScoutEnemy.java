@@ -82,13 +82,14 @@ public class ScoutEnemy extends Enemy{
 //            aframe += ANIMATION_SPEED;
 //        }
 
-        public void draw(GameCanvas canvas, float currFrame) {
+        public void draw(GameCanvas canvas, float currFrame, float tileSize) {
             aframe = ((int)currFrame % 2 == 0 ? 0 : 1);
             currentAnimator.setFrame((int)aframe);
             canvas.draw(currentAnimator, Color.WHITE,body.getWorldCenter().x*drawScale.x, body.getWorldCenter().y*drawScale.y,
-                    body.getWorldCenter().x/* *drawScale.x /*+ (body.getWorldCenter().x*drawScale.x/ canvas.getWidth() * 80f)*/,
-                    body.getWorldCenter().y/* *drawScale.y /*+ (body.getWorldCenter().y*drawScale.y/ canvas.getHeight() * 50f)*/,
+                    body.getWorldCenter().x,
+                    body.getWorldCenter().y,
                     0.0f, scale, scale);
+
         }
 
         @Override
@@ -352,7 +353,7 @@ public class ScoutEnemy extends Enemy{
                 currentVineAnimator = vineAnimatorHeadRightTop;
                 break;
         }
-        tempVineTile = new VineTile(x, y, currentVineTexture.getWidth()/2*scale, currentVineTexture.getHeight()*scale, currentVineAnimator, scale, d);
+        tempVineTile = new VineTile(x, y, currentVineTexture.getWidth()*scale, currentVineTexture.getHeight()*scale, currentVineAnimator, scale, d);
         tempVineTile.activatePhysics(world);
         tempVineTile.createFixtures(world);
         if (vines.size < MAX_VINES && !vinesShrinking) {
@@ -494,7 +495,7 @@ public class ScoutEnemy extends Enemy{
         if(isExtendingVines) {
             if (vines.size > 0) {
                 for (int i = 0; i < vines.size; i++) {
-                    vines.get(i).draw(canvas, aframevine);
+                    vines.get(i).draw(canvas, aframevine, width);
                 }
             }
         }

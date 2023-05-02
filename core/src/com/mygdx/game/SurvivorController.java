@@ -57,7 +57,7 @@ public class SurvivorController {
      * @param board A 2d boolean array that is true in a position if it contains a game obstacle and false if not  (for pathfinding)
      * @param caravanPos The caravan (will be the target for the survivor when walking)
      */
-    public SurvivorController(Survivor survivor, Vector2 caravanPos, Vector2 playerPos, boolean[][] board, int tileSize, int tileOffset) {
+    public SurvivorController(Survivor survivor, Vector2 caravanPos, Vector2 playerPos, boolean[][] board, boolean[][] smogBoard, int tileSize, int tileOffset) {
         this.survivor = survivor;
         this.board = board;
         this.playerPos = playerPos;
@@ -68,9 +68,14 @@ public class SurvivorController {
         ticks = 0;
         target = playerPos;
         tiles = new Tile[board.length][board[0].length];
+
         for (int i = 0; i < tiles.length; i++) {
             for (int j = 0; j < tiles[0].length; j++) {
-                tiles[i][j] = new Tile(i, j, board[i][j]);
+                tiles[i][j] = new Tile(i, j, (board[i][j] ||
+                        smogBoard[i * 2][(j * 2)] ||
+                        smogBoard[i * 2][(j * 2) + 1] ||
+                        smogBoard[(i*2) + 1][(j * 2)] ||
+                        smogBoard[(i*2) + 1][(j * 2) + 1]));
             }
         }
 
