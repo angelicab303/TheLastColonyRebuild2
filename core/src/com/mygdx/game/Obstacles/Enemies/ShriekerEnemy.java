@@ -6,6 +6,7 @@ import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.mygdx.game.GameCanvas;
 import com.mygdx.game.Obstacles.Enemies.Enemy;
+import util.FilmStrip;
 
 public class ShriekerEnemy extends Enemy {
     // Constants
@@ -40,15 +41,11 @@ public class ShriekerEnemy extends Enemy {
      *
      * @param x the x-coordinate of this enemy
      * @param y the y-coordinate of this enemy
-     * @param up the texture used for this enemy
-     * @param down the texture used for this enemy
-     * @param right the texture used for this enemy
-     * @param left the texture used for this enemy
-     * @param idle the texture used for this enemy
+     * @param animator the filmstrips for the enemy
      * @param scale the scale used to draw for this enemy
      */
-    public ShriekerEnemy(float x, float y, Texture up, Texture down, Texture right, Texture left, Texture idle, float scale){
-        super(x, y, up, down, right, left, idle, scale);
+    public ShriekerEnemy(float x, float y, FilmStrip[] animator, float scale, float tileSize){
+        super(x, y, animator, scale, tileSize);
         isShrieking = false;
         canShriek = false;
         justShrieked = false;

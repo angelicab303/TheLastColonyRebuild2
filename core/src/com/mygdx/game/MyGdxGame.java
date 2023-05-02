@@ -27,7 +27,7 @@ public class MyGdxGame extends Game implements ScreenListener {
 	private LevelSelectMode levelSelect;
 	private int current;
 	/** List of all WorldControllers */
-	private WorldController[] controllers;
+	private GameplayController controller;
 	/** Input Controller **/
 	private InputController input = new InputController();
 
@@ -45,8 +45,8 @@ public class MyGdxGame extends Game implements ScreenListener {
 		levelSelect = new LevelSelectMode(canvas);
 
 		 //Initialize the three game worlds
-		 controllers = new WorldController[1];
-		 controllers[0] = new GameplayController(canvas);
+		 //controllers = new WorldController[1];
+		 controller = new GameplayController(canvas);
 
 		 //Initialize the first game world
 		//controllers[0] = new RocketController();
@@ -78,9 +78,7 @@ public class MyGdxGame extends Game implements ScreenListener {
 	public void dispose() {
 		// Call dispose on our children
 		setScreen(null);
-		for(int ii = 0; ii < controllers.length; ii++) {
-			controllers[ii].dispose();
-		}
+		controller.dispose();
 
 		canvas.dispose();
 		canvas = null;
@@ -123,9 +121,9 @@ public class MyGdxGame extends Game implements ScreenListener {
 		if (screen == loading) {
 			directory = loading.getAssets();
 			// gather assets for game level
-			controllers[0].gatherAssets(directory);
-			controllers[0].setScreenListener(this);
-			controllers[0].setCanvas(canvas);
+			controller.gatherAssets(directory);
+			controller.setScreenListener(this);
+			controller.setCanvas(canvas);
 			// gather assets for level select menu
 			levelSelect.gatherAssets(directory);
 			levelSelect.setScreenListener(this);
@@ -152,9 +150,9 @@ public class MyGdxGame extends Game implements ScreenListener {
 				mainMenu.reset();
 				setScreen(mainMenu);
 			}
-			else if (exitCode == levelSelect.EXIT_1){
-				controllers[0].reset();
-				setScreen(controllers[0]);
+			else{
+				controller.reset(exitCode);
+				setScreen(controller);
 			}
 		}
 //		else if (exitCode == WorldController.EXIT_NEXT) {

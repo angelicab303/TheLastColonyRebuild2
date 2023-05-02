@@ -65,8 +65,8 @@ public class ScoutEnemy extends Enemy{
             aframe = ((int)currFrame % 2 == 0 ? 0 : 1);
             currentAnimator.setFrame((int)aframe);
             canvas.draw(currentAnimator, Color.WHITE,body.getWorldCenter().x*drawScale.x, body.getWorldCenter().y*drawScale.y,
-                    body.getWorldCenter().x*drawScale.x + (body.getWorldCenter().x*drawScale.x/ canvas.getWidth() * 80f),
-                    body.getWorldCenter().y*drawScale.y + (body.getWorldCenter().y*drawScale.y/ canvas.getHeight() * 50f),
+                    body.getWorldCenter().x/* *drawScale.x /*+ (body.getWorldCenter().x*drawScale.x/ canvas.getWidth() * 80f)*/,
+                    body.getWorldCenter().y/* *drawScale.y /*+ (body.getWorldCenter().y*drawScale.y/ canvas.getHeight() * 50f)*/,
                     0.0f, scale, scale);
         }
 
@@ -359,15 +359,11 @@ public class ScoutEnemy extends Enemy{
      *
      * @param x     the x-coordinate of this enemy
      * @param y     the y-coordinate of this enemy
-     * @param up
-     * @param down
-     * @param right
-     * @param left
-     * @param idle
+     * @param animator
      * @param scale
      */
-    public ScoutEnemy(float x, float y, Texture up, Texture down, Texture right, Texture left, Texture idle, Texture[] vineTextures, float scale, World world) {
-        super(x, y, up, down, right, left, idle, scale);
+    public ScoutEnemy(float x, float y, FilmStrip[] animator, Texture[] vineTextures, float scale, float tileSize, World world) {
+        super(x, y, animator, scale, tileSize);
         vines = new Array<>();
         this.world = world;
         vineTick = 0;

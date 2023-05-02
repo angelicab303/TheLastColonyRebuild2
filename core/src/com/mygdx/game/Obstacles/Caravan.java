@@ -42,6 +42,14 @@ public class Caravan extends obstacle.BoxObstacle implements GameObstacle {
     /** Scale factor */
     private float scale;
 
+    public void setMaxCapacity(int maxCapacity) {
+        this.maxCapacity = maxCapacity;
+    }
+
+    public int getMaxCapacity() {
+        return maxCapacity;
+    }
+
     /**
      * Create a caravan at the given position.
      *
