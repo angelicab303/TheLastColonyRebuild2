@@ -72,8 +72,8 @@ public class ScoutEnemyController extends com.mygdx.game.EnemyControllers.EnemyC
         }
     }
 
-    public ScoutEnemyController(boolean[][] board, int tileSize, int tileOffset, ScoutEnemy enemy, Player player, Array<ShriekerEnemy> shriekArr) {
-        super(board, tileSize, tileOffset, enemy, player, shriekArr);
+    public ScoutEnemyController(boolean[][] board, int tileSize, int tileOffset, ScoutEnemy enemy, Player player) {
+        super(board, tileSize, tileOffset, enemy, player);
         this.enemy = enemy;
         state = FSMState.IDLE;
         // change later

@@ -36,8 +36,9 @@ public class ShriekerEnemyController extends EnemyController{
      * @param enemy  the enemy controlled by this controller
      * @param player the player that will be the enemy's target
      */
-    public ShriekerEnemyController(boolean[][] board, int tileSize, int tileOffset, ShriekerEnemy enemy, Player player, Array<ShriekerEnemy> shriekArr) {
-        super(board, tileSize, tileOffset, enemy, player, shriekArr);
+    public ShriekerEnemyController(boolean[][] board, int tileSize, int tileOffset, ShriekerEnemy enemy, Player player) {
+        super(board, tileSize, tileOffset, enemy, player);
+        addShrieker(enemy);
         target = new Vector2(player.getX(), player.getY());
         state = FSMState.SPAWN;
         this.enemy = enemy;

@@ -55,7 +55,7 @@ public class GameplayController implements Screen {
 	/** Texture assets for player avatar */
 	private FilmStrip[] playerDirectionTextures;
 	/** Texture asset for enemy avatar */
-	private FilmStrip[] enemyDirectionTextures;
+	private FilmStrip[][] enemyDirectionTextures;
 	private Texture vineTextureVertical;
 	private Texture vineTextureHorizontal;
 	private Texture vineTextureLeftBottom;
@@ -389,10 +389,11 @@ public class GameplayController implements Screen {
 		input = new InputController();
 
 		canvas.createLights(world);
+		enemyDirectionTextures = new FilmStrip[3][5];
 
 		enemyControllers = new Array<EnemyController>();
 		survivorControllers = new Array<SurvivorController>();
-		tileGrid = new boolean[canvas.getWidth() / tileSize][canvas.getHeight() / tileSize];
+		//tileGrid = new boolean[canvas.getWidth() / tileSize][canvas.getHeight() / tileSize];
 		cameraZoom = 0.4f;
 		numRescued = 0;
 
@@ -460,7 +461,9 @@ public class GameplayController implements Screen {
 		// Unnecessary atm?
 
 		playerDirectionTextures = importCharacterFilmstrip("player");
-		enemyDirectionTextures = importCharacterFilmstrip("maskEnemy");
+		enemyDirectionTextures[0] = importCharacterFilmstrip("maskEnemy");
+		enemyDirectionTextures[1] = importCharacterFilmstrip("maskEnemy"); //Should be changed to scoutenemy when it is finished
+		enemyDirectionTextures[2] = importCharacterFilmstrip("maskEnemy"); //Should be changed to shreaker enemy when it is finished
 		vineTextureVertical = directory.getEntry("images:vineVertical", Texture.class);
 		vineTextureHorizontal = directory.getEntry("images:vineHorizontal", Texture.class);
 		vineTextureLeftBottom = directory.getEntry("images:vineBottomLeft", Texture.class);
@@ -623,7 +626,7 @@ public class GameplayController implements Screen {
 		// Here we will instantiate the objects in the level using the JSONLevelReader.
 		JSONLevelReader reader = new JSONLevelReader(directory, bounds, world, level, canvas.camera, input,
 				objects, floorArr, SCALE, tileGrid, tileSize, tileOffset, smogTileSize, smogTileOffset,
-				playerDirectionTextures, enemyDirectionTextures, toxicAir,
+				playerDirectionTextures, enemyDirectionTextures, vineTextures, toxicAir,
 				survivorITexture, displayFontInteract, fHeartTexture, player, weapon);
 
 		// System.out.println("Canvas width: " + canvas.getWidth() + "\tTile Size: " +

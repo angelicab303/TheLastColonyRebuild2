@@ -18,8 +18,8 @@ public class FloatingEnemyController extends EnemyController {
 
     final Vector2 angle = new Vector2();
 
-    public FloatingEnemyController(boolean[][] board, int tileSize, int tileOffset, FloatingEnemy enemy, Player player, Array<ShriekerEnemy> shriekArr, ToxicQueue toxicQueue) {
-        super(board, tileSize, tileOffset, enemy, player, shriekArr);
+    public FloatingEnemyController(boolean[][] board, int tileSize, int tileOffset, FloatingEnemy enemy, Player player, ToxicQueue toxicQueue) {
+        super(board, tileSize, tileOffset, enemy, player);
         this.toxicQueue = toxicQueue;
         target = new Vector2(player.getX(), player.getY());
         super.initTiles(target);

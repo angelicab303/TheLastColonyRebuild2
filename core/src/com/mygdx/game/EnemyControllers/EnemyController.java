@@ -38,7 +38,7 @@ public class EnemyController {
     protected final float ALERT_DISTANCE = 600.0f;
 
     /** The array of shrieker enemies */
-    private Array<ShriekerEnemy> shriekerArr;
+    protected Array<ShriekerEnemy> shriekerArr = new Array<ShriekerEnemy>();
 
 
     protected Vector2 target;
@@ -97,10 +97,9 @@ public class EnemyController {
      * @param player the player that will be the enemy's target
      *
      * */
-    public EnemyController(boolean[][] board, int tileSize, int tileOffset, Enemy enemy, Player player, Array<ShriekerEnemy> shriekArr)
+    public EnemyController(boolean[][] board, int tileSize, int tileOffset, Enemy enemy, Player player)
     {
         this.enemy = enemy;
-        this.shriekerArr = shriekArr;
         this.board = board;
         this.tileSize = tileSize;
         this.tileOffset = tileOffset;
@@ -178,6 +177,10 @@ public class EnemyController {
 //        this(board, tileSize, tileOffset, enemy, player);
 //        this.shriekerArr = shriekArr;
 //    }
+
+    protected void addShrieker(ShriekerEnemy shriekerEnemy){
+        shriekerArr.add(shriekerEnemy);
+    }
 
     /** Returns an int value representing the enemy's next movement action:
      * 0 = no move, 1 = right, 2 = left, 3 = up, 4 = down,
