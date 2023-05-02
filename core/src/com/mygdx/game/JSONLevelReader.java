@@ -225,7 +225,6 @@ public class JSONLevelReader {
             height = layers.get(0).getInt("height");
             System.out.println("Width: " + width + "\t\tHeight: " + height);
 
-//            this.camera.setToOrtho(false, width * tileSize, height * tileSize);
             this.tileGrid = new boolean[width][height];
 
             // Loop through each of the layers and first simply instantiate the caravan and player, in that order.

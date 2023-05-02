@@ -870,14 +870,14 @@ public class GameplayController implements Screen {
 		if (player.getX() < 20) {
 			player.setPosition(20, player.getBody().getPosition().y);
 		}
-		if (player.getX() >= canvas.getWidth() - 20) {
-			player.setPosition(canvas.getWidth() - 20, player.getBody().getPosition().y);
+		if (player.getX() >= tileGrid.length * tileSize - 20) {
+			player.setPosition(tileGrid.length * tileSize - 20, player.getBody().getPosition().y);
 		}
 		if (player.getY() < 20) {
 			player.setPosition(player.getBody().getPosition().x, 20);
 		}
-		if (player.getY() >= canvas.getHeight() - 20) {
-			player.setPosition(player.getBody().getPosition().x, canvas.getHeight() - 20);
+		if (player.getY() >= tileGrid[0].length * tileSize - 20) {
+			player.setPosition(player.getBody().getPosition().x, tileGrid[0].length * tileSize - 20);
 		}
 
 		// Update UI elements
@@ -922,14 +922,14 @@ public class GameplayController implements Screen {
 			if (enemyArr.get(i).getX() < 20) {
 				enemyArr.get(i).setPosition(20, enemyArr.get(i).getBody().getPosition().y);
 			}
-			if (enemyArr.get(i).getX() >= canvas.getWidth() - 20) {
-				enemyArr.get(i).setPosition(canvas.getWidth() - 20, enemyArr.get(i).getBody().getPosition().y);
+			if (enemyArr.get(i).getX() >= tileGrid.length * tileSize - 20) {
+				enemyArr.get(i).setPosition(tileGrid.length * tileSize - 20, enemyArr.get(i).getBody().getPosition().y);
 			}
 			if (enemyArr.get(i).getY() < 20) {
 				enemyArr.get(i).setPosition(enemyArr.get(i).getBody().getPosition().x, 20);
 			}
-			if (enemyArr.get(i).getY() >= canvas.getHeight() - 20) {
-				enemyArr.get(i).setPosition(enemyArr.get(i).getBody().getPosition().x, canvas.getHeight() - 20);
+			if (enemyArr.get(i).getY() >= tileGrid[0].length * tileSize - 20) {
+				enemyArr.get(i).setPosition(enemyArr.get(i).getBody().getPosition().x, tileGrid[0].length * tileSize - 20);
 			}
 		}
 
@@ -944,14 +944,14 @@ public class GameplayController implements Screen {
 			if (survivorArr.get(i).getX() < 20) {
 				survivorArr.get(i).setPosition(20, survivorArr.get(i).getBody().getPosition().y);
 			}
-			if (survivorArr.get(i).getX() >= canvas.getWidth() - 20) {
-				survivorArr.get(i).setPosition(canvas.getWidth() - 20, survivorArr.get(i).getBody().getPosition().y);
+			if (survivorArr.get(i).getX() >= tileGrid.length * tileSize - 20) {
+				survivorArr.get(i).setPosition(tileGrid.length * tileSize - 20, survivorArr.get(i).getBody().getPosition().y);
 			}
 			if (survivorArr.get(i).getY() < 20) {
 				survivorArr.get(i).setPosition(survivorArr.get(i).getBody().getPosition().x, 20);
 			}
-			if (survivorArr.get(i).getY() >= canvas.getHeight() - 20) {
-				survivorArr.get(i).setPosition(survivorArr.get(i).getBody().getPosition().x, canvas.getHeight() - 20);
+			if (survivorArr.get(i).getY() >= tileGrid[0].length * tileSize - 20) {
+				survivorArr.get(i).setPosition(survivorArr.get(i).getBody().getPosition().x, tileGrid[0].length * tileSize - 20);
 			}
 			survivorArr.get(i).update();
 			if (survivorArr.get(i).isInteractable() && input.didCollectSurvivor()) {
@@ -1285,7 +1285,7 @@ public class GameplayController implements Screen {
 		canvas.clear();
 
 		if (isActive()) {
-			canvas.begin(player.getX(), player.getY());
+			canvas.begin(player.getX(), player.getY(), tileGrid.length * tileSize, tileGrid[0].length * tileSize);
 		} else {
 			canvas.begin();
 		}
