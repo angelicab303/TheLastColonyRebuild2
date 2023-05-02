@@ -428,7 +428,7 @@ public class Enemy extends Shadow implements GameObstacle {
     public void drawDebug(GameCanvas canvas) {
         super.drawDebug(canvas);
         //canvas.beginDebug();
-        canvas.drawPhysics(sensorShape, Color.RED, getX()*drawScale.x, getY()*drawScale.y, getAngle(), drawScale.x, drawScale.y);
+        //canvas.drawPhysics(sensorShape, Color.RED, getX()*drawScale.x, getY()*drawScale.y, getAngle(), drawScale.x, drawScale.y);
         //canvas.endDebug();
     }
 

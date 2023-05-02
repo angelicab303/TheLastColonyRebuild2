@@ -133,6 +133,7 @@ public class Obstacles extends Shadow implements GameObstacle {
             return false;
         }
 
+
         Vector2 sensorCenter = new Vector2(0, -getHeight() / 2);
         FixtureDef sensorDef = new FixtureDef();
 
@@ -150,6 +151,8 @@ public class Obstacles extends Shadow implements GameObstacle {
         // Ground sensor to represent our feet
         Fixture sensorFixture = body.createFixture( sensorDef );
 //        sensorFixture.setUserData(getSensorName());
+
+
 
 
         body.setUserData(this);

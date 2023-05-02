@@ -135,7 +135,7 @@ public class Shadow extends SimpleObstacle {
         releaseFixtures();
 
         //dimension.y is width
-        float offset = size/2 - dimension.y;
+        float offset = size - dimension.y;
         temp.set(0,offset);
 
         if (shape.equals(ShadowShape.CIRCLE)){
@@ -144,9 +144,9 @@ public class Shadow extends SimpleObstacle {
         }
         else {
 
-            transform(offset);
+            //transform(offset);
             fixture.shape = boxShape;
-            transform(-offset); // resets the global box position
+            //transform(-offset); // resets the global box position
         }
 
         // Create the fixture
@@ -185,7 +185,7 @@ public class Shadow extends SimpleObstacle {
      * @param canvas Drawing context
      */
     public void drawDebug(GameCanvas canvas) {
-        float offset = size/2 - dimension.y;
+        float offset = size - dimension.y;
         if(shape.equals(ShadowShape.CIRCLE)){
             canvas.drawPhysics(circleShape, Color.YELLOW,getX(),getY()+offset,drawScale.x,drawScale.y);
         }
