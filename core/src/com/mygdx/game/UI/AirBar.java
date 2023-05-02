@@ -37,8 +37,8 @@ public class AirBar {
 //        this.xPos = x;
 //        this.yPos = y;
 
-        startX = (canvas.getWidth()*cameraZoom)/2.0f;
-        startY = (canvas.getHeight()*cameraZoom)/2.0f;
+        startX = (canvas.camera.viewportWidth*cameraZoom)/2.0f;
+        startY = (canvas.camera.viewportHeight*cameraZoom)/2.0f;
 
         animator = new FilmStrip(value,1,NUM_ANIM_FRAMES,NUM_ANIM_FRAMES);
         aframe = 0.0f;

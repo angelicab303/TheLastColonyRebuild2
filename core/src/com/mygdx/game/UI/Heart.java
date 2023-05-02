@@ -68,8 +68,8 @@ public class Heart {
      */
     public void draw(GameCanvas canvas) {
         // animator.setFrame((int)aframe);
-        xPos = canvas.camera.position.x - (canvas.getWidth()*cameraZoom)/2.0f + (30.0f * cameraZoom) + spacing;
-        yPos = canvas.camera.position.y + (canvas.getHeight()*cameraZoom)*0.8f/2.0f - (40.0f * cameraZoom) - texture.getHeight()*scale;
+        xPos = canvas.camera.position.x - (canvas.camera.viewportWidth*cameraZoom)/2.0f + (30.0f * cameraZoom) + spacing;
+        yPos = canvas.camera.position.y + (canvas.camera.viewportHeight*cameraZoom)*0.8f/2.0f - (40.0f * cameraZoom) - texture.getHeight()*scale;
         canvas.draw(texture, new Color(255, 255, 255, 0.75f), texture.getWidth()*scale, texture.getHeight()*scale/2, xPos, yPos, 0.0f, scale, scale);
 //        xPos = canvas.camera.position.x + (canvas.getWidth()*cameraZoom)/2.0f - (90.0f * cameraZoom) - spacing;
 //        yPos = canvas.camera.position.y + (canvas.getHeight()*cameraZoom)/2.0f - (40.0f * cameraZoom) - texture.getHeight()*scale;
