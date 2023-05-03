@@ -199,12 +199,12 @@ public class JSONLevelReader {
             }
             // Get each of the wall IDs
             for (int i = 0; i < numWallIDs; i++) {
-                wallIDs[i] = tileIDs.get(numBeforeFloors + numFloorIDs + i).getInt("id");
+                wallIDs[i] = tileIDs.get(numBeforeFloors + numFloorIDs + i-1).getInt("id");
                 tIDs[numBeforeFloors + numFloorIDs + i] = wallIDs[i];
             }
             // Get each of the tree IDs
             for (int i = 0; i < numTreeIDs; i++) {
-                treeIDs[i] = tileIDs.get(numBeforeFloors + numFloorIDs + numWallIDs + i).getInt("id");
+                treeIDs[i] = tileIDs.get(numBeforeFloors + numFloorIDs + numWallIDs + i-1).getInt("id");
                 tIDs[numBeforeFloors + numFloorIDs + numWallIDs + i] = treeIDs[i];
             }
             // Get each of the smog IDs
@@ -466,7 +466,6 @@ public class JSONLevelReader {
         if (id == 8){ //tile w/ mushroom
             Lights.createMushroomLight(x,y);
         }
-//        wallTemp.activatePhysics(world);
     }
 
     public void createWall(int x, int y, int id, float scale) {
@@ -489,7 +488,7 @@ public class JSONLevelReader {
         treeTemp.setBodyType(BodyDef.BodyType.StaticBody);
         addObject(treeTemp);
 
-        tileGrid[x][y-1] = true;
+        //tileGrid[x][y-1] = true;
 //        treeTemp.activatePhysics(world);
     }
 
