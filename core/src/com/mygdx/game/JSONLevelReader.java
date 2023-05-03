@@ -340,7 +340,7 @@ public class JSONLevelReader {
             }
             for (int i = 0; i < survivorArr.size; i++)
             {
-                survivorControllers.add(new SurvivorController(survivorArr.get(i), caravan.getPosition(), this.player.getPosition(), this.tileGrid, tileSize, tileOffset));
+                survivorControllers.add(new SurvivorController(survivorArr.get(i), caravan.getPosition(), this.player.getPosition(), this.tileGrid, this.smogGrid, tileSize, tileOffset));
             }
             for (int i = 0; i < enemyArr.size; i++)
             {
