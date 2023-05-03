@@ -270,7 +270,7 @@ public class CollisionController{
                         survivor = (Survivor) objB;
                         ((ToxicQueue.ToxicAir) objA).collide();
                     }
-                    if (survivor.canLoseLife()){
+                    if (survivor.isFollowing() && survivor.canLoseLife()){
                         survivor.loseLife();
                         survivor.coolDown(false);
                     }
