@@ -37,7 +37,7 @@ public class JSONLevelReader {
     private int width;
     private int height;
     private boolean[][] tileGrid;
-
+    private boolean[][] smogGrid;
     private int imageTileSize;
     private int tileSize;
     private int tileOffset;
@@ -96,11 +96,34 @@ public class JSONLevelReader {
     private Texture survivorITexture;
     private BitmapFont displayFontInteract;
     private Texture heart;
+    private Texture vineTextureVertical;
+    private Texture vineTextureHorizontal;
+    private Texture vineTextureLeftBottom;
+    private Texture vineTextureLeftTop;
+    private Texture vineTextureRightBottom;
+    private Texture vineTextureRightTop;
+    private Texture vineTextureHeadLeft;
+    private Texture vineTextureHeadRight;
+    private Texture vineTextureHeadDown;
+    private Texture vineTextureHeadUp;
+    private Texture vineTextureHeadLeftBottom;
+    private Texture vineTextureHeadLeftTop;
+    private Texture vineTextureHeadRightBottom;
+    private Texture vineTextureHeadRightTop;
+    private Texture vineTextureClosedLeft;
+    private Texture vineTextureClosedRight;
+    private Texture vineTextureClosedDown;
+    private Texture vineTextureClosedUp;
+    private Texture vineTextureClosedLeftBottom;
+    private Texture vineTextureClosedLeftTop;
+    private Texture vineTextureClosedRightBottom;
+    private Texture vineTextureClosedRightTop;
+    private Texture[] vineTextures;
 
     // Texture Stuff
     JsonValue tileIDs;
 
-    public JSONLevelReader(AssetDirectory directory, Rectangle bounds, World world, int level, OrthographicCamera camera, InputController input, PooledList<Obstacle> objects, Array<FloorTile> floorArr, float scale, boolean[][] tileGrid, int tileSize, int tileOffset, int smogTileSize, int smogTileOffset, FilmStrip[] playerDirectionTextures, FilmStrip[] enemyDirectionTextures, ToxicQueue toxicAir, Texture survivorITexture, BitmapFont displayFontInteractive, Texture heart, Player player, Weapon weapon) {
+    public JSONLevelReader(AssetDirectory directory, Rectangle bounds, World world, int level, OrthographicCamera camera, InputController input, PooledList<Obstacle> objects, Array<FloorTile> floorArr, float scale, boolean[][] tileGrid, boolean[][] smogGrid, int tileSize, int tileOffset, int smogTileSize, int smogTileOffset, FilmStrip[] playerDirectionTextures, FilmStrip[] enemyDirectionTextures, ToxicQueue toxicAir, Texture survivorITexture, BitmapFont displayFontInteractive, Texture heart, Player player, Weapon weapon) {
         this.directory = directory;
         this.bounds = bounds;
         this.world = world;
@@ -111,6 +134,7 @@ public class JSONLevelReader {
         this.floorArr = floorArr;
         this.scale = scale;
         this.tileGrid = tileGrid;
+        this.smogGrid = smogGrid;
         this.tileSize = tileSize;
         this.imageTileSize = tileSize * 10;
         this.tileOffset = tileOffset;
@@ -124,6 +148,54 @@ public class JSONLevelReader {
         this.heart = heart;
         this.player = player;
         this.weapon = weapon;
+        vineTextureVertical = directory.getEntry("images:vineVertical", Texture.class);
+        vineTextureHorizontal = directory.getEntry("images:vineHorizontal", Texture.class);
+        vineTextureLeftBottom = directory.getEntry("images:vineBottomLeft", Texture.class);
+        vineTextureLeftTop = directory.getEntry("images:vineTopLeft", Texture.class);
+        vineTextureRightBottom = directory.getEntry("images:vineBottomRight", Texture.class);
+        vineTextureRightTop = directory.getEntry("images:vineTopRight", Texture.class);
+        vineTextureHeadLeft = directory.getEntry("images:vineStraightHeadLeft", Texture.class);
+        vineTextureHeadRight = directory.getEntry("images:vineStraightHeadRight", Texture.class);
+        vineTextureHeadDown = directory.getEntry("images:vineStraightHeadDown", Texture.class);
+        vineTextureHeadUp = directory.getEntry("images:vineStraightHeadUp", Texture.class);
+        vineTextureHeadLeftBottom = directory.getEntry("images:vineCornerHeadLeftDown", Texture.class);
+        vineTextureHeadLeftTop = directory.getEntry("images:vineCornerHeadLeftUp", Texture.class);
+        vineTextureHeadRightBottom = directory.getEntry("images:vineCornerHeadRightDown", Texture.class);
+        vineTextureHeadRightTop = directory.getEntry("images:vineCornerHeadRightUp", Texture.class);
+
+        vineTextureClosedLeft = directory.getEntry("images:vineStraightClosedLeft", Texture.class);
+        vineTextureClosedRight = directory.getEntry("images:vineStraightClosedRight", Texture.class);
+        vineTextureClosedDown = directory.getEntry("images:vineStraightClosedDown", Texture.class);
+        vineTextureClosedUp = directory.getEntry("images:vineStraightClosedUp", Texture.class);
+        vineTextureClosedLeftBottom = directory.getEntry("images:vineCornerClosedLeftDown", Texture.class);
+        vineTextureClosedLeftTop = directory.getEntry("images:vineCornerClosedLeftUp", Texture.class);
+        vineTextureClosedRightBottom = directory.getEntry("images:vineCornerClosedRightDown", Texture.class);
+        vineTextureClosedRightTop = directory.getEntry("images:vineCornerClosedRightUp", Texture.class);
+
+        vineTextures = new Texture[22];
+        vineTextures[0] = vineTextureVertical;
+        vineTextures[1] = vineTextureHorizontal;
+        vineTextures[2] = vineTextureLeftBottom;
+        vineTextures[3] = vineTextureLeftTop;
+        vineTextures[4] = vineTextureRightBottom;
+        vineTextures[5] = vineTextureRightTop;
+        vineTextures[6] = vineTextureHeadLeft;
+        vineTextures[7] = vineTextureHeadRight;
+        vineTextures[8] = vineTextureHeadDown;
+        vineTextures[9] = vineTextureHeadUp;
+        vineTextures[10] = vineTextureHeadLeftBottom;
+        vineTextures[11] = vineTextureHeadLeftTop;
+        vineTextures[12] = vineTextureHeadRightBottom;
+        vineTextures[13] = vineTextureHeadRightTop;
+        vineTextures[14] = vineTextureClosedLeft;
+        vineTextures[15] = vineTextureClosedRight;
+        vineTextures[16] = vineTextureClosedDown;
+        vineTextures[17] = vineTextureClosedUp;
+        vineTextures[18] = vineTextureClosedLeftTop;
+        vineTextures[19] = vineTextureClosedLeftBottom;
+        vineTextures[20] = vineTextureClosedRightTop;
+        vineTextures[21] = vineTextureClosedRightBottom;
+
         try {
             // Read the JSON file into a FileReader object
             //InputStream inputStream = getClass().getResourceAsStream("assets/tiles/LastColonyTilesetCorrect.json");
@@ -225,7 +297,8 @@ public class JSONLevelReader {
             height = layers.get(0).getInt("height");
             System.out.println("Width: " + width + "\t\tHeight: " + height);
 
-            this.tileGrid = new boolean[width][height];
+//            this.camera.setToOrtho(false, width * tileSize, height * tileSize);
+//            this.tileGrid = new boolean[width][height];
 
             // Loop through each of the layers and first simply instantiate the caravan and player, in that order.
             int caravanX = 0;
@@ -361,6 +434,7 @@ public class JSONLevelReader {
     public boolean[][] getTileGrid() {
         return tileGrid;
     }
+    public boolean[][] getSmogGrid() {return smogGrid;}
     public OrthographicCamera getCamera() {
         return camera;
     }
@@ -422,7 +496,7 @@ public class JSONLevelReader {
 
     public void createEnemy(float x, float y, int id, float scale) {
         FloatingEnemy enemyTemp;
-        enemyTemp = new FloatingEnemy(x * tileSize + tileOffset, y * tileSize + tileOffset, enemyDirectionTextures, scale, imageTileSize );
+        enemyTemp = new FloatingEnemy(x * tileSize + tileOffset, y * tileSize + tileOffset, enemyDirectionTextures, scale, imageTileSize);
 //        enemyTemp.activatePhysics(world);
 
         enemyArr.add(enemyTemp);
@@ -455,8 +529,9 @@ public class JSONLevelReader {
         wallArr.add(wallTemp);
         //cliffTemp.setAwake(true);
         wallTemp.setBodyType(BodyDef.BodyType.StaticBody);
-        addObject(wallTemp);
-//        wallTemp.activatePhysics(world);
+//        addObject(wallTemp);
+        wallTemp.activatePhysics(world);
+//        tileGrid[(int)x][(int)y] = true;
 //        tiles[wallLocations[i][0]][wallLocations[i][1]] = true;
 //        tileGrid[wallLocations[i][0]][wallLocations[i][1]] = true;
         //System.out.println(id + " " + x + " " + y);
@@ -483,7 +558,7 @@ public class JSONLevelReader {
     }
 
     public void createSmog(float x, float y, int id, float scale) {
-
+        smogGrid[(int)y][(int)x] = true;
     }
 
     public void dispose(){

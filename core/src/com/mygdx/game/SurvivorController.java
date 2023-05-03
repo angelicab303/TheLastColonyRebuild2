@@ -18,7 +18,9 @@ public class SurvivorController {
         /** The survivor has been rescued and is following the player */
         FOLLOW,
         /** The survivor has been rescued and is walking to the caravan without the player */
-        FIND
+        FIND,
+        /** The survivor is at the caravan */
+        SAFE
     }
 
     // Instance Attributes
@@ -57,7 +59,7 @@ public class SurvivorController {
      * @param board A 2d boolean array that is true in a position if it contains a game obstacle and false if not  (for pathfinding)
      * @param caravanPos The caravan (will be the target for the survivor when walking)
      */
-    public SurvivorController(Survivor survivor, Vector2 caravanPos, Vector2 playerPos, boolean[][] board, int tileSize, int tileOffset) {
+    public SurvivorController(Survivor survivor, Vector2 caravanPos, Vector2 playerPos, boolean[][] board, boolean[][] smogBoard, int tileSize, int tileOffset) {
         this.survivor = survivor;
         this.board = board;
         this.playerPos = playerPos;
@@ -68,9 +70,14 @@ public class SurvivorController {
         ticks = 0;
         target = caravanPos;
         tiles = new Tile[board.length][board[0].length];
+
         for (int i = 0; i < tiles.length; i++) {
             for (int j = 0; j < tiles[0].length; j++) {
-                tiles[i][j] = new Tile(i, j, board[i][j]);
+                tiles[i][j] = new Tile(i, j, (board[i][j] ||
+                        smogBoard[i * 2][(j * 2)] ||
+                        smogBoard[i * 2][(j * 2) + 1] ||
+                        smogBoard[(i*2) + 1][(j * 2)] ||
+                        smogBoard[(i*2) + 1][(j * 2) + 1]));
             }
         }
 
@@ -123,7 +130,9 @@ public class SurvivorController {
             if (state == FSMState.FOLLOW || state == FSMState.FIND) {
                 action = getMove();
             }
-
+            if (state == FSMState.SAFE) {
+                survivor.rescue();
+            }
             return action;
         }
 
@@ -140,9 +149,15 @@ public class SurvivorController {
                     break;
                 case FOLLOW:
                     // code for state change in follow state
+                    if (survivor.getBody().getFixtureList().peek().testPoint(caravanPos.x, caravanPos.y)) {
+                        state = FSMState.SAFE;
+                    }
                     break;
                 case FIND:
                     // code for state change in find state
+                    break;
+                case SAFE:
+                    break;
                 default:
                     // Unknown or unhandled state, should never get here
                     assert (false);
@@ -164,10 +179,14 @@ public class SurvivorController {
                     break;
                 case FOLLOW:
                     // the player is the target if we are in FOLLOW state
-                    target = playerPos;
+                    target = caravanPos;
+                    break;
                 case FIND:
                     // the caravan is the target if we are in TARGET state
                     target = caravanPos;
+                    break;
+                case SAFE:
+                    break;
             }
         }
 

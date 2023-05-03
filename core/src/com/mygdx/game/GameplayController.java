@@ -23,6 +23,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.JsonValue;
 import com.mygdx.game.EnemyControllers.EnemyController;
+import com.mygdx.game.EnemyControllers.ScoutEnemyController;
 import com.mygdx.game.Obstacles.*;
 import com.mygdx.game.Obstacles.Enemies.*;
 import com.badlogic.gdx.Screen;
@@ -605,6 +606,7 @@ public class GameplayController implements Screen {
 		// Arrays used to find tiles to place smog at
 		boolean[][] tiles = new boolean[canvas.getWidth() / tileSize][canvas.getHeight() / tileSize];
 		boolean[][] smogLocations = new boolean[canvas.getWidth() / smogTileSize][canvas.getHeight() / smogTileSize];
+		smogGrid = new boolean[canvas.getWidth() * 2/tileSize][canvas.getHeight() * 2/tileSize];
 
 		// Testing tiles array:
 		// System.out.println("Canvas width: " + canvas.getWidth() + "\tTile Size: " +
@@ -622,7 +624,7 @@ public class GameplayController implements Screen {
 //		System.out.println("Width: " + canvas.getWidth() + "\t\tHeight: " + canvas.getHeight());
 		// Here we will instantiate the objects in the level using the JSONLevelReader.
 		JSONLevelReader reader = new JSONLevelReader(directory, bounds, world, level, canvas.camera, input,
-				objects, floorArr, SCALE, tileGrid, tileSize, tileOffset, smogTileSize, smogTileOffset,
+				objects, floorArr, SCALE, tileGrid, smogGrid, tileSize, tileOffset, smogTileSize, smogTileOffset,
 				playerDirectionTextures, enemyDirectionTextures, toxicAir,
 				survivorITexture, displayFontInteract, fHeartTexture, player, weapon);
 
@@ -634,6 +636,7 @@ public class GameplayController implements Screen {
 
 		objects = reader.getObjects();
 		tileGrid = reader.getTileGrid();
+		smogGrid = reader.getSmogGrid();
 //		canvas.camera = reader.getCamera();
 		caravan = reader.getCaravan();
 		player = reader.getPlayer();
@@ -965,31 +968,40 @@ public class GameplayController implements Screen {
 				player.removeFromFollowing(survivorArr.get(i));
 				setFailure(true);
 			}
+			if (survivorArr.get(i).isRescued()) {
+				player.removeFromFollowing(survivorArr.get(i));
+				survivorArr.get(i).deactivatePhysics(world);
+				survivorArr.removeIndex(i);
+				numRescued++;
+				caravan.incrCap();
+				caravan.setInteractable(false);
+			}
 		}
 		caravan.update();
 		// Update caravan state
 		if (caravan.getBody().getFixtureList().first().testPoint(player.getPosition())) {
 			caravan.setInteractable(true);
-		} else {
+		}
+		else {
 			caravan.setInteractable(false);
 		}
-		if (caravan.isInteractable() && input.didDropSurvivors()) {
+//		if (caravan.isInteractable() && input.didDropSurvivors()) {
 			if (caravan.getCurrentCapacity() == caravan.getMaxCapacity()) {
 				setComplete(true);
 			}
-			for (int i = 0; i < survivorArr.size; i++) {
-				if (survivorArr.get(i).isFollowing()) {
-					survivorArr.get(i).rescue();
-					player.removeFromFollowing(survivorArr.get(i));
-					survivorArr.get(i).deactivatePhysics(world);
-					survivorArr.removeIndex(i);
-					numRescued++;
-					caravan.incrCap();
-					caravan.setInteractable(false);
-				}
-			}
-			caravan.setInteractable(false);
-		}
+//			for (int i = 0; i < survivorArr.size; i++) {
+//				if (survivorArr.get(i).isFollowing()) {
+//					survivorArr.get(i).rescue();
+//					player.removeFromFollowing(survivorArr.get(i));
+//					survivorArr.get(i).deactivatePhysics(world);
+//					survivorArr.removeIndex(i);
+//					numRescued++;
+//					caravan.incrCap();
+//					caravan.setInteractable(false);
+//				}
+//			}
+//			caravan.setInteractable(false);
+//		}
 		// -------------------------------------------------------------------------------------------------------------
 
 		// Update Ammo Progress Bar
