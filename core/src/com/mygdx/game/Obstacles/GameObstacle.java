@@ -24,6 +24,8 @@ public interface GameObstacle {
         WEAPON,
         /** An enemy */
         ENEMY,
+        /** A Vine */
+        VINE,
         /** A survivor */
         SURVIVOR
     }
@@ -37,14 +39,16 @@ public interface GameObstacle {
     final short CATEGORY_PURIFIED = 0x0020;
     final short CATEGORY_TOXIC = 0x0040;
     final short CATEGORY_CARAVAN = 0x0080;
+    final short CATEGORY_VINE = 0x0100;
     final short MASK_SMOG = CATEGORY_ENEMY;
     final short MASK_PLAYER = CATEGORY_ENEMY | CATEGORY_SURVIVOR | CATEGORY_ENV | CATEGORY_TOXIC; //| CATEGORY_CARAVAN;
     final short MASK_ENEMY = CATEGORY_PLAYER | CATEGORY_ENEMY | CATEGORY_ENV |CATEGORY_SMOG | CATEGORY_PURIFIED;// | CATEGORY_CARAVAN ;
     final short MASK_SURVIVOR = CATEGORY_PLAYER| CATEGORY_ENEMY | CATEGORY_SURVIVOR | CATEGORY_ENV | CATEGORY_TOXIC; //| CATEGORY_CARAVAN;
     final short MASK_ENV = -1;
 
-    final short MASK_PURIFIED = CATEGORY_ENV | CATEGORY_ENEMY;
+    final short MASK_PURIFIED = CATEGORY_ENV | CATEGORY_ENEMY | CATEGORY_VINE;
     final short MASK_TOXIC = CATEGORY_ENV | CATEGORY_PLAYER | CATEGORY_SURVIVOR;
+    final short MASK_VINE = CATEGORY_PURIFIED;
     //final short MASK_CARAVAN = CATEGORY_SURVIVOR | CATEGORY_PLAYER | CATEGORY_ENEMY;
 
 
