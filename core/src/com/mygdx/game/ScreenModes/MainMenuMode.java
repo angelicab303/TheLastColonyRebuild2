@@ -231,6 +231,7 @@ public class MainMenuMode implements Screen, InputProcessor, ControllerListener 
     private BitmapFont nullFont;
     /** the state of which button was pressed (0=none, 1=play, 2=levels, 3=settings, 4=exit) */
     private int buttonState;
+    private boolean isPopulated = false;
 
 
     /**
@@ -281,6 +282,8 @@ public class MainMenuMode implements Screen, InputProcessor, ControllerListener 
         stage = new Stage();
         table = new Table();
         buttonState = 0;
+
+
     }
 
     /**
@@ -391,6 +394,8 @@ public class MainMenuMode implements Screen, InputProcessor, ControllerListener 
             };
         } );
 
+        isPopulated = true;
+
 
 
     }
@@ -415,7 +420,9 @@ public class MainMenuMode implements Screen, InputProcessor, ControllerListener 
         stage = new Stage();
         table = new Table();
         Gdx.input.setInputProcessor(null);
-        populateMenu();
+        if (!isPopulated){
+            populateMenu();
+        }
         buttonState = 0;
     }
 
