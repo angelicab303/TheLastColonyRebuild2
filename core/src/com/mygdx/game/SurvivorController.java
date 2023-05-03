@@ -18,7 +18,9 @@ public class SurvivorController {
         /** The survivor has been rescued and is following the player */
         FOLLOW,
         /** The survivor has been rescued and is walking to the caravan without the player */
-        FIND
+        FIND,
+        /** The survivor is at the caravan */
+        SAFE
     }
 
     // Instance Attributes
@@ -66,7 +68,7 @@ public class SurvivorController {
 
         state = FSMState.IDLE;
         ticks = 0;
-        target = playerPos;
+        target = caravanPos;
         tiles = new Tile[board.length][board[0].length];
 
         for (int i = 0; i < tiles.length; i++) {
@@ -128,7 +130,9 @@ public class SurvivorController {
             if (state == FSMState.FOLLOW || state == FSMState.FIND) {
                 action = getMove();
             }
-
+            if (state == FSMState.SAFE) {
+                survivor.rescue();
+            }
             return action;
         }
 
@@ -145,9 +149,15 @@ public class SurvivorController {
                     break;
                 case FOLLOW:
                     // code for state change in follow state
+                    if (survivor.getBody().getFixtureList().peek().testPoint(caravanPos.x, caravanPos.y)) {
+                        state = FSMState.SAFE;
+                    }
                     break;
                 case FIND:
                     // code for state change in find state
+                    break;
+                case SAFE:
+                    break;
                 default:
                     // Unknown or unhandled state, should never get here
                     assert (false);
@@ -169,10 +179,14 @@ public class SurvivorController {
                     break;
                 case FOLLOW:
                     // the player is the target if we are in FOLLOW state
-                    target = playerPos;
+                    target = caravanPos;
+                    break;
                 case FIND:
                     // the caravan is the target if we are in TARGET state
                     target = caravanPos;
+                    break;
+                case SAFE:
+                    break;
             }
         }
 

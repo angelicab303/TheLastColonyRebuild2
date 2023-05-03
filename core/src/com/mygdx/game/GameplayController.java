@@ -968,31 +968,40 @@ public class GameplayController implements Screen {
 				player.removeFromFollowing(survivorArr.get(i));
 				setFailure(true);
 			}
+			if (survivorArr.get(i).isRescued()) {
+				player.removeFromFollowing(survivorArr.get(i));
+				survivorArr.get(i).deactivatePhysics(world);
+				survivorArr.removeIndex(i);
+				numRescued++;
+				caravan.incrCap();
+				caravan.setInteractable(false);
+			}
 		}
 		caravan.update();
 		// Update caravan state
 		if (caravan.getBody().getFixtureList().first().testPoint(player.getPosition())) {
 			caravan.setInteractable(true);
-		} else {
+		}
+		else {
 			caravan.setInteractable(false);
 		}
-		if (caravan.isInteractable() && input.didDropSurvivors()) {
+//		if (caravan.isInteractable() && input.didDropSurvivors()) {
 			if (caravan.getCurrentCapacity() == caravan.getMaxCapacity()) {
 				setComplete(true);
 			}
-			for (int i = 0; i < survivorArr.size; i++) {
-				if (survivorArr.get(i).isFollowing()) {
-					survivorArr.get(i).rescue();
-					player.removeFromFollowing(survivorArr.get(i));
-					survivorArr.get(i).deactivatePhysics(world);
-					survivorArr.removeIndex(i);
-					numRescued++;
-					caravan.incrCap();
-					caravan.setInteractable(false);
-				}
-			}
-			caravan.setInteractable(false);
-		}
+//			for (int i = 0; i < survivorArr.size; i++) {
+//				if (survivorArr.get(i).isFollowing()) {
+//					survivorArr.get(i).rescue();
+//					player.removeFromFollowing(survivorArr.get(i));
+//					survivorArr.get(i).deactivatePhysics(world);
+//					survivorArr.removeIndex(i);
+//					numRescued++;
+//					caravan.incrCap();
+//					caravan.setInteractable(false);
+//				}
+//			}
+//			caravan.setInteractable(false);
+//		}
 		// -------------------------------------------------------------------------------------------------------------
 
 		// Update Ammo Progress Bar
