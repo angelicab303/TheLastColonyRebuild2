@@ -486,14 +486,14 @@ public class JSONLevelReader {
     }
 
     public void createEnemy(float x, float y, int id, float scale) {
-        ScoutEnemy enemyTemp;
-        enemyTemp = new ScoutEnemy(x * tileSize + tileOffset, y * tileSize + tileOffset, enemyDirectionTextures, vineTextures, scale, imageTileSize, world);
+        FloatingEnemy enemyTemp;
+        enemyTemp = new FloatingEnemy(x * tileSize + tileOffset, y * tileSize + tileOffset, enemyDirectionTextures, scale, imageTileSize);
 //        enemyTemp.activatePhysics(world);
 
         enemyArr.add(enemyTemp);
         addObject(enemyTemp);
 //        System.out.println("Width: " + tileGrid.length + "\t\tHeight: " + tileGrid[0].length);
-        enemyControllers.add(new ScoutEnemyController(tileGrid, tileSize, tileOffset, enemyTemp, player, shriekerArr));
+        enemyControllers.add(new FloatingEnemyController(tileGrid, tileSize, tileOffset, enemyTemp, player, shriekerArr, toxicAir));
     }
 
     public Array<Enemy> getEnemies() {

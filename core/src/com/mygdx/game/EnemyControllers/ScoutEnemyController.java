@@ -137,7 +137,7 @@ public class ScoutEnemyController extends com.mygdx.game.EnemyControllers.EnemyC
 
 
     protected void changeStateIfApplicable() {
-        dist = Vector2.dst(enemy.getX(), enemy.getY(), player.getX(), player.getY());
+        dist = Vector2.dst(enemy.getX(), enemy.getY(), target.x, target.y);
         switch (state) {
             case SPAWN:
                 state = FSMState.IDLE;
@@ -187,11 +187,9 @@ public class ScoutEnemyController extends com.mygdx.game.EnemyControllers.EnemyC
     }
 
     private void selectTarget() {
-        target.x = player.getX();
-        target.y = player.getY();
         if (!player.getSurvivorsFollowing().isEmpty()) {
             for (int i = 0; i < player.getSurvivorsFollowing().size; i++) {
-                if (!player.getSurvivorsFollowing().get(i).isTargetOfEnemy() && player.getSurvivorsFollowing().get(i).canLoseLife()) {
+                if (!player.getSurvivorsFollowing().get(i).isTargetOfEnemy() /*&& player.getSurvivorsFollowing().get(i).canLoseLife()*/) {
                     target.x = player.getSurvivorsFollowing().get(i).getX();
                     target.y = player.getSurvivorsFollowing().get(i).getY();
                     survivorTarget = player.getSurvivorsFollowing().get(i);
@@ -199,6 +197,10 @@ public class ScoutEnemyController extends com.mygdx.game.EnemyControllers.EnemyC
                     player.getSurvivorsFollowing().get(i).setTargetOfEnemy(true);
                 }
             }
+        }
+        else {
+            target.x = player.getX();
+            target.y = player.getY();
         }
     }
 
@@ -231,7 +233,7 @@ public class ScoutEnemyController extends com.mygdx.game.EnemyControllers.EnemyC
             selectTarget();
 
             if (firstMove) {
-                action = super.getMove();
+                action = getMoveVine();
                 firstMove = false;
             } else {
                 if (goalReached() || moveTime > 30) {
@@ -272,6 +274,7 @@ public class ScoutEnemyController extends com.mygdx.game.EnemyControllers.EnemyC
     }
 
     protected int getMoveVine() {
+//        selectTarget();
         if (enemy.vines.isEmpty()) {
             clearContainsVine();
             startTile = tiles[(int) (enemy.getX() / tileSize)][(int) (enemy.getY() / tileSize)];
