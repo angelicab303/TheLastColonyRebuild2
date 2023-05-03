@@ -66,7 +66,7 @@ public class SurvivorController {
 
         state = FSMState.IDLE;
         ticks = 0;
-        target = playerPos;
+        target = caravanPos;
         tiles = new Tile[board.length][board[0].length];
         for (int i = 0; i < tiles.length; i++) {
             for (int j = 0; j < tiles[0].length; j++) {

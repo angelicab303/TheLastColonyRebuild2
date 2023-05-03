@@ -228,10 +228,10 @@ public class JSONLevelReader {
             this.tileGrid = new boolean[width][height];
 
             // Loop through each of the layers and first simply instantiate the caravan and player, in that order.
-            float caravanX = 0;
-            float caravanY = 0;
-            float playerX = 0;
-            float playerY = 0;
+            int caravanX = 0;
+            int caravanY = 0;
+            int playerX = 0;
+            int playerY = 0;
             for (int i = 0; i < layers.size; i++) {
                 // Loop through the layer's data and retrieve each data array
                 JsonValue layerData = layers.get(i).get("data");
@@ -264,6 +264,14 @@ public class JSONLevelReader {
                         createObject(j % width, height - (j / width), dataValue);
                     }
                 }
+            }
+            for (int i = 0; i < survivorArr.size; i++)
+            {
+                survivorControllers.add(new SurvivorController(survivorArr.get(i), caravan.getPosition(), this.player.getPosition(), this.tileGrid, tileSize, tileOffset));
+            }
+            for (int i = 0; i < enemyArr.size; i++)
+            {
+                enemyControllers.add(new FloatingEnemyController(this.tileGrid, tileSize, tileOffset, (FloatingEnemy)enemyArr.get(i), this.player, shriekerArr, toxicAir));
             }
             caravan.setMaxCapacity(survivorArr.size);
             System.out.println("Finished loading JSON Level");
@@ -312,7 +320,8 @@ public class JSONLevelReader {
 //        obj.activatePhysics(world);
     }
 
-    public void createObject(float x, float y, int id) {
+    public void createObject(int x, int y, int id) {
+        //System.out.println(id + " " + x + " " + y);
         if (id == 0) {
             createCaravan(x, y, scale);
         } else if (id == 1) {
@@ -321,11 +330,11 @@ public class JSONLevelReader {
             createSurvivor(x, y, id, scale);
         } else if (id > 1 + numSurvivorIDs && id < 2 + numSurvivorIDs + numEnemyIDs) {
             createEnemy(x, y, id, scale);
-        } else if (id >= numBeforeFloors && id < 1 + numBeforeFloors + numFloorIDs) {
+        } else if (id >= numBeforeFloors && id < numBeforeFloors + numFloorIDs) {
             createFloor(x, y, id, scale);
         } else if (id >= numBeforeFloors + numFloorIDs && id < 1 + numBeforeFloors + numFloorIDs + numWallIDs) {
             createWall(x, y, id, scale);
-        } else if (id >= numBeforeFloors + numFloorIDs + numWallIDs && id < 1 + numBeforeFloors + numFloorIDs + numWallIDs + numTreeIDs) {
+        } else if (id >= 1 + numBeforeFloors + numFloorIDs + numWallIDs && id < 1 + numBeforeFloors + numFloorIDs + numWallIDs + numTreeIDs) {
             createTree(x, y, id, scale);
         } else if (id >= numBeforeFloors + numFloorIDs + numWallIDs + numTreeIDs && id < 1 + numBeforeFloors + numFloorIDs + numWallIDs + numTreeIDs + numSmogIDs) {
             createSmog(x, y, id, scale);
@@ -401,7 +410,7 @@ public class JSONLevelReader {
 
         survivorArr.add(survivorTemp);
         addObject(survivorTemp);
-        survivorControllers.add(new SurvivorController(survivorTemp, caravan.getPosition(), player.getPosition(), tileGrid, tileSize, tileOffset));
+        //survivorControllers.add(new SurvivorController(survivorTemp, caravan.getPosition(), player.getPosition(), tileGrid, tileSize, tileOffset));
     }
 
     public Array<Survivor> getSurvivors() {
@@ -419,7 +428,7 @@ public class JSONLevelReader {
         enemyArr.add(enemyTemp);
         addObject(enemyTemp);
 //        System.out.println("Width: " + tileGrid.length + "\t\tHeight: " + tileGrid[0].length);
-        enemyControllers.add(new FloatingEnemyController(tileGrid, tileSize, tileOffset, enemyTemp, player, shriekerArr, toxicAir));
+        //enemyControllers.add(new FloatingEnemyController(tileGrid, tileSize, tileOffset, enemyTemp, player, shriekerArr, toxicAir));
     }
 
     public Array<Enemy> getEnemies() {
@@ -441,7 +450,7 @@ public class JSONLevelReader {
 //        wallTemp.activatePhysics(world);
     }
 
-    public void createWall(float x, float y, int id, float scale) {
+    public void createWall(int x, int y, int id, float scale) {
         wallTemp = new Obstacles(x * tileSize + (tileSize / 2), y * tileSize + (tileSize / 2), getTextureRegionKey(id), scale);
         wallArr.add(wallTemp);
         //cliffTemp.setAwake(true);
@@ -450,15 +459,27 @@ public class JSONLevelReader {
 //        wallTemp.activatePhysics(world);
 //        tiles[wallLocations[i][0]][wallLocations[i][1]] = true;
 //        tileGrid[wallLocations[i][0]][wallLocations[i][1]] = true;
+        //System.out.println(id + " " + x + " " + y);
+        tileGrid[x][y-1] = true;
+        if (id >= 18 && id <= 21)
+        {
+            if (x > 0) {
+                tileGrid[x - 1][y - 1] = true;
+            }
+            if (x < width) {
+                tileGrid[x + 1][y - 1] = true;
+            }
+        }
     }
 
-    public void createTree(float x, float y, int id, float scale) {
+    public void createTree(int x, int y, int id, float scale) {
         treeTemp = new Obstacles(x * tileSize + (tileSize / 2), y * tileSize + (tileSize / 2), getTextureRegionKey(id), scale);
         treeArr.add(treeTemp);
         //cliffTemp.setAwake(true);
         treeTemp.setBodyType(BodyDef.BodyType.StaticBody);
         addObject(treeTemp);
 //        treeTemp.activatePhysics(world);
+        tileGrid[x][y-1] = true;
     }
 
     public void createSmog(float x, float y, int id, float scale) {

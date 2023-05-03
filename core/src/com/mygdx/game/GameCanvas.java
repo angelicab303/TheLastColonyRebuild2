@@ -419,9 +419,17 @@ public class GameCanvas {
 
 
         camera.zoom = 0.4f;
-        camera.position.set(MathUtils.clamp(x, camera.viewportWidth/2*camera.zoom, width-camera.viewportWidth/2*camera.zoom),
-                MathUtils.clamp(y, camera.viewportHeight/2*camera.zoom, height-camera.viewportHeight/2*camera.zoom), 0);
-        camera.update();
+        if (camera.viewportHeight/2*camera.zoom > height-camera.viewportHeight/2*camera.zoom)
+        {
+            camera.position.set(MathUtils.clamp(x, camera.viewportWidth/2*camera.zoom, width-camera.viewportWidth/2*camera.zoom),
+                    MathUtils.clamp(y, height-camera.viewportHeight/2*camera.zoom, camera.viewportHeight/2*camera.zoom), 0);
+            camera.update();
+        }
+        else {
+            camera.position.set(MathUtils.clamp(x, camera.viewportWidth / 2 * camera.zoom, width - camera.viewportWidth / 2 * camera.zoom),
+                    MathUtils.clamp(y, camera.viewportHeight / 2 * camera.zoom, height - camera.viewportHeight / 2 * camera.zoom), 0);
+            camera.update();
+        }
 
     }
 
