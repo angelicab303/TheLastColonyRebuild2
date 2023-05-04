@@ -298,7 +298,7 @@ public class JSONLevelReader {
             System.out.println("Width: " + width + "\t\tHeight: " + height);
 
 //            this.camera.setToOrtho(false, width * tileSize, height * tileSize);
-//            this.tileGrid = new boolean[width][height];
+            this.tileGrid = new boolean[width][height];
 
             // Loop through each of the layers and first simply instantiate the caravan and player, in that order.
             int caravanX = 0;
@@ -535,9 +535,8 @@ public class JSONLevelReader {
 //        tiles[wallLocations[i][0]][wallLocations[i][1]] = true;
 //        tileGrid[wallLocations[i][0]][wallLocations[i][1]] = true;
         //System.out.println(id + " " + x + " " + y);
-        tileGrid[x][y-1] = true;
-        if (id >= 18 && id <= 21)
-        {
+        tileGrid[x][y - 1] = true;
+        if (id >= 18 && id <= 21) {
             if (x > 0) {
                 tileGrid[x - 1][y - 1] = true;
             }
