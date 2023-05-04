@@ -151,6 +151,9 @@ public class ShriekerEnemy extends Enemy {
         }
         else if (isShrieking){
             currentAnimator = animatorShriek;
+            if (aframe >= NUM_ANIM_FRAMES){
+                aframe = 5;
+            }
         }
         else currentAnimator = animatorIdle;
         if (aframe >= NUM_ANIM_FRAMES) {
