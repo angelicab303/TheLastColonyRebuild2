@@ -13,10 +13,12 @@ public class Shadow extends SimpleObstacle {
     private Vector2 dimension;
 
     protected static float size;
-    static CircleShape circleShape;
-    static PolygonShape boxShape;
+    CircleShape circleShape;
+    PolygonShape boxShape;
 
-    FixtureDef fixture;
+    protected Shape shape;
+
+    protected FixtureDef fixture;
     //FixtureDef boxFixture;
 
     /** A cache value for the fixture (for resizing) */
@@ -25,7 +27,7 @@ public class Shadow extends SimpleObstacle {
     /** Cache of the polygon vertices (for resizing) */
     private static float[] vertices;
 
-    ShadowShape shape;
+    ShadowShape shadowShape;
 
     private Vector2 temp;
 
@@ -40,17 +42,9 @@ public class Shadow extends SimpleObstacle {
         dimension = new Vector2(width, height);
         origin = new Vector2(0,(size-height)/2);
         geometry = null;
-        this.shape = shape;
+        this.shadowShape = shape;
         this.fixture = new FixtureDef();
         temp = new Vector2();
-    }
-
-    /** Sets the default tile size, will be the diameter if circular or the side length if square
-     * Will affect all obstacles */
-    public static void setSize(float new_size){
-        size = new_size;
-
-        vertices = new float[8];
 
         //creates the fixtures according to this size
         circleShape = new CircleShape();
@@ -59,7 +53,15 @@ public class Shadow extends SimpleObstacle {
         resize(size);
     }
 
-    private static void resize(float size){
+    /** Sets the default tile size, will be the diameter if circular or the side length if square
+     * Will affect all obstacles */
+    public static void setSize(float new_size){
+        size = new_size;
+
+        vertices = new float[8];
+    }
+
+    private void resize(float size){
         circleShape.setRadius(size/2.0f);
         resize(size, size);
     }
@@ -69,7 +71,7 @@ public class Shadow extends SimpleObstacle {
      *
      * Reset the polygon vertices in the shape to match the dimension.
      */
-    private static void transform(float offset) {
+    private void transform(float offset) {
         // Make the box with the center in the center
         vertices[1] += offset;
         vertices[3] +=  offset;
@@ -84,7 +86,7 @@ public class Shadow extends SimpleObstacle {
      *
      * Reset the polygon vertices in the shape to match the dimension.
      */
-    private static void resize(float width, float height) {
+    private void resize(float width, float height) {
         // Make the box with the center in the center
         vertices[0] = -width/2.0f;
         vertices[1] = -height/2.0f;
@@ -138,16 +140,21 @@ public class Shadow extends SimpleObstacle {
         float offset = size - dimension.y;
         temp.set(0,offset);
 
-        if (shape.equals(ShadowShape.CIRCLE)){
-            circleShape.setPosition(temp);
+
+        if (shadowShape.equals(ShadowShape.CIRCLE)){
+            (circleShape).setPosition(temp);
             fixture.shape = circleShape;
         }
         else {
+            transform(offset);
+            shape = boxShape;
+            transform(-offset); // resets the global box position
+            fixture.shape = shape;
 
-            //transform(offset);
-            fixture.shape = boxShape;
-            //transform(-offset); // resets the global box position
         }
+
+
+
 
         // Create the fixture
         //fixture.shape = shape;
@@ -185,11 +192,12 @@ public class Shadow extends SimpleObstacle {
      * @param canvas Drawing context
      */
     public void drawDebug(GameCanvas canvas) {
+
         float offset = size - dimension.y;
-        if(shape.equals(ShadowShape.CIRCLE)){
+        if(shadowShape.equals(ShadowShape.CIRCLE)){
             canvas.drawPhysics(circleShape, Color.YELLOW,getX(),getY()+offset,drawScale.x,drawScale.y);
         }
-        else if(shape.equals(ShadowShape.SQUARE)){
+        else if(shadowShape.equals(ShadowShape.SQUARE)){
             canvas.drawPhysics(boxShape,Color.YELLOW,getX(),getY()+offset,getAngle(),drawScale.x,drawScale.y);
         }
 

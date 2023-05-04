@@ -1268,7 +1268,7 @@ public class GameplayController implements Screen {
 			obj.draw(canvas);
 		}
 		for(Obstacle obj : movObjects){
-			//obj.draw(canvas);
+			obj.draw(canvas);
 		}
 
 		for (Obstacle obj : smogs){
