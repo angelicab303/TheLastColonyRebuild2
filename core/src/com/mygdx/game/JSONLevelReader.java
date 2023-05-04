@@ -9,12 +9,10 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.JsonReader;
-import com.badlogic.gdx.utils.JsonValue;
-import com.badlogic.gdx.utils.Pool;
+import com.badlogic.gdx.utils.*;
 import com.mygdx.game.EnemyControllers.FloatingEnemyController;
 import com.mygdx.game.EnemyControllers.ScoutEnemyController;
 import com.mygdx.game.Obstacles.*;
@@ -79,12 +77,16 @@ public class JSONLevelReader {
     private Array<Survivor> survivorArr;
     /** survivor controller list **/
     private Array<SurvivorController> survivorControllers;
+    /** survivor paths list **/
+    private Array<Vector2[]> survivorPaths;
     /** Enemy list */
     private Array<Enemy> enemyArr;
     /** Shrieker Enemy List */
     private Array<ShriekerEnemy> shriekerArr;
     /** Enemy Controller */
     private Array<EnemyController> enemyControllers;
+    /** enemy paths list **/
+    private Array<Vector2[]> enemyPaths;
 
     // Declare variables for each entity that has a lot of instantiations
     private FloorTile floorTemp;
@@ -215,6 +217,8 @@ public class JSONLevelReader {
                 levelStr = directory.getEntry("apartmentLevel", JsonValue.class);
             } else if (level == 5) {
                 levelStr = directory.getEntry("mazeLevel", JsonValue.class);
+            } else if (level == 6) {
+                levelStr = directory.getEntry("complexLevel", JsonValue.class);
             }
 
             //FileReader mapReader = new FileReader(levelStr);
@@ -307,6 +311,9 @@ public class JSONLevelReader {
             float playerY = 0;
             for (int i = 0; i < layers.size; i++) {
                 // Loop through the layer's data and retrieve each data array
+                if (!layers.get(i).getString("type").equals("tilelayer")) {
+                    continue;
+                }
                 JsonValue layerData = layers.get(i).get("data");
                 for (int j = 0; j < layerData.size; j++) {
                     int dataValue = layerData.getInt(j) - 1;
@@ -326,9 +333,44 @@ public class JSONLevelReader {
             didCreateCaravan = true;
             didCreatePlayer = true;
 
+            survivorPaths = new Array<Vector2[]>();
+            enemyPaths = new Array<Vector2[]>();
+
+            // Loop through each of the object group layers to get the paths for the enemies and survivors
+            for (int i = 0; i < layers.size; i++) {
+                if (layers.get(i).getString("type").equals("objectgroup")) {
+                    JsonValue layerObjects = layers.get(i).get("objects");
+                    if (layers.get(i).getString("name").equals("Survivor Paths")) {
+                        for (int j = 0; j < layerObjects.size; j++) {
+                            JsonValue polygon = layerObjects.get(j);
+                            survivorPaths.add(new Vector2[polygon.size]);;
+                            for (int k = 0; k < polygon.size; k++) {
+                                survivorPaths.get(j)[k] = new Vector2(polygon.get(k).get(0).getFloat(0), polygon.get(k).get(0).getFloat(1));
+                            }
+                        }
+                    } else if (layers.get(i).getString("name").equals("Enemy Paths")) {
+                        for (int j = 0; j < layerObjects.size; j++) {
+                            JsonValue polygon = layerObjects.get(j);
+                            enemyPaths.add(new Vector2[polygon.size]);;
+                            for (int k = 0; k < polygon.size; k++) {
+                                enemyPaths.get(j)[k] = new Vector2(polygon.get(k).get(0).getFloat(0), polygon.get(k).get(0).getFloat(1));
+                            }
+                        }
+                    } else {
+                        System.out.println("Object layer \"" + layers.get(i).getString("name") + "\" not recognized");
+                    }
+                }
+            }
+
+            // Either need new constructor to initialize enemy with path
+            //  or a set function to set the path of an enemy
+
             // Loop through each of the layers and instantiate each object from the id
             for (int i = 0; i < layers.size; i++) {
                 // Loop through the layer's data and retrieve each data array
+                if (!layers.get(i).getString("type").equals("tilelayer")) {
+                    continue;
+                }
                 JsonValue layerData = layers.get(i).get("data");
                 for (int j = 0; j < layerData.size; j++) {
                     int dataValue = layerData.getInt(j) - 1;

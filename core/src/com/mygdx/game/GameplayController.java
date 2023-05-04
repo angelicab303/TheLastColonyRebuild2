@@ -853,7 +853,7 @@ public class GameplayController implements Screen {
 		}
 
 		if (input.isNextLevel()) {
-			reset(level + 1 % 2);
+			reset(level + 1);
 		}
 
 		if (input.didPressAbsorb()) {
