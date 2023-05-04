@@ -379,7 +379,7 @@ public class GameplayController implements Screen {
 	 */
 	public GameplayController(GameCanvas canvas) {
 		this(new Rectangle(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT), new Vector2(0, DEFAULT_GRAVITY));
-		setDebug(false);
+		setDebug(true);
 		setComplete(false);
 		setFailure(false);
 		// world.setContactListener(this);

@@ -520,8 +520,14 @@ public class JSONLevelReader {
         wallArr.add(wallTemp);
         //cliffTemp.setAwake(true);
         wallTemp.setBodyType(BodyDef.BodyType.StaticBody);
-//        addObject(wallTemp);
-        wallTemp.activatePhysics(world);
+        addObject(wallTemp);
+//        wallTemp.activatePhysics(world);
+//        if (id == 15 || id == 19 || id == 20 || id == 22) {
+//            System.out.println("id: " + id);
+//            System.out.println("textureRegionKey: " + getTextureRegionKey(id));
+//            System.out.println("textureRegion name: " + (tileIDs.get(id)).getString("image"));
+//            System.out.println("---");
+//        }
 //        tileGrid[(int)x][(int)y] = true;
 //        tiles[wallLocations[i][0]][wallLocations[i][1]] = true;
 //        tileGrid[wallLocations[i][0]][wallLocations[i][1]] = true;
