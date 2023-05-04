@@ -148,7 +148,6 @@ public class Shadow extends SimpleObstacle {
         else {
             transform(offset);
             shape = boxShape;
-            transform(-offset); // resets the global box position
             fixture.shape = shape;
 
         }

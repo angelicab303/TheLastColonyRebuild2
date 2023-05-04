@@ -133,6 +133,10 @@ public class Obstacles extends Shadow implements GameObstacle {
             return false;
         }
 
+        setFilterData(filter);
+
+
+
 
         Vector2 sensorCenter = new Vector2(0, -getHeight() / 2);
         FixtureDef sensorDef = new FixtureDef();
@@ -157,7 +161,7 @@ public class Obstacles extends Shadow implements GameObstacle {
 
         body.setUserData(this);
 
-        setFilterData(filter);
+
 
         return true;
     }
