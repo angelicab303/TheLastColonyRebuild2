@@ -492,7 +492,6 @@ public class JSONLevelReader {
         }
         player = new Player(x * tileSize + tileOffset, y * tileSize + tileOffset, playerDirectionTextures, input, scale, imageTileSize);
         addObject(player);
-//        player.activatePhysics(world);
         player.setAwake(true);
 
         // Instantiate the weapon:
@@ -511,9 +510,7 @@ public class JSONLevelReader {
     public void createSurvivor(float x, float y, int id, float scale) {
         Survivor survivorTemp;
         // Instantiate a survivor:
-        //Survivor survivorTemp = new Survivor(i, survivorLocations[i][0] * tileSize, survivorLocations[i][1] * tileSize, survivorTexture);
         survivorTemp = new Survivor(survivorArr.size, x * tileSize + tileOffset, y * tileSize + tileOffset, getTextureRegionKey(id), heart, displayFontInteract, scale);
-//        survivorTemp.activatePhysics(world);
 
         survivorArr.add(survivorTemp);
         addObject(survivorTemp);
@@ -530,10 +527,10 @@ public class JSONLevelReader {
     public void createEnemy(float x, float y, int id, float scale) {
         FloatingEnemy enemyTemp;
         enemyTemp = new FloatingEnemy(x * tileSize + tileOffset, y * tileSize + tileOffset, enemyDirectionTextures, scale, imageTileSize);
-//        enemyTemp.activatePhysics(world);
 
         enemyArr.add(enemyTemp);
         addObject(enemyTemp);
+
 //        System.out.println("Width: " + tileGrid.length + "\t\tHeight: " + tileGrid[0].length);
         enemyControllers.add(new FloatingEnemyController(tileGrid, tileSize, tileOffset, enemyTemp, player, shriekerArr, toxicAir));
     }
@@ -554,16 +551,14 @@ public class JSONLevelReader {
         if (id == 8){ //tile w/ mushroom
             Lights.createMushroomLight(x,y);
         }
-//        wallTemp.activatePhysics(world);
     }
 
     public void createWall(float x, float y, int id, float scale) {
         wallTemp = new Obstacles(x * tileSize + (tileSize / 2), y * tileSize + (tileSize / 2), getTextureRegionKey(id), scale);
         wallArr.add(wallTemp);
-        //cliffTemp.setAwake(true);
         wallTemp.setBodyType(BodyDef.BodyType.StaticBody);
-//        addObject(wallTemp);
-        wallTemp.activatePhysics(world);
+        addObject(wallTemp);
+
 //        tileGrid[(int)x][(int)y] = true;
 //        tiles[wallLocations[i][0]][wallLocations[i][1]] = true;
 //        tileGrid[wallLocations[i][0]][wallLocations[i][1]] = true;
@@ -572,10 +567,8 @@ public class JSONLevelReader {
     public void createTree(float x, float y, int id, float scale) {
         treeTemp = new Obstacles(x * tileSize + (tileSize / 2), y * tileSize + (tileSize / 2), getTextureRegionKey(id), scale);
         treeArr.add(treeTemp);
-        //cliffTemp.setAwake(true);
         treeTemp.setBodyType(BodyDef.BodyType.StaticBody);
         addObject(treeTemp);
-//        treeTemp.activatePhysics(world);
     }
 
     public void createSmog(float x, float y, int id, float scale) {
