@@ -48,6 +48,7 @@ public class ShriekerEnemy extends Enemy {
     protected FilmStrip animatorAlert;
     protected FilmStrip animatorShriek;
     protected FilmStrip currentAnimator;
+    private final float SHRIEKER_ANIMATION_SPEED = 0.1f;
 
     /**
      * Initialize a shrieker enemy: enemy that alerts other enemies to player location.
@@ -234,7 +235,7 @@ public class ShriekerEnemy extends Enemy {
             // updateDirection(hVelocity, vVelocity);
         }
         // Increase animation frame
-        aframe += ANIMATION_SPEED;
+        aframe += SHRIEKER_ANIMATION_SPEED;
 
         // Update animator
         updateAnimator();
@@ -283,22 +284,6 @@ public class ShriekerEnemy extends Enemy {
         else {
             canvas.draw(currentAnimator, Color.WHITE, origin.x, origin.y, body.getWorldCenter().x*drawScale.x - currentAnimator.getRegionWidth()*scale/2, body.getWorldCenter().y*drawScale.y- currentAnimator.getRegionHeight()*scale/2, 0.0f, scale, scale);
         }
-//        else if (isShrieking) {
-//            canvas.draw(currentAnimator, Color.RED, origin.x, origin.y, body.getWorldCenter().x * drawScale.x - currentAnimator.getRegionWidth() * getScale() / 2, body.getWorldCenter().y * drawScale.y - currentAnimator.getRegionHeight() * getScale() / 2, 0.0f, getScale(), getScale());
-//        }
-//        else if (isStunned()){
-//            canvas.draw(currentAnimator, Color.PINK, origin.x, origin.y, body.getWorldCenter().x * drawScale.x - currentAnimator.getRegionWidth() * getScale() / 2, body.getWorldCenter().y * drawScale.y - currentAnimator.getRegionHeight() * getScale() / 2, 0.0f, getScale(), getScale());
-//        }
-//        else if (isWaking){
-//            canvas.draw(currentAnimator, Color.ORANGE, origin.x, origin.y, body.getWorldCenter().x * drawScale.x - currentAnimator.getRegionWidth() * getScale() / 2, body.getWorldCenter().y * drawScale.y - currentAnimator.getRegionHeight() * getScale() / 2, 0.0f, getScale(), getScale());
-//        }
-//        else if (justShrieked){
-//            canvas.draw(currentAnimator, Color.GRAY, origin.x, origin.y, body.getWorldCenter().x * drawScale.x - currentAnimator.getRegionWidth() * getScale() / 2, body.getWorldCenter().y * drawScale.y - currentAnimator.getRegionHeight() * getScale() / 2, 0.0f, getScale(), getScale());
-//
-//        }
-//        else{
-//            canvas.draw(currentAnimator, Color.BLUE, origin.x, origin.y, body.getWorldCenter().x * drawScale.x - currentAnimator.getRegionWidth() * getScale() / 2, body.getWorldCenter().y * drawScale.y - currentAnimator.getRegionHeight() * getScale() / 2, 0.0f, getScale(), getScale());
-//        }
     }
     @Override
     public void drawDebug(GameCanvas canvas) {
