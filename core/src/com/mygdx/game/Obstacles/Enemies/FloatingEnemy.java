@@ -12,9 +12,9 @@ public class FloatingEnemy extends Enemy {
     /** Time enemy must wait before attacking again */
     private final float ATTACK_COOLDOWN = 100;
 
-    public FloatingEnemy (float x, float y, Texture up, Texture down, Texture right, Texture left, Texture idle, float scale)
+    public FloatingEnemy (float x, float y, FilmStrip[] animator, float scale, float tileSize)
     {
-        super(x, y, up, down, right, left, idle, scale);
+        super(x, y, animator, scale, tileSize);
     }
 
     /**

@@ -224,9 +224,26 @@ public class EnemyController {
         return action;
     }
 
+    protected void chooseTarget() {
+        if(player.getSurvivorsFollowing().isEmpty()) {
+            target.x = player.getX();
+            target.y = player.getY();
+        } else {
+            for (int i = 0; i < player.getSurvivorsFollowing().size; i++) {
+                if (!player.getSurvivorsFollowing().get(i).isTargetOfEnemy() && player.getSurvivorsFollowing().get(i).canLoseLife()) {
+                    target.x = player.getSurvivorsFollowing().get(i).getX();
+                    target.y = player.getSurvivorsFollowing().get(i).getY();
+//                    survivorTarget = player.getSurvivorsFollowing().get(i);
+//                    followingSurvivor = true;
+                    player.getSurvivorsFollowing().get(i).setTargetOfEnemy(true);
+                }
+            }
+        }
+    }
     /** Changes the state encoding of this enemy */
     protected void changeStateIfApplicable()
     {
+        chooseTarget();
         Tile enemyTile = tiles[(int) (enemy.getX() / tileSize)][(int) (enemy.getY() / tileSize)];
         Tile targetTile = tiles[(int) (target.x / tileSize)][(int) (target.y / tileSize)];
         alertAllEnemies = false;
