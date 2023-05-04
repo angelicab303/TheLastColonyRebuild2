@@ -536,6 +536,15 @@ public class JSONLevelReader {
 //        tileGrid[wallLocations[i][0]][wallLocations[i][1]] = true;
         //System.out.println(id + " " + x + " " + y);
         tileGrid[x][y - 1] = true;
+        if (id >= 13 && id <= 17) {
+            if (y < height - 1) {
+                tileGrid[x][y] = true;
+            }
+            if (y < height - 2)
+            {
+                tileGrid[x][y+1] = true;
+            }
+        }
         if (id >= 18 && id <= 21) {
             if (x > 0) {
                 tileGrid[x - 1][y - 1] = true;
