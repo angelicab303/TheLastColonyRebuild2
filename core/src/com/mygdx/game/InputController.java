@@ -212,7 +212,7 @@ public class InputController {
 		} else {
 			// Figure out, based on which player we are, which keys
 			// control our actions (depends on player).
-			int up, left, right, down, absorb, shoot, upshoot, leftshoot, rightshoot, downshoot,
+			int up, left, right, down, absorb, shoot, altshoot, upshoot, leftshoot, rightshoot, downshoot,
 					pickUpSurvivor, dropOffSurvivors, restart, pause, next;
 			up    = Input.Keys.W;
 			down  = Input.Keys.S;
@@ -220,6 +220,7 @@ public class InputController {
 			right = Input.Keys.D;
 			absorb = Input.Buttons.LEFT;
 			shoot = Input.Buttons.RIGHT;
+			altshoot = Input.Keys.SHIFT_LEFT;
 			upshoot = Input.Keys.UP;
 			downshoot  = Input.Keys.DOWN;
 			leftshoot  = Input.Keys.LEFT;
@@ -294,7 +295,7 @@ public class InputController {
 
 			// Shooting
 			//if (Gdx.input.isKeyPressed(upshoot)||Gdx.input.isKeyPressed(downshoot)||Gdx.input.isKeyPressed(leftshoot)||Gdx.input.isKeyPressed(rightshoot)){
-			if(Gdx.input.isButtonPressed(shoot) && !Gdx.input.isKeyPressed(pause)){
+			if((Gdx.input.isButtonPressed(shoot) || (Gdx.input.isButtonPressed(absorb) && Gdx.input.isKeyPressed(altshoot))) && !Gdx.input.isKeyPressed(pause)){
 				pressedFire = true;
 			}
 
