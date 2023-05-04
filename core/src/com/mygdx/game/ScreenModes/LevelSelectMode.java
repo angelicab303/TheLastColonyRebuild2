@@ -291,6 +291,10 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
             };
         } );
 
+        if (!populated){
+            populated = true;
+        }
+
     }
 
     private void addLevel(Table tableLevels, Texture up, Texture down, int level){
@@ -302,10 +306,6 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
         buttons.add(new TextButton("", textButtonStyle));
         tableLevels.add(buttons.get(level)).spaceBottom(20.0f).left().size(up.getWidth()*textScale, up.getHeight()*textScale);
         tableLevels.row();
-
-        if (!populated){
-            populated = true;
-        }
     }
 
     /**
@@ -331,8 +331,6 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
                 // t = new Table();
             }
         }
-
-
         Gdx.input.setInputProcessor(null);
         populateMenu();
         buttonState = -1;
