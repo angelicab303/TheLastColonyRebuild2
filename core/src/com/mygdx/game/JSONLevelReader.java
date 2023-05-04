@@ -529,8 +529,8 @@ public class JSONLevelReader {
         wallArr.add(wallTemp);
         //cliffTemp.setAwake(true);
         wallTemp.setBodyType(BodyDef.BodyType.StaticBody);
-//        addObject(wallTemp);
-        wallTemp.activatePhysics(world);
+        addObject(wallTemp);
+        //wallTemp.activatePhysics(world);
 //        tileGrid[(int)x][(int)y] = true;
 //        tiles[wallLocations[i][0]][wallLocations[i][1]] = true;
 //        tileGrid[wallLocations[i][0]][wallLocations[i][1]] = true;
