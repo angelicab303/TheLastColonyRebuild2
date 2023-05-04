@@ -551,6 +551,7 @@ public class GameplayController implements Screen {
 		survivorControllers.clear();
 		smogs.clear();
 		objects.clear();
+		movObjects.clear();
 		addQueue.clear();
 		canvas.disposeLights();
 		world.dispose();
