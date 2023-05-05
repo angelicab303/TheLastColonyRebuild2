@@ -73,12 +73,16 @@ public class SurvivorController {
 
         for (int i = 0; i < tiles.length; i++) {
             for (int j = 0; j < tiles[0].length; j++) {
-                tiles[i][j] = new Tile(i, j, (board[i][j] ||
+                tiles[i][j] = new Tile(i, j, ((board[i][j]) ||
                         smogBoard[i * 2][(j * 2)] ||
                         smogBoard[i * 2][(j * 2) + 1] ||
                         smogBoard[(i*2) + 1][(j * 2)] ||
                         smogBoard[(i*2) + 1][(j * 2) + 1]));
             }
+        }
+
+        if (caravanPos.x < 400f) {
+            startTile = tiles[(int) (survivor.getX() / tileSize)][(int) (survivor.getY() / tileSize)];
         }
 
         startTile = tiles[(int) (survivor.getX() / tileSize)][(int) (survivor.getY() / tileSize)];
@@ -209,7 +213,7 @@ public class SurvivorController {
                 return 0;
             }
             System.out.println(nextTile.getX() + ", " + nextTile.getY());
-            if(nextTile.getX() == 15.0 && nextTile.getY() == 3.0) {
+            if(nextTile.getX() == 15.0 && nextTile.getY() == 4.0) {
                 int action = 0;
             }
             int action = 0;

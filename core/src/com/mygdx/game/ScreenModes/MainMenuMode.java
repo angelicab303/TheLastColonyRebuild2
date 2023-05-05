@@ -420,9 +420,7 @@ public class MainMenuMode implements Screen, InputProcessor, ControllerListener 
         stage = new Stage();
         table = new Table();
         Gdx.input.setInputProcessor(null);
-        if (!isPopulated){
-            populateMenu();
-        }
+        populateMenu();
         buttonState = 0;
     }
 
