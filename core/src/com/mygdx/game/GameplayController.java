@@ -1265,16 +1265,27 @@ public class GameplayController implements Screen {
 			flr.draw(canvas);
 		}
 
+		for(Obstacle obj : movObjects){
+			if(obj.getBehind()){
+				obj.draw(canvas);
+			}
+		}
+
 		for (Obstacle obj : objects) {
 			obj.draw(canvas);
 		}
+
 		for(Obstacle obj : movObjects){
-			obj.draw(canvas);
+			if(!obj.getBehind()){
+				obj.draw(canvas);
+			}
 		}
 
 		for (Obstacle obj : smogs){
 			obj.draw(canvas);
 		}
+
+
 
 		// END remove
 		// drawBar();

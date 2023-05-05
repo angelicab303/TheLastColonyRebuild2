@@ -98,6 +98,8 @@ public class Enemy extends Shadow implements GameObstacle {
     float height;
     float width;
 
+    int behind;
+
 
     /**Filter for filtering */
     private static volatile Filter filter;
@@ -150,7 +152,7 @@ public class Enemy extends Shadow implements GameObstacle {
      *
      * @param revealed whether this enemy is under smog
      */
-    public void setRevealed (boolean revealed) { this.revealed = revealed; }
+    public void setRevealed (boolean revealed) {this.revealed = revealed; }
 
     /**
      * Returns the aframe of the animation.
@@ -194,6 +196,7 @@ public class Enemy extends Shadow implements GameObstacle {
         this.scale = scale;
 
         this.animator = animator;
+        this.behind = 0;
 
         stunned = false;
         canAttack = true;
@@ -237,6 +240,52 @@ public class Enemy extends Shadow implements GameObstacle {
         }
     }
 
+    protected float getMoveSpeed(){
+        return MOVE_SPEED;
+    }
+
+    protected float getAttackCooldown(){
+        return ATTACK_COOLDOWN;
+    }
+
+    protected void calculateMovement(int action){
+        float hVelocity = 0;
+        float vVelocity = 0;
+        switch (action){
+            case 1:
+                hVelocity = 1;
+                break;
+            case 2:
+                hVelocity = -1;
+                break;
+            case 3:
+                vVelocity = 1;
+                break;
+            case 4:
+                vVelocity = -1;
+                break;
+            case 5:
+                hVelocity = 1;
+                vVelocity = 1;
+                break;
+            case 6:
+                hVelocity = 1;
+                vVelocity = -1;
+                break;
+            case 7:
+                hVelocity = -1;
+                vVelocity = 1;
+                break;
+            case 8:
+                hVelocity = -1;
+                vVelocity = -1;
+                break;
+        }
+        velocity.x = hVelocity * getMoveSpeed();
+        velocity.y = vVelocity * getMoveSpeed();
+        //return new Vector2(hVelocity, vVelocity);
+    }
+
     /**
      * Updates the positions of enemies based on their chosen action.
      * Also updates the stun time of stunned enemies and the attack time of enemies on cooldown.
@@ -248,9 +297,7 @@ public class Enemy extends Shadow implements GameObstacle {
             toStunTime = 0;
             this.setStunned(true);
         }
-        body.setAwake(true);
-        if (damaged)
-        {
+        if (damaged) {
             stunCooldown++;
             if (stunCooldown >= MAX_STUN_COOLDOWN)
             {
@@ -260,6 +307,7 @@ public class Enemy extends Shadow implements GameObstacle {
         }
         if (isStunned())
         {
+            body.setActive(false);
             damaged = false;
             stunCooldown = 0;
             canAttack = false;
@@ -274,81 +322,46 @@ public class Enemy extends Shadow implements GameObstacle {
         }
         if (!canAttack())
         {
-            body.setActive(false);
             attackTime++;
-            if (attackTime >= ATTACK_COOLDOWN && !isStunned())
+            if (attackTime >= getAttackCooldown() && !isStunned())
             {
                 canAttack = true;
                 attackTime = 0;
-                body.setActive(true);
             }
         }
 
+        if (!isStunned()) {
         // Determine how we are moving.
-        float hVelocity = 0;
-        float vVelocity = 0;
-        if (action == 1)
-        {
-            hVelocity = 1;
-        }
-        else if (action == 2)
-        {
-            hVelocity = -1;
-        }
-        else if (action == 3)
-        {
-            vVelocity = 1;
-        }
-        else if (action == 4)
-        {
-            vVelocity = -1;
-        }
-        else if (action == 5)
-        {
-            hVelocity = 1;
-            vVelocity = 1;
-        }
-        else if (action == 6)
-        {
-            hVelocity = 1;
-            vVelocity = -1;
-        }
-        else if (action == 7)
-        {
-            hVelocity = -1;
-            vVelocity = 1;
-        }
-        else if (action == 8)
-        {
-            hVelocity = -1;
-            vVelocity = -1;
-        }
-
-        velocity.x = hVelocity * MOVE_SPEED;
-        velocity.y = vVelocity * MOVE_SPEED;
-        setVX(velocity.x);
-        setVY(velocity.y);
-
-        if (!velocity.equals(zerovector)) {
-            lastVelocity  = velocity.cpy();
-        }
-//        position.add(velocity);
-//        setPosition(position);
-        body.setLinearVelocity(velocity);
-        body.applyLinearImpulse(velocity, body.getWorldCenter(), true);
-        setX(body.getWorldCenter().x);
-        setY(body.getWorldCenter().y);
+            setVX(velocity.x);
+            setVY(velocity.y);
+    //        position.add(velocity);
+    //        setPosition(position);
+            body.setLinearVelocity(velocity);
+            body.applyLinearImpulse(velocity, body.getWorldCenter(), true);
+            setX(body.getWorldCenter().x);
+            setY(body.getWorldCenter().y);
 
         // Set enemy texture based on direction from movement
-        if (!isStunned()) {
-            updateDirection(hVelocity, vVelocity);
+            updateDirection(velocity.x, velocity.y);
         }
+
 
         // Increase animation frame
         aframe += ANIMATION_SPEED;
 
         if (aframe >= NUM_ANIM_FRAMES) {
             aframe -= NUM_ANIM_FRAMES;
+        }
+
+        if (behind < 0){
+            behind = 0;
+        }
+
+        if(behind > 0){
+            setBehind(true);
+        }
+        else {
+            setBehind(false);
         }
     }
 
@@ -398,8 +411,6 @@ public class Enemy extends Shadow implements GameObstacle {
         body.setUserData(this);
         setFilterData(filter);
 
-        setFilterData(filter);
-
 
         return true;
     }
@@ -446,4 +457,10 @@ public class Enemy extends Shadow implements GameObstacle {
     public short getMaskBits() {
         return MASK_ENEMY;
     }
+
+    @Override
+    public void incBehind(int inc){
+        behind = inc;
+    }
+
 }

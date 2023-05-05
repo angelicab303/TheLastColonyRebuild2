@@ -271,6 +271,20 @@ public class CollisionController{
                         ((ToxicQueue.ToxicAir) objB).collide();
                     }
                     break;
+                case GameObstacle.CATEGORY_ENV | GameObstacle.CATEGORY_PLAYER:
+                case GameObstacle.CATEGORY_ENV | GameObstacle.CATEGORY_ENEMY:
+                case GameObstacle.CATEGORY_ENV | GameObstacle.CATEGORY_SURVIVOR:
+                    if(objA.getType() == GameObstacle.ObstacleType.OBSTACLE){
+                        if (contact.getFixtureA().isSensor()){
+                            (objB).incBehind(1);
+                        }
+                    }
+                    else {
+                        if (contact.getFixtureB().isSensor()){
+                            (objA).incBehind(1);
+                        }
+                    }
+                    break;
             }
         }
 
@@ -298,6 +312,22 @@ public class CollisionController{
                     else {
                         ((Survivor) objB).setInteractable(false);
                     }
+                    break;
+                case GameObstacle.CATEGORY_ENV | GameObstacle.CATEGORY_PLAYER:
+                case GameObstacle.CATEGORY_ENV | GameObstacle.CATEGORY_ENEMY:
+                case GameObstacle.CATEGORY_ENV | GameObstacle.CATEGORY_SURVIVOR:
+                    if(objA.getType() == GameObstacle.ObstacleType.OBSTACLE){
+                        if (contact.getFixtureA().isSensor()){
+                            (objB).incBehind(-1);
+                        }
+
+                    }
+                    else {
+                        if (contact.getFixtureB().isSensor()){
+                            (objA).incBehind(-1);
+                        }
+                    }
+                    break;
             }
         }
 

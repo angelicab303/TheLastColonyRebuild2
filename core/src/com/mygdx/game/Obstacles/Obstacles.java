@@ -20,6 +20,8 @@ public class Obstacles extends Shadow implements GameObstacle {
     private static volatile Filter filter;
     private float scale;
 
+    private boolean isBelow;
+
     PolygonShape sensorShape;
 
     /**
@@ -39,6 +41,7 @@ public class Obstacles extends Shadow implements GameObstacle {
         position = new Vector2(x, y);
         velocity = new Vector2(0.0f, 0.0f);
         this.scale = scale;
+        this.isBelow = false;
 
         if (filter == null) {
             filter = new Filter();
@@ -133,12 +136,13 @@ public class Obstacles extends Shadow implements GameObstacle {
             return false;
         }
 
-        setFilterData(filter);
 
 
+        float width = texture.getRegionWidth() * scale;
+        float height = texture.getRegionHeight() * scale;
 
 
-        Vector2 sensorCenter = new Vector2(0, -getHeight() / 2);
+        Vector2 sensorCenter = new Vector2(0, 5);
         FixtureDef sensorDef = new FixtureDef();
 
         //TO DO: Make Json dependant
@@ -149,13 +153,18 @@ public class Obstacles extends Shadow implements GameObstacle {
         //TO DO: Make Json dependant
         //JsonValue sensorjv = data.get("sensor");
         //sensorShape.setAsBox(sensorjv.getFloat("shrink",0)*getWidth()/2.0f, sensorjv.getFloat("height",0), sensorCenter, 0.0f);
-        sensorShape.setAsBox(getWidth()/2, getHeight());
+        sensorShape.setAsBox(width/2, height/2-5, sensorCenter, 0f);
         sensorDef.shape = sensorShape;
 
         // Ground sensor to represent our feet
         Fixture sensorFixture = body.createFixture( sensorDef );
 //        sensorFixture.setUserData(getSensorName());
 
+
+        setFilterData(filter);
+
+
+        //body.setAwake(true);
 
 
 
@@ -186,6 +195,14 @@ public class Obstacles extends Shadow implements GameObstacle {
         //canvas.endDebug();
     }
 
+    public void setBehind(boolean bool){
+        this.isBelow = true;
+    }
+
+    public boolean getBehind(){
+        return isBelow;
+    }
+
     @Override
     public ObstacleType getType() {
         return ObstacleType.OBSTACLE;
@@ -199,5 +216,10 @@ public class Obstacles extends Shadow implements GameObstacle {
     @Override
     public short getMaskBits() {
         return MASK_ENV;
+    }
+
+    @Override
+    public void incBehind(int inc) {
+
     }
 }

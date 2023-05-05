@@ -55,7 +55,7 @@ public interface GameObstacle {
     final int LEFT = 3;
     final int IDLE = 4;
     
-    boolean isBelow = false;
+
 
     /** Returns the type of an obstacle */
     ObstacleType getType();
@@ -64,6 +64,10 @@ public interface GameObstacle {
 
     short getCatagoricalBits();
     short getMaskBits();
+
+    void incBehind(int inc);
+    void setBehind(boolean bool);
+    boolean getBehind();
 
 
 

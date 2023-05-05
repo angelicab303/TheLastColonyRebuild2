@@ -191,4 +191,19 @@ public class Smog extends BoxObstacle implements GameObstacle{
     public short getMaskBits() {
         return MASK_SMOG;
     }
+
+    @Override
+    public void incBehind(int inc) {
+
+    }
+
+    @Override
+    public void setBehind(boolean bool) {
+
+    }
+
+    @Override
+    public boolean getBehind() {
+        return false;
+    }
 }

@@ -6,7 +6,7 @@ import com.badlogic.gdx.physics.box2d.*;
 import com.mygdx.game.GameCanvas;
 import obstacle.SimpleObstacle;
 
-public class Shadow extends SimpleObstacle {
+public class Shadow extends SimpleObstacle{
     private Vector2 position;
 
     /** The width and height of the box */
@@ -27,6 +27,8 @@ public class Shadow extends SimpleObstacle {
     /** Cache of the polygon vertices (for resizing) */
     private static float[] vertices;
 
+    private boolean isBelow;
+
     ShadowShape shadowShape;
 
     private Vector2 temp;
@@ -46,11 +48,13 @@ public class Shadow extends SimpleObstacle {
         this.fixture = new FixtureDef();
         temp = new Vector2();
 
+        isBelow = false;
+
         //creates the fixtures according to this size
         circleShape = new CircleShape();
         boxShape = new PolygonShape();
 
-        resize(size);
+        resize(width, size);
     }
 
     /** Sets the default tile size, will be the diameter if circular or the side length if square
@@ -87,6 +91,7 @@ public class Shadow extends SimpleObstacle {
      * Reset the polygon vertices in the shape to match the dimension.
      */
     private void resize(float width, float height) {
+        circleShape.setRadius(size/2.0f);
         // Make the box with the center in the center
         vertices[0] = -width/2.0f;
         vertices[1] = -height/2.0f;
@@ -200,6 +205,16 @@ public class Shadow extends SimpleObstacle {
             canvas.drawPhysics(boxShape,Color.YELLOW,getX(),getY()+offset,getAngle(),drawScale.x,drawScale.y);
         }
 
-    };
+    }
+
+    public void setBehind(boolean bool){
+        this.isBelow = bool;
+    }
+
+    public boolean getBehind(){
+        return isBelow;
+    }
+
+    ;
 
 }
