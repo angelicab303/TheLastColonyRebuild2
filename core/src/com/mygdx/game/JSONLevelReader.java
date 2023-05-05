@@ -546,6 +546,14 @@ public class JSONLevelReader {
             if (x < width) {
                 tileGrid[x + 1][y - 1] = true;
             }
+//            if (y > 1) {
+//                tileGrid[x][y - 2] = true;
+//            }
+        }
+        if (caravan.getX() < 400f && (id < 22 && id > 12)) {
+            System.out.println("WALL: " + x + ", " + (y-1) + "    |" + id);
+            System.out.println("-----");
+            int i = 0;
         }
     }
 
@@ -557,6 +565,11 @@ public class JSONLevelReader {
         addObject(treeTemp);
 //        treeTemp.activatePhysics(world);
         tileGrid[x][y-1] = true;
+        if (caravan.getX() < 400f) {
+            System.out.println("TREE: " + x + ", " + y);
+            System.out.println("-----");
+            int i = 0;
+        }
     }
 
     public void createSmog(float x, float y, int id, float scale) {
