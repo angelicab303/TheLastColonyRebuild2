@@ -273,4 +273,19 @@ public class Caravan extends obstacle.BoxObstacle implements GameObstacle {
     public short getMaskBits() {
         return 0x0;
     }
+
+    @Override
+    public void incBehind(int inc) {
+
+    }
+
+    @Override
+    public void setBehind(boolean bool) {
+
+    }
+
+    @Override
+    public boolean getBehind() {
+        return false;
+    }
 }

@@ -18,6 +18,7 @@ public class ScoutEnemy extends Enemy{
         private float x;
         /** Y coordinate of this tile */
         private float y;
+        private int behind = 0;
 
         public enum Direction {
             /** The enemy is not moving */
@@ -105,6 +106,11 @@ public class ScoutEnemy extends Enemy{
         @Override
         public short getMaskBits() {
             return MASK_VINE;
+        }
+
+        @Override
+        public void incBehind(int inc){
+            behind += inc;
         }
 
         @Override
@@ -452,6 +458,7 @@ public class ScoutEnemy extends Enemy{
         }
     }
 
+    @Override
     public void update(int action)
     {
         if(toStunTime >= MAX_TO_STUN_TIME){
@@ -469,9 +476,11 @@ public class ScoutEnemy extends Enemy{
         aframevine += VINE_ANIMATION_SPEED;
         vineTick++;
         if(!isExtendingVines) {
+            calculateMovement(action);
             super.update(action);
         }
         else {
+            calculateMovement(action);
             super.update(0);
 //            updateVines();
         }

@@ -106,6 +106,9 @@ public class Player extends Shadow implements GameObstacle{
     private float height;
     private float width;
 
+    private int behind;
+
+
     private Array<Survivor> survivorsFollowing;
 
     public void addToFollowing(Survivor survivor) {
@@ -147,6 +150,8 @@ public class Player extends Shadow implements GameObstacle{
         prevPosition = position;
         maxHealth = 5;
         blinkTime = 0;
+
+        behind = 0;
 
         if (filter == null){
             filter = new Filter();
@@ -459,6 +464,16 @@ public class Player extends Shadow implements GameObstacle{
         }
 //        Filter filter = body.getFixtureList().get(0).getFilterData();
 
+        if (behind < 0){
+            behind = 0;
+        }
+
+        if(behind > 0){
+            setBehind(true);
+        }
+        else {
+            setBehind(false);
+        }
     }
 
     /**
@@ -505,6 +520,11 @@ public class Player extends Shadow implements GameObstacle{
         }
 
 
+    }
+
+
+    public void incBehind(int inc){
+        behind += inc;
     }
 
 

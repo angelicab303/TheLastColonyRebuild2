@@ -517,4 +517,14 @@ public class CapsuleObstacle extends SimpleObstacle {
 		}
 	}
 
+	@Override
+	public void setBehind(boolean bool) {
+
+	}
+
+	@Override
+	public boolean getBehind() {
+		return false;
+	}
+
 }

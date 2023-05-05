@@ -253,6 +253,21 @@ public class PurifiedQueue {
         public short getMaskBits() {
             return MASK_PURIFIED;
         }
+
+        @Override
+        public void incBehind(int inc) {
+
+        }
+
+        @Override
+        public void setBehind(boolean bool) {
+
+        }
+
+        @Override
+        public boolean getBehind() {
+            return false;
+        }
     }
 
 

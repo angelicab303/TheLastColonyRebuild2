@@ -65,6 +65,8 @@ public class Survivor extends Shadow implements GameObstacle {
     Filter filter;
     private float scale;
 
+    private int behind;
+
     private boolean isTargetOfEnemy;
 
     /**
@@ -97,6 +99,7 @@ public class Survivor extends Shadow implements GameObstacle {
         isRescued = false;
         isAlive = true;
         isTargetOfEnemy = false;
+        behind = 0;
         lives = 3;
         damageCooldown = 0;
         //shadow = new Shadow(position, 0, -10, 10);
@@ -404,6 +407,16 @@ public class Survivor extends Shadow implements GameObstacle {
 //        }
 //        position.add(velocity);
 
+        if (behind < 0){
+            behind = 0;
+        }
+
+        if(behind > 0){
+            setBehind(true);
+        }
+        else {
+            setBehind(false);
+        }
     }
 
     /**
@@ -590,4 +603,10 @@ public class Survivor extends Shadow implements GameObstacle {
     public short getMaskBits() {
         return MASK_SURVIVOR;
     }
+
+    @Override
+    public void incBehind(int inc){
+        behind += inc;
+    }
+
 }

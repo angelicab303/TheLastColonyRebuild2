@@ -212,21 +212,20 @@ public class InputController {
 		} else {
 			// Figure out, based on which player we are, which keys
 			// control our actions (depends on player).
-			int up, left, right, down, absorb, shoot, altshoot, upshoot, leftshoot, rightshoot, downshoot,
-					pickUpSurvivor, dropOffSurvivors, restart, pause, next;
+			int up, left, right, down, absorb, shoot, upshoot, leftshoot, rightshoot, downshoot,
+					pickUpSurvivor, shiftControls, restart, pause, next;
 			up    = Input.Keys.W;
 			down  = Input.Keys.S;
 			left  = Input.Keys.A;
 			right = Input.Keys.D;
 			absorb = Input.Buttons.LEFT;
 			shoot = Input.Buttons.RIGHT;
-			altshoot = Input.Keys.SHIFT_LEFT;
 			upshoot = Input.Keys.UP;
 			downshoot  = Input.Keys.DOWN;
 			leftshoot  = Input.Keys.LEFT;
 			rightshoot = Input.Keys.RIGHT;
 			pickUpSurvivor = Input.Keys.E;
-			dropOffSurvivors = Input.Keys.E;
+			shiftControls = Input.Keys.SHIFT_LEFT;
 			restart = Input.Keys.R;
 			pause = Input.Keys.ESCAPE;
 			next = Input.Keys.N;
@@ -295,12 +294,15 @@ public class InputController {
 
 			// Shooting
 			//if (Gdx.input.isKeyPressed(upshoot)||Gdx.input.isKeyPressed(downshoot)||Gdx.input.isKeyPressed(leftshoot)||Gdx.input.isKeyPressed(rightshoot)){
-			if((Gdx.input.isButtonPressed(shoot) || (Gdx.input.isButtonPressed(absorb) && Gdx.input.isKeyPressed(altshoot))) && !Gdx.input.isKeyPressed(pause)){
+			if((Gdx.input.isButtonPressed(shoot) ||
+					(Gdx.input.isButtonPressed(absorb) && Gdx.input.isKeyPressed(shiftControls)))
+					&& !Gdx.input.isKeyPressed(pause)){
 				pressedFire = true;
 			}
 
 			//Absorbing
-			if (Gdx.input.isButtonPressed(absorb) && !Gdx.input.isKeyPressed(pause)) {
+			if ((Gdx.input.isButtonPressed(absorb)&& !Gdx.input.isKeyPressed(shiftControls))
+					&& !Gdx.input.isKeyPressed(pause)) {
 				pressedAbsorb = true;
 			}
 			// Picking up Survivor
