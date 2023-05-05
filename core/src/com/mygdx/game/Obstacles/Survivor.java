@@ -18,7 +18,7 @@ public class Survivor extends Shadow implements GameObstacle {
     /** How long the survivor must wait until it can lose a life again */
     private static final int   COOLDOWN = 200;
     /** How far forward the survivor can move */
-    private static final float MOVE_SPEED = 70.0f;
+    private static final float MOVE_SPEED = 40.0f;
     /** The font for interactable prompt*/
     protected BitmapFont displayFontInteract;
     /** The texture for the survivor. */

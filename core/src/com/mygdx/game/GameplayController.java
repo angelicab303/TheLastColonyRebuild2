@@ -23,6 +23,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.JsonValue;
 import com.mygdx.game.EnemyControllers.EnemyController;
+import com.mygdx.game.EnemyControllers.ScoutEnemyController;
 import com.mygdx.game.Obstacles.*;
 import com.mygdx.game.Obstacles.Enemies.*;
 import com.badlogic.gdx.Screen;
@@ -563,6 +564,7 @@ public class GameplayController implements Screen {
 		setFailure(false);
 		// System.out.println(1);
 		populateLevel(curLevel);
+		numRescued = 0;
 
 
 		// System.out.println(2);
@@ -597,6 +599,7 @@ public class GameplayController implements Screen {
 		// Arrays used to find tiles to place smog at
 		boolean[][] tiles = new boolean[canvas.getWidth() / tileSize][canvas.getHeight() / tileSize];
 		boolean[][] smogLocations = new boolean[canvas.getWidth() / smogTileSize][canvas.getHeight() / smogTileSize];
+		smogGrid = new boolean[canvas.getWidth() * 2/tileSize][canvas.getHeight() * 2/tileSize];
 
 		// Testing tiles array:
 		// System.out.println("Canvas width: " + canvas.getWidth() + "\tTile Size: " +
@@ -614,7 +617,7 @@ public class GameplayController implements Screen {
 //		System.out.println("Width: " + canvas.getWidth() + "\t\tHeight: " + canvas.getHeight());
 		// Here we will instantiate the objects in the level using the JSONLevelReader.
 		JSONLevelReader reader = new JSONLevelReader(directory, bounds, world, level, canvas.camera, input,
-				objects, movObjects, floorArr, SCALE, tileGrid, tileSize, tileOffset, smogTileSize, smogTileOffset,
+				objects, floorArr, SCALE, tileGrid, smogGrid, tileSize, tileOffset, smogTileSize, smogTileOffset,
 				playerDirectionTextures, enemyDirectionTextures, toxicAir,
 				survivorITexture, displayFontInteract, fHeartTexture, player, weapon);
 
@@ -626,6 +629,7 @@ public class GameplayController implements Screen {
 
 		objects = reader.getObjects();
 		tileGrid = reader.getTileGrid();
+		smogGrid = reader.getSmogGrid();
 //		canvas.camera = reader.getCamera();
 		caravan = reader.getCaravan();
 		player = reader.getPlayer();
@@ -833,14 +837,14 @@ public class GameplayController implements Screen {
 		if (player.getX() < 20) {
 			player.setPosition(20, player.getBody().getPosition().y);
 		}
-		if (player.getX() >= canvas.getWidth() - 20) {
-			player.setPosition(canvas.getWidth() - 20, player.getBody().getPosition().y);
+		if (player.getX() >= tileGrid.length * tileSize - 20) {
+			player.setPosition(tileGrid.length * tileSize - 20, player.getBody().getPosition().y);
 		}
 		if (player.getY() < 20) {
 			player.setPosition(player.getBody().getPosition().x, 20);
 		}
-		if (player.getY() >= canvas.getHeight() - 20) {
-			player.setPosition(player.getBody().getPosition().x, canvas.getHeight() - 20);
+		if (player.getY() >= tileGrid[0].length * tileSize - 20) {
+			player.setPosition(player.getBody().getPosition().x, tileGrid[0].length * tileSize - 20);
 		}
 
 		// Update UI elements
@@ -885,14 +889,14 @@ public class GameplayController implements Screen {
 			if (enemyArr.get(i).getX() < 20) {
 				enemyArr.get(i).setPosition(20, enemyArr.get(i).getBody().getPosition().y);
 			}
-			if (enemyArr.get(i).getX() >= canvas.getWidth() - 20) {
-				enemyArr.get(i).setPosition(canvas.getWidth() - 20, enemyArr.get(i).getBody().getPosition().y);
+			if (enemyArr.get(i).getX() >= tileGrid.length * tileSize - 20) {
+				enemyArr.get(i).setPosition(tileGrid.length * tileSize - 20, enemyArr.get(i).getBody().getPosition().y);
 			}
 			if (enemyArr.get(i).getY() < 20) {
 				enemyArr.get(i).setPosition(enemyArr.get(i).getBody().getPosition().x, 20);
 			}
-			if (enemyArr.get(i).getY() >= canvas.getHeight() - 20) {
-				enemyArr.get(i).setPosition(enemyArr.get(i).getBody().getPosition().x, canvas.getHeight() - 20);
+			if (enemyArr.get(i).getY() >= tileGrid[0].length * tileSize - 20) {
+				enemyArr.get(i).setPosition(enemyArr.get(i).getBody().getPosition().x, tileGrid[0].length * tileSize - 20);
 			}
 		}
 
@@ -907,14 +911,14 @@ public class GameplayController implements Screen {
 			if (survivorArr.get(i).getX() < 20) {
 				survivorArr.get(i).setPosition(20, survivorArr.get(i).getBody().getPosition().y);
 			}
-			if (survivorArr.get(i).getX() >= canvas.getWidth() - 20) {
-				survivorArr.get(i).setPosition(canvas.getWidth() - 20, survivorArr.get(i).getBody().getPosition().y);
+			if (survivorArr.get(i).getX() >= tileGrid.length * tileSize - 20) {
+				survivorArr.get(i).setPosition(tileGrid.length * tileSize - 20, survivorArr.get(i).getBody().getPosition().y);
 			}
 			if (survivorArr.get(i).getY() < 20) {
 				survivorArr.get(i).setPosition(survivorArr.get(i).getBody().getPosition().x, 20);
 			}
-			if (survivorArr.get(i).getY() >= canvas.getHeight() - 20) {
-				survivorArr.get(i).setPosition(survivorArr.get(i).getBody().getPosition().x, canvas.getHeight() - 20);
+			if (survivorArr.get(i).getY() >= tileGrid[0].length * tileSize - 20) {
+				survivorArr.get(i).setPosition(survivorArr.get(i).getBody().getPosition().x, tileGrid[0].length * tileSize - 20);
 			}
 			survivorArr.get(i).update();
 			if (survivorArr.get(i).isInteractable() && input.didCollectSurvivor()) {
@@ -928,31 +932,40 @@ public class GameplayController implements Screen {
 				player.removeFromFollowing(survivorArr.get(i));
 				setFailure(true);
 			}
+			if (survivorArr.get(i).isRescued()) {
+				player.removeFromFollowing(survivorArr.get(i));
+				survivorArr.get(i).deactivatePhysics(world);
+				survivorArr.removeIndex(i);
+				numRescued++;
+				caravan.incrCap();
+				caravan.setInteractable(false);
+			}
 		}
 		caravan.update();
 		// Update caravan state
 		if (caravan.getBody().getFixtureList().first().testPoint(player.getPosition())) {
 			caravan.setInteractable(true);
-		} else {
+		}
+		else {
 			caravan.setInteractable(false);
 		}
-		if (caravan.isInteractable() && input.didDropSurvivors()) {
-			if (numRescued == survivorArr.size) {
+//		if (caravan.isInteractable() && input.didDropSurvivors()) {
+			if (caravan.getCurrentCapacity() == caravan.getMaxCapacity()) {
 				setComplete(true);
 			}
-			for (int i = 0; i < survivorArr.size; i++) {
-				if (survivorArr.get(i).isFollowing()) {
-					survivorArr.get(i).rescue();
-					player.removeFromFollowing(survivorArr.get(i));
-					survivorArr.get(i).deactivatePhysics(world);
-					survivorArr.removeIndex(i);
-					numRescued++;
-					caravan.incrCap();
-					caravan.setInteractable(false);
-				}
-			}
-			caravan.setInteractable(false);
-		}
+//			for (int i = 0; i < survivorArr.size; i++) {
+//				if (survivorArr.get(i).isFollowing()) {
+//					survivorArr.get(i).rescue();
+//					player.removeFromFollowing(survivorArr.get(i));
+//					survivorArr.get(i).deactivatePhysics(world);
+//					survivorArr.removeIndex(i);
+//					numRescued++;
+//					caravan.incrCap();
+//					caravan.setInteractable(false);
+//				}
+//			}
+//			caravan.setInteractable(false);
+//		}
 		// -------------------------------------------------------------------------------------------------------------
 
 		// Update Ammo Progress Bar
@@ -1254,7 +1267,7 @@ public class GameplayController implements Screen {
 		canvas.clear();
 
 		if (isActive()) {
-			canvas.begin(player.getX(), player.getY());
+			canvas.begin(player.getX(), player.getY(), tileGrid.length * tileSize, tileGrid[0].length * tileSize);
 		} else {
 			canvas.begin();
 		}
