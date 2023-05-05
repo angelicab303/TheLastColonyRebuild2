@@ -7,8 +7,12 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Filter;
 import com.badlogic.gdx.physics.box2d.World;
 import com.mygdx.game.GameCanvas;
+import com.mygdx.game.SmogRegenerator;
 import obstacle.BoxObstacle;
 import util.FilmStrip;
+
+import com.badlogic.gdx.utils.Array;
+
 
 public class Smog extends BoxObstacle implements GameObstacle{
 
@@ -20,6 +24,12 @@ public class Smog extends BoxObstacle implements GameObstacle{
 
     /** Maximum time it will take for this smog unit to fade */
     private final float MAX_FADE_TIME = 60;
+
+
+    private final float REAPPEAR_TIME = 200;
+    private float reappearanceTime = 0;
+
+    private boolean willReappear = false;
 
     /** Time this smog unit has faded */
     private float fadeTime = 0;
@@ -33,6 +43,8 @@ public class Smog extends BoxObstacle implements GameObstacle{
     private float aframe;
     /** Scale of the object */
     private float scale;
+
+    private Array<Smog> neighbors;
 
 
     /**Filter for filtering */
@@ -100,6 +112,7 @@ public class Smog extends BoxObstacle implements GameObstacle{
         animator = new FilmStrip(value,1,NUM_ANIM_FRAMES,NUM_ANIM_FRAMES);
         aframe = frame;
         this.scale = scale;
+        neighbors = new Array<>();
     }
 
     /** Updates the fade time of absorbed smog */
@@ -114,6 +127,12 @@ public class Smog extends BoxObstacle implements GameObstacle{
         }
 
          */
+        if (reappearanceTime >= REAPPEAR_TIME){
+            reappear();
+            reappearanceTime = 0;
+        }
+
+
         //Adds absorption time if absorbed
         if (isAbsorbed())
         {
@@ -124,6 +143,7 @@ public class Smog extends BoxObstacle implements GameObstacle{
             fadeTime++;
             if (fadeTime >= MAX_FADE_TIME)
             {
+                fadeTime = MAX_FADE_TIME;
                 faded = true;
             }
         }
@@ -135,6 +155,38 @@ public class Smog extends BoxObstacle implements GameObstacle{
             aframe -= NUM_ANIM_FRAMES;
         }
 
+        if(!isActive()){
+            int sum = 0;
+            int total = 0;
+            for(Smog s: neighbors){
+                if (s.isActive()){
+                    sum++;
+                }
+                total++;
+            }
+            if (((double)sum)/((double)total)> 0.25){
+                reappearanceTime++;
+            }
+            else {
+                reappearanceTime = 0;
+            }
+        }
+        if (isFaded()){
+            setActive(false);
+        }
+    }
+
+    public static void addNeighboringSmog(Smog s1, Smog s2){
+        if (s1 != null && s2 != null){
+            s1.addNeighbor(s2);
+            s2.addNeighbor(s1);
+        }
+
+    }
+
+    private void addNeighbor(Smog smog){
+        neighbors.add(smog);
+        return;
     }
 
     /**
@@ -177,6 +229,13 @@ public class Smog extends BoxObstacle implements GameObstacle{
         return true;
     }
 
+    public void reappear(){
+        body.setActive(true);
+        setAbsorbed(false);
+        faded = false;
+        fadeTime = 0;
+    }
+
     @Override
     public ObstacleType getType() {
         return ObstacleType.SMOG;
@@ -194,6 +253,7 @@ public class Smog extends BoxObstacle implements GameObstacle{
 
     @Override
     public void incBehind(int inc) {
+
 
     }
 

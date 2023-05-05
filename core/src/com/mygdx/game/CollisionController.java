@@ -41,7 +41,6 @@ public class CollisionController{
     Vector2 temp3;
     Vector2 zerovector;
     List<Smog> smogList;
-    Array<Smog> tempSmogList;
 
     /** stores a temporary smog*/
     Smog tempSmog;
@@ -59,6 +58,8 @@ public class CollisionController{
     private float width;
     /** Height of the collision geometry */
     private float height;
+
+
 
     ShapeRenderer shapeRenderer;
 
@@ -354,6 +355,12 @@ public class CollisionController{
             int collision = objA.getCatagoricalBits() | objB.getCatagoricalBits();
             switch (collision){
                 case GameObstacle.CATEGORY_SMOG | GameObstacle.CATEGORY_ENEMY:
+                    if (objA.getType() == GameObstacle.ObstacleType.ENEMY){
+                        ((Enemy) objA).setRevealed(false);
+                    }
+                    else {
+                        ((Enemy) objB).setRevealed(false);
+                    }
                 case GameObstacle.CATEGORY_PURIFIED | GameObstacle.CATEGORY_ENEMY:
                 case GameObstacle.CATEGORY_PLAYER | GameObstacle.CATEGORY_SURVIVOR:
                 case GameObstacle.CATEGORY_SMOG | GameObstacle.CATEGORY_ENV:
