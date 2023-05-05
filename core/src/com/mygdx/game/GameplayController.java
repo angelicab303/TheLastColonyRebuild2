@@ -371,7 +371,7 @@ public class GameplayController implements Screen {
 		this.scale = new Vector2(1, 1);
 		complete = false;
 		failed = false;
-		debug = true;
+		debug = false;
 		active = false;
 		countdown = -1;
 	}
