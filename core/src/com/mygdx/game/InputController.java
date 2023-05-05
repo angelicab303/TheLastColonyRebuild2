@@ -220,7 +220,6 @@ public class InputController {
 			right = Input.Keys.D;
 			absorb = Input.Buttons.LEFT;
 			shoot = Input.Buttons.RIGHT;
-			altshoot = Input.Keys.SHIFT_LEFT;
 			upshoot = Input.Keys.UP;
 			downshoot  = Input.Keys.DOWN;
 			leftshoot  = Input.Keys.LEFT;
