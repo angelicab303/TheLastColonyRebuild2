@@ -7,7 +7,7 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Filter;
 import com.badlogic.gdx.physics.box2d.World;
 import com.mygdx.game.GameCanvas;
-import com.mygdx.game.SmogRegenerator;
+//import com.mygdx.game.SmogRegenerator;
 import obstacle.BoxObstacle;
 import util.FilmStrip;
 
