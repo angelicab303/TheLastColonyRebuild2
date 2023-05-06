@@ -89,6 +89,9 @@ public class FloatingEnemyController extends EnemyController {
                 {
                     state = FSMState.ATTACK;
                 }
+                else if(!enemy.isRevealed()){
+                    state = FSMState.IDLE;
+                }
                 break;
             case ATTACK:
                 angle.set(target.cpy().sub(enemyPos));
@@ -99,7 +102,13 @@ public class FloatingEnemyController extends EnemyController {
                     survivorTarget.setTargetOfEnemy(false);
                     shootingSurvivor = false;
                 }
-                state = FSMState.CHASE;
+
+                if(!enemy.isRevealed()){
+                    state = FSMState.IDLE;
+                }
+                else{
+                    state = FSMState.CHASE;
+                }
                 break;
             case STUNNED:
                 if (!enemy.isStunned())
@@ -110,6 +119,9 @@ public class FloatingEnemyController extends EnemyController {
                     else {
                         state = FSMState.CHASE;
                     }
+                }
+                else if(!enemy.isRevealed()){
+                    state = FSMState.IDLE;
                 }
                 break;
         }
