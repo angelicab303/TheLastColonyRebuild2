@@ -134,7 +134,7 @@ public class Obstacles extends Shadow implements GameObstacle {
         }
 
         setFilterData(filter);
-
+        setActive(false);
         return true;
     }
 
