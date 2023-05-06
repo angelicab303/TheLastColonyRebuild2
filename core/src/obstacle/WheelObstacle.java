@@ -117,4 +117,14 @@ public class WheelObstacle extends SimpleObstacle {
 		canvas.drawPhysics(shape,Color.YELLOW,getX(),getY(),drawScale.x,drawScale.y);
 	}
 
+	@Override
+	public void setBehind(boolean bool) {
+
+	}
+
+	@Override
+	public boolean getBehind() {
+		return false;
+	}
+
 }
