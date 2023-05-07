@@ -55,6 +55,8 @@ public class GameplayController implements Screen {
 	// ***************************
 	/** Texture assets for player avatar */
 	private FilmStrip[] playerDirectionTextures;
+	/** Texture assets for survivor avatar */
+	private FilmStrip[] survivorDirectionTextures;
 	/** Texture asset for enemy avatar */
 	private FilmStrip[] enemyDirectionTextures;
 	private Texture vineTextureVertical;
@@ -464,6 +466,7 @@ public class GameplayController implements Screen {
 		// Unnecessary atm?
 
 		playerDirectionTextures = importCharacterFilmstrip("player");
+		survivorDirectionTextures = importCharacterFilmstrip("survivorP");
 		enemyDirectionTextures = importCharacterFilmstrip("maskEnemy");
 		vineTextureVertical = directory.getEntry("images:vineVertical", Texture.class);
 		vineTextureHorizontal = directory.getEntry("images:vineHorizontal", Texture.class);
@@ -618,8 +621,8 @@ public class GameplayController implements Screen {
 		// Here we will instantiate the objects in the level using the JSONLevelReader.
 		JSONLevelReader reader = new JSONLevelReader(directory, bounds, world, level, canvas.camera, input,
 				objects, movObjects, floorArr, SCALE, tileGrid, smogGrid, tileSize, tileOffset, smogTileSize, smogTileOffset,
-				playerDirectionTextures, enemyDirectionTextures, toxicAir,
-				survivorITexture, displayFontInteract, fHeartTexture, player, weapon);
+				playerDirectionTextures, survivorDirectionTextures, enemyDirectionTextures, toxicAir,
+				displayFontInteract, fHeartTexture, player, weapon);
 
 		// System.out.println("Canvas width: " + canvas.getWidth() + "\tTile Size: " +
 		// tileSize + "\tNumTiles: " + canvas.getWidth() / tileSize);

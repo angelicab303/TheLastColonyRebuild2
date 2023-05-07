@@ -181,9 +181,9 @@ public class Enemy extends Shadow implements GameObstacle {
      */
     public Enemy (float x, float y, FilmStrip[] animator, float scale, float tileSize)
     {
-        super(x, y, tileSize*scale, tileSize*scale, ShadowShape.CIRCLE);
-        this.height = tileSize;
-        this.width = tileSize;
+        super(x, y, animator[0].getRegionWidth()*scale, animator[0].getRegionHeight()*scale, ShadowShape.CIRCLE);
+        this.height = animator[0].getRegionHeight();
+        this.width = animator[0].getRegionWidth();
         //setTexture(value);
         setDensity(1);
         setFriction(0.1f);
