@@ -351,7 +351,7 @@ public class JSONLevelReader {
             }
             for (int i = 0; i < enemyArr.size; i++)
             {
-                enemyControllers.add(new FloatingEnemyController(this.tileGrid, tileSize, tileOffset, (FloatingEnemy)enemyArr.get(i), this.player, shriekerArr, toxicAir));
+                enemyControllers.add(new ScoutEnemyController(this.tileGrid, tileSize, tileOffset, (ScoutEnemy)enemyArr.get(i), this.player, shriekerArr));
             }
             caravan.setMaxCapacity(survivorArr.size);
             if (caravan.getX() < 400f) {
@@ -521,11 +521,11 @@ public class JSONLevelReader {
     }
 
     public void createEnemy(float x, float y, int id, float scale) {
-        FloatingEnemy enemyTemp;
-        enemyTemp = new FloatingEnemy(x * tileSize + tileOffset, y * tileSize + tileOffset, enemyDirectionTextures, scale, imageTileSize);
+        ScoutEnemy enemyTemp;
+        enemyTemp = new ScoutEnemy(x * tileSize + tileOffset, y * tileSize + tileOffset, enemyDirectionTextures, vineTextures, scale, imageTileSize, world);
         enemyArr.add(enemyTemp);
         addMovObject(enemyTemp);
-        enemyControllers.add(new FloatingEnemyController(tileGrid, tileSize, tileOffset, enemyTemp, player, shriekerArr, toxicAir));
+        enemyControllers.add(new ScoutEnemyController(tileGrid, tileSize, tileOffset, enemyTemp, player, shriekerArr));
     }
 
     public Array<Enemy> getEnemies() {

@@ -230,7 +230,7 @@ public class ScoutEnemy extends Enemy{
         }
     }
 
-//    public void activateVinePhysics(World world) {vines.activatePhysics(world);}
+    //    public void activateVinePhysics(World world) {vines.activatePhysics(world);}
 //    public void setAttackPoint(float x, float y) {attackPoint.x = x; attackPoint.y = y;}
     public void addVineTile(float x, float y, int direction) {
         VineTile.Direction d;
@@ -480,7 +480,7 @@ public class ScoutEnemy extends Enemy{
             super.update(action);
         }
         else {
-            calculateMovement(action);
+            calculateMovement(0);
             super.update(0);
 //            updateVines();
         }

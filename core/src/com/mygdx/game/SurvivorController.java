@@ -213,7 +213,7 @@ public class SurvivorController {
                 return 0;
             }
 
-            System.out.println(nextTile.getX() + ", " + nextTile.getY());
+//            System.out.println(nextTile.getX() + ", " + nextTile.getY());
             if(nextTile.getX() == 15.0 && nextTile.getY() == 4.0) {
                 int action = 0;
             }

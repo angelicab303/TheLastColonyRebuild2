@@ -16,7 +16,7 @@ import com.mygdx.game.Obstacles.Enemies.ShriekerEnemy;
 
 public class ScoutEnemyController extends com.mygdx.game.EnemyControllers.EnemyController {
     protected FSMState state;
-    private static float VINE_CHASE_DIST = 100f;
+    private static float VINE_CHASE_DIST = 400f;
     private boolean[][] containsVine;
     private float[] patrolPointsHor;
     private float[] patrolPointsVert;
@@ -137,6 +137,7 @@ public class ScoutEnemyController extends com.mygdx.game.EnemyControllers.EnemyC
 
 
     protected void changeStateIfApplicable() {
+        System.out.println(state);
         dist = Vector2.dst(enemy.getX(), enemy.getY(), target.x, target.y);
         switch (state) {
             case SPAWN:
@@ -152,7 +153,7 @@ public class ScoutEnemyController extends com.mygdx.game.EnemyControllers.EnemyC
             case PATROL:
                 if (enemy.isStunned() && !enemy.isExtendingVines()) {
                     state = FSMState.STUNNED;
-                } else if (enemy.canAttack() && dist < VINE_CHASE_DIST)
+                } else if (enemy.canAttack() && dist < VINE_CHASE_DIST && enemy.isRevealed())
                         /*(player.getX() <= patrolPointsHor[1] && player.getX() >= patrolPointsHor[0] &&
                                 player.getY() <= patrolPointsVert[1] && player.getY() >= patrolPointsVert[0]))*/ {
                     enemy.setShrinkVines(true);
@@ -218,7 +219,7 @@ public class ScoutEnemyController extends com.mygdx.game.EnemyControllers.EnemyC
 
         int action = 0;
         if (state == FSMState.PATROL) {
-            if (directionalTick > 250) {
+            if (directionalTick > 100) {
                 if (prevAction == 1) {
                     action = 2;
                 } else {
@@ -327,24 +328,24 @@ public class ScoutEnemyController extends com.mygdx.game.EnemyControllers.EnemyC
             }
         }
         if(enemy.vines.isEmpty()) {
-            System.out.println("vine tile location: " + nextTile.getX() + ", " + nextTile.getY());
-            System.out.println("enemy being drawn at: " + (enemy.getBody().getWorldCenter().x - tileSize / 2) + ", " + (enemy.getBody().getWorldCenter().y - tileSize / 2));
-            System.out.println("enemy tile location: " + ((int)(enemy.getX()/tileSize)) + ", " + ((int)(enemy.getY()/tileSize)));
-            System.out.println("enemy location: " + (enemy.getX() + ", " + (enemy.getY())));
-            System.out.println("enemy tile range should be X: [" + (((int)(enemy.getX()/tileSize)) * tileSize) + ", " + ((((int)(enemy.getX()/tileSize)) + 1) * tileSize + "]"));
-            System.out.println("enemy tile range should be Y: [" + (((int)(enemy.getY()/tileSize)) * tileSize) + ", " + ((((int)(enemy.getY()/tileSize)) + 1) * tileSize + "]"));
-            System.out.println("vine tile range should be X: [" + (nextTile.getX() * tileSize) + ", " + ((nextTile.getX() + 1) * tileSize) + "]");
-            System.out.println("vine tile range should be Y: [" + (nextTile.getY() * tileSize) + ", " + ((nextTile.getY() + 1) * tileSize) + "]");
-            System.out.println("vine location: " + (nextTile.getX() * tileSize + (tileSize / 2)) + ", " + (nextTile.getY() * tileSize + (tileSize / 2)));
+//            System.out.println("vine tile location: " + nextTile.getX() + ", " + nextTile.getY());
+//            System.out.println("enemy being drawn at: " + (enemy.getBody().getWorldCenter().x - tileSize / 2) + ", " + (enemy.getBody().getWorldCenter().y - tileSize / 2));
+//            System.out.println("enemy tile location: " + ((int)(enemy.getX()/tileSize)) + ", " + ((int)(enemy.getY()/tileSize)));
+//            System.out.println("enemy location: " + (enemy.getX() + ", " + (enemy.getY())));
+//            System.out.println("enemy tile range should be X: [" + (((int)(enemy.getX()/tileSize)) * tileSize) + ", " + ((((int)(enemy.getX()/tileSize)) + 1) * tileSize + "]"));
+//            System.out.println("enemy tile range should be Y: [" + (((int)(enemy.getY()/tileSize)) * tileSize) + ", " + ((((int)(enemy.getY()/tileSize)) + 1) * tileSize + "]"));
+//            System.out.println("vine tile range should be X: [" + (nextTile.getX() * tileSize) + ", " + ((nextTile.getX() + 1) * tileSize) + "]");
+//            System.out.println("vine tile range should be Y: [" + (nextTile.getY() * tileSize) + ", " + ((nextTile.getY() + 1) * tileSize) + "]");
+//            System.out.println("vine location: " + (nextTile.getX() * tileSize + (tileSize / 2)) + ", " + (nextTile.getY() * tileSize + (tileSize / 2)));
         }
         if (!containsVine[(int) nextTile.getX()][(int) nextTile.getY()]) {
             enemy.addVineTile(nextTile.getX() * tileSize + (tileSize / 2), nextTile.getY() * tileSize + (tileSize / 2), action);
             containsVine[(int) nextTile.getX()][(int) nextTile.getY()] = true;
         }
         if(enemy.vines.size == 1) {
-            System.out.println("vine location: " + enemy.vines.first().getX() + ", " + enemy.vines.first().getX());
-            System.out.println("vine body: " + enemy.vines.first().getBody().getWorldCenter().x + ", " + enemy.vines.first().getBody().getWorldCenter().y);
-            System.out.println("---");
+//            System.out.println("vine location: " + enemy.vines.first().getX() + ", " + enemy.vines.first().getX());
+//            System.out.println("vine body: " + enemy.vines.first().getBody().getWorldCenter().x + ", " + enemy.vines.first().getBody().getWorldCenter().y);
+//            System.out.println("---");
         }
         return action;
     }

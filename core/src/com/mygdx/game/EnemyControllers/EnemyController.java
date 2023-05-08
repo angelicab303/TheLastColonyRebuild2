@@ -105,6 +105,7 @@ public class EnemyController {
         this.tileSize = tileSize;
         this.tileOffset = tileOffset;
         this.player = player;
+        target = new Vector2(player.getX(), player.getY());
 //        target = player;
         firstMove = true;
         moveTime = 0;

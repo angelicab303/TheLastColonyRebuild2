@@ -33,7 +33,7 @@ public class Survivor extends Shadow implements GameObstacle {
     /** The survivor's current direction */
     private Survivor.Direction direction;
     /** How far forward the survivor can move */
-    private static final float MOVE_SPEED = 40.0f;
+    private static final float MOVE_SPEED = 30.0f;
     /** The font for interactable prompt*/
     protected BitmapFont displayFontInteract;
     /** The texture for the survivor. */
