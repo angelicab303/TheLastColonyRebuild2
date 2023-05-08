@@ -135,7 +135,51 @@
         }
       }
     },
-
+    "images:survivorPUp": {
+      "file" : "images/survivors/survivorUp.png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 9
+        }
+      }
+    },
+    "images:survivorPDown": {
+      "file" : "images/survivors/survivorDown.png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 9
+        }
+      }
+    },
+    "images:survivorPRight": {
+      "file" : "images/survivors/survivorRight.png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 9
+        }
+      }
+    },
+    "images:survivorPLeft": {
+      "file" : "images/survivors/survivorLeft.png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 9
+        }
+      }
+    },
+    "images:survivorPIdle": {
+      "file" : "images/survivors/survivorIdle.png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 6
+        }
+      }
+    },
     "images:maskEnemyUp": {
       "file" : "images/MaskUp-Sheet.png",
       "sprites" : {

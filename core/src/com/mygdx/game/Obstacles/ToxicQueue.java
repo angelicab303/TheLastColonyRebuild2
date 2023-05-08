@@ -227,6 +227,21 @@ public class ToxicQueue {
             return MASK_TOXIC;
         }
 
+        @Override
+        public void incBehind(int inc) {
+
+        }
+
+        @Override
+        public void setBehind(boolean bool) {
+
+        }
+
+        @Override
+        public boolean getBehind() {
+            return false;
+        }
+
         public void drawDebug(GameCanvas canvas) {
             //canvas.beginDebug();
             canvas.drawPhysics(shape, Color.RED, getX()*drawScale.x, getY()*drawScale.y, getAngle(), drawScale.x, drawScale.y);

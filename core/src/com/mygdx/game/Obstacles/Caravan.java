@@ -56,7 +56,7 @@ public class Caravan extends obstacle.BoxObstacle implements GameObstacle {
      * @param x The initial x-coordinate of the caravan
      * @param y The initial y-coordinate of the caravan
      */
-    public Caravan(float x, float y, int maxCapacity, TextureRegion cvalue, Texture ivalue, float scale, BitmapFont font) {
+    public Caravan(float x, float y, int maxCapacity, TextureRegion cvalue, float scale, BitmapFont font) {
         super(x, y, cvalue.getRegionWidth()*scale, cvalue.getRegionHeight()*scale);
         setDensity(1);
         setFriction(0);
@@ -77,7 +77,7 @@ public class Caravan extends obstacle.BoxObstacle implements GameObstacle {
             filter.maskBits = getMaskBits();
         }
 
-        animator = new FilmStrip(ivalue,1,NUM_ANIM_FRAMES,NUM_ANIM_FRAMES);
+        //animator = new FilmStrip(ivalue,1,NUM_ANIM_FRAMES,NUM_ANIM_FRAMES);
         aframe = 0.0f;
     }
     /**
@@ -195,21 +195,9 @@ public class Caravan extends obstacle.BoxObstacle implements GameObstacle {
     public void update() {
         if (isInteractable) {
             //System.out.println("Updating");
-            updateInteractable();
         }
     }
 
-    /**
-     * Updates the interactable prompt that appears above the caravan when the player is near.
-     */
-    private void updateInteractable(){
-        // Increase animation frame
-        aframe += ANIMATION_SPEED;
-
-        if (aframe >= NUM_ANIM_FRAMES) {
-            aframe -= NUM_ANIM_FRAMES;
-        }
-    }
 
     /**
      * Draws a caravan object.
@@ -221,7 +209,7 @@ public class Caravan extends obstacle.BoxObstacle implements GameObstacle {
         if (isInteractable){
             float yspace = 5;
             float xspace = 0; //(origin.x)/2;
-            animator.setFrame((int)aframe);
+            //animator.setFrame((int)aframe);
 
             String message = "(E) Dropoff";
             canvas.drawText(message, displayFontInteract, position.x-texture.getRegionWidth()*scale/2, position.y + texture.getRegionHeight()*scale+5);
@@ -272,5 +260,20 @@ public class Caravan extends obstacle.BoxObstacle implements GameObstacle {
     @Override
     public short getMaskBits() {
         return 0x0;
+    }
+
+    @Override
+    public void incBehind(int inc) {
+
+    }
+
+    @Override
+    public void setBehind(boolean bool) {
+
+    }
+
+    @Override
+    public boolean getBehind() {
+        return false;
     }
 }

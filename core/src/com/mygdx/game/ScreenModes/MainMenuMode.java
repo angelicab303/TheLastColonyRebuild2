@@ -231,7 +231,7 @@ public class MainMenuMode implements Screen, InputProcessor, ControllerListener 
     private BitmapFont nullFont;
     /** the state of which button was pressed (0=none, 1=play, 2=levels, 3=settings, 4=exit) */
     private int buttonState;
-    private boolean isPopulated = false;
+    private boolean populated = false;
 
 
     /**
@@ -316,16 +316,21 @@ public class MainMenuMode implements Screen, InputProcessor, ControllerListener 
         System.out.println("Main Menu populated");
         // Initialize the clouds to be drawn on screen
         // Order: [large, med, med, small, small]
-        clouds.add(new Cloud(largeCloud, canvas.getWidth()*0.95f, canvas.getHeight()*0.32f, 0.05f, 50.0f, 0.9f));
-        clouds.add(new Cloud(mediumCloud, clouds.get(0).x - 450, clouds.get(0).y - 90, 0.1f, 100.0f,0.6f));
-        clouds.add(new Cloud(mediumCloud, clouds.get(1).x + 220, clouds.get(1).y + 360, 0.08f, 100.0f, 0.6f));
-        clouds.add(new Cloud(smallCloud, clouds.get(1).x - 100, clouds.get(1).y, 0.12f, 150.0f,0.6f));
-        clouds.add(new Cloud(smallCloud, clouds.get(2).x - 100, clouds.get(2).y+ 100, 0.12f, 150.0f,0.6f));
-
-        // Initialize the buttons/titles to be drawn on screen
         float startX = RIGHT_SPACING + 10;
         float startY = canvas.getHeight()*.05f;
-        text.add(new Text(title, RIGHT_SPACING, canvas.getHeight()*.95f, false));
+        if (!populated){
+            clouds.add(new Cloud(largeCloud, canvas.getWidth()*0.95f, canvas.getHeight()*0.32f, 0.05f, 50.0f, 0.9f));
+            clouds.add(new Cloud(mediumCloud, clouds.get(0).x - 450, clouds.get(0).y - 90, 0.1f, 100.0f,0.6f));
+            clouds.add(new Cloud(mediumCloud, clouds.get(1).x + 220, clouds.get(1).y + 360, 0.08f, 100.0f, 0.6f));
+            clouds.add(new Cloud(smallCloud, clouds.get(1).x - 100, clouds.get(1).y, 0.12f, 150.0f,0.6f));
+            clouds.add(new Cloud(smallCloud, clouds.get(2).x - 100, clouds.get(2).y+ 100, 0.12f, 150.0f,0.6f));
+
+            text.add(new Text(title, RIGHT_SPACING, canvas.getHeight()*.95f, false));
+        }
+
+
+        // Initialize the buttons/titles to be drawn on screen
+
         // text.add(new Text(play, startX, startY, false));
 
         // Add skins
@@ -394,7 +399,7 @@ public class MainMenuMode implements Screen, InputProcessor, ControllerListener 
             };
         } );
 
-        isPopulated = true;
+        populated = true;
 
 
 
@@ -414,15 +419,15 @@ public class MainMenuMode implements Screen, InputProcessor, ControllerListener 
      */
     public void reset() {
         stage.clear();
-        table.clearActions();
-        table.clearListeners();
-        table.clear();
-        stage = new Stage();
-        table = new Table();
-        Gdx.input.setInputProcessor(null);
-        if (!isPopulated){
-            populateMenu();
+        if (table != null){
+            table.clearActions();
+            table.clearListeners();
+            table.clear();
+            stage = new Stage();
+            table = new Table();
         }
+        Gdx.input.setInputProcessor(null);
+        populateMenu();
         buttonState = 0;
     }
 

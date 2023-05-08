@@ -117,17 +117,7 @@ public class ShriekerEnemy extends Enemy {
      */
     public void update(int action)
     {
-
-        body.setAwake(true);
-        if (damaged)
-        {
-            stunCooldown++;
-            if (stunCooldown >= MAX_STUN_COOLDOWN)
-            {
-                stunCooldown = 0;
-                damaged = false;
-            }
-        }
+        super.update(action);
         // Count down for when the shrieker can wake again after shrieking
         if (justShrieked){
             postShriekTime++;
@@ -136,7 +126,9 @@ public class ShriekerEnemy extends Enemy {
                 justShrieked = false;
                 postShriekTime = 0;
             }
-
+            else {
+                canWake = false;
+            }
         }
 
         if (isStunned())
@@ -145,16 +137,8 @@ public class ShriekerEnemy extends Enemy {
             canWake = false;
             isShrieking = false;
             isWaking = false;
-            stunTime++;
             wakeTime = 0;
             shriekTime = 0;
-            if (stunTime >= MAX_STUN_TIME)
-            {
-                canWake = true;
-                stunned = false;
-                stunTime = 0;
-                body.setActive(true);
-            }
         }
         if (isWaking){
             wakeTime++;
@@ -172,19 +156,6 @@ public class ShriekerEnemy extends Enemy {
                 justShrieked = true;
                 shriekTime = 0;
             }
-        }
-
-
-        // Set enemy texture based on direction from movement
-        if (!isStunned()) {
-            // updateDirection(hVelocity, vVelocity);
-        }
-
-        // Increase animation frame
-        aframe += ANIMATION_SPEED;
-
-        if (aframe >= NUM_ANIM_FRAMES) {
-            aframe -= NUM_ANIM_FRAMES;
         }
     }
     /**

@@ -3,9 +3,7 @@ package com.mygdx.game.Obstacles;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.Filter;
-import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.physics.box2d.*;
 import com.mygdx.game.GameCanvas;
 import obstacle.BoxObstacle;
 
@@ -21,6 +19,10 @@ public class Obstacles extends Shadow implements GameObstacle {
     /** Filter for filtering */
     private static volatile Filter filter;
     private float scale;
+
+    private boolean isBelow;
+
+    PolygonShape sensorShape;
 
     /**
      * Create a cliff at the given position.
@@ -39,6 +41,7 @@ public class Obstacles extends Shadow implements GameObstacle {
         position = new Vector2(x, y);
         velocity = new Vector2(0.0f, 0.0f);
         this.scale = scale;
+        this.isBelow = false;
 
         if (filter == null) {
             filter = new Filter();
@@ -133,7 +136,41 @@ public class Obstacles extends Shadow implements GameObstacle {
             return false;
         }
 
+
+
+        float width = texture.getRegionWidth() * scale;
+        float height = texture.getRegionHeight() * scale;
+
+
+        Vector2 sensorCenter = new Vector2(0, 5);
+        FixtureDef sensorDef = new FixtureDef();
+
+        //TO DO: Make Json dependant
+        //sensorDef.density = data.getFloat("density",0);
+        sensorDef.density = 1;
+        sensorDef.isSensor = true;
+        sensorShape = new PolygonShape();
+        //TO DO: Make Json dependant
+        //JsonValue sensorjv = data.get("sensor");
+        //sensorShape.setAsBox(sensorjv.getFloat("shrink",0)*getWidth()/2.0f, sensorjv.getFloat("height",0), sensorCenter, 0.0f);
+        sensorShape.setAsBox(width/2, height/2-5, sensorCenter, 0f);
+        sensorDef.shape = sensorShape;
+
+        // Ground sensor to represent our feet
+        Fixture sensorFixture = body.createFixture( sensorDef );
+//        sensorFixture.setUserData(getSensorName());
+
+
         setFilterData(filter);
+
+
+        //body.setAwake(true);
+
+
+
+        body.setUserData(this);
+
+
 
         return true;
     }
@@ -151,6 +188,21 @@ public class Obstacles extends Shadow implements GameObstacle {
                 scale);
     }
 
+    public void drawDebug(GameCanvas canvas) {
+        super.drawDebug(canvas);
+        //canvas.beginDebug();
+        canvas.drawPhysics(sensorShape, Color.RED, getX()*drawScale.x, getY()*drawScale.y, getAngle(), drawScale.x, drawScale.y);
+        //canvas.endDebug();
+    }
+
+    public void setBehind(boolean bool){
+        this.isBelow = true;
+    }
+
+    public boolean getBehind(){
+        return isBelow;
+    }
+
     @Override
     public ObstacleType getType() {
         return ObstacleType.OBSTACLE;
@@ -164,5 +216,10 @@ public class Obstacles extends Shadow implements GameObstacle {
     @Override
     public short getMaskBits() {
         return MASK_ENV;
+    }
+
+    @Override
+    public void incBehind(int inc) {
+
     }
 }
