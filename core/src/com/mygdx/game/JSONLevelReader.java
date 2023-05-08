@@ -42,7 +42,7 @@ public class JSONLevelReader {
 
     // Declare and instantiate IDs for each element of the level
     private int caravanID = 0;
-    private int playerID = 0;
+    private int playerID = 1;
     private int numSurvivorIDs = 1;
     private int[] survivorIDs = new int[numSurvivorIDs];
     private int numEnemyIDs = 4;
@@ -59,7 +59,7 @@ public class JSONLevelReader {
     private int numTrees = 6;
     private int[] obstacleIDs = new int[numObstacleIDs];
     private Array<Obstacles> obstacleArr = new Array<Obstacles>();
-    private int numSmogIDs = 0;
+    private int numSmogIDs = 1;
     private int[] smogIDs = new int[numSmogIDs];
     private Array<Obstacles> smogArr = new Array<Obstacles>();
     private int numPlaceableIDs = 3;
@@ -220,9 +220,9 @@ public class JSONLevelReader {
             // Send the fileReader to a new JsonReader object
             //JsonReader tilesJSONReader = new JsonReader();
             //JsonValue tilesJSON = tilesJSONReader.parse(tilesReader);
-            JsonValue tilesJSON = directory.getEntry("tilesets", JsonValue.class);
+            JsonValue tilesJSON = directory.getEntry("tileset", JsonValue.class);
 
-            tileIDs = tilesJSON.get("tileset");
+            tileIDs = tilesJSON.get("tiles");
 
             // Initialize relevant arrays for object creation:
             survivorArr = new Array<>();

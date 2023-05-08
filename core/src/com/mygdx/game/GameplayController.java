@@ -666,9 +666,9 @@ public class GameplayController implements Screen {
 		// Instantiate the smog array:
 		smogArr = new Array<Smog>();
 		// Determine where the smog is and log it in smogLocations:
-		for (int i = 0; i < tiles.length; i++) {
-			for (int j = 0; j < tiles[0].length; j++) {
-				if (!tiles[i][j]) {
+		for (int i = 0; i < smogTiles.length; i++) {
+			for (int j = 0; j < smogTiles[0].length; j++) {
+				if (smogTiles[i][j]) {
 					smogLocations[2 * i][2 * j] = true;
 					smogLocations[2 * i + 1][2 * j] = true;
 					smogLocations[2 * i][2 * j + 1] = true;
