@@ -502,7 +502,7 @@ public class JSONLevelReader {
 
         survivorArr.add(survivorTemp);
         addMovObject(survivorTemp);
-        survivorControllers.add(new SurvivorController(survivorTemp, caravan.getPosition(), player.getPosition(), tileGrid, smogGrid, tileSize, tileOffset));
+        //survivorControllers.add(new SurvivorController(survivorTemp, caravan.getPosition(), player.getPosition(), tileGrid, smogGrid, tileSize, tileOffset));
     }
 
     public Array<Survivor> getSurvivors() {
@@ -517,7 +517,7 @@ public class JSONLevelReader {
         enemyTemp = new FloatingEnemy(x * tileSize + tileOffset, (y-1) * tileSize + tileOffset, enemyDirectionTextures, scale, imageTileSize);
         enemyArr.add(enemyTemp);
         addMovObject(enemyTemp);
-        enemyControllers.add(new FloatingEnemyController(tileGrid, tileSize, tileOffset, enemyTemp, player, shriekerArr, toxicAir));
+        //enemyControllers.add(new FloatingEnemyController(tileGrid, tileSize, tileOffset, enemyTemp, player, shriekerArr, toxicAir));
     }
 
     public Array<Enemy> getEnemies() {
@@ -545,7 +545,7 @@ public class JSONLevelReader {
         //cliffTemp.setAwake(true);
         wallTemp.setBodyType(BodyDef.BodyType.StaticBody);
         addObject(wallTemp);
-        //wallTemp.setActive(false);
+        wallTemp.setActive(false);
         //wallTemp.activatePhysics(world);
 //        tileGrid[(int)x][(int)y] = true;
 //        tiles[wallLocations[i][0]][wallLocations[i][1]] = true;
