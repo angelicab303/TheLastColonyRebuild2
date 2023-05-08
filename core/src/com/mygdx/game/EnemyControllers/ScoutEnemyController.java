@@ -137,7 +137,6 @@ public class ScoutEnemyController extends com.mygdx.game.EnemyControllers.EnemyC
 
 
     protected void changeStateIfApplicable() {
-        System.out.println(state);
         dist = Vector2.dst(enemy.getX(), enemy.getY(), target.x, target.y);
         switch (state) {
             case SPAWN:
@@ -209,6 +208,7 @@ public class ScoutEnemyController extends com.mygdx.game.EnemyControllers.EnemyC
 //        if (enemy.isExtendingVines) {
 //            System.out.println(state);
 //        }
+        System.out.println(state);
         ticks++;
         moveTime++;
         directionalTick++;
@@ -219,7 +219,7 @@ public class ScoutEnemyController extends com.mygdx.game.EnemyControllers.EnemyC
 
         int action = 0;
         if (state == FSMState.PATROL) {
-            if (directionalTick > 100) {
+            if (directionalTick % 150 == 0) {
                 if (prevAction == 1) {
                     action = 2;
                 } else {
@@ -328,15 +328,15 @@ public class ScoutEnemyController extends com.mygdx.game.EnemyControllers.EnemyC
             }
         }
         if(enemy.vines.isEmpty()) {
-//            System.out.println("vine tile location: " + nextTile.getX() + ", " + nextTile.getY());
-//            System.out.println("enemy being drawn at: " + (enemy.getBody().getWorldCenter().x - tileSize / 2) + ", " + (enemy.getBody().getWorldCenter().y - tileSize / 2));
-//            System.out.println("enemy tile location: " + ((int)(enemy.getX()/tileSize)) + ", " + ((int)(enemy.getY()/tileSize)));
-//            System.out.println("enemy location: " + (enemy.getX() + ", " + (enemy.getY())));
-//            System.out.println("enemy tile range should be X: [" + (((int)(enemy.getX()/tileSize)) * tileSize) + ", " + ((((int)(enemy.getX()/tileSize)) + 1) * tileSize + "]"));
-//            System.out.println("enemy tile range should be Y: [" + (((int)(enemy.getY()/tileSize)) * tileSize) + ", " + ((((int)(enemy.getY()/tileSize)) + 1) * tileSize + "]"));
-//            System.out.println("vine tile range should be X: [" + (nextTile.getX() * tileSize) + ", " + ((nextTile.getX() + 1) * tileSize) + "]");
-//            System.out.println("vine tile range should be Y: [" + (nextTile.getY() * tileSize) + ", " + ((nextTile.getY() + 1) * tileSize) + "]");
-//            System.out.println("vine location: " + (nextTile.getX() * tileSize + (tileSize / 2)) + ", " + (nextTile.getY() * tileSize + (tileSize / 2)));
+            System.out.println("vine tile location: " + nextTile.getX() + ", " + nextTile.getY());
+            System.out.println("enemy being drawn at: " + (enemy.getBody().getWorldCenter().x - tileSize / 2) + ", " + (enemy.getBody().getWorldCenter().y - tileSize / 2));
+            System.out.println("enemy tile location: " + ((int)(enemy.getX()/tileSize)) + ", " + ((int)(enemy.getY()/tileSize)));
+            System.out.println("enemy location: " + (enemy.getX() + ", " + (enemy.getY())));
+            System.out.println("enemy tile range should be X: [" + (((int)(enemy.getX()/tileSize)) * tileSize) + ", " + ((((int)(enemy.getX()/tileSize)) + 1) * tileSize + "]"));
+            System.out.println("enemy tile range should be Y: [" + (((int)(enemy.getY()/tileSize)) * tileSize) + ", " + ((((int)(enemy.getY()/tileSize)) + 1) * tileSize + "]"));
+            System.out.println("vine tile range should be X: [" + (nextTile.getX() * tileSize) + ", " + ((nextTile.getX() + 1) * tileSize) + "]");
+            System.out.println("vine tile range should be Y: [" + (nextTile.getY() * tileSize) + ", " + ((nextTile.getY() + 1) * tileSize) + "]");
+            System.out.println("vine location: " + (nextTile.getX() * tileSize + (tileSize / 2)) + ", " + (nextTile.getY() * tileSize + (tileSize / 2)));
         }
         if (!containsVine[(int) nextTile.getX()][(int) nextTile.getY()]) {
             enemy.addVineTile(nextTile.getX() * tileSize + (tileSize / 2), nextTile.getY() * tileSize + (tileSize / 2), action);
