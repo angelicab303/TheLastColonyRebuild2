@@ -54,6 +54,8 @@ public class SurvivorController {
     /** The goal tile of the survivor; used for pathfinding */
     private Tile goalTile;
 
+    private Tile nextTile;
+
     private Vector2 goalLoc;
 
     private int moveTime;
@@ -71,6 +73,7 @@ public class SurvivorController {
         this.playerPos = playerPos;
         this.caravanPos = caravanPos;
         this.tileSize = tileSize;
+        this.tileOffset = tileOffset;
 
         state = FSMState.IDLE;
         ticks = 0;
@@ -80,6 +83,10 @@ public class SurvivorController {
 
         for (int i = 0; i < tiles.length; i++) {
             for (int j = 0; j < tiles[0].length; j++) {
+                if (board[i][j])
+                {
+                    System.out.println(i + " " + j);
+                }
                 tiles[i][j] = new Tile(i, j, (board[i][j] ||
                         smogBoard[i * 2][(j * 2)] ||
                         smogBoard[i * 2][(j * 2) + 1] ||
@@ -122,6 +129,8 @@ public class SurvivorController {
             }
         }
         tilePath = tileGraph.findPath(startTile, goalTile);
+
+        nextTile = tilePath.get(1);
 
         float x = tilePath.get(1).getX() * tileSize + tileOffset;
         float y = tilePath.get(1).getY() * tileSize + tileOffset;
@@ -212,77 +221,68 @@ public class SurvivorController {
 
             tilePath = tileGraph.findPath(startTile, goalTile);
 
-            Tile nextTile;
+            Tile next;
             if (tilePath.getCount() > 1) {
-                nextTile = tilePath.get(1);
+                next = tilePath.get(1);
             } else if (tilePath.getCount() == 1) {
-                nextTile = tilePath.get(0);
+                next = tilePath.get(0);
             } else {
                 return 0;
             }
 
             if (goalReached() || moveTime > 30) {
+                moveTime = 0;
+                nextTile = next;
                 goalLoc = setGoal(nextTile);
             }
 
+            //System.out.println(nextTile.getX() + " " + nextTile.getY());
+            System.out.println(nextTile.isBlocked());
+
             int action = 0;
-            //System.out.println(nextTile.getX() - startTile.getX());
-//            if (nextTile.getX() == startTile.getX() + 1 && nextTile.getY() == startTile.getY() + 1) {
-//                // up, right diagonal
-//                action = 5;
-//            } else if (nextTile.getX() == startTile.getX() + 1 && nextTile.getY() == startTile.getY() - 1) {
-//                // down, right diagonal
-//                action = 6;
-//            } else if (nextTile.getX() == startTile.getX() - 1 && nextTile.getY() == startTile.getY() + 1) {
-//                // up, left diagonal
-//                action = 7;
-//            } else if (nextTile.getX() == startTile.getX() - 1 && nextTile.getY() == startTile.getY() - 1) {
-//                // down, left diagonal
-//                action = 8;
-//            } else if (nextTile.getX() == startTile.getX() + 1) {
-//                // right
-//                action = 1;
-//            } else if (nextTile.getX() == startTile.getX() - 1) {
-//                // left
-//                action = 2;
-//            } else if (nextTile.getY() == startTile.getY() + 1) {
-//                // up
-//                action = 3;
-//            } else if (nextTile.getY() == startTile.getY() - 1) {
-//                // down
-//                action = 4;
-//            }
-            if ((int)goalLoc.x > (int)survivor.getX() && (int)goalLoc.y > (int)survivor.getY())
-            {
+            if (nextTile.getX() == startTile.getX() + 1 && nextTile.getY() == startTile.getY() + 1) {
+                // up, right diagonal
                 action = 5;
-            }
-            else if ((int)goalLoc.x > (int)survivor.getX() && (int)goalLoc.y < (int)survivor.getY())
-            {
+            } else if (nextTile.getX() == startTile.getX() + 1 && nextTile.getY() == startTile.getY() - 1) {
+                // down, right diagonal
                 action = 6;
-            }
-            else if ((int)goalLoc.x < (int)survivor.getX() && (int)goalLoc.y > (int)survivor.getY())
-            {
+            } else if (nextTile.getX() == startTile.getX() - 1 && nextTile.getY() == startTile.getY() + 1) {
+                // up, left diagonal
                 action = 7;
-            }
-            else if ((int)goalLoc.x < (int)survivor.getX() && (int)goalLoc.y < (int)survivor.getY())
-            {
+            } else if (nextTile.getX() == startTile.getX() - 1 && nextTile.getY() == startTile.getY() - 1) {
+                // down, left diagonal
                 action = 8;
-            }
-            else if ((int)goalLoc.x > (int)survivor.getX())
-            {
+            } else if (nextTile.getX() == startTile.getX() + 1) {
+                // right
                 action = 1;
-            }
-            else if ((int)goalLoc.x < (int)survivor.getX())
-            {
+            } else if (nextTile.getX() == startTile.getX() - 1) {
+                // left
                 action = 2;
-            }
-            else if ((int)goalLoc.y > (int)survivor.getY())
-            {
+            } else if (nextTile.getY() == startTile.getY() + 1) {
+                // up
                 action = 3;
-            }
-            else if ((int)goalLoc.y < (int)survivor.getY())
-            {
+            } else if (nextTile.getY() == startTile.getY() - 1) {
+                // down
                 action = 4;
+            }
+            else if (nextTile.getX() == startTile.getX() && nextTile.getY() == startTile.getY()) {
+                if ((int) goalLoc.x > (int) survivor.getX() && (int) goalLoc.y > (int) survivor.getY()) {
+                    action = 5;
+                } else if ((int) goalLoc.x > (int) survivor.getX() && (int) goalLoc.y < (int) survivor.getY()) {
+                    action = 6;
+                } else if ((int) goalLoc.x < (int) survivor.getX() && (int) goalLoc.y > (int) survivor.getY()) {
+                    action = 7;
+                } else if ((int) goalLoc.x < (int) survivor.getX() && (int) goalLoc.y < (int) survivor.getY()) {
+                    action = 8;
+                } else if ((int) goalLoc.x > (int) survivor.getX()) {
+                    action = 1;
+                } else if ((int) goalLoc.x < (int) survivor.getX()) {
+                    action = 2;
+                } else if ((int) goalLoc.y > (int) survivor.getY()) {
+                    action = 3;
+                } else if ((int) goalLoc.y < (int) survivor.getY()) {
+                    action = 4;
+                }
             }
             return action;
         }
