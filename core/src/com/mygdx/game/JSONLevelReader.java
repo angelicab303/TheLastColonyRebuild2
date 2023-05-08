@@ -49,13 +49,13 @@ public class JSONLevelReader {
     private int playerID = 0;
     private int numSurvivorIDs = 1;
     private int[] survivorIDs = new int[numSurvivorIDs];
-    private int numEnemyIDs = 2;
+    private int numEnemyIDs = 4;
     private int[] enemyIDs = new int[numEnemyIDs];
     private int numBeforeFloors = 2 + numSurvivorIDs + numEnemyIDs;
-    private int numFloorIDs = 8;
+    private int numFloorIDs = 25;
     private int[] floorIDs = new int[numFloorIDs];
     private Array<FloorTile> floorArr = new Array<>();
-    private int numWallIDs = 10;
+    private int numWallIDs = 14;
     private int[] wallIDs = new int[numWallIDs];
     private Array<Obstacles> wallArr = new Array<Obstacles>();
     private int numTreeIDs = 3;
