@@ -93,6 +93,7 @@ public class JSONLevelReader {
     private Obstacles wallTemp;
     private Obstacles treeTemp;
     private FilmStrip[] playerDirectionTextures;
+    private FilmStrip[] survivorDirectionTextures;
     private FilmStrip[] enemyDirectionTextures;
     private ToxicQueue toxicAir;
     private Texture survivorITexture;
@@ -125,7 +126,7 @@ public class JSONLevelReader {
     // Texture Stuff
     JsonValue tileIDs;
 
-    public JSONLevelReader(AssetDirectory directory, Rectangle bounds, World world, int level, OrthographicCamera camera, InputController input, PooledList<Obstacle> objects, Array<FloorTile> floorArr, float scale, boolean[][] tileGrid, boolean[][] smogGrid, int tileSize, int tileOffset, int smogTileSize, int smogTileOffset, FilmStrip[] playerDirectionTextures, FilmStrip[] enemyDirectionTextures, ToxicQueue toxicAir, Texture survivorITexture, BitmapFont displayFontInteractive, Texture heart, Player player, Weapon weapon) {
+    public JSONLevelReader(AssetDirectory directory, Rectangle bounds, World world, int level, OrthographicCamera camera, InputController input, PooledList<Obstacle> objects, Array<FloorTile> floorArr, float scale, boolean[][] tileGrid, boolean[][] smogGrid, int tileSize, int tileOffset, int smogTileSize, int smogTileOffset, FilmStrip[] playerDirectionTextures, FilmStrip[] survivorDirectionTextures, FilmStrip[] enemyDirectionTextures, ToxicQueue toxicAir, Texture survivorITexture, BitmapFont displayFontInteractive, Texture heart, Player player, Weapon weapon) {
         this.directory = directory;
         this.bounds = bounds;
         this.world = world;
@@ -143,6 +144,7 @@ public class JSONLevelReader {
         this.smogTileSize = smogTileSize;
         this.smogTileOffset = smogTileOffset;
         this.playerDirectionTextures = playerDirectionTextures;
+        this.survivorDirectionTextures = survivorDirectionTextures;
         this.enemyDirectionTextures = enemyDirectionTextures;
         this.toxicAir = toxicAir;
         this.survivorITexture = survivorITexture;
@@ -476,7 +478,7 @@ public class JSONLevelReader {
         if (didCreateCaravan) {
             return;
         }
-        caravan = new Caravan(x * tileSize + tileOffset, y * tileSize + tileOffset, getSurvivors().size, getTextureRegionKey(0), survivorITexture, scale, displayFontInteract);
+        caravan = new Caravan(x * tileSize + tileOffset, y * tileSize + tileOffset, getSurvivors().size, getTextureRegionKey(0), scale, displayFontInteract);
         addObject(caravan);
 //        caravan.activatePhysics(world);
     }
@@ -510,7 +512,7 @@ public class JSONLevelReader {
     public void createSurvivor(float x, float y, int id, float scale) {
         Survivor survivorTemp;
         // Instantiate a survivor:
-        survivorTemp = new Survivor(survivorArr.size, x * tileSize + tileOffset, y * tileSize + tileOffset, getTextureRegionKey(id), heart, displayFontInteract, scale);
+        survivorTemp = new Survivor(survivorArr.size, x * tileSize + tileOffset, y * tileSize + tileOffset, survivorDirectionTextures, heart, displayFontInteract, scale);
 
         survivorArr.add(survivorTemp);
         addObject(survivorTemp);
