@@ -633,6 +633,7 @@ public class GameplayController implements Screen {
 
 		objects = reader.getObjects();
 		tileGrid = reader.getTileGrid();
+		smogTiles = reader.getSmogTiles();
 		smogGrid = reader.getSmogGrid();
 //		canvas.camera = reader.getCamera();
 		caravan = reader.getCaravan();

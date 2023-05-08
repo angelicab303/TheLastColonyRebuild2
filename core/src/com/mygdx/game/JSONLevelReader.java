@@ -212,19 +212,7 @@ public class JSONLevelReader {
 
             JsonValue levelStr = new JsonValue(false);
             if (level == 0) {
-                levelStr = directory.getEntry("easyLevel", JsonValue.class);
-            } else if (level == 1) {
                 levelStr = directory.getEntry("mediumLevel", JsonValue.class);
-            } else if (level == 2) {
-                levelStr = directory.getEntry("alphaLevel", JsonValue.class);
-            } else if (level == 3) {
-                levelStr = directory.getEntry("symmetricalLevel", JsonValue.class);
-            } else if (level == 4) {
-                levelStr = directory.getEntry("apartmentLevel", JsonValue.class);
-            } else if (level == 5) {
-                levelStr = directory.getEntry("mazeLevel", JsonValue.class);
-            } else if (level == 6) {
-                levelStr = directory.getEntry("complexLevel", JsonValue.class);
             }
 
             //FileReader mapReader = new FileReader(levelStr);
@@ -232,9 +220,9 @@ public class JSONLevelReader {
             // Send the fileReader to a new JsonReader object
             //JsonReader tilesJSONReader = new JsonReader();
             //JsonValue tilesJSON = tilesJSONReader.parse(tilesReader);
-            JsonValue tilesJSON = directory.getEntry("tileset", JsonValue.class);
+            JsonValue tilesJSON = directory.getEntry("tilesets", JsonValue.class);
 
-            tileIDs = tilesJSON.get("tiles");
+            tileIDs = tilesJSON.get("tileset");
 
             // Initialize relevant arrays for object creation:
             survivorArr = new Array<>();
@@ -607,6 +595,10 @@ public class JSONLevelReader {
 
     public void createSmog(float x, float y, int id, float scale) {
         smogTiles[(int)x][(int)y] = true;
+    }
+
+    public boolean[][] getSmogTiles() {
+        return smogTiles;
     }
 
     public void createPlaceable(float x, float y, int id, float scale) {
