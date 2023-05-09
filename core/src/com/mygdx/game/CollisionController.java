@@ -147,7 +147,7 @@ public class CollisionController{
         if(weapon.isAbsorbing()) {
             for (Smog s : smogList) {
                 if (!s.isAbsorbed()){
-                    weapon.incrementAmmo(1);
+                    //weapon.incrementAmmo(1);
                 }
                 s.setAbsorbed(true);
             }

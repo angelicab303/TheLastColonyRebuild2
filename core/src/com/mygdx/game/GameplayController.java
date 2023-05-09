@@ -1433,7 +1433,7 @@ public class GameplayController implements Screen {
 			canvas.begin(); // DO NOT SCALE
 			canvas.drawText("VICTORY!", displayFont, canvas.camera.position.x - 195, canvas.camera.position.y);
 
-			canvas.drawText("Press 'R' to restart", displayFontSub, canvas.camera.position.x - 120, canvas.camera.position.y - 100);
+			canvas.drawText("Press 'N' for next level", displayFontSub, canvas.camera.position.x - 170, canvas.camera.position.y - 100);
 			canvas.end();
 		} else if (failed) {
 			displayFont.setColor(Color.RED);
