@@ -290,49 +290,49 @@
         }, 
         {
          "id":46,
-         "image":"5d_Fence1.png",
+         "image":"5d_fence1.png",
          "imageheight":32,
          "imagewidth":32
         }, 
         {
          "id":47,
-         "image":"5d_Fence2.png",
+         "image":"5d_fence2.png",
          "imageheight":32,
          "imagewidth":32
         }, 
         {
          "id":48,
-         "image":"5d_Fence3.png",
+         "image":"5d_fence3.png",
          "imageheight":32,
          "imagewidth":32
         }, 
         {
          "id":49,
-         "image":"5d_Fence4.png",
+         "image":"5d_fence4.png",
          "imageheight":32,
          "imagewidth":32
         }, 
         {
          "id":50,
-         "image":"5d_Fence5.png",
+         "image":"5d_fence5.png",
          "imageheight":32,
          "imagewidth":32
         }, 
         {
          "id":51,
-         "image":"5d_Fence6.png",
+         "image":"5d_fence6.png",
          "imageheight":32,
          "imagewidth":32
         }, 
         {
          "id":52,
-         "image":"5d_Fence7.png",
+         "image":"5d_fence7.png",
          "imageheight":32,
          "imagewidth":32
         }, 
         {
          "id":53,
-         "image":"5d_Fence8.png",
+         "image":"5d_fence8.png",
          "imageheight":32,
          "imagewidth":32
         }, 
@@ -386,7 +386,7 @@
         }, 
         {
          "id":62,
-         "image":"9_torch.png",
+         "image":"9a_torch.png",
          "imageheight":32,
          "imagewidth":32
         }, 

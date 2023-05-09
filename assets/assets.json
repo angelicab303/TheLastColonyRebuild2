@@ -279,6 +279,7 @@
     "tiles:3a_floater": "tiles/3a_floater.png",
     "tiles:3b_scout": "tiles/3b_scout.png",
     "tiles:3c_chaser": "tiles/3c_chaser.png",
+    "tiles:3d_shrieker": "tiles/3d_shrieker.png",
     "tiles:4a_grass1": "tiles/4a_grass1.png",
     "tiles:4a_grass2": "tiles/4a_grass2.png",
     "tiles:4a_grass3": "tiles/4a_grass3.png",
@@ -388,6 +389,11 @@
     "tileset": "tiles/LastColonyTileset.json"
   },
   "levels": {
+    "tutorialLevel1": "levels/LastColonyTutorial1.json",
+    "tutorialLevel2": "levels/LastColonyTutorial2.json",
+    "tutorialLevel3": "levels/LastColonyTutorial3.json",
+    "tutorialLevel4": "levels/LastColonyTutorial4.json",
+    "tutorialLevel5": "levels/LastColonyTutorial5.json",
     "mediumLevel": "levels/LastColonyMedLevel.json"
   },
   "jsons": {
