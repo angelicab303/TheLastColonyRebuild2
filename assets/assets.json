@@ -398,6 +398,11 @@
   },
   "jsons": {
     "tileset": "tiles/LastColonyTileset.json",
+    "tutorialLevel1": "levels/LastColonyTutorial1.json",
+    "tutorialLevel2": "levels/LastColonyTutorial2.json",
+    "tutorialLevel3": "levels/LastColonyTutorial3.json",
+    "tutorialLevel4": "levels/LastColonyTutorial4.json",
+    "tutorialLevel5": "levels/LastColonyTutorial5.json",
     "mediumLevel": "levels/LastColonyMedLevel.json"
   },
   "sounds": {

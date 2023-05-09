@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.World;
@@ -223,7 +224,7 @@ public class JSONLevelReader {
             // JsonValue.class)));
  
             JsonValue levelStr = new JsonValue(false);
-            if (level == -1) {
+            if (level == 0) {
                 levelStr = directory.getEntry("tutorialLevel1", JsonValue.class);
             } else if (level == 1) {
                 levelStr = directory.getEntry("tutorialLevel2", JsonValue.class);
@@ -233,9 +234,17 @@ public class JSONLevelReader {
                 levelStr = directory.getEntry("tutorialLevel4", JsonValue.class);
             } else if (level == 4) {
                 levelStr = directory.getEntry("tutorialLevel5", JsonValue.class);
-            } else if (level == 0) {
+            } else if (level == 5) {
                 levelStr = directory.getEntry("mediumLevel", JsonValue.class);
             }
+
+            Array<Vector2> levelBounds = new Array<Vector2>();
+            levelBounds.add(new Vector2(15, 10));
+            levelBounds.add(new Vector2(20, 15));
+            levelBounds.add(new Vector2(30, 13));
+            levelBounds.add(new Vector2(20, 20));
+            levelBounds.add(new Vector2(25, 25));
+            levelBounds.add(new Vector2(30, 30));
 
             // FileReader mapReader = new FileReader(levelStr);
 
@@ -343,7 +352,7 @@ public class JSONLevelReader {
                     int dataValue = layerData.getInt(j) - 1;
                     // Do something with the data value...
                     if (dataValue == 0) {
-                        caravanX = j % width;
+                        caravanX = j % width + 1;
                         caravanY = height - (j / width);
                     } else if (dataValue == 1) {
                         // System.out.println("Found player");
@@ -428,8 +437,21 @@ public class JSONLevelReader {
                 }
             }
 
-            caravan.setMaxCapacity(survivorArr.size);
-            if (caravan.getX() < 400f) {
+            // Create extra smog border
+            for (int i = -4; i < levelBounds.get(level).x + 8; i++) {
+                for (int j = -4; j < levelBounds.get(level).y + 8; j++) {
+                    if (i < 0 || i >= levelBounds.get(level).x || j <= 0 || j >= levelBounds.get(level).y) {
+                        createWall(i, j, numBeforeFloors + numFloorIDs + numWallIDs - 1, scale);
+                    }
+                }
+            }
+
+            for (int i = 0; i < survivorArr.size; i++) {
+                survivorControllers.add(new SurvivorController(survivorArr.get(i), this.caravan.getPosition(), this.player.getPosition(), this.tileGrid, this.smogGrid, tileSize, tileOffset));
+            }
+
+            this.caravan.setMaxCapacity(survivorArr.size);
+            if (this.caravan.getX() < 400f) {
                 System.out.println("Finished loading JSON Level");
             }
             System.out.println("Finished loading JSON Level");
@@ -590,7 +612,7 @@ public class JSONLevelReader {
 //        survivorControllers.add(new SurvivorController(survivorTemp, caravan.getPosition(), player.getPosition(), tileGrid, smogGrid, tileSize, tileOffset));
 
         addMovObject(survivorTemp);
-        survivorControllers.add(new SurvivorController(survivorTemp, caravan.getPosition(), player.getPosition(), tileGrid, smogGrid, tileSize, tileOffset));
+//        survivorControllers.add(new SurvivorController(survivorTemp, caravan.getPosition(), player.getPosition(), tileGrid, smogGrid, tileSize, tileOffset));
     }
 
     public Array<Survivor> getSurvivors() {
