@@ -83,16 +83,22 @@ public class SurvivorController {
 
         for (int i = 0; i < tiles.length; i++) {
             for (int j = 0; j < tiles[0].length; j++) {
-//                if (board[i][j])
-//                {
-//                    System.out.println(i + " " + j);
-//                }
-                tiles[i][j] = new Tile(i, j, (board[i][j] ||
-                        smogBoard[i * 2][(j * 2)] ||
-                        smogBoard[i * 2][(j * 2) + 1] ||
-                        smogBoard[(i*2) + 1][(j * 2)] ||
-                        smogBoard[(i*2) + 1][(j * 2) + 1]));
+                tiles[i][j] = new Tile(i, j, ((board[i][j])));
+
+                if (board[i][j])
+                {
+                    System.out.println(i + " " + j);
+                }
+//                tiles[i][j] = new Tile(i, j, (board[i][j] ||
+//                        smogBoard[i * 2][(j * 2)] ||
+//                        smogBoard[i * 2][(j * 2) + 1] ||
+//                        smogBoard[(i*2) + 1][(j * 2)] ||
+//                        smogBoard[(i*2) + 1][(j * 2) + 1]));
             }
+        }
+
+        if (caravanPos.x < 400f) {
+            startTile = tiles[(int) (survivor.getX() / tileSize)][(int) (survivor.getY() / tileSize)];
         }
 
         startTile = tiles[(int) (survivor.getX() / tileSize)][(int) (survivor.getY() / tileSize)];
@@ -229,15 +235,13 @@ public class SurvivorController {
             } else {
                 return 0;
             }
-
             if (goalReached() || moveTime > 30) {
                 moveTime = 0;
                 nextTile = next;
                 goalLoc = setGoal(nextTile);
             }
-
-            //System.out.println(nextTile.getX() + " " + nextTile.getY());
-            //System.out.println(nextTile.isBlocked());
+            
+//            System.out.println(nextTile.isBlocked());
 
             int action = 0;
             if (nextTile.getX() == startTile.getX() + 1 && nextTile.getY() == startTile.getY() + 1) {
@@ -284,6 +288,7 @@ public class SurvivorController {
                     action = 4;
                 }
             }
+
             return action;
         }
 

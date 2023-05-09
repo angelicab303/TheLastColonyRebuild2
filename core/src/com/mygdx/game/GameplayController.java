@@ -398,7 +398,7 @@ public class GameplayController implements Screen {
 
 		enemyControllers = new Array<EnemyController>();
 		survivorControllers = new Array<SurvivorController>();
-		tileGrid = new boolean[canvas.getWidth() / tileSize][canvas.getHeight() / tileSize];
+//		tileGrid = new boolean[canvas.getWidth() / tileSize][canvas.getHeight() / tileSize];
 		cameraZoom = 0.4f;
 		numRescued = 0;
 
@@ -624,6 +624,9 @@ public class GameplayController implements Screen {
 				playerDirectionTextures, survivorDirectionTextures, enemyDirectionTextures, toxicAir,
 				displayFontInteract, fHeartTexture, player, weapon);
 
+//		if (caravan.getX() < 400f) {
+//			int i = 0;
+//		}
 		// System.out.println("Canvas width: " + canvas.getWidth() + "\tTile Size: " +
 		// tileSize + "\tNumTiles: " + canvas.getWidth() / tileSize);
 		// System.out.println("First element of tiles: " + tiles[0][0]);
@@ -1004,6 +1007,7 @@ public class GameplayController implements Screen {
 					caravan.setInteractable(false);
 				}
 			}
+
 		}
 		caravan.update();
 		// Update caravan state

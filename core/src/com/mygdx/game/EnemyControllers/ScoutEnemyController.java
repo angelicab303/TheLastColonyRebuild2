@@ -16,7 +16,7 @@ import com.mygdx.game.Obstacles.Enemies.ShriekerEnemy;
 
 public class ScoutEnemyController extends com.mygdx.game.EnemyControllers.EnemyController {
     protected FSMState state;
-    private static float VINE_CHASE_DIST = 100f;
+    private static float VINE_CHASE_DIST = 400f;
     private boolean[][] containsVine;
     private float[] patrolPointsHor;
     private float[] patrolPointsVert;
@@ -152,7 +152,7 @@ public class ScoutEnemyController extends com.mygdx.game.EnemyControllers.EnemyC
             case PATROL:
                 if (enemy.isStunned() && !enemy.isExtendingVines()) {
                     state = FSMState.STUNNED;
-                } else if (enemy.canAttack() && dist < VINE_CHASE_DIST)
+                } else if (enemy.canAttack() && dist < VINE_CHASE_DIST && enemy.isRevealed())
                         /*(player.getX() <= patrolPointsHor[1] && player.getX() >= patrolPointsHor[0] &&
                                 player.getY() <= patrolPointsVert[1] && player.getY() >= patrolPointsVert[0]))*/ {
                     enemy.setShrinkVines(true);
@@ -208,6 +208,7 @@ public class ScoutEnemyController extends com.mygdx.game.EnemyControllers.EnemyC
 //        if (enemy.isExtendingVines) {
 //            System.out.println(state);
 //        }
+//        System.out.println(state);
         ticks++;
         moveTime++;
         directionalTick++;
@@ -218,7 +219,7 @@ public class ScoutEnemyController extends com.mygdx.game.EnemyControllers.EnemyC
 
         int action = 0;
         if (state == FSMState.PATROL) {
-            if (directionalTick > 250) {
+            if (directionalTick % 150 == 0) {
                 if (prevAction == 1) {
                     action = 2;
                 } else {
@@ -342,9 +343,9 @@ public class ScoutEnemyController extends com.mygdx.game.EnemyControllers.EnemyC
             containsVine[(int) nextTile.getX()][(int) nextTile.getY()] = true;
         }
         if(enemy.vines.size == 1) {
-            System.out.println("vine location: " + enemy.vines.first().getX() + ", " + enemy.vines.first().getX());
-            System.out.println("vine body: " + enemy.vines.first().getBody().getWorldCenter().x + ", " + enemy.vines.first().getBody().getWorldCenter().y);
-            System.out.println("---");
+//            System.out.println("vine location: " + enemy.vines.first().getX() + ", " + enemy.vines.first().getX());
+//            System.out.println("vine body: " + enemy.vines.first().getBody().getWorldCenter().x + ", " + enemy.vines.first().getBody().getWorldCenter().y);
+//            System.out.println("---");
         }
         return action;
     }
