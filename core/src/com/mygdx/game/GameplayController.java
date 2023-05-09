@@ -999,11 +999,20 @@ public class GameplayController implements Screen {
 			if (survivorArr.get(i).isRescued()) {
 				player.removeFromFollowing(survivorArr.get(i));
 				survivorArr.get(i).deactivatePhysics(world);
-				survivorArr.removeIndex(i);
 				numRescued++;
-				caravan.incrCap();
+				if (survivorArr.get(i).isSafeInCaravan()) {
+					if (player.getSurvivorsFollowing().isEmpty()) {
+						survivorArr.removeIndex(i);
+					}
+				}
+				else {
+					caravan.incrCap();
+					survivorArr.get(i).setSafeInCaravan(true);
+				}
 				caravan.setInteractable(false);
+//				survivorArr.removeIndex(i);
 			}
+
 		}
 		caravan.update();
 		// Update caravan state

@@ -14,12 +14,14 @@ public class TileConnection implements Connection<Tile> {
     public TileConnection (Tile fromTile, Tile toTile) {
         this.fromTile = fromTile;
         this.toTile = toTile;
-        //cost = Math.abs((fromTile.getX() - toTile.getX()) + (fromTile.getY() - toTile.getY()));
+        cost = Math.abs((fromTile.getX() - toTile.getX()) + (fromTile.getY() - toTile.getY()));
         if (fromTile.isBlocked() || toTile.isBlocked())
         {
-            cost = 9999;
+            cost = Integer.MAX_VALUE;
         }
-        cost += Vector2.dst(fromTile.getX(), fromTile.getY(), toTile.getX(), toTile.getY());
+        else {
+            cost += Vector2.dst(fromTile.getX(), fromTile.getY(), toTile.getX(), toTile.getY());
+        }
     }
 
 

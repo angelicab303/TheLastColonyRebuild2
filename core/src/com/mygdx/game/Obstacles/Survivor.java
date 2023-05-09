@@ -89,7 +89,15 @@ public class Survivor extends Shadow implements GameObstacle {
     private boolean isTargetOfEnemy;
     private float height;
     private float width;
+    private boolean safeInCaravan;
 
+    public boolean isSafeInCaravan() {
+        return safeInCaravan;
+    }
+
+    public void setSafeInCaravan(boolean val) {
+        safeInCaravan = val;
+    }
     /**
      * Create survivor at the given position.
      *
@@ -111,7 +119,7 @@ public class Survivor extends Shadow implements GameObstacle {
         lastVelocity = new Vector2();
         zerovector = new Vector2(0,0);
         displayFontInteract = font;
-
+        safeInCaravan = false;
         this.scale = scale;
 
         //stexture = svalue;

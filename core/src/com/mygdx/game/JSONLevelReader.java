@@ -599,7 +599,7 @@ public class JSONLevelReader {
         //cliffTemp.setAwake(true);
         treeTemp.setBodyType(BodyDef.BodyType.StaticBody);
         addObject(treeTemp);
-//        treeTemp.setActive(false);
+        treeTemp.setActive(false);
 //        treeTemp.activatePhysics(world);
         //System.out.println("Tree: " + x + " " + (y-1));
         tileGrid[x][y-1] = true;

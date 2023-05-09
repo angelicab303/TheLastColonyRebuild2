@@ -242,8 +242,7 @@ public class SurvivorController {
                 goalLoc = setGoal(nextTile);
             }
 
-            //System.out.println(nextTile.getX() + " " + nextTile.getY());
-            System.out.println(nextTile.isBlocked());
+//            System.out.println(nextTile.isBlocked());
 
             int action = 0;
             if (nextTile.getX() == startTile.getX() + 1 && nextTile.getY() == startTile.getY() + 1) {
@@ -290,6 +289,7 @@ public class SurvivorController {
                     action = 4;
                 }
             }
+
             return action;
         }
 
