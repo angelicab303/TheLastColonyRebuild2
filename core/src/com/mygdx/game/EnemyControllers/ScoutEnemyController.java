@@ -208,7 +208,7 @@ public class ScoutEnemyController extends com.mygdx.game.EnemyControllers.EnemyC
 //        if (enemy.isExtendingVines) {
 //            System.out.println(state);
 //        }
-        System.out.println(state);
+//        System.out.println(state);
         ticks++;
         moveTime++;
         directionalTick++;

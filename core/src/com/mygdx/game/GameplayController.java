@@ -645,6 +645,17 @@ public class GameplayController implements Screen {
 		survivorControllers = reader.getSurvivorControllers();
 		enemyControllers = reader.getEnemyControllers();
 
+//		for (int i = 0; i < tileGrid.length; i++)
+//		{
+//			for (int j = 0; j < tileGrid[0].length; j++)
+//			{
+//				if (tileGrid[i][j])
+//				{
+//					System.out.println(i + " " + j);
+//				}
+//			}
+//		}
+
 		if (isInvincible) {
 			player.setHealth(10000);
 		}

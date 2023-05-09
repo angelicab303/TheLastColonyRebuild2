@@ -69,7 +69,11 @@ public class ScoutEnemy extends Enemy{
         }
 
         public boolean activatePhysics(World world) {
-            return super.activatePhysics(world);
+            if (!super.activatePhysics(world)) {
+                return false;
+            }
+            setFilterData(filter);
+            return true;
         }
 
         public void createFixtures(World world) {
