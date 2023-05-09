@@ -354,6 +354,9 @@ public class JSONLevelReader {
                 enemyControllers.add(new FloatingEnemyController(this.tileGrid, tileSize, tileOffset, (FloatingEnemy)enemyArr.get(i), this.player, shriekerArr, toxicAir));
             }
             caravan.setMaxCapacity(survivorArr.size);
+            if (caravan.getX() < 400f) {
+                System.out.println("Finished loading JSON Level");
+            }
             System.out.println("Finished loading JSON Level");
 
             // Close the map reader
@@ -501,6 +504,10 @@ public class JSONLevelReader {
 //        survivorTemp.activatePhysics(world);
 
         survivorArr.add(survivorTemp);
+
+//        addObject(survivorTemp);
+//        survivorControllers.add(new SurvivorController(survivorTemp, caravan.getPosition(), player.getPosition(), tileGrid, smogGrid, tileSize, tileOffset));
+
         addMovObject(survivorTemp);
         //survivorControllers.add(new SurvivorController(survivorTemp, caravan.getPosition(), player.getPosition(), tileGrid, smogGrid, tileSize, tileOffset));
     }
@@ -513,11 +520,18 @@ public class JSONLevelReader {
     }
 
     public void createEnemy(float x, float y, int id, float scale) {
+//        ScoutEnemy enemyTemp;
+//        enemyTemp = new ScoutEnemy(x * tileSize + tileOffset, y * tileSize + tileOffset, enemyDirectionTextures, vineTextures, scale, imageTileSize, world);
+//        enemyArr.add(enemyTemp);
+//        addMovObject(enemyTemp);
+//        enemyControllers.add(new ScoutEnemyController(tileGrid, tileSize, tileOffset, enemyTemp, player, shriekerArr));
+
         FloatingEnemy enemyTemp;
         enemyTemp = new FloatingEnemy(x * tileSize + tileOffset, y * tileSize + tileOffset, enemyDirectionTextures, scale, imageTileSize);
         enemyArr.add(enemyTemp);
         addMovObject(enemyTemp);
-        //enemyControllers.add(new FloatingEnemyController(tileGrid, tileSize, tileOffset, enemyTemp, player, shriekerArr, toxicAir));
+        enemyControllers.add(new FloatingEnemyController(tileGrid, tileSize, tileOffset, enemyTemp, player, shriekerArr, toxicAir));
+
     }
 
     public Array<Enemy> getEnemies() {
@@ -545,6 +559,7 @@ public class JSONLevelReader {
         //cliffTemp.setAwake(true);
         wallTemp.setBodyType(BodyDef.BodyType.StaticBody);
         addObject(wallTemp);
+//        wallTemp.setActive(true);
         //wallTemp.setActive(false);
         //wallTemp.activatePhysics(world);
 //        tileGrid[(int)x][(int)y] = true;
@@ -568,6 +583,14 @@ public class JSONLevelReader {
             if (x < width) {
                 tileGrid[x + 1][y - 1] = true;
             }
+//            if (y > 1) {
+//                tileGrid[x][y - 2] = true;
+//            }
+        }
+        if (caravan.getX() < 400f && (id < 22 && id > 12)) {
+            System.out.println("WALL: " + x + ", " + (y-1) + "    |" + id);
+            System.out.println("-----");
+            int i = 0;
         }
     }
 

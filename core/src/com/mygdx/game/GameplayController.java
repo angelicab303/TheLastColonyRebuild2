@@ -398,7 +398,7 @@ public class GameplayController implements Screen {
 
 		enemyControllers = new Array<EnemyController>();
 		survivorControllers = new Array<SurvivorController>();
-		tileGrid = new boolean[canvas.getWidth() / tileSize][canvas.getHeight() / tileSize];
+//		tileGrid = new boolean[canvas.getWidth() / tileSize][canvas.getHeight() / tileSize];
 		cameraZoom = 0.4f;
 		numRescued = 0;
 
@@ -624,6 +624,9 @@ public class GameplayController implements Screen {
 				playerDirectionTextures, survivorDirectionTextures, enemyDirectionTextures, toxicAir,
 				displayFontInteract, fHeartTexture, player, weapon);
 
+//		if (caravan.getX() < 400f) {
+//			int i = 0;
+//		}
 		// System.out.println("Canvas width: " + canvas.getWidth() + "\tTile Size: " +
 		// tileSize + "\tNumTiles: " + canvas.getWidth() / tileSize);
 		// System.out.println("First element of tiles: " + tiles[0][0]);
@@ -996,11 +999,20 @@ public class GameplayController implements Screen {
 			if (survivorArr.get(i).isRescued()) {
 				player.removeFromFollowing(survivorArr.get(i));
 				survivorArr.get(i).deactivatePhysics(world);
-				survivorArr.removeIndex(i);
 				numRescued++;
-				caravan.incrCap();
+				if (survivorArr.get(i).isSafeInCaravan()) {
+					if (player.getSurvivorsFollowing().isEmpty()) {
+						survivorArr.removeIndex(i);
+					}
+				}
+				else {
+					caravan.incrCap();
+					survivorArr.get(i).setSafeInCaravan(true);
+				}
 				caravan.setInteractable(false);
+//				survivorArr.removeIndex(i);
 			}
+
 		}
 		caravan.update();
 		// Update caravan state
