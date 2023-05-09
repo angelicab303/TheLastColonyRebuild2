@@ -967,39 +967,42 @@ public class GameplayController implements Screen {
 		// -------------------------------------------------------------------------------------------------------------
 		// Update survivor positions and states
 		for (int i = 0; i < survivorArr.size; i++) {
-			// This will be handled by collisionController in the future
-			survivorArr.get(i).update(survivorControllers.get(i).getAction());
-			if (survivorArr.get(i).getX() < 20) {
-				survivorArr.get(i).setPosition(20, survivorArr.get(i).getBody().getPosition().y);
-			}
-			if (survivorArr.get(i).getX() >= tileGrid.length * tileSize - 20) {
-				survivorArr.get(i).setPosition(tileGrid.length * tileSize - 20, survivorArr.get(i).getBody().getPosition().y);
-			}
-			if (survivorArr.get(i).getY() < 20) {
-				survivorArr.get(i).setPosition(survivorArr.get(i).getBody().getPosition().x, 20);
-			}
-			if (survivorArr.get(i).getY() >= tileGrid[0].length * tileSize - 20) {
-				survivorArr.get(i).setPosition(survivorArr.get(i).getBody().getPosition().x, tileGrid[0].length * tileSize - 20);
-			}
-			survivorArr.get(i).update();
-			if (survivorArr.get(i).isInteractable() && input.didCollectSurvivor()) {
-				survivorArr.get(i).setInteractable(false);
-				if (!survivorArr.get(i).isFollowing()) {
-					player.addToFollowing(survivorArr.get(i));
+			//System.out.println(caravan.getCurrentCapacity() + " " + caravan.getMaxCapacity());
+			if (!survivorArr.get(i).isRescued()) {
+				// This will be handled by collisionController in the future
+				survivorArr.get(i).update(survivorControllers.get(i).getAction());
+				if (survivorArr.get(i).getX() < 20) {
+					survivorArr.get(i).setPosition(20, survivorArr.get(i).getBody().getPosition().y);
 				}
-				survivorArr.get(i).follow();
-			}
-			if (!survivorArr.get(i).isAlive()) {
-				player.removeFromFollowing(survivorArr.get(i));
-				setFailure(true);
-			}
-			if (survivorArr.get(i).isRescued()) {
-				player.removeFromFollowing(survivorArr.get(i));
-				survivorArr.get(i).deactivatePhysics(world);
-				survivorArr.removeIndex(i);
-				numRescued++;
-				caravan.incrCap();
-				caravan.setInteractable(false);
+				if (survivorArr.get(i).getX() >= tileGrid.length * tileSize - 20) {
+					survivorArr.get(i).setPosition(tileGrid.length * tileSize - 20, survivorArr.get(i).getBody().getPosition().y);
+				}
+				if (survivorArr.get(i).getY() < 20) {
+					survivorArr.get(i).setPosition(survivorArr.get(i).getBody().getPosition().x, 20);
+				}
+				if (survivorArr.get(i).getY() >= tileGrid[0].length * tileSize - 20) {
+					survivorArr.get(i).setPosition(survivorArr.get(i).getBody().getPosition().x, tileGrid[0].length * tileSize - 20);
+				}
+				survivorArr.get(i).update();
+				if (survivorArr.get(i).isInteractable() && input.didCollectSurvivor()) {
+					survivorArr.get(i).setInteractable(false);
+					if (!survivorArr.get(i).isFollowing()) {
+						player.addToFollowing(survivorArr.get(i));
+					}
+					survivorArr.get(i).follow();
+				}
+				if (!survivorArr.get(i).isAlive()) {
+					player.removeFromFollowing(survivorArr.get(i));
+					setFailure(true);
+				}
+				if (survivorArr.get(i).isRescued()) {
+					player.removeFromFollowing(survivorArr.get(i));
+					survivorArr.get(i).deactivatePhysics(world);
+					//survivorArr.removeIndex(i);
+					numRescued++;
+					caravan.incrCap();
+					caravan.setInteractable(false);
+				}
 			}
 		}
 		caravan.update();
