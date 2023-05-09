@@ -191,18 +191,18 @@ public class CollisionController{
                     }
                     break;
                 case GameObstacle.CATEGORY_PURIFIED | GameObstacle.CATEGORY_VINE:
-//                    System.out.println("VINE COLLISION");
-//                    if(objA.getType() == GameObstacle.ObstacleType.VINE){
-//                        ((ScoutEnemy.VineTile) objA).setStunned(true);
-////                        ((ScoutEnemy.VineTile) objA).incToStunTime();
-//                        ((PurifiedQueue.PurifiedAir) objB).collide();
-//                    }
-//                    else {
-//                        ((ScoutEnemy.VineTile) objB).setStunned(true);
-////                        ((ScoutEnemy.VineTile) objB).incToStunTime();
-//                        ((PurifiedQueue.PurifiedAir) objA).collide();
-//                    }
-//                    break;
+                    System.out.println("VINE COLLISION");
+                    if(objA.getType() == GameObstacle.ObstacleType.VINE){
+                        ((ScoutEnemy.VineTile) objA).setStunned(true);
+//                        ((ScoutEnemy.VineTile) objA).incToStunTime();
+                        ((PurifiedQueue.PurifiedAir) objB).collide();
+                    }
+                    else {
+                        ((ScoutEnemy.VineTile) objB).setStunned(true);
+//                        ((ScoutEnemy.VineTile) objB).incToStunTime();
+                        ((PurifiedQueue.PurifiedAir) objA).collide();
+                    }
+                    break;
                 case GameObstacle.CATEGORY_PURIFIED | GameObstacle.CATEGORY_ENV:
                     if(objA.getType() == GameObstacle.ObstacleType.PURIFIED_AIR){
                         ((PurifiedQueue.PurifiedAir) objA).collide();
@@ -364,6 +364,7 @@ public class CollisionController{
                 case GameObstacle.CATEGORY_PURIFIED | GameObstacle.CATEGORY_ENEMY:
                 case GameObstacle.CATEGORY_PLAYER | GameObstacle.CATEGORY_SURVIVOR:
                 case GameObstacle.CATEGORY_SMOG | GameObstacle.CATEGORY_ENV:
+                case GameObstacle.CATEGORY_PURIFIED | GameObstacle.CATEGORY_VINE:
                     contact.setEnabled(false);
             }
         }

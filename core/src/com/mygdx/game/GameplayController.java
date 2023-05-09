@@ -398,7 +398,7 @@ public class GameplayController implements Screen {
 
 		enemyControllers = new Array<EnemyController>();
 		survivorControllers = new Array<SurvivorController>();
-		tileGrid = new boolean[canvas.getWidth() / tileSize][canvas.getHeight() / tileSize];
+//		tileGrid = new boolean[canvas.getWidth() / tileSize][canvas.getHeight() / tileSize];
 		cameraZoom = 0.4f;
 		numRescued = 0;
 
@@ -625,6 +625,9 @@ public class GameplayController implements Screen {
 				playerDirectionTextures, survivorDirectionTextures, enemyDirectionTextures, toxicAir, survivorITexture,
 				displayFontInteract, fHeartTexture, player, weapon);
 
+//		if (caravan.getX() < 400f) {
+//			int i = 0;
+//		}
 		// System.out.println("Canvas width: " + canvas.getWidth() + "\tTile Size: " +
 		// tileSize + "\tNumTiles: " + canvas.getWidth() / tileSize);
 		// System.out.println("First element of tiles: " + tiles[0][0]);
@@ -643,6 +646,17 @@ public class GameplayController implements Screen {
 		enemyArr = reader.getEnemies();
 		survivorControllers = reader.getSurvivorControllers();
 		enemyControllers = reader.getEnemyControllers();
+
+//		for (int i = 0; i < tileGrid.length; i++)
+//		{
+//			for (int j = 0; j < tileGrid[0].length; j++)
+//			{
+//				if (tileGrid[i][j])
+//				{
+//					System.out.println(i + " " + j);
+//				}
+//			}
+//		}
 
 		if (isInvincible) {
 			player.setHealth(10000);
@@ -958,40 +972,44 @@ public class GameplayController implements Screen {
 		// -------------------------------------------------------------------------------------------------------------
 		// Update survivor positions and states
 		for (int i = 0; i < survivorArr.size; i++) {
-			// This will be handled by collisionController in the future
-			survivorArr.get(i).update(survivorControllers.get(i).getAction());
-			if (survivorArr.get(i).getX() < 20) {
-				survivorArr.get(i).setPosition(20, survivorArr.get(i).getBody().getPosition().y);
-			}
-			if (survivorArr.get(i).getX() >= tileGrid.length * tileSize - 20) {
-				survivorArr.get(i).setPosition(tileGrid.length * tileSize - 20, survivorArr.get(i).getBody().getPosition().y);
-			}
-			if (survivorArr.get(i).getY() < 20) {
-				survivorArr.get(i).setPosition(survivorArr.get(i).getBody().getPosition().x, 20);
-			}
-			if (survivorArr.get(i).getY() >= tileGrid[0].length * tileSize - 20) {
-				survivorArr.get(i).setPosition(survivorArr.get(i).getBody().getPosition().x, tileGrid[0].length * tileSize - 20);
-			}
-			survivorArr.get(i).update();
-			if (survivorArr.get(i).isInteractable() && input.didCollectSurvivor()) {
-				survivorArr.get(i).setInteractable(false);
-				if (!survivorArr.get(i).isFollowing()) {
-					player.addToFollowing(survivorArr.get(i));
+			//System.out.println(caravan.getCurrentCapacity() + " " + caravan.getMaxCapacity());
+			if (!survivorArr.get(i).isRescued()) {
+				// This will be handled by collisionController in the future
+				survivorArr.get(i).update(survivorControllers.get(i).getAction());
+				if (survivorArr.get(i).getX() < 20) {
+					survivorArr.get(i).setPosition(20, survivorArr.get(i).getBody().getPosition().y);
 				}
-				survivorArr.get(i).follow();
+				if (survivorArr.get(i).getX() >= tileGrid.length * tileSize - 20) {
+					survivorArr.get(i).setPosition(tileGrid.length * tileSize - 20, survivorArr.get(i).getBody().getPosition().y);
+				}
+				if (survivorArr.get(i).getY() < 20) {
+					survivorArr.get(i).setPosition(survivorArr.get(i).getBody().getPosition().x, 20);
+				}
+				if (survivorArr.get(i).getY() >= tileGrid[0].length * tileSize - 20) {
+					survivorArr.get(i).setPosition(survivorArr.get(i).getBody().getPosition().x, tileGrid[0].length * tileSize - 20);
+				}
+				survivorArr.get(i).update();
+				if (survivorArr.get(i).isInteractable() && input.didCollectSurvivor()) {
+					survivorArr.get(i).setInteractable(false);
+					if (!survivorArr.get(i).isFollowing()) {
+						player.addToFollowing(survivorArr.get(i));
+					}
+					survivorArr.get(i).follow();
+				}
+				if (!survivorArr.get(i).isAlive()) {
+					player.removeFromFollowing(survivorArr.get(i));
+					setFailure(true);
+				}
+				if (survivorArr.get(i).isRescued()) {
+					player.removeFromFollowing(survivorArr.get(i));
+					survivorArr.get(i).deactivatePhysics(world);
+					//survivorArr.removeIndex(i);
+					numRescued++;
+					caravan.incrCap();
+					caravan.setInteractable(false);
+				}
 			}
-			if (!survivorArr.get(i).isAlive()) {
-				player.removeFromFollowing(survivorArr.get(i));
-				setFailure(true);
-			}
-			if (survivorArr.get(i).isRescued()) {
-				player.removeFromFollowing(survivorArr.get(i));
-				survivorArr.get(i).deactivatePhysics(world);
-				survivorArr.removeIndex(i);
-				numRescued++;
-				caravan.incrCap();
-				caravan.setInteractable(false);
-			}
+
 		}
 		caravan.update();
 		// Update caravan state
@@ -1407,7 +1425,7 @@ public class GameplayController implements Screen {
 		}
 		if (paused) {
 			displayFont.setColor(Color.GRAY);
-			canvas.drawText("PAUSED", displayFont, player.getX() - 150f, player.getY() + 25f);
+			canvas.drawText("PAUSED", displayFont, canvas.camera.position.x - 150f, canvas.camera.position.y + 25f);
 		}
 		canvas.end();
 
@@ -1415,15 +1433,15 @@ public class GameplayController implements Screen {
 		if (complete && !failed) {
 			displayFont.setColor(Color.YELLOW);
 			canvas.begin(); // DO NOT SCALE
-			canvas.drawText("VICTORY!", displayFont, player.getX() - 195, player.getY());
+			canvas.drawText("VICTORY!", displayFont, canvas.camera.position.x - 195, canvas.camera.position.y);
 
-			canvas.drawText("Press 'R' to restart", displayFontSub, player.getX() - 120, player.getY() - 100);
+			canvas.drawText("Press 'R' to restart", displayFontSub, canvas.camera.position.x - 120, canvas.camera.position.y - 100);
 			canvas.end();
 		} else if (failed) {
 			displayFont.setColor(Color.RED);
 			canvas.begin(); // DO NOT SCALE
-			canvas.drawText("FAILURE!", displayFont, player.getX() - 195, player.getY());
-			canvas.drawText("Press 'R' to restart", displayFontSub, player.getX() - 120, player.getY() - 100);
+			canvas.drawText("FAILURE!", displayFont, canvas.camera.position.x - 195, canvas.camera.position.y);
+			canvas.drawText("Press 'R' to restart", displayFontSub, canvas.camera.position.x - 120, canvas.camera.position.y - 100);
 
 			canvas.end();
 		}

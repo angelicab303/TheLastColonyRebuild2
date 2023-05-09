@@ -33,7 +33,7 @@ public class Survivor extends Shadow implements GameObstacle {
     /** The survivor's current direction */
     private Survivor.Direction direction;
     /** How far forward the survivor can move */
-    private static final float MOVE_SPEED = 40.0f;
+    private static final float MOVE_SPEED = 30.0f;
     /** The font for interactable prompt*/
     protected BitmapFont displayFontInteract;
     /** The texture for the survivor. */
@@ -89,7 +89,15 @@ public class Survivor extends Shadow implements GameObstacle {
     private boolean isTargetOfEnemy;
     private float height;
     private float width;
+    private boolean safeInCaravan;
 
+    public boolean isSafeInCaravan() {
+        return safeInCaravan;
+    }
+
+    public void setSafeInCaravan(boolean val) {
+        safeInCaravan = val;
+    }
     /**
      * Create survivor at the given position.
      *
@@ -111,7 +119,7 @@ public class Survivor extends Shadow implements GameObstacle {
         lastVelocity = new Vector2();
         zerovector = new Vector2(0,0);
         displayFontInteract = font;
-
+        safeInCaravan = false;
         this.scale = scale;
 
         //stexture = svalue;

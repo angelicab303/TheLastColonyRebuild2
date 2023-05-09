@@ -66,10 +66,10 @@ public class JSONLevelReader {
     private int[] placeableIDs = new int[numPlaceableIDs];
     private Array<Obstacles> placeableArr = new Array<Obstacles>();
 
-
-    private int[] tIDs = new int[numBeforeFloors + numFloorIDs + numWallIDs + numObstacleIDs + numSmogIDs];
-
-    // Declare variables for entities that are stored in GameplayController and passed in
+    
+    // Declare variables for entities that are stored in GameplayController and
+    // passed in
+    // 
     private Caravan caravan;
     private boolean didCreateCaravan = false;
     private Player player;
@@ -129,7 +129,17 @@ public class JSONLevelReader {
     // Texture Stuff
     JsonValue tileIDs;
 
-    public JSONLevelReader(AssetDirectory directory, Rectangle bounds, World world, int level, OrthographicCamera camera, InputController input, PooledList<Obstacle> objects, Array<FloorTile> floorArr, float scale, boolean[][] tileGrid, boolean[][] smogTiles, boolean[][] smogGrid, int tileSize, int tileOffset, int smogTileSize, int smogTileOffset, FilmStrip[] playerDirectionTextures, FilmStrip[] survivorDirectionTextures, FilmStrip[] enemyDirectionTextures, ToxicQueue toxicAir, Texture survivorITexture, BitmapFont displayFontInteractive, Texture heart, Player player, Weapon weapon) {
+    public JSONLevelReader(AssetDirectory directory, Rectangle bounds, World world, int level,
+            
+            
+            
+            
+            
+            OrthographicCamera camera, InputController input, PooledList<Obstacle> objects, Array<FloorTile> floorArr,
+            float scale, boolean[][] tileGrid, boolean[][] smogTiles, boolean[][] smogGrid, int tileSize,
+            int tileOffset, int smogTileSize, int smogTileOffset, FilmStrip[] playerDirectionTextures,
+            FilmStrip[] survivorDirectionTextures, FilmStrip[] enemyDirectionTextures, ToxicQueue toxicAir,
+            Texture survivorITexture, BitmapFont displayFontInteractive, Texture heart, Player player, Weapon weapon) {
         this.directory = directory;
         this.bounds = bounds;
         this.world = world;
@@ -201,28 +211,37 @@ public class JSONLevelReader {
         vineTextures[17] = vineTextureClosedUp;
         vineTextures[18] = vineTextureClosedLeftTop;
         vineTextures[19] = vineTextureClosedLeftBottom;
-        vineTextures[20] = vineTextureClosedRightTop;
-        vineTextures[21] = vineTextureClosedRightBottom;
-
+        vineTe xtures[20] = vineTextureC
+            // osedRightTop;
+        vineTe xtures[21] = vineTextureClosedRightBottom;
+            // 
+ 
+            // 
+            // 
         try {
             // Read the JSON file into a FileReader object
-            //InputStream inputStream = getClass().getResourceAsStream("assets/tiles/LastColonyTilesetCorrect.json");
-            //BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-            //FileReader tilesReader = new FileReader(directory.getAssetFileName(directory.getEntry("tileset", JsonValue.class)));
-
-            JsonValue levelStr = new JsonValue(false);
+            // InputStream inputStream =
+            // getClass().getResourceAsStream("assets/tiles/LastColonyTilesetCorrect.json");
+            // BufferedReader reader = new BufferedReader(new
+            // InputStreamReader(inputStream));
+            //  FileReader tilesReader = new
+            // FileReader(directory.getAssetFileName(directory.getEntry("tileset",
+            // JsonValue.class)));
+ 
+            Js onValue levelStr = new JsonValue(false);
             if (level == 0) {
                 levelStr = directory.getEntry("mediumLevel", JsonValue.class);
             }
 
-            //FileReader mapReader = new FileReader(levelStr);
+            // FileReader mapReader = new FileReader(levelStr);
 
             // Send the fileReader to a new JsonReader object
-            //JsonReader tilesJSONReader = new JsonReader();
-            //JsonValue tilesJSON = tilesJSONReader.parse(tilesReader);
+            // JsonReader tilesJSONReader = new JsonReader();
+            // JsonValue tilesJSON = tilesJSONReader.parse(tilesReader);
             JsonValue tilesJSON = directory.getEntry("tileset", JsonValue.class);
 
-            tileIDs = tilesJSON.get("tiles");
+            til
+             * IDs = tilesJSON.get("tiles");
 
             // Initialize relevant arrays for object creation:
             survivorArr = new Array<>();
@@ -231,7 +250,8 @@ public class JSONLevelReader {
             survivorControllers = new Array<SurvivorController>();
             enemyControllers = new Array<EnemyController>();
 
-            /** This is the order of the naming system for the files:
+             
+             * This is the order of the naming system for the files:
              * Caravan first
              * Player next
              * Survivor next
@@ -240,7 +260,7 @@ public class JSONLevelReader {
              * Wall tiles next
              * Tree tiles next
              * Smog tiles next
-             * **/
+             **/
 
             // Get each of the IDs from the tile specification JSON
             caravanID = tileIDs.get(0).getInt("id");
@@ -271,23 +291,26 @@ public class JSONLevelReader {
             }
             // Get each of the tree IDs
             for (int i = 0; i < numObstacleIDs; i++) {
-                obstacleIDs[i] = tileIDs.get(numBeforeFloors + numFloorIDs + numWallIDs + i).getInt("id");
-                tIDs[numBeforeFloors + numFloorIDs + numWallIDs + i] = obstacleIDs[i];
+                 obstacleIDs[i] = tileIDs.get(numBeforeFloors + numFloorIDs + numWallIDs + i).getInt("id");
+                tIDs[numBeforeFloors + numFloorIDs + numWallIDs + i] = obsta
+            // leIDs[i];
             }
             // Get each of the smog IDs
-            for (int i = 0; i < numSmogIDs; i++) {
-                smogIDs[i] = tileIDs.get(numBeforeFloors + numFloorIDs + numWallIDs + numObstacleIDs + i).getInt("id");
+            fo r (int i = 0; i < numSmogIDs; i++) {
+                 smogIDs[i] = tileIDs.get(numBeforeFloors + numFloorIDs + numWallIDs + numObstacleIDs + i).getInt("id");
                 tIDs[numBeforeFloors + numFloorIDs + numWallIDs + numObstacleIDs + i] = smogIDs[i];
             }
 
             // Close the tile reader
-            //tilesReader.close();
-            // ******************************************* END OF TILEREADER *******************************************
+            // tilesReader.close();
+            // ******************************************* END OF TILEREADER
+            // *******************************************
 
-            // Send the fileReader to a new JsonReader object
-            //JsonReader mapJSONReader = new JsonReader();
-            //JsonValue mapJSON = mapJSONReader.parse(mapReader);
+                Send the fileReader to a new JsonReader object
+                JsonReader mapJSONReader = new JsonReader();
+            // JsonValue mapJSON = mapJSONReader.parse(mapReader);
             JsonValue mapJSON = levelStr;
+            // 
 
             // Get JSON layers of the map
             JsonValue layers = mapJSON.get("layers");
@@ -295,16 +318,17 @@ public class JSONLevelReader {
             height = layers.get(0).getInt("height");
             System.out.println("Width: " + width + "\t\tHeight: " + height);
 
-//            this.camera.setToOrtho(false, width * tileSize, height * tileSize);
-//            this.tileGrid = new boolean[width][height];
+            // this.camera.setToOrtho(false, width * tileSize, height * tileSize);
+            // this.tileGrid = new boolean[width][height];
 
-            // Loop through each of the layers and first simply instantiate the caravan and player, in that order.
+            // Loop through each of the layers and first simply instantiate the caravan and
+            // player, in that order.
             float caravanX = 0;
             float caravanY = 0;
             float playerX = 0;
             float playerY = 0;
-            for (int i = 0; i < layers.size; i++) {
-                // Loop through the layer's data and retrieve each data array
+            for (int i = 0; i < layers.size; i++
+                           rough the layer's data and retrieve each data array
                 if (!layers.get(i).getString("type").equals("tilelayer")) {
                     continue;
                 }
@@ -316,9 +340,10 @@ public class JSONLevelReader {
                         caravanX = j % width;
                         caravanY = height - (j / width);
                     } else if (dataValue == 1) {
-//                        System.out.println("Found player");
+                        // System.out.println("Found player");
                         playerX = j % width;
                         playerY = height - (j / width);
+            // 
                     }
                 }
             }
@@ -326,28 +351,37 @@ public class JSONLevelReader {
             createObject(playerX, playerY, 1);
             didCreateCaravan = true;
             didCreatePlayer = true;
+                            
 
             survivorPaths = new Array<Vector2[]>();
+                                        
             enemyPaths = new Array<Vector2[]>();
 
-            // Loop through each of the object group layers to get the paths for the enemies and survivors
+            // Loop through each of the object group layers to get the paths for the enemies
+            // and survivors
             for (int i = 0; i < layers.size; i++) {
-                if (layers.get(i).getString("type").equals("objectgroup")) {
+                if (layers.get(i).getString("type").equals("objectgrou
+                            p")) {
                     JsonValue layerObjects = layers.get(i).get("objects");
                     if (layers.get(i).getString("name").equals("Survivor Paths")) {
+                                        
                         for (int j = 0; j < layerObjects.size; j++) {
                             JsonValue polygon = layerObjects.get(j);
-                            survivorPaths.add(new Vector2[polygon.size]);;
+                            survivorPaths.add(new Vector2[polygon.size]);
+                            ;
                             for (int k = 0; k < polygon.size; k++) {
-                                survivorPaths.get(j)[k] = new Vector2(polygon.get(k).get(0).getFloat(0), polygon.get(k).get(0).getFloat(1));
+                                survivorPaths.get(j)[k] = new Vector2(polygon.get(k).get(0).getFloat(0),
+                                        polygon.get(k).get(0).getFloat(1));
                             }
                         }
-                    } else if (layers.get(i).getString("name").equals("Enemy Paths")) {
+                   } else if (layers.get(i).getString("name").equals("Enemy Paths")) {
                         for (int j = 0; j < layerObjects.size; j++) {
                             JsonValue polygon = layerObjects.get(j);
-                            enemyPaths.add(new Vector2[polygon.size]);;
+                            enemyPaths.add(new Vector2[polygon.size]);
+                            ;
                             for (int k = 0; k < polygon.size; k++) {
-                                enemyPaths.get(j)[k] = new Vector2(polygon.get(k).get(0).getFloat(0), polygon.get(k).get(0).getFloat(1));
+                                enemyPaths.get(j)[k] = new Vector2(polygon.get(k).get(0).getFloat(0),
+                                        polygon.get(k).get(0).getFloat(1));
                             }
                         }
                     } else {
@@ -357,14 +391,14 @@ public class JSONLevelReader {
             }
 
             // Either need new constructor to initialize enemy with path
-            //  or a set function to set the path of an enemy
+            // or a set function to set the path of an enemy
 
             // Loop through each of the layers and instantiate each object from the id
             for (int i = 0; i < layers.size; i++) {
                 // Loop through the layer's data and retrieve each data array
                 if (!layers.get(i).getString("type").equals("tilelayer")) {
                     continue;
-                }
+                 }
                 JsonValue layerData = layers.get(i).get("data");
                 for (int j = 0; j < layerData.size; j++) {
                     int dataValue = layerData.getInt(j) - 1;
@@ -375,10 +409,13 @@ public class JSONLevelReader {
                 }
             }
             caravan.setMaxCapacity(survivorArr.size);
+            if (caravan.getX() < 400f) {
+                System.out.println("Finished loading JSON Level");
+            }
             System.out.println("Finished loading JSON Level");
 
-            // Close the map reader
-            //mapReader.close();
+            // Close the map reader  
+            // mapRe er.close();  
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -394,14 +431,14 @@ public class JSONLevelReader {
      * @return true if the object is in bounds.
      */
     public boolean inBounds(Obstacle obj) {
-        boolean horiz = (bounds.x <= obj.getX() && obj.getX() <= bounds.x+bounds.width);
-        boolean vert  = (bounds.y <= obj.getY() && obj.getY() <= bounds.y+bounds.height);
+        boolean horiz = (bounds.x <= obj.getX() && obj.getX() <= bounds.x + bounds.width);
+        boolean vert = (bounds.y <= obj.getY() && obj.getY() <= bounds.y + bounds.height);
         return horiz && vert;
     }
 
-    /**
-     * Immediately adds the object to the physics world
-     *
+           
+     * Immediately adds th
+           
      * param obj The object to add
      */
     public void addObject(Obstacle obj) {
@@ -416,9 +453,9 @@ public class JSONLevelReader {
      * param obj The object to add
      */
     public void addFloor(FloorTile obj) {
-//        assert inBounds(obj) : "Object is not in bounds";
+        // assert inBounds(obj) : "Object is not in bounds";
         floorArr.add(obj);
-//        obj.activatePhysics(world);
+        // obj.activatePhysics(world);
     }
 
     public void createObject(float x, float y, int id) {
@@ -432,13 +469,14 @@ public class JSONLevelReader {
             createEnemy(x, y, id, scale);
         } else if (id >= numBeforeFloors && id < 1 + numBeforeFloors + numFloorIDs) {
             createFloor(x, y, id, scale);
-        } else if (id >= numBeforeFloors + numFloorIDs && id < 1 + numBeforeFloors + numFloorIDs + numWallIDs) {
+        } else if (id >= numBeforeFloors + numFloorIDs && id < numBeforeFloors + numFloorIDs + numWallIDs) {
             createWall(x, y, id, scale);
         } else if (id >= numBeforeFloors + numFloorIDs + numWallIDs && id < 1 + numBeforeFloors + numFloorIDs + numWallIDs + numObstacleIDs) {
             createObstacle(x, y, id, scale);
-        } else if (id >= numBeforeFloors + numFloorIDs + numWallIDs + numObstacleIDs && id < 1 + numBeforeFloors + numFloorIDs + numWallIDs + numObstacleIDs + numSmogIDs) {
-            createSmog(x, y, id, scale);
-        } else if (id >= numBeforeFloors + numFloorIDs + numWallIDs + numObstacleIDs + numSmogIDs && id < 1 + numBeforeFloors + numFloorIDs + numWallIDs + numObstacleIDs + numSmogIDs + numPlaceableIDs) {
+        } else if (id >= numBeforeFloors + numFloorIDs + numWallIDs +
+             createSmog(x, y, id, scale);
+        } else if (id >= numBefor
+                eFloors + numFloorIDs + numWallIDs + numObstacleIDs + numSmogIDs && id < 1 + numBeforeFloors + numFloorIDs + numWallIDs + numObstacleIDs + numSmogIDs + numPlaceableIDs) {
             createPlaceable(x, y, id, scale);
         } else {
             System.out.println("Error - ID " + id + " out of bounds");
@@ -448,39 +486,53 @@ public class JSONLevelReader {
 
     public TextureRegion getTextureRegionKey(int textReg) {
         String textureName = tileIDs.get(textReg).getString("image");
-//        System.out.println(textureName);
+//   
+
         return new TextureRegion(directory.getEntry("tiles:" + textureName.substring(0, textureName.length() - 4), Texture.class));
     }
 
-    public Texture getTextureKey(int textReg) {
+
+    public Texture getTextureKey(int t
+        extReg) {
+    
+
         String textureName = tileIDs.get(textReg).getString("image");
-        return directory.getEntry("tiles:" + textureName.substring(0, textureName.length() - 4), Texture.class);
+           turn directory.getEntry("tiles:" + textureName.substring(0, textureName.length() - 4), Texture.class);
     }
+                
 
     public PooledList<Obstacle> getObjects() {
         return objects;
     }
     public boolean[][] getTileGrid() {
+                
         return tileGrid;
-    }
+           
     public boolean[][] getSmogGrid() {return smogGrid;}
     public OrthographicCamera getCamera() {
-        return camera;
+     
+
     }
 
-    public void createCaravan(float x, float y, float scale) {
+    p
+
         if (didCreateCaravan) {
+        
+    
+
+                
             return;
         }
         caravan = new Caravan(x * tileSize + tileOffset, y * tileSize + tileOffset, getSurvivors().size, getTextureRegionKey(0), scale, displayFontInteract);
         addObject(caravan);
 //        caravan.activatePhysics(world);
-    }
+    } 
 
     public Caravan getCaravan() {
         return caravan;
+                
     }
-
+         
     public void createPlayer(float x, float y, float scale) {
         // Instantiate the player:
         if (didCreatePlayer) {
@@ -493,24 +545,30 @@ public class JSONLevelReader {
         // Instantiate the weapon:
         weapon = new Weapon(player.getPosition().x, player.getPosition().y);
         //player.attachLightToPlayer(weapon.getAbsorbSensor());
+                
     }
 
     public Player getPlayer() {
         return player;
     }
-
+ 
     public Weapon getWeapon() {
         return weapon;
     }
 
     public void createSurvivor(float x, float y, int id, float scale) {
         Survivor survivorTemp;
-        // Instantiate a survivor:
+     
+
         survivorTemp = new Survivor(survivorArr.size, x * tileSize + tileOffset, y * tileSize + tileOffset, survivorDirectionTextures, heart, displayFontInteract, scale);
 
         survivorArr.add(survivorTemp);
-        addObject(survivorTemp);
-        survivorControllers.add(new SurvivorController(survivorTemp, caravan.getPosition(), player.getPosition(), tileGrid, smogGrid, tileSize, tileOffset));
+
+//        addObject(survivorTemp);
+//        survivorControllers.add(new SurvivorController(survivorTemp, caravan.getPosition(), player.getPosition(), tileGrid, smogGrid, tileSize, tileOffset));
+
+        addMovObject(survivorTemp);
+        //survivorControllers.add(new SurvivorController(survivorTemp, caravan.getPosition(), player.getPosition(), tileGrid, smogGrid, tileSize, tileOffset));
     }
 
     public Array<Survivor> getSurvivors() {
@@ -526,8 +584,9 @@ public class JSONLevelReader {
             FloatingEnemy enemyTemp = new FloatingEnemy(x * tileSize + tileOffset, y * tileSize + tileOffset, enemyDirectionTextures, scale, imageTileSize);
 
             enemyArr.add(enemyTemp);
-            addObject(enemyTemp);
+     
 
+    
             enemyControllers.add(new FloatingEnemyController(tileGrid, tileSize, tileOffset, enemyTemp, player, shriekerArr, toxicAir));
         } else if (id == enemyIDs[1]) {
             // Scout
@@ -560,18 +619,20 @@ public class JSONLevelReader {
     public Array<Enemy> getEnemies() {
         return enemyArr;
     }
+
     public Array<EnemyController> getEnemyControllers() {
         return enemyControllers;
     }
 
     public void createFloor(float x, float y, int id, float scale) {
-        floorTemp = new FloorTile(x * tileSize + (tileSize / 2), y * tileSize + (tileSize / 2), getTextureRegionKey(id), scale);
+        floorTemp = new FloorTile(x * tileSize + (tileSize / 2), y * tileSize + (tileSize / 2), getTextureRegionKey(id),
+                scale);
         floorArr.add(floorTemp);
-        //cliffTemp.setAwake(true);
-//        floorTemp.setBodyType(BodyDef.BodyType.StaticBody);
+        // cliffTemp.setAwake(true);
+        // floorTemp.setBodyType(BodyDef.BodyType.StaticBody);
         addFloor(floorTemp);
-        if (id == 8){ //tile w/ mushroom
-            Lights.createMushroomLight(x,y);
+        if (id == 8) { // tile w/ mushroom
+            Lights.createMushroomLight(x, y);
         }
     }
 
@@ -586,11 +647,13 @@ public class JSONLevelReader {
 //        tileGrid[wallLocations[i][0]][wallLocations[i][1]] = true;
     }
 
+    
     public void createObstacle(float x, float y, int id, float scale) {
         obstacleTemp = new Obstacles(x * tileSize + (tileSize / 2), y * tileSize + (tileSize / 2), getTextureRegionKey(id), scale);
         obstacleArr.add(obstacleTemp);
         obstacleTemp.setBodyType(BodyDef.BodyType.StaticBody);
         addObject(obstacleTemp);
+                
     }
 
     public void createSmog(float x, float y, int id, float scale) {
@@ -613,3 +676,6 @@ public class JSONLevelReader {
     }
 
 }
+  
+                   
+                 

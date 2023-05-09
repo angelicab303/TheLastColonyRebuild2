@@ -170,8 +170,6 @@ public class Obstacles extends Shadow implements GameObstacle {
 
         body.setUserData(this);
 
-
-
         return true;
     }
 

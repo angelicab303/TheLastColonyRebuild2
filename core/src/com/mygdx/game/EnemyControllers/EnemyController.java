@@ -105,6 +105,7 @@ public class EnemyController {
         this.tileSize = tileSize;
         this.tileOffset = tileOffset;
         this.player = player;
+        target = new Vector2(player.getX(), player.getY());
 //        target = player;
         firstMove = true;
         moveTime = 0;
@@ -199,19 +200,20 @@ public class EnemyController {
         //System.out.println(((int)goalLoc.x == (int)enemy.getX()) + " " + ((int)goalLoc.y == (int)enemy.getY()));
         if (state == FSMState.CHASE)
         {
-            if (firstMove)
-            {
-                action = getMove();
-                firstMove = false;
-            }
-            else {
-                if (goalReached() || moveTime > 30) {
-                    moveTime = 0;
-                    action = getMove();
-                } else {
-                    action = prevAction;
-                }
-            }
+//            if (firstMove)
+//            {
+//                action = getMove();
+//                firstMove = false;
+//            }
+//            else {
+//                if (goalReached() || moveTime > 30) {
+//                    moveTime = 0;
+//                    action = getMove();
+//                } else {
+//                    action = prevAction;
+//                }
+//            }
+            action = getMove();
         }
 
         if (state == FSMState.ATTACK)
@@ -219,7 +221,7 @@ public class EnemyController {
 //            enemy.setAttack(false);
         }
 
-        prevAction = action;
+        //prevAction = action;
         //System.out.println(action);
         return action;
     }
@@ -345,7 +347,9 @@ public class EnemyController {
         }
         else { return 0; }
 
-        goalLoc = setGoal(nextTile);
+        if (goalReached() || moveTime > 30) {
+            goalLoc = setGoal(nextTile);
+        }
 
         //System.out.println(startTile.getX() + " " + startTile.getY());
         //System.out.println(goalTile.getX() + " " + goalTile.getY());
