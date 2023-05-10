@@ -516,7 +516,7 @@ public class Survivor extends Shadow implements GameObstacle {
 
         //geometry.setUserData("survivor");
         setFilterData(filter);
-
+        setAwake(true);
         getBody().setUserData(this);
         return true;
     }

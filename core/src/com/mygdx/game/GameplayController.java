@@ -368,6 +368,7 @@ public class GameplayController implements Screen {
 	 * @param gravity The gravitational force on this Box2d world
 	 */
 	protected GameplayController(Rectangle bounds, Vector2 gravity) {
+
 		world = new World(gravity, false);
 		this.bounds = new Rectangle(bounds);
 		this.scale = new Vector2(1, 1);
@@ -376,6 +377,7 @@ public class GameplayController implements Screen {
 		debug = false;
 		active = false;
 		countdown = -1;
+		setDebug(false);
 	}
 
 	/**

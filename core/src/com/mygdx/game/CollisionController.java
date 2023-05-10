@@ -329,7 +329,7 @@ public class CollisionController{
                     }
                     break;
                 case GameObstacle.CATEGORY_SMOG | GameObstacle.CATEGORY_SURVIVOR:
-                    System.out.println("SURVIVOR + SMOG");
+//                    System.out.println("SURVIVOR + SMOG");
                     if (objA.getType() == GameObstacle.ObstacleType.SURVIVOR){
                         ((Survivor) objA).setRevealed(true);
                     }
