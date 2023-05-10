@@ -246,6 +246,8 @@ public class JSONLevelReader {
             levelBounds.add(new Vector2(25, 25));
             levelBounds.add(new Vector2(30, 30));
 
+            this.tileGrid = new boolean[canvas.getWidth() / tileSize][canvas.getHeight() / tileSize];
+
             // FileReader mapReader = new FileReader(levelStr);
 
             // Send the fileReader to a new JsonReader object
