@@ -344,7 +344,6 @@ public class CollisionController{
                         if (contact.getFixtureA().isSensor()){
                             (objB).incBehind(-1);
                         }
-
                     }
                     else {
                         if (contact.getFixtureB().isSensor()){

@@ -51,6 +51,8 @@ public class Survivor extends Shadow implements GameObstacle {
     /** zerovector for calculations **/
     private Vector2 zerovector;
 
+    private float DEFAULT_DETECTION_RADIUS = 60f;
+
     /** Whether survivor is alive or dead */
     private boolean isAlive;
     /** Whether survivor has been found and rescued by player */
@@ -85,13 +87,16 @@ public class Survivor extends Shadow implements GameObstacle {
     private float scale;
 
     private int behind;
-
+    private Vector2 temp1;
+    private Vector2 temp2;
     private boolean isTargetOfEnemy;
     private float height;
     private float width;
     private boolean safeInCaravan;
 
     protected boolean revealed;
+
+    private Vector2[] smogDetectionVertices;
 
     public boolean isRevealed() {
         return revealed;
@@ -132,6 +137,12 @@ public class Survivor extends Shadow implements GameObstacle {
         safeInCaravan = false;
         this.scale = scale;
         revealed = false;
+        smogDetectionVertices = new Vector2[8];
+        temp1 = new Vector2();
+        temp2 = new Vector2();
+        for(int i = 0; i <  8; i++){
+            smogDetectionVertices[i] = new Vector2();
+        }
 
         //stexture = svalue;
         //setTexture(stexture);
@@ -167,6 +178,24 @@ public class Survivor extends Shadow implements GameObstacle {
      */
     public float getHeight() {
         return texture.getRegionHeight()*scale;
+    }
+
+    public void calculateDetectionRay(){
+        // Start position for raycasts
+        temp2.set(position);
+//        temp2.scl(-1f);
+        smogDetectionVertices[0].set(temp2);
+        // End positions for raycasts
+
+        float angle_change = 45f;
+        float angle = 0f;
+        temp1.set(DEFAULT_DETECTION_RADIUS, 0);
+//        temp1.rotateDeg(absorbRange.x);
+        temp1.rotateDeg(angle);
+        for(int i = 0; i < 8; i ++){
+            smogDetectionVertices[i+1].set(temp1.cpy().add(getPosition()));
+            temp1.rotateDeg(angle_change);
+        }
     }
 
     /**
