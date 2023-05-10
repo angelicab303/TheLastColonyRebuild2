@@ -213,52 +213,6 @@ public class Enemy extends Shadow implements GameObstacle {
 
 
     }
-
-    /**
-     * Initialize a standard enemy
-     *
-     * @param x the x-coordinate of this enemy
-     * @param y the y-coordinate of this enemy
-     * @param up the texture for upwards movement
-     * @param down the texture for downwards movement
-     * @param right the texture for rightwards movement
-     * @param left the texture for leftwards movement
-     * @param idle the texture for idle movement
-     * @param scale the scale to be drawn to
-     */
-    public Enemy (float x, float y, Texture idle, float scale)
-    {
-        super(x, y, idle.getWidth()/NUM_ANIM_FRAMES*scale, idle.getHeight()*scale, ShadowShape.CIRCLE);
-        //setTexture(value);
-        setDensity(1);
-        setFriction(0.1f);
-        setRestitution(0.1f);
-        setFixedRotation(true);
-        position = new Vector2(x, y);
-        velocity = new Vector2();
-        lastVelocity = new Vector2();
-        zerovector = new Vector2(0,0);
-        this.scale = scale;
-
-        textureIdle = idle;
-        currentTexture = textureIdle;
-
-        stunned = false;
-        canAttack = true;
-        revealed = false;
-
-        if (filter == null){
-            filter = new Filter();
-            filter.categoryBits = getCatagoricalBits();
-            filter.maskBits = getMaskBits();
-        }
-
-        animatorIdle = new FilmStrip(textureIdle,1,NUM_ANIM_FRAMES,NUM_ANIM_FRAMES);
-        currentAnimator = animatorIdle;
-        aframe = 0.0f;
-
-
-    }
     /**
      *  Updates the direction that the enemy sprite faces.
      */
@@ -282,7 +236,6 @@ public class Enemy extends Shadow implements GameObstacle {
         else{
             direction = Enemy.Direction.IDLE;
             currentAnimator = animator[IDLE];
-
         }
     }
 
@@ -377,17 +330,17 @@ public class Enemy extends Shadow implements GameObstacle {
         }
 
         if (!isStunned()) {
-        // Determine how we are moving.
+            // Determine how we are moving.
             setVX(velocity.x);
             setVY(velocity.y);
-    //        position.add(velocity);
-    //        setPosition(position);
+            //        position.add(velocity);
+            //        setPosition(position);
             body.setLinearVelocity(velocity);
             body.applyLinearImpulse(velocity, body.getWorldCenter(), true);
             setX(body.getWorldCenter().x);
             setY(body.getWorldCenter().y);
 
-        // Set enemy texture based on direction from movement
+            // Set enemy texture based on direction from movement
             updateDirection(velocity.x, velocity.y);
         }
 
