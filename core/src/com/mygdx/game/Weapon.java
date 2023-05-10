@@ -9,7 +9,7 @@ import com.badlogic.gdx.math.Vector2;
  *
  */
 public class Weapon {
-    public static int MAX_AMMO_CAPACITY = 500;
+    public static int MAX_AMMO_CAPACITY = 100;
     private float DEFAULT_SHOOT_RADIUS = 200f;
     private Vector2 DEFAULT_ANGLE_RANGE = new Vector2(-35f, 35f);
     private float DEFAULT_ABSORB_RADIUS = 100f;
@@ -65,6 +65,7 @@ public class Weapon {
     /** impulse magnitude */
     private final float power = 300;
     private Vector2 temp1;
+    private Vector2 temp2;
 
     private Vector2 relMousePos;
     private Vector2 mousePos;
@@ -314,7 +315,11 @@ public class Weapon {
 
     public void calculateAbsorptionRange(Vector2 mouseRelPos){
         // Start position for raycasts
-        absorptionVertices[0].set(position);
+        temp2.set(mouseRelPos);
+        temp2.nor().scl(15f);
+        temp2.sub(position);
+        temp2.scl(-1f);
+        absorptionVertices[0].set(temp2);
         // End positions for raycasts
 
         float angle_change = (absorbRange.y - absorbRange.x)/ ((float) raycasts - 1);
@@ -367,7 +372,7 @@ public class Weapon {
      * @param posY             The initial y-coordinate of the weapon
      */
     public Weapon(float posX, float posY) {
-        numAmmo = 0;
+        numAmmo = MAX_AMMO_CAPACITY;
         firing = false;
         position = new Vector2();
         position.x = posX;
@@ -389,6 +394,7 @@ public class Weapon {
             impulses[i] = new Vector2(power, 0);
         }
         temp1 = new Vector2();
+        temp2 = new Vector2();
         mousePos = new Vector2();
         refire = RELOAD_RATE;
         absorbSensor = Lights.createConeLight(Color.BLUE, absorbRadius*2, position.x, position.y, getAbsorbAngleChange()/2);

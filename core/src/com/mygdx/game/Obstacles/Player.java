@@ -106,6 +106,9 @@ public class Player extends Shadow implements GameObstacle{
     private float height;
     private float width;
 
+    private int behind;
+
+
     private Array<Survivor> survivorsFollowing;
 
     public void addToFollowing(Survivor survivor) {
@@ -126,9 +129,9 @@ public class Player extends Shadow implements GameObstacle{
      * @param y The initial y-coordinate of the player in box2d units
      */
     public Player(float x, float y, FilmStrip[] player, InputController input, float scale, float tileSize) {
-        super(x, y, tileSize*scale, tileSize*2*scale, ShadowShape.CIRCLE);
-        this.height = 4.0f/3.0f*tileSize;
-        this.width = 4.0f/3.0f*tileSize;
+        super(x, y, player[0].getRegionWidth()*scale, player[0].getRegionHeight()*scale, ShadowShape.CIRCLE);
+        this.height = player[0].getRegionHeight();
+        this.width = player[0].getRegionWidth();
         // setTexture(value);
         setDensity(1);
         setFriction(0.1f);
@@ -147,6 +150,8 @@ public class Player extends Shadow implements GameObstacle{
         prevPosition = position;
         maxHealth = 5;
         blinkTime = 0;
+
+        behind = 0;
 
         if (filter == null){
             filter = new Filter();
@@ -459,6 +464,16 @@ public class Player extends Shadow implements GameObstacle{
         }
 //        Filter filter = body.getFixtureList().get(0).getFilterData();
 
+        if (behind < 0){
+            behind = 0;
+        }
+
+        if(behind > 0){
+            setBehind(true);
+        }
+        else {
+            setBehind(false);
+        }
     }
 
     /**
@@ -505,6 +520,11 @@ public class Player extends Shadow implements GameObstacle{
         }
 
 
+    }
+
+
+    public void incBehind(int inc){
+        behind += inc;
     }
 
 

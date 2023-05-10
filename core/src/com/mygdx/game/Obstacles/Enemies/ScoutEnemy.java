@@ -3,6 +3,7 @@ package com.mygdx.game.Obstacles.Enemies;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.Filter;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.game.GameCanvas;
@@ -17,6 +18,7 @@ public class ScoutEnemy extends Enemy{
         private float x;
         /** Y coordinate of this tile */
         private float y;
+        private int behind = 0;
 
         public enum Direction {
             /** The enemy is not moving */
@@ -42,47 +44,77 @@ public class ScoutEnemy extends Enemy{
         private float scale;
         private float aframe;
         protected FilmStrip currentAnimator;
+
+        private static volatile Filter filter;
+
+        protected boolean isStunned;
+        public void setStunned(boolean stunned) {
+            isStunned = stunned;
+        }
         public VineTile(float x, float y, float width, float height, FilmStrip animator, float scale, Direction direction) {
             super(x, y, width, height);
 //            this.currentTexture = texture;
+            isStunned = false;
             currentAnimator = animator;
             this.direction = direction;
             this.scale = scale;
             bodyinfo.fixedRotation = true;
             bodyinfo.type = BodyDef.BodyType.StaticBody;
+
+            filter = new Filter();
+            filter.categoryBits = GameObstacle.CATEGORY_VINE;
+            filter.maskBits = GameObstacle.MASK_VINE;
+
             aframe = 0.0f;
         }
 
         public boolean activatePhysics(World world) {
-            return super.activatePhysics(world);
+            if (!super.activatePhysics(world)) {
+                return false;
+            }
+            setFilterData(filter);
+            return true;
+        }
+
+        public void createFixtures(World world) {
+            super.createFixtures();
+            filter = new Filter();
+            filter.categoryBits = GameObstacle.CATEGORY_VINE;
+            filter.maskBits = GameObstacle.MASK_VINE;
         }
 
 //        public void update() {
 //            aframe += ANIMATION_SPEED;
 //        }
 
-        public void draw(GameCanvas canvas, float currFrame) {
+        public void draw(GameCanvas canvas, float currFrame, float tileSize) {
             aframe = ((int)currFrame % 2 == 0 ? 0 : 1);
             currentAnimator.setFrame((int)aframe);
             canvas.draw(currentAnimator, Color.WHITE,body.getWorldCenter().x*drawScale.x, body.getWorldCenter().y*drawScale.y,
-                    body.getWorldCenter().x/* *drawScale.x /*+ (body.getWorldCenter().x*drawScale.x/ canvas.getWidth() * 80f)*/,
-                    body.getWorldCenter().y/* *drawScale.y /*+ (body.getWorldCenter().y*drawScale.y/ canvas.getHeight() * 50f)*/,
+                    body.getWorldCenter().x,
+                    body.getWorldCenter().y,
                     0.0f, scale, scale);
+
         }
 
         @Override
         public ObstacleType getType() {
-            return ObstacleType.ENEMY;
+            return ObstacleType.VINE;
         }
 
         @Override
         public short getCatagoricalBits() {
-            return CATEGORY_ENEMY;
+            return CATEGORY_VINE;
         }
 
         @Override
         public short getMaskBits() {
-            return MASK_ENEMY;
+            return MASK_VINE;
+        }
+
+        @Override
+        public void incBehind(int inc){
+            behind += inc;
         }
 
         @Override
@@ -154,6 +186,8 @@ public class ScoutEnemy extends Enemy{
 
     protected float aframevine;
 
+    protected int vineStunTime;
+
     public boolean areVinesShrinking() {
         return vinesShrinking;
     }
@@ -200,7 +234,7 @@ public class ScoutEnemy extends Enemy{
         }
     }
 
-//    public void activateVinePhysics(World world) {vines.activatePhysics(world);}
+    //    public void activateVinePhysics(World world) {vines.activatePhysics(world);}
 //    public void setAttackPoint(float x, float y) {attackPoint.x = x; attackPoint.y = y;}
     public void addVineTile(float x, float y, int direction) {
         VineTile.Direction d;
@@ -329,8 +363,9 @@ public class ScoutEnemy extends Enemy{
                 currentVineAnimator = vineAnimatorHeadRightTop;
                 break;
         }
-        tempVineTile = new VineTile(x, y, currentVineTexture.getWidth()/2*scale, currentVineTexture.getHeight()*scale, currentVineAnimator, scale, d);
+        tempVineTile = new VineTile(x, y, currentVineTexture.getWidth()*scale, currentVineTexture.getHeight()*scale, currentVineAnimator, scale, d);
         tempVineTile.activatePhysics(world);
+        tempVineTile.createFixtures(world);
         if (vines.size < MAX_VINES && !vinesShrinking) {
             vines.add(tempVineTile);
         }
@@ -427,18 +462,29 @@ public class ScoutEnemy extends Enemy{
         }
     }
 
+    @Override
     public void update(int action)
     {
         if(toStunTime >= MAX_TO_STUN_TIME){
             toStunTime = 0;
             this.setStunned(true);
         }
+//        if(!vines.isEmpty() && vines.peek().isStunned) {
+//            isExtendingVines = false;
+//            vineStunTime++;
+//        }
+//        if(vineStunTime > MAX_TO_STUN_TIME) {
+//            vineStunTime = 0;
+//            vinesShrinking = true;
+//        }
         aframevine += VINE_ANIMATION_SPEED;
         vineTick++;
         if(!isExtendingVines) {
+            calculateMovement(action);
             super.update(action);
         }
         else {
+            calculateMovement(0);
             super.update(0);
 //            updateVines();
         }
@@ -462,7 +508,7 @@ public class ScoutEnemy extends Enemy{
         if(isExtendingVines) {
             if (vines.size > 0) {
                 for (int i = 0; i < vines.size; i++) {
-                    vines.get(i).draw(canvas, aframevine);
+                    vines.get(i).draw(canvas, aframevine, width);
                 }
             }
         }

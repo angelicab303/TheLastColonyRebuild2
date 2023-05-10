@@ -14,11 +14,26 @@ import obstacle.BoxObstacle;
 import util.FilmStrip;
 
 public class Survivor extends Shadow implements GameObstacle {
+    /** Enum to encode the finite state machine */
+    private static enum Direction {
+        /** The survivor is not moving */
+        IDLE,
+        /** The survivor is moving in the upwards direction */
+        UP,
+        /** The survivor is moving in the downwards direction */
+        DOWN,
+        /** The survivor is moving to the right */
+        RIGHT,
+        /** The survivor is moving to the left */
+        LEFT
+    }
     // Constants for the survivor
     /** How long the survivor must wait until it can lose a life again */
     private static final int   COOLDOWN = 200;
+    /** The survivor's current direction */
+    private Survivor.Direction direction;
     /** How far forward the survivor can move */
-    private static final float MOVE_SPEED = 70.0f;
+    private static final float MOVE_SPEED = 30.0f;
     /** The font for interactable prompt*/
     protected BitmapFont displayFontInteract;
     /** The texture for the survivor. */
@@ -55,7 +70,11 @@ public class Survivor extends Shadow implements GameObstacle {
     /** How fast we change frames (one frame per 10 calls to update) */
     private static final float ANIMATION_SPEED = 0.04f;
     /** The number of animation frames in our filmstrip */
-    private static final int   NUM_ANIM_FRAMES = 2;
+    private static final int   NUM_MOVE_ANIM_FRAMES = 9;
+    private static final int   NUM_IDLE_ANIM_FRAMES = 6;
+    /** Filmstrip for survivor */
+    protected FilmStrip[] animator;
+    protected FilmStrip currentAnimator;
     /** Current animation frame for this shell */
     private float aframe;
     /** The number of lives this survivor has */
@@ -65,8 +84,30 @@ public class Survivor extends Shadow implements GameObstacle {
     Filter filter;
     private float scale;
 
-    private boolean isTargetOfEnemy;
+    private int behind;
 
+    private boolean isTargetOfEnemy;
+    private float height;
+    private float width;
+    private boolean safeInCaravan;
+
+    protected boolean revealed;
+
+    public boolean isRevealed() {
+        return revealed;
+    }
+
+    public void setRevealed(boolean value) {
+        revealed = value;
+    }
+
+    public boolean isSafeInCaravan() {
+        return safeInCaravan;
+    }
+
+    public void setSafeInCaravan(boolean val) {
+        safeInCaravan = val;
+    }
     /**
      * Create survivor at the given position.
      *
@@ -76,8 +117,10 @@ public class Survivor extends Shadow implements GameObstacle {
      * @param heart The texture for the heart interface
      *
      */
-    public Survivor(int id, float x, float y, TextureRegion svalue, Texture heart, BitmapFont font, float scale) {
-        super(x, y, svalue.getRegionWidth()*scale, svalue.getRegionHeight()*scale, ShadowShape.CIRCLE);
+    public Survivor(int id, float x, float y, FilmStrip[] survivor, Texture heart, BitmapFont font, float scale) {
+        super(x, y, survivor[0].getRegionWidth()*scale, survivor[0].getRegionHeight()*scale, ShadowShape.CIRCLE);
+        this.width = survivor[0].getRegionWidth();
+        this.height = survivor[0].getRegionHeight();
         setDensity(0);
         setFriction(0);
         setRestitution(0.1f);
@@ -86,17 +129,19 @@ public class Survivor extends Shadow implements GameObstacle {
         lastVelocity = new Vector2();
         zerovector = new Vector2(0,0);
         displayFontInteract = font;
-
+        safeInCaravan = false;
         this.scale = scale;
+        revealed = false;
 
-        stexture = svalue;
-        setTexture(stexture);
+        //stexture = svalue;
+        //setTexture(stexture);
         // itexture = ivalue;
         isFollowing = false;
         isInteractable = false;
         isRescued = false;
         isAlive = true;
         isTargetOfEnemy = false;
+        behind = 0;
         lives = 3;
         damageCooldown = 0;
         //shadow = new Shadow(position, 0, -10, 10);
@@ -108,6 +153,10 @@ public class Survivor extends Shadow implements GameObstacle {
         }
 
         textureHeart = heart;
+        animator = survivor;
+        currentAnimator = animator[IDLE];
+        direction = Survivor.Direction.IDLE;
+        // currentTexture = textureRight;
         aframe = 0.0f;
     }
 
@@ -357,14 +406,28 @@ public class Survivor extends Shadow implements GameObstacle {
 
 
     /**
-     * Updates the interactable prompt that appears above the survivor when the player is near.
+     *  Updates the direction that the survivor sprite faces.
      */
-    private void updateInteractable(){
-        // Increase animation frame
-        aframe += ANIMATION_SPEED;
-
-        if (aframe >= NUM_ANIM_FRAMES) {
-            aframe -= NUM_ANIM_FRAMES;
+    public void updateDirection(float h, float v){
+        if (h > 0){
+            direction = Survivor.Direction.RIGHT;
+            currentAnimator = animator[RIGHT];
+        }
+        else if (h < 0){
+            direction = Survivor.Direction.LEFT;
+            currentAnimator = animator[LEFT];
+        }
+        else if (v > 0){
+            direction = Survivor.Direction.UP;
+            currentAnimator = animator[UP];
+        }
+        else if (v < 0){
+            direction = Survivor.Direction.DOWN;
+            currentAnimator = animator[DOWN];
+        }
+        else{
+            direction = Survivor.Direction.IDLE;
+            currentAnimator = animator[IDLE];
         }
     }
     /**
@@ -391,8 +454,9 @@ public class Survivor extends Shadow implements GameObstacle {
 
         if (isInteractable) {
             //System.out.println("Updating");
-            updateInteractable();
+            //updateInteractable();
         }
+//        System.out.println(isRevealed());
         damageCooldown--;
         // Determine how we are moving.
 
@@ -403,6 +467,35 @@ public class Survivor extends Shadow implements GameObstacle {
 //            lastVelocity  = velocity.cpy();
 //        }
 //        position.add(velocity);
+
+        if (behind < 0){
+            behind = 0;
+        }
+
+        if(behind > 0){
+            setBehind(true);
+        }
+        else {
+            setBehind(false);
+        }
+
+        // Set player texture based on direction from movement
+        updateDirection(velocity.x, velocity.y);
+
+
+        // Increase animation frame
+        if (currentAnimator != animator[IDLE]){
+            aframe += ANIMATION_SPEED;
+            if (aframe >= NUM_MOVE_ANIM_FRAMES){
+                aframe = 0;
+            }
+        }
+        else{
+            aframe += ANIMATION_SPEED;
+            if (aframe >= NUM_IDLE_ANIM_FRAMES){
+                aframe = 0;
+            }
+        }
 
     }
 
@@ -423,7 +516,7 @@ public class Survivor extends Shadow implements GameObstacle {
 
         //geometry.setUserData("survivor");
         setFilterData(filter);
-
+        setAwake(true);
         getBody().setUserData(this);
         return true;
     }
@@ -450,17 +543,18 @@ public class Survivor extends Shadow implements GameObstacle {
      * @param canvas Drawing context
      */
     public void draw(GameCanvas canvas) {
+        currentAnimator.setFrame((int)aframe);
         if (!isRescued && isAlive) {
             if (damageCooldown > 0) {
                 if (damageCooldown % 10 == 0) {
-                    canvas.draw(stexture, Color.CLEAR, origin.x, origin.y, body.getWorldCenter().x*drawScale.x, body.getWorldCenter().y*drawScale.y, getAngle(), scale, scale);
+                    canvas.draw(currentAnimator, Color.CLEAR, origin.x, origin.y, body.getWorldCenter().x*drawScale.x - height*scale/2, body.getWorldCenter().y*drawScale.y- height*scale/2, width*scale, height*scale);
                 }
                 else {
-                    canvas.draw(stexture, Color.WHITE, origin.x, origin.y, body.getWorldCenter().x*drawScale.x, body.getWorldCenter().y*drawScale.y, getAngle(), scale, scale);
+                    canvas.draw(currentAnimator, Color.WHITE, origin.x, origin.y, body.getWorldCenter().x*drawScale.x - height*scale/2, body.getWorldCenter().y*drawScale.y- height*scale/2, width*scale, height*scale);
                 }
             }
             else {
-                canvas.draw(stexture, Color.WHITE, origin.x, origin.y, body.getWorldCenter().x*drawScale.x, body.getWorldCenter().y*drawScale.y, getAngle(), scale, scale);
+                canvas.draw(currentAnimator, Color.WHITE, origin.x, origin.y, body.getWorldCenter().x*drawScale.x - height*scale/2, body.getWorldCenter().y*drawScale.y- height*scale/2, width*scale, height*scale);
             }
             //canvas.draw(stexture, Color.YELLOW, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), 1, 1);
         }
@@ -477,7 +571,7 @@ public class Survivor extends Shadow implements GameObstacle {
         if (isFollowing){
             float spacing = 0.0f;
             for (int i = 0; i < lives; i++){
-                canvas.draw(textureHeart, Color.BLUE, 0.0f, 0.0f, (getX() * drawScale.x - 10) + spacing, getY() * drawScale.y + texture.getRegionHeight()*scale/2 - 2, getAngle(), 0.1f, 0.1f);
+                canvas.draw(textureHeart, Color.PURPLE, 0.0f, 0.0f, (getX() * drawScale.x - 20) + spacing, getY() * drawScale.y + currentAnimator.getRegionHeight()*scale/2 - 2, getAngle(), 0.1f, 0.1f);
                 spacing += 8.0f;
             }
         }
@@ -497,7 +591,6 @@ public class Survivor extends Shadow implements GameObstacle {
         //System.out.println(body.getFixtureList().size);
 
         if (isInteractable) {
-            updateInteractable();
         }
 
         // Determine how we are moving.
@@ -590,4 +683,10 @@ public class Survivor extends Shadow implements GameObstacle {
     public short getMaskBits() {
         return MASK_SURVIVOR;
     }
+
+    @Override
+    public void incBehind(int inc){
+        behind += inc;
+    }
+
 }

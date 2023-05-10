@@ -1016,5 +1016,9 @@ public abstract class Obstacle {
 	 */
 	public abstract void drawDebug(GameCanvas canvas);
 
+	public abstract void setBehind(boolean bool);
+
+	public abstract boolean getBehind();
+
 
 }

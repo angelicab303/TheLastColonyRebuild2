@@ -23,6 +23,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.JsonValue;
 import com.mygdx.game.EnemyControllers.EnemyController;
+import com.mygdx.game.EnemyControllers.ScoutEnemyController;
 import com.mygdx.game.Obstacles.*;
 import com.mygdx.game.Obstacles.Enemies.*;
 import com.badlogic.gdx.Screen;
@@ -54,8 +55,10 @@ public class GameplayController implements Screen {
 	// ***************************
 	/** Texture assets for player avatar */
 	private FilmStrip[] playerDirectionTextures;
+	/** Texture assets for survivor avatar */
+	private FilmStrip[] survivorDirectionTextures;
 	/** Texture asset for enemy avatar */
-	private FilmStrip[][] enemyDirectionTextures;
+	private FilmStrip[] enemyDirectionTextures;
 	private Texture vineTextureVertical;
 	private Texture vineTextureHorizontal;
 	private Texture vineTextureLeftBottom;
@@ -310,6 +313,10 @@ public class GameplayController implements Screen {
 	protected GameCanvas canvas;
 	/** All the objects in the world. */
 	protected PooledList<Obstacle> objects = new PooledList<Obstacle>();
+	/** All the movable objects in the world. */
+	protected PooledList<Obstacle> movObjects = new PooledList<Obstacle>();
+	/** All of the smog objects in the world **DO NOT COMBINE, NEEDED FOR CORRECT RENDERING */
+	protected PooledList<Smog> smogs = new PooledList<Smog>();
 	protected Array<FloorTile> floorArr = new Array<FloorTile>();
 	/** Queue for adding objects */
 	protected PooledList<Obstacle> addQueue = new PooledList<Obstacle>();
@@ -361,6 +368,7 @@ public class GameplayController implements Screen {
 	 * @param gravity The gravitational force on this Box2d world
 	 */
 	protected GameplayController(Rectangle bounds, Vector2 gravity) {
+
 		world = new World(gravity, false);
 		this.bounds = new Rectangle(bounds);
 		this.scale = new Vector2(1, 1);
@@ -369,6 +377,7 @@ public class GameplayController implements Screen {
 		debug = false;
 		active = false;
 		countdown = -1;
+		setDebug(false);
 	}
 
 	/**
@@ -378,7 +387,6 @@ public class GameplayController implements Screen {
 	 */
 	public GameplayController(GameCanvas canvas) {
 		this(new Rectangle(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT), new Vector2(0, DEFAULT_GRAVITY));
-		setDebug(false);
 		setComplete(false);
 		setFailure(false);
 		// world.setContactListener(this);
@@ -389,11 +397,10 @@ public class GameplayController implements Screen {
 		input = new InputController();
 
 		canvas.createLights(world);
-		enemyDirectionTextures = new FilmStrip[3][5];
 
 		enemyControllers = new Array<EnemyController>();
 		survivorControllers = new Array<SurvivorController>();
-		//tileGrid = new boolean[canvas.getWidth() / tileSize][canvas.getHeight() / tileSize];
+//		tileGrid = new boolean[canvas.getWidth() / tileSize][canvas.getHeight() / tileSize];
 		cameraZoom = 0.4f;
 		numRescued = 0;
 
@@ -461,9 +468,8 @@ public class GameplayController implements Screen {
 		// Unnecessary atm?
 
 		playerDirectionTextures = importCharacterFilmstrip("player");
-		enemyDirectionTextures[0] = importCharacterFilmstrip("maskEnemy");
-		enemyDirectionTextures[1] = importCharacterFilmstrip("maskEnemy"); //Should be changed to scoutenemy when it is finished
-		enemyDirectionTextures[2] = importCharacterFilmstrip("maskEnemy"); //Should be changed to shreaker enemy when it is finished
+		survivorDirectionTextures = importCharacterFilmstrip("survivorP");
+		enemyDirectionTextures = importCharacterFilmstrip("maskEnemy");
 		vineTextureVertical = directory.getEntry("images:vineVertical", Texture.class);
 		vineTextureHorizontal = directory.getEntry("images:vineHorizontal", Texture.class);
 		vineTextureLeftBottom = directory.getEntry("images:vineBottomLeft", Texture.class);
@@ -541,9 +547,17 @@ public class GameplayController implements Screen {
 		for (Obstacle obj : objects) {
 			obj.deactivatePhysics(world);
 		}
+		for (Obstacle obj : smogs) {
+			obj.deactivatePhysics(world);
+		}
+		for (Obstacle obj : movObjects) {
+			obj.deactivatePhysics(world);
+		}
 		enemyControllers.clear();
 		survivorControllers.clear();
+		smogs.clear();
 		objects.clear();
+		movObjects.clear();
 		addQueue.clear();
 		canvas.disposeLights();
 		world.dispose();
@@ -572,29 +586,11 @@ public class GameplayController implements Screen {
 	 * This method disposes of the world and creates a new one.
 	 */
 	public void nextLevel() {
-		Vector2 gravity = new Vector2(world.getGravity());
-
-		for (Obstacle obj : objects) {
-			obj.deactivatePhysics(world);
-		}
-		enemyControllers.clear();
-		survivorControllers.clear();
-		objects.clear();
-		addQueue.clear();
-		canvas.disposeLights();
-		world.dispose();
-
-		world = new World(gravity, false);
-		collisionController.setContactListener(world);
-		canvas.createLights(world);
-		setComplete(false);
-		setFailure(false);
-
 		if (curLevel >= maxLevels-1) {
 			curLevel = -1;
 		}
-		populateLevel(curLevel + 1);
 		curLevel++;
+		reset(curLevel);
 	}
 
 	private void populateLevel(int level) {
@@ -608,6 +604,7 @@ public class GameplayController implements Screen {
 		// Arrays used to find tiles to place smog at
 		boolean[][] tiles = new boolean[canvas.getWidth() / tileSize][canvas.getHeight() / tileSize];
 		boolean[][] smogLocations = new boolean[canvas.getWidth() / smogTileSize][canvas.getHeight() / smogTileSize];
+		smogGrid = new boolean[canvas.getWidth() * 2/tileSize][canvas.getHeight() * 2/tileSize];
 
 		// Testing tiles array:
 		// System.out.println("Canvas width: " + canvas.getWidth() + "\tTile Size: " +
@@ -625,10 +622,13 @@ public class GameplayController implements Screen {
 //		System.out.println("Width: " + canvas.getWidth() + "\t\tHeight: " + canvas.getHeight());
 		// Here we will instantiate the objects in the level using the JSONLevelReader.
 		JSONLevelReader reader = new JSONLevelReader(directory, bounds, world, level, canvas.camera, input,
-				objects, floorArr, SCALE, tileGrid, tileSize, tileOffset, smogTileSize, smogTileOffset,
-				playerDirectionTextures, enemyDirectionTextures, vineTextures, toxicAir,
-				survivorITexture, displayFontInteract, fHeartTexture, player, weapon);
+				objects, movObjects, floorArr, SCALE, tileGrid, smogGrid, tileSize, tileOffset, smogTileSize, smogTileOffset,
+				playerDirectionTextures, survivorDirectionTextures, enemyDirectionTextures, toxicAir,
+				displayFontInteract, fHeartTexture, player, weapon);
 
+//		if (caravan.getX() < 400f) {
+//			int i = 0;
+//		}
 		// System.out.println("Canvas width: " + canvas.getWidth() + "\tTile Size: " +
 		// tileSize + "\tNumTiles: " + canvas.getWidth() / tileSize);
 		// System.out.println("First element of tiles: " + tiles[0][0]);
@@ -637,6 +637,7 @@ public class GameplayController implements Screen {
 
 		objects = reader.getObjects();
 		tileGrid = reader.getTileGrid();
+		smogGrid = reader.getSmogGrid();
 //		canvas.camera = reader.getCamera();
 		caravan = reader.getCaravan();
 		player = reader.getPlayer();
@@ -646,29 +647,20 @@ public class GameplayController implements Screen {
 		survivorControllers = reader.getSurvivorControllers();
 		enemyControllers = reader.getEnemyControllers();
 
-		// *************************** CARAVAN, PLAYER, AND WEAPON ***************************
-		// Instantiate the caravan:
-		// caravan = new Caravan(caravanLocation[0] * tileSize + tileOffset,
-		// caravanLocation[1] * tileSize + tileOffset,
-		// 5, caravanTexture, survivorITexture, SCALE * 2, displayFontInteract);
-		// addObject(caravan);
-		// caravan.activatePhysics(world);
+//		for (int i = 0; i < tileGrid.length; i++)
+//		{
+//			for (int j = 0; j < tileGrid[0].length; j++)
+//			{
+//				if (tileGrid[i][j])
+//				{
+//					System.out.println(i + " " + j);
+//				}
+//			}
+//		}
 
-		// Instantiate the player:
-		// player = new Player(playerLocation[0] * tileSize + tileOffset,
-		// playerLocation[1] * tileSize + tileOffset, playerTextureUp,
-		// playerTextureDown, playerTextureRight, playerTextureLeft, playerTextureIdle,
-		// input, SCALE);
 		if (isInvincible) {
 			player.setHealth(10000);
 		}
-		// addObject(player);
-		// player.activatePhysics(world);
-		// player.setAwake(true);
-
-		// Instantiate the weapon:
-		// weapon = new Weapon(player.getPosition().x, player.getPosition().y);
-
 		// Gives ammo in debug mode
 		if (isDebug()) {
 			weapon.setNumAmmo(1000);
@@ -703,9 +695,14 @@ public class GameplayController implements Screen {
 		Smog smogT;
 		Smog smogTO; // Smog Temp Offset
 		// For categories and masking:
-		for (int i = 0; i < smogLocations.length; i++) {
-			for (int j = 0; j < smogLocations[0].length; j++) {
-				if (smogLocations[i][j]) {
+		int column = smogLocations[0].length;
+		Smog[] tempSmogArray = new Smog[column];
+		Smog[] tempSmogArrayO= new Smog[column];
+
+
+		for (int i = 0; i < column; i++) {
+			for (int j = 0; j < column; j++) {
+				if (smogLocations[i][j] && Vector2.dst(i * smogTileSize + smogTileOffset, j * smogTileSize + smogTileOffset, player.getX(), player.getY()) > 90) {
 					// Primary Grid
 					// Later get data from json file
 					float maxFrame = 4;
@@ -714,29 +711,58 @@ public class GameplayController implements Screen {
 					smogT = new Smog(i * smogTileSize + smogTileOffset, j * smogTileSize + smogTileOffset, smogTexture, frameNum,
 							SCALE);
 					smogT.setAwake(true);
-					smogT.setBodyType(BodyDef.BodyType.StaticBody);
 					smogArr.add(smogT);
-					addObject(smogT);
-					smogT.activatePhysics(world);
+					addSmog(smogT);
+
+					if( j > 0 ) {
+						smogT.addNeighboringSmog(tempSmogArray[j - 1], smogT);
+					}
+
+					smogT.addNeighboringSmog(tempSmogArray[j], smogT);
+					smogT.addNeighboringSmog(tempSmogArrayO[j], smogT);
+
+					if (j < column - 1){
+						smogT.addNeighboringSmog(tempSmogArrayO[j + 1], smogT);
+					}
+
+					tempSmogArray[j] = smogT;
+				}
+
+				else {
+					tempSmogArray[j] = null;
+				}
+			}
+
+			for (int j = 0; j < smogLocations[0].length; j++) {
+				if (smogLocations[i][j] && Vector2.dst(i * smogTileSize + smogTileOffset, j * smogTileSize + smogTileOffset, player.getX(), player.getY()) > 90) {
+
 					// Secondary Grid
-					frameNum = (float) (Math.random() * (maxFrame - minFrame + 1) + minFrame);
+					float maxFrame = 4;
+					float minFrame = 0;
+					float frameNum = (float) (Math.random() * (maxFrame - minFrame + 1) + minFrame);
 					smogTO = new Smog(i * smogTileSize + smogTileSize, j * smogTileSize + smogTileSize, smogTexture, frameNum,
 							SCALE);
 					smogTO.setAwake(true);
-					smogTO.setBodyType(BodyDef.BodyType.StaticBody);
 					smogArr.add(smogTO);
-					addObject(smogTO);
-					smogTO.activatePhysics(world);
+					addSmog(smogTO);
+
+					if( j > 0 ){
+						smogTO.addNeighboringSmog(tempSmogArray[j-1], smogTO);
+						smogTO.addNeighboringSmog(tempSmogArrayO[j-1], smogTO);
+					}
+
+					smogTO.addNeighboringSmog(tempSmogArray[j], smogTO);
+					smogTO.addNeighboringSmog(tempSmogArrayO[j], smogTO);
+
+					tempSmogArrayO[j] = smogTO;
+				}
+				else {
+					tempSmogArrayO[j] = null;
 				}
 			}
-		}
-		// System.out.println("Finished smog instantiation");
 
-		// AirBar Creation
-		// float barX = player.getX() - (canvas.getWidth()*cameraZoom)/2.0f + (30.0f *
-		// cameraZoom);
-		// float barY = player.getY() + (canvas.getHeight()*cameraZoom)/2.0f - (30.0f *
-		// cameraZoom);
+
+		}
 		airBar = new AirBar(airBarTexture, weapon.getMaxNumAmmo(), weapon.getNumAmmo(), canvas);
 
 		// Hearts
@@ -906,11 +932,15 @@ public class GameplayController implements Screen {
 		// collisionController.processCollisions(player,weapon,smogArr);
 
 		// Update smog animations
-		for (Smog obj : smogArr) {
+		for (Smog obj : smogs) {
 			obj.update();
+			//Trying out recycling
+			/*
 			if (obj.isFaded()) {
 				obj.markRemoved(true);
 			}
+
+			 */
 		}
 		/*
 		 * for (Cliff obj : cliffArr) {
@@ -942,57 +972,70 @@ public class GameplayController implements Screen {
 		// -------------------------------------------------------------------------------------------------------------
 		// Update survivor positions and states
 		for (int i = 0; i < survivorArr.size; i++) {
-			// This will be handled by collisionController in the future
-			survivorArr.get(i).update(survivorControllers.get(i).getAction());
-			if (survivorArr.get(i).getX() < 20) {
-				survivorArr.get(i).setPosition(20, survivorArr.get(i).getBody().getPosition().y);
-			}
-			if (survivorArr.get(i).getX() >= tileGrid.length * tileSize - 20) {
-				survivorArr.get(i).setPosition(tileGrid.length * tileSize - 20, survivorArr.get(i).getBody().getPosition().y);
-			}
-			if (survivorArr.get(i).getY() < 20) {
-				survivorArr.get(i).setPosition(survivorArr.get(i).getBody().getPosition().x, 20);
-			}
-			if (survivorArr.get(i).getY() >= tileGrid[0].length * tileSize - 20) {
-				survivorArr.get(i).setPosition(survivorArr.get(i).getBody().getPosition().x, tileGrid[0].length * tileSize - 20);
-			}
-			survivorArr.get(i).update();
-			if (survivorArr.get(i).isInteractable() && input.didCollectSurvivor()) {
-				survivorArr.get(i).setInteractable(false);
-				if (!survivorArr.get(i).isFollowing()) {
-					player.addToFollowing(survivorArr.get(i));
+			//System.out.println(caravan.getCurrentCapacity() + " " + caravan.getMaxCapacity());
+			if (!survivorArr.get(i).isRescued()) {
+				// This will be handled by collisionController in the future
+				survivorArr.get(i).update(survivorControllers.get(i).getAction());
+				if (survivorArr.get(i).getX() < 20) {
+					survivorArr.get(i).setPosition(20, survivorArr.get(i).getBody().getPosition().y);
 				}
-				survivorArr.get(i).follow();
-			}
-			if (!survivorArr.get(i).isAlive()) {
-				player.removeFromFollowing(survivorArr.get(i));
-				setFailure(true);
-			}
-		}
-		caravan.update();
-		// Update caravan state
-		if (caravan.getBody().getFixtureList().first().testPoint(player.getPosition())) {
-			caravan.setInteractable(true);
-		} else {
-			caravan.setInteractable(false);
-		}
-		if (caravan.isInteractable() && input.didDropSurvivors()) {
-			if (caravan.getCurrentCapacity() == caravan.getMaxCapacity()) {
-				setComplete(true);
-			}
-			for (int i = 0; i < survivorArr.size; i++) {
-				if (survivorArr.get(i).isFollowing()) {
-					survivorArr.get(i).rescue();
+				if (survivorArr.get(i).getX() >= tileGrid.length * tileSize - 20) {
+					survivorArr.get(i).setPosition(tileGrid.length * tileSize - 20, survivorArr.get(i).getBody().getPosition().y);
+				}
+				if (survivorArr.get(i).getY() < 20) {
+					survivorArr.get(i).setPosition(survivorArr.get(i).getBody().getPosition().x, 20);
+				}
+				if (survivorArr.get(i).getY() >= tileGrid[0].length * tileSize - 20) {
+					survivorArr.get(i).setPosition(survivorArr.get(i).getBody().getPosition().x, tileGrid[0].length * tileSize - 20);
+				}
+				survivorArr.get(i).update();
+				if (survivorArr.get(i).isInteractable() && input.didCollectSurvivor()) {
+					survivorArr.get(i).setInteractable(false);
+					if (!survivorArr.get(i).isFollowing()) {
+						player.addToFollowing(survivorArr.get(i));
+					}
+					survivorArr.get(i).follow();
+				}
+				if (!survivorArr.get(i).isAlive()) {
+					player.removeFromFollowing(survivorArr.get(i));
+					setFailure(true);
+				}
+				if (survivorArr.get(i).isRescued()) {
 					player.removeFromFollowing(survivorArr.get(i));
 					survivorArr.get(i).deactivatePhysics(world);
-					survivorArr.removeIndex(i);
+					//survivorArr.removeIndex(i);
 					numRescued++;
 					caravan.incrCap();
 					caravan.setInteractable(false);
 				}
 			}
+
+		}
+		caravan.update();
+		// Update caravan state
+		if (caravan.getBody().getFixtureList().first().testPoint(player.getPosition())) {
+			caravan.setInteractable(true);
+		}
+		else {
 			caravan.setInteractable(false);
 		}
+//		if (caravan.isInteractable() && input.didDropSurvivors()) {
+			if (caravan.getCurrentCapacity() == caravan.getMaxCapacity()) {
+				setComplete(true);
+			}
+//			for (int i = 0; i < survivorArr.size; i++) {
+//				if (survivorArr.get(i).isFollowing()) {
+//					survivorArr.get(i).rescue();
+//					player.removeFromFollowing(survivorArr.get(i));
+//					survivorArr.get(i).deactivatePhysics(world);
+//					survivorArr.removeIndex(i);
+//					numRescued++;
+//					caravan.incrCap();
+//					caravan.setInteractable(false);
+//				}
+//			}
+//			caravan.setInteractable(false);
+//		}
 		// -------------------------------------------------------------------------------------------------------------
 
 		// Update Ammo Progress Bar
@@ -1145,10 +1188,17 @@ public class GameplayController implements Screen {
 		for (Obstacle obj : objects) {
 			obj.deactivatePhysics(world);
 		}
+		for (Obstacle obj : smogs) {
+			obj.deactivatePhysics(world);
+		}
+		smogs.clear();
 		objects.clear();
+		movObjects.clear();
 		addQueue.clear();
 		world.dispose();
+		smogs = null;
 		objects = null;
+		movObjects = null;
 		addQueue = null;
 		bounds = null;
 		scale = null;
@@ -1179,7 +1229,18 @@ public class GameplayController implements Screen {
 	public void addObject(Obstacle obj) {
 		assert inBounds(obj) : "Object is not in bounds";
 		objects.add(obj);
-		// obj.activatePhysics(world);
+		obj.activatePhysics(world);
+	}
+
+	/**
+	 * Immediately adds the object to the physics world
+	 *
+	 * param obj The object to add
+	 */
+	public void addSmog(Smog obj) {
+		assert inBounds(obj) : "Object is not in bounds";
+		smogs.add(obj);
+		obj.activatePhysics(world);
 	}
 
 	/**
@@ -1234,43 +1295,31 @@ public class GameplayController implements Screen {
 				obj.update(dt);
 			}
 		}
-		canvas.updateLights();
-	}
-
-	/**
-	 * Draw the progress bar for the smog ammo.
-	 */
-	public void drawBar() {
-		// Figure out how to place bar appropriately on the screen
-		width = (int) (0.50f * canvas.getWidth()) / 2;
-		centerY = canvas.getHeight() - statusBar.getHeight();
-		BAR_Y = centerY;
-		centerX = width / 2 + BAR_PAD_X;
-		BAR_X = centerX;
-		heightY = canvas.getHeight();
-		float scale = 0.5f;
-		// Progress should be between 0.0f and 1.0f
-		// progress = 0.25f;
-
-		canvas.draw(statusBkgLeft, Color.WHITE, centerX - width / 2, centerY,
-				scale * statusBkgLeft.getRegionWidth(), scale * statusBkgLeft.getRegionHeight());
-		canvas.draw(statusBkgMiddle, Color.WHITE, centerX - width / 2 + scale * statusBkgLeft.getRegionWidth(), centerY,
-				width - scale * (statusBkgRight.getRegionWidth() + statusBkgLeft.getRegionWidth()),
-				scale * statusBkgMiddle.getRegionHeight());
-		canvas.draw(statusBkgRight, Color.WHITE, centerX + width / 2 - scale * statusBkgRight.getRegionWidth(), centerY,
-				scale * statusBkgRight.getRegionWidth(), scale * statusBkgRight.getRegionHeight());
-
-		if (progress > 0) {
-			canvas.draw(statusFrgLeft, Color.CYAN, centerX - width / 2, centerY,
-					scale * statusFrgLeft.getRegionWidth(), scale * statusFrgLeft.getRegionHeight());
-			float span = (progress * 2) * (width - scale * (statusFrgLeft.getRegionWidth() + statusFrgRight.getRegionWidth()))
-					/ 2.0f;
-			canvas.draw(statusFrgMiddle, Color.CYAN, centerX - width / 2 + scale * statusFrgLeft.getRegionWidth(), centerY,
-					span, scale * statusFrgMiddle.getRegionHeight());
-			canvas.draw(statusFrgRight, Color.CYAN, centerX - width / 2 + scale * statusFrgLeft.getRegionWidth() + span,
-					centerY,
-					scale * statusFrgRight.getRegionWidth(), scale * statusFrgRight.getRegionHeight());
+		iterator = movObjects.entryIterator();
+		while (iterator.hasNext()) {
+			PooledList<Obstacle>.Entry entry = iterator.next();
+			Obstacle obj = entry.getValue();
+			if (obj.isRemoved()) {
+				obj.deactivatePhysics(world);
+				entry.remove();
+			} else {
+				// Note that update is called last!
+				obj.update(dt);
+			}
 		}
+		Iterator<PooledList<Smog>.Entry>iterator2 = smogs.entryIterator();
+		while (iterator2.hasNext()) {
+			PooledList<Smog>.Entry entry = iterator2.next();
+			Smog obj = entry.getValue();
+			if (obj.isRemoved()) {
+				obj.deactivatePhysics(world);
+				entry.remove();
+			} else {
+				// Note that update is called last!
+				obj.update(dt);
+			}
+		}
+		canvas.updateLights();
 	}
 
 	/**
@@ -1299,15 +1348,32 @@ public class GameplayController implements Screen {
 			flr.draw(canvas);
 		}
 
+		for(Obstacle obj : movObjects){
+			if(obj.getBehind()){
+				obj.draw(canvas);
+			}
+		}
+
 		for (Obstacle obj : objects) {
 			obj.draw(canvas);
 		}
+
+		for(Obstacle obj : movObjects){
+			if(!obj.getBehind()){
+				obj.draw(canvas);
+			}
+		}
+
+		for (Obstacle obj : smogs){
+			obj.draw(canvas);
+		}
+
+
 
 		// END remove
 		// drawBar();
 		canvas.end();
 
-//		System.out.println("Finished drawing objects");
 
 		canvas.renderLights();
 
@@ -1326,15 +1392,6 @@ public class GameplayController implements Screen {
 			heartArr.get(i).draw(canvas);
 		}
 
-		// Draw statics and the player in order of when they appear
-		// for (Obstacle obj : staticsAndPlayer) {
-		// obj.draw(canvas);
-		// }
-
-		// Get amount of ammo from weapon
-		// for(Obstacle obj : objects) {
-		// if obj.getType() == Obstacle
-		// }
 		String message = "ÆIR: ";
 		// canvas.drawText(message, displayFontBar, BAR_X - (width/2) + 5, BAR_Y + 38);
 		// Remove later, testing progress movement for now
@@ -1355,6 +1412,12 @@ public class GameplayController implements Screen {
 			for (Obstacle obj : objects) {
 				obj.drawDebug(canvas);
 			}
+			for (Obstacle obj : movObjects) {
+				obj.drawDebug(canvas);
+			}
+			for (Obstacle obj : smogs) {
+				obj.drawDebug(canvas);
+			}
 			toxicAir.drawDebug(canvas);
 
 			weapon.draw(canvas);
@@ -1362,7 +1425,7 @@ public class GameplayController implements Screen {
 		}
 		if (paused) {
 			displayFont.setColor(Color.GRAY);
-			canvas.drawText("PAUSED", displayFont, player.getX() - 150f, player.getY() + 25f);
+			canvas.drawText("PAUSED", displayFont, canvas.camera.position.x - 150f, canvas.camera.position.y + 25f);
 		}
 		canvas.end();
 
@@ -1370,15 +1433,15 @@ public class GameplayController implements Screen {
 		if (complete && !failed) {
 			displayFont.setColor(Color.YELLOW);
 			canvas.begin(); // DO NOT SCALE
-			canvas.drawText("VICTORY!", displayFont, player.getX() - 195, player.getY());
+			canvas.drawText("VICTORY!", displayFont, canvas.camera.position.x - 195, canvas.camera.position.y);
 
-			canvas.drawText("Press 'R' to restart", displayFontSub, player.getX() - 120, player.getY() - 100);
+			canvas.drawText("Press 'N' for next level", displayFontSub, canvas.camera.position.x - 170, canvas.camera.position.y - 100);
 			canvas.end();
 		} else if (failed) {
 			displayFont.setColor(Color.RED);
 			canvas.begin(); // DO NOT SCALE
-			canvas.drawText("FAILURE!", displayFont, player.getX() - 195, player.getY());
-			canvas.drawText("Press 'R' to restart", displayFontSub, player.getX() - 120, player.getY() - 100);
+			canvas.drawText("FAILURE!", displayFont, canvas.camera.position.x - 195, canvas.camera.position.y);
+			canvas.drawText("Press 'R' to restart", displayFontSub, canvas.camera.position.x - 120, canvas.camera.position.y - 100);
 
 			canvas.end();
 		}

@@ -143,6 +143,9 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
 
     /** checks if graphics have been loaded */
     private boolean loaded = false;
+    /** All tables used for UI */
+    private Array<Table> tables;
+    private boolean populated = false;
 
 
     /**
@@ -219,11 +222,16 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
         float startX = RIGHT_SPACING + 10;
         float startY = canvas.getHeight()*.05f;
 
+        tables = new Array<Table>();
+
         // Title
-        text.add(new Text(title, RIGHT_SPACING, canvas.getHeight()*.85f, false));
+        if (!populated){
+            text.add(new Text(title, RIGHT_SPACING, canvas.getHeight()*.85f, false));
+        }
 
         // Table for back button
         Table backTable = new Table();
+        tables.add(backTable);
         backTable.setPosition(startX-10, canvas.getHeight()*0.90f);
         backTable.setWidth(back.getWidth());
         backTable.setHeight(back.getHeight());
@@ -231,6 +239,7 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
 
         // Table for level select buttons
         Table tableLevels = new Table();
+        tables.add(tableLevels);
         //table.setFillParent(true);
         tableLevels.setPosition(startX, startY);
         tableLevels.setWidth(600.0f);
@@ -282,6 +291,10 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
             };
         } );
 
+        if (!populated){
+            populated = true;
+        }
+
     }
 
     private void addLevel(Table tableLevels, Texture up, Texture down, int level){
@@ -308,6 +321,17 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
      * This method disposes of the world and creates a new one.
      */
     public void reset() {
+        stage.clear();
+        if (tables != null){
+            for (Table t : tables){
+                t.clearActions();
+                t.clearListeners();
+                t.clear();
+                stage = new Stage();
+                // t = new Table();
+            }
+        }
+        Gdx.input.setInputProcessor(null);
         populateMenu();
         buttonState = -1;
     }

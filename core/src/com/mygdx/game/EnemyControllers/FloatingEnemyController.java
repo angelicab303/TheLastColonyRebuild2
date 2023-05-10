@@ -36,24 +36,29 @@ public class FloatingEnemyController extends EnemyController {
     }
 
     private void selectTarget() {
-        target.x = player.getX();
-        target.y = player.getY();
-//        if (!player.getSurvivorsFollowing().isEmpty()) {
-//            for (int i = 0; i < player.getSurvivorsFollowing().size; i++) {
-//                if (!player.getSurvivorsFollowing().get(i).isTargetOfEnemy()) {
-//                    target.x = player.getSurvivorsFollowing().get(i).getX();
-//                    target.y = player.getSurvivorsFollowing().get(i).getY();
-//                    survivorTarget = player.getSurvivorsFollowing().get(i);
-//                    shootingSurvivor = true;
-//                    player.getSurvivorsFollowing().get(i).setTargetOfEnemy(true);
-//                }
-//            }
-//        }
+//        target.x = player.getX();
+//        target.y = player.getY();
+        if (!player.getSurvivorsFollowing().isEmpty()) {
+            for (int i = 0; i < player.getSurvivorsFollowing().size; i++) {
+                if (!player.getSurvivorsFollowing().get(i).isTargetOfEnemy() /*&& player.getSurvivorsFollowing().get(i).canLoseLife()*/) {
+                    target.x = player.getSurvivorsFollowing().get(i).getX();
+                    target.y = player.getSurvivorsFollowing().get(i).getY();
+                    survivorTarget = player.getSurvivorsFollowing().get(i);
+                    shootingSurvivor = true;
+                    player.getSurvivorsFollowing().get(i).setTargetOfEnemy(true);
+                }
+            }
+        }
+        else {
+            target.x = player.getX();
+            target.y = player.getY();
+        }
     }
 
     @Override
     protected void changeStateIfApplicable()
     {
+        selectTarget();
         Tile enemyTile = tiles[(int) (enemy.getX() / tileSize)][(int) (enemy.getY() / tileSize)];
         Tile targetTile = tiles[(int) (target.x / tileSize)][(int) (target.y / tileSize)];
         Vector2 enemyPos = new Vector2(enemy.getX(), enemy.getY());
@@ -90,6 +95,10 @@ public class FloatingEnemyController extends EnemyController {
                 Vector2 attackPos = angle.cpy().scl(2);
                 toxicQueue.attack(1, enemy.getBody().getWorldCenter(), attackPos);
                 enemy.setAttack(false);
+                if (shootingSurvivor) {
+                    survivorTarget.setTargetOfEnemy(false);
+                    shootingSurvivor = false;
+                }
                 state = FSMState.CHASE;
                 break;
             case STUNNED:
@@ -105,5 +114,5 @@ public class FloatingEnemyController extends EnemyController {
                 break;
         }
     }
-    
+
 }
