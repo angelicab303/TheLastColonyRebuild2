@@ -246,7 +246,6 @@ public class JSONLevelReader {
             levelBounds.add(new Vector2(25, 25));
             levelBounds.add(new Vector2(30, 30));
 
-            this.tileGrid = new boolean[canvas.getWidth() / tileSize][canvas.getHeight() / tileSize];
 
             // FileReader mapReader = new FileReader(levelStr);
 
@@ -334,6 +333,9 @@ public class JSONLevelReader {
             width = layers.get(0).getInt("width");
             height = layers.get(0).getInt("height");
             System.out.println("Width: " + width + "\t\tHeight: " + height);
+
+//            this.tileGrid = new boolean[canvas.getWidth() / tileSize][canvas.getHeight() / tileSize];
+//            this.tileGrid = new boolean[width][height];
 
             // this.camera.setToOrtho(false, width * tileSize, height * tileSize);
             // this.tileGrid = new boolean[width][height];

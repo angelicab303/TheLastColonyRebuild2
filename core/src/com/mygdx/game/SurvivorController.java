@@ -69,9 +69,9 @@ public class SurvivorController {
      */
     public SurvivorController(Survivor survivor, Vector2 caravanPos, Vector2 playerPos, boolean[][] board, boolean[][] smogBoard, int tileSize, int tileOffset) {
         this.survivor = survivor;
-        this.board = board;
         this.playerPos = playerPos;
         this.caravanPos = caravanPos;
+        this.board = board;
         this.tileSize = tileSize;
         this.tileOffset = tileOffset;
 
