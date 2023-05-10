@@ -700,7 +700,7 @@ public class GameplayController implements Screen {
 
 		for (int i = 0; i < column; i++) {
 			for (int j = 0; j < column; j++) {
-				if (smogLocations[i][j]) {
+				if (smogLocations[i][j] && Vector2.dst(i * smogTileSize + smogTileOffset, j * smogTileSize + smogTileOffset, player.getX(), player.getY()) > 90) {
 					// Primary Grid
 					// Later get data from json file
 					float maxFrame = 4;
@@ -732,7 +732,7 @@ public class GameplayController implements Screen {
 			}
 
 			for (int j = 0; j < smogLocations[0].length; j++) {
-				if (smogLocations[i][j]) {
+				if (smogLocations[i][j] && Vector2.dst(i * smogTileSize + smogTileOffset, j * smogTileSize + smogTileOffset, player.getX(), player.getY()) > 90) {
 
 					// Secondary Grid
 					float maxFrame = 4;
@@ -1433,7 +1433,7 @@ public class GameplayController implements Screen {
 			canvas.begin(); // DO NOT SCALE
 			canvas.drawText("VICTORY!", displayFont, canvas.camera.position.x - 195, canvas.camera.position.y);
 
-			canvas.drawText("Press 'R' to restart", displayFontSub, canvas.camera.position.x - 120, canvas.camera.position.y - 100);
+			canvas.drawText("Press 'N' for next level", displayFontSub, canvas.camera.position.x - 170, canvas.camera.position.y - 100);
 			canvas.end();
 		} else if (failed) {
 			displayFont.setColor(Color.RED);
