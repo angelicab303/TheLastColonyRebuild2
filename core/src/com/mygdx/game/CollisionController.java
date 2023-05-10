@@ -147,7 +147,7 @@ public class CollisionController{
         if(weapon.isAbsorbing()) {
             for (Smog s : smogList) {
                 if (!s.isAbsorbed()){
-                    weapon.incrementAmmo(1);
+                    //weapon.incrementAmmo(1);
                 }
                 s.setAbsorbed(true);
             }
@@ -191,7 +191,7 @@ public class CollisionController{
                     }
                     break;
                 case GameObstacle.CATEGORY_PURIFIED | GameObstacle.CATEGORY_VINE:
-                    System.out.println("VINE COLLISION");
+//                    System.out.println("VINE COLLISION");
                     if(objA.getType() == GameObstacle.ObstacleType.VINE){
                         ((ScoutEnemy.VineTile) objA).setStunned(true);
 //                        ((ScoutEnemy.VineTile) objA).incToStunTime();
@@ -328,6 +328,15 @@ public class CollisionController{
                         ((Survivor) objB).setInteractable(false);
                     }
                     break;
+                case GameObstacle.CATEGORY_SMOG | GameObstacle.CATEGORY_SURVIVOR:
+//                    System.out.println("SURVIVOR + SMOG");
+                    if (objA.getType() == GameObstacle.ObstacleType.SURVIVOR){
+                        ((Survivor) objA).setRevealed(true);
+                    }
+                    else {
+                        ((Survivor) objB).setRevealed(true);
+                    }
+                    break;
                 case GameObstacle.CATEGORY_ENV | GameObstacle.CATEGORY_PLAYER:
                 case GameObstacle.CATEGORY_ENV | GameObstacle.CATEGORY_ENEMY:
                 case GameObstacle.CATEGORY_ENV | GameObstacle.CATEGORY_SURVIVOR:
@@ -360,6 +369,14 @@ public class CollisionController{
                     }
                     else {
                         ((Enemy) objB).setRevealed(false);
+                    }
+                    break;
+                case GameObstacle.CATEGORY_SMOG | GameObstacle.CATEGORY_SURVIVOR:
+                    if (objA.getType() == GameObstacle.ObstacleType.SURVIVOR){
+                        ((Survivor) objA).setRevealed(false);
+                    }
+                    else {
+                        ((Survivor) objB).setRevealed(false);
                     }
                 case GameObstacle.CATEGORY_PURIFIED | GameObstacle.CATEGORY_ENEMY:
                 case GameObstacle.CATEGORY_PLAYER | GameObstacle.CATEGORY_SURVIVOR:
