@@ -236,7 +236,6 @@ public class Enemy extends Shadow implements GameObstacle {
         else{
             direction = Enemy.Direction.IDLE;
             currentAnimator = animator[IDLE];
-
         }
     }
 
