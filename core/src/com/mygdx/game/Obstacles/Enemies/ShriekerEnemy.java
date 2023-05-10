@@ -60,16 +60,12 @@ public class ShriekerEnemy extends Enemy {
      * @param idle the texture used for this enemy
      * @param scale the scale used to draw for this enemy
      */
-    public ShriekerEnemy(float x, float y, Texture alert, Texture shriek, Texture idle, float scale){
-        super(x, y, idle, scale);
+    public ShriekerEnemy(float x, float y, FilmStrip[] animator, float scale, float tileSize){
+        super(x, y, animator, scale, tileSize);
         isShrieking = false;
         canShriek = false;
         justShrieked = false;
         canWake = true;
-
-        textureAlert = alert;
-        textureShriek = shriek;
-        textureIdle = idle;
         currentTexture = textureIdle;
 
         animatorAlert = new FilmStrip(textureAlert,1,NUM_ANIM_FRAMES,NUM_ANIM_FRAMES);
@@ -169,20 +165,7 @@ public class ShriekerEnemy extends Enemy {
      */
     public void update(int action)
     {
-        if(toStunTime >= MAX_TO_STUN_TIME){
-            toStunTime = 0;
-            this.setStunned(true);
-        }
-        body.setAwake(true);
-        if (damaged)
-        {
-            stunCooldown++;
-            if (stunCooldown >= MAX_STUN_COOLDOWN)
-            {
-                stunCooldown = 0;
-                damaged = false;
-            }
-        }
+        super.update(action);
         // Count down for when the shrieker can wake again after shrieking
         if (justShrieked){
             postShriekTime++;
@@ -191,7 +174,9 @@ public class ShriekerEnemy extends Enemy {
                 justShrieked = false;
                 postShriekTime = 0;
             }
-
+            else {
+                canWake = false;
+            }
         }
 
         if (isStunned())
@@ -200,16 +185,8 @@ public class ShriekerEnemy extends Enemy {
             canWake = false;
             isShrieking = false;
             isWaking = false;
-            stunTime++;
             wakeTime = 0;
             shriekTime = 0;
-            if (stunTime >= MAX_STUN_TIME)
-            {
-                canWake = true;
-                stunned = false;
-                stunTime = 0;
-                body.setActive(true);
-            }
         }
         if (isWaking){
             wakeTime++;
@@ -239,9 +216,6 @@ public class ShriekerEnemy extends Enemy {
 
         // Update animator
         updateAnimator();
-
-
-
     }
     /**
      * Returns whether the shrieker is shrieking.

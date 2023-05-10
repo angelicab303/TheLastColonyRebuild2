@@ -141,6 +141,12 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
     /** Exit state for level 2 */
     public static final int EXIT_2 = 2;
 
+    /** checks if graphics have been loaded */
+    private boolean loaded = false;
+    /** All tables used for UI */
+    private Array<Table> tables;
+    private boolean populated = false;
+
 
     /**
      * Returns the asset directory produced by this loading screen
@@ -208,6 +214,7 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
         back = directory.getEntry("levelSelect:back", Texture.class);
         backDown = directory.getEntry("levelSelect:backDown", Texture.class);
         nullFont = directory.getEntry("shared:retro" ,BitmapFont.class);
+        loaded = true;
     }
     /** Populates the menu with clouds */
     public void populateMenu(){
@@ -215,11 +222,16 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
         float startX = RIGHT_SPACING + 10;
         float startY = canvas.getHeight()*.05f;
 
+        tables = new Array<Table>();
+
         // Title
-        text.add(new Text(title, RIGHT_SPACING, canvas.getHeight()*.85f, false));
+        if (!populated){
+            text.add(new Text(title, RIGHT_SPACING, canvas.getHeight()*.85f, false));
+        }
 
         // Table for back button
         Table backTable = new Table();
+        tables.add(backTable);
         backTable.setPosition(startX-10, canvas.getHeight()*0.90f);
         backTable.setWidth(back.getWidth());
         backTable.setHeight(back.getHeight());
@@ -227,6 +239,7 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
 
         // Table for level select buttons
         Table tableLevels = new Table();
+        tables.add(tableLevels);
         //table.setFillParent(true);
         tableLevels.setPosition(startX, startY);
         tableLevels.setWidth(600.0f);
@@ -247,25 +260,10 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
 
 
 
-        // Level 1
-        textButtonStyle = new TextButton.TextButtonStyle();
-        textButtonStyle.font = nullFont;
-        textButtonStyle.up   = new TextureRegionDrawable(level1);
-        textButtonStyle.down = new TextureRegionDrawable(level1Down);
-        textButtonStyle.checked = new TextureRegionDrawable(level1);
-        buttons.add(new TextButton("", textButtonStyle));
-        tableLevels.add(buttons.get(1)).spaceBottom(20.0f).left().size(level1.getWidth()*textScale, level1.getHeight()*textScale);
-        tableLevels.row();
+        // Levels
+        addLevel(tableLevels, level1, level1Down, 1);
+        addLevel(tableLevels, level2, level2Down, 2);
 
-        // Level 2
-        textButtonStyle = new TextButton.TextButtonStyle();
-        textButtonStyle.font = nullFont;
-        textButtonStyle.up   = new TextureRegionDrawable(level2);
-        textButtonStyle.down = new TextureRegionDrawable(level2Down);
-        textButtonStyle.checked = new TextureRegionDrawable(level2);
-        buttons.add(new TextButton("", textButtonStyle));
-        tableLevels.add(buttons.get(2)).spaceBottom(20.0f).left().size(level2.getWidth()*textScale, level2.getHeight()*textScale);
-        tableLevels.row();
 
         tableLevels.left().top();
         backTable.left().top();
@@ -301,6 +299,21 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
             };
         } );
 
+        if (!populated){
+            populated = true;
+        }
+
+    }
+
+    private void addLevel(Table tableLevels, Texture up, Texture down, int level){
+        TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
+        textButtonStyle.font = nullFont;
+        textButtonStyle.up   = new TextureRegionDrawable(up);
+        textButtonStyle.down = new TextureRegionDrawable(down);
+        textButtonStyle.checked = new TextureRegionDrawable(up);
+        buttons.add(new TextButton("", textButtonStyle));
+        tableLevels.add(buttons.get(level)).spaceBottom(20.0f).left().size(up.getWidth()*textScale, up.getHeight()*textScale);
+        tableLevels.row();
     }
 
     /**
@@ -316,6 +329,17 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
      * This method disposes of the world and creates a new one.
      */
     public void reset() {
+        stage.clear();
+        if (tables != null){
+            for (Table t : tables){
+                t.clearActions();
+                t.clearListeners();
+                t.clear();
+                stage = new Stage();
+                // t = new Table();
+            }
+        }
+        Gdx.input.setInputProcessor(null);
         populateMenu();
         buttonState = -1;
     }
@@ -468,6 +492,9 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
      * @return whether to hand the event to other listeners.
      */
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        if(!loaded){
+            return false;
+        }
         if (pressState == 2) {
             return true;
         }

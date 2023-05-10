@@ -383,5 +383,15 @@ public class PolygonObstacle extends SimpleObstacle {
 			canvas.drawPhysics(tri,Color.YELLOW,getX(),getY(),getAngle(),drawScale.x,drawScale.y);
 		}
 	}
-	
+
+	@Override
+	public void setBehind(boolean bool) {
+
+	}
+
+	@Override
+	public boolean getBehind() {
+		return false;
+	}
+
 }

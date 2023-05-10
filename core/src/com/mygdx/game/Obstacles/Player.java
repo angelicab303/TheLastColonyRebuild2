@@ -4,6 +4,7 @@ import box2dLight.Light;
 import box2dLight.RayHandler;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Filter;
 import com.badlogic.gdx.physics.box2d.World;
@@ -45,13 +46,13 @@ public class Player extends Shadow implements GameObstacle{
     /** How far forward the player can move */
     private static final float MOVE_SPEED = 500.0f;
     /** The texture for the player. */
-    protected Texture textureUp;
-    protected Texture textureDown;
-    protected Texture textureRight;
-    protected Texture textureLeft;
-    protected Texture textureIdle;
+    protected FilmStrip textureUp;
+    protected FilmStrip textureDown;
+    protected FilmStrip textureRight;
+    protected FilmStrip textureLeft;
+    protected FilmStrip textureIdle;
     /** Current texture to be used for the player */
-    protected Texture currentTexture;
+    protected FilmStrip currentTexture;
 
     protected InputController controller;
 
@@ -83,11 +84,7 @@ public class Player extends Shadow implements GameObstacle{
     /**Filter for filtering */
     private static volatile Filter filter;
     /** Filmstrip for player */
-    protected FilmStrip animatorUp;
-    protected FilmStrip animatorDown;
-    protected FilmStrip animatorRight;
-    protected FilmStrip animatorLeft;
-    protected FilmStrip animatorIdle;
+    protected FilmStrip[] animator;
     protected FilmStrip currentAnimator;
     /** How fast we change frames (one frame per 10 calls to update) */
     private static final float ANIMATION_SPEED = 0.25f;
@@ -105,6 +102,12 @@ public class Player extends Shadow implements GameObstacle{
     private float scale;
     /** Max amount of health for the player */
     private int maxHealth;
+
+    private float height;
+    private float width;
+
+    private int behind;
+
 
     private Array<Survivor> survivorsFollowing;
 
@@ -125,8 +128,10 @@ public class Player extends Shadow implements GameObstacle{
      * @param x The initial x-coordinate of the player in box2d units
      * @param y The initial y-coordinate of the player in box2d units
      */
-    public Player(float x, float y, Texture up, Texture down, Texture right, Texture left, Texture idle, InputController input, float scale) {
-        super(x, y, up.getWidth()/NUM_ANIM_FRAMES*scale, up.getHeight()*scale, ShadowShape.CIRCLE);
+    public Player(float x, float y, FilmStrip[] player, InputController input, float scale, float tileSize) {
+        super(x, y, player[0].getRegionWidth()*scale, player[0].getRegionHeight()*scale, ShadowShape.CIRCLE);
+        this.height = player[0].getRegionHeight();
+        this.width = player[0].getRegionWidth();
         // setTexture(value);
         setDensity(1);
         setFriction(0.1f);
@@ -137,11 +142,7 @@ public class Player extends Shadow implements GameObstacle{
         lastVelocity = new Vector2();
         zerovector = new Vector2(0,0);
         health = 5;
-        textureUp = up;
-        textureDown = down;
-        textureRight = right;
-        textureLeft = left;
-        textureIdle = idle;
+        animator = player;
         currentTexture = textureRight;
         isAlive = true;
         controller = input;
@@ -149,6 +150,8 @@ public class Player extends Shadow implements GameObstacle{
         prevPosition = position;
         maxHealth = 5;
         blinkTime = 0;
+
+        behind = 0;
 
         if (filter == null){
             filter = new Filter();
@@ -158,13 +161,9 @@ public class Player extends Shadow implements GameObstacle{
         survivorsFollowing = new Array<>();
 
         //shadow = new Shadow(position, 0, -10, 10);
-        animatorUp = new FilmStrip(textureUp,1,NUM_ANIM_FRAMES,NUM_ANIM_FRAMES);
-        animatorDown = new FilmStrip(textureDown,1,NUM_ANIM_FRAMES,NUM_ANIM_FRAMES);
-        animatorRight = new FilmStrip(textureRight,1,NUM_ANIM_FRAMES,NUM_ANIM_FRAMES);
-        animatorLeft = new FilmStrip(textureLeft,1,NUM_ANIM_FRAMES,NUM_ANIM_FRAMES);
-        animatorIdle = new FilmStrip(textureIdle,1,NUM_ANIM_FRAMES,NUM_ANIM_FRAMES);
 
-        currentAnimator = animatorIdle;
+
+        currentAnimator = animator[IDLE];
         aframe = 0.0f;
         this.scale = scale;
     }
@@ -193,7 +192,7 @@ public class Player extends Shadow implements GameObstacle{
      * @return the x-coordinate of the player position
      */
     public float getHeight() {
-        return currentAnimator.getRegionHeight();
+        return height;
     }
 
     /**
@@ -202,7 +201,7 @@ public class Player extends Shadow implements GameObstacle{
      * @return the y-coordinate of the player position
      */
     public float getWidth() {
-        return currentAnimator.getRegionWidth()/NUM_ANIM_FRAMES;
+        return width;
     }
     public int getHealth(){
         return health;
@@ -363,7 +362,7 @@ public class Player extends Shadow implements GameObstacle{
         }
 
         setFilterData(filter);
-        attachLightToPlayer(Lights.createPointLight(Color.WHITE, sightDis, 0,0));
+        //attachLightToPlayer(Lights.createPointLight(Color.WHITE, sightDis, 0,0));
         return true;
     }
 
@@ -377,23 +376,23 @@ public class Player extends Shadow implements GameObstacle{
     public void updateDirection(float h, float v){
         if (h > 0){
             direction = Direction.RIGHT;
-            currentAnimator = animatorRight;
+            currentAnimator = animator[RIGHT];
         }
         else if (h < 0){
             direction = Direction.LEFT;
-            currentAnimator = animatorLeft;
+            currentAnimator = animator[LEFT];
         }
         else if (v > 0){
             direction = Direction.UP;
-            currentAnimator = animatorUp;
+            currentAnimator = animator[UP];
         }
         else if (v < 0){
             direction = Direction.DOWN;
-            currentAnimator = animatorDown;
+            currentAnimator = animator[DOWN];
         }
         else{
             direction = Direction.IDLE;
-            currentAnimator = animatorIdle;
+            currentAnimator = animator[IDLE];
         }
     }
 
@@ -443,7 +442,7 @@ public class Player extends Shadow implements GameObstacle{
 
 
         // Increase animation frame
-        if (currentAnimator != animatorIdle){
+        if (currentAnimator != animator[IDLE]){
             aframe += ANIMATION_SPEED;
         }
         else{
@@ -451,7 +450,7 @@ public class Player extends Shadow implements GameObstacle{
         }
 
         if (aframe >= NUM_ANIM_FRAMES-1) {
-            if (currentAnimator != animatorIdle){
+            if (currentAnimator != animator[IDLE]){
                 aframe -= NUM_ANIM_FRAMES-1;
             }
             else{
@@ -465,6 +464,16 @@ public class Player extends Shadow implements GameObstacle{
         }
 //        Filter filter = body.getFixtureList().get(0).getFilterData();
 
+        if (behind < 0){
+            behind = 0;
+        }
+
+        if(behind > 0){
+            setBehind(true);
+        }
+        else {
+            setBehind(false);
+        }
     }
 
     /**
@@ -503,14 +512,19 @@ public class Player extends Shadow implements GameObstacle{
         if (isAlive)
         {
             if (damageCooldown > 0 && damageCooldown % 10 == 0) {
-                canvas.draw(currentAnimator, Color.CLEAR, origin.x, origin.y, body.getWorldCenter().x*drawScale.x - currentAnimator.getRegionWidth()*scale/2, body.getWorldCenter().y*drawScale.y- currentAnimator.getRegionHeight()*scale/2, currentAnimator.getRegionWidth()*scale, currentAnimator.getRegionHeight()*scale);
+                canvas.draw(currentAnimator, Color.CLEAR, origin.x, origin.y, body.getWorldCenter().x*drawScale.x - height*scale/2, body.getWorldCenter().y*drawScale.y- height*scale/2, width*scale, height*scale);
             }
             else {
-                canvas.draw(currentAnimator, Color.WHITE, origin.x, origin.y, body.getWorldCenter().x*drawScale.x - currentAnimator.getRegionWidth()*scale/2, body.getWorldCenter().y*drawScale.y- currentAnimator.getRegionHeight()*scale/2, currentAnimator.getRegionWidth()*scale, currentAnimator.getRegionHeight()*scale);
+                canvas.draw(currentAnimator, Color.WHITE, origin.x, origin.y, body.getWorldCenter().x*drawScale.x - width*scale/2, body.getWorldCenter().y*drawScale.y- height*scale/2, width*scale, height*scale);
             }
         }
 
 
+    }
+
+
+    public void incBehind(int inc){
+        behind += inc;
     }
 
 

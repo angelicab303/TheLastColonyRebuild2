@@ -6,18 +6,20 @@ import com.badlogic.gdx.physics.box2d.*;
 import com.mygdx.game.GameCanvas;
 import obstacle.SimpleObstacle;
 
-public class Shadow extends SimpleObstacle {
+public class Shadow extends SimpleObstacle{
     private Vector2 position;
 
     /** The width and height of the box */
     private Vector2 dimension;
 
     protected static float size;
-    static CircleShape circleShape;
-    static PolygonShape boxShape;
+    CircleShape circleShape;
+    PolygonShape boxShape;
 
-    static FixtureDef circleFixture;
-    static FixtureDef boxFixture;
+    protected Shape shape;
+
+    protected FixtureDef fixture;
+    //FixtureDef boxFixture;
 
     /** A cache value for the fixture (for resizing) */
     private Fixture geometry;
@@ -25,7 +27,11 @@ public class Shadow extends SimpleObstacle {
     /** Cache of the polygon vertices (for resizing) */
     private static float[] vertices;
 
-    ShadowShape shape;
+    private boolean isBelow;
+
+    ShadowShape shadowShape;
+
+    private Vector2 temp;
 
     public enum ShadowShape{
         SQUARE,
@@ -38,7 +44,17 @@ public class Shadow extends SimpleObstacle {
         dimension = new Vector2(width, height);
         origin = new Vector2(0,(size-height)/2);
         geometry = null;
-        this.shape = shape;
+        this.shadowShape = shape;
+        this.fixture = new FixtureDef();
+        temp = new Vector2();
+
+        isBelow = false;
+
+        //creates the fixtures according to this size
+        circleShape = new CircleShape();
+        boxShape = new PolygonShape();
+
+        resize(width, size);
     }
 
     /** Sets the default tile size, will be the diameter if circular or the side length if square
@@ -47,24 +63,11 @@ public class Shadow extends SimpleObstacle {
         size = new_size;
 
         vertices = new float[8];
-
-        //creates the fixtures according to this size
-        circleShape = new CircleShape();
-        boxShape = new PolygonShape();
-
-        resize(size);
-
-        circleFixture = new FixtureDef();
-        boxFixture = new FixtureDef();
-
-        circleFixture.shape = circleShape;
-        boxFixture.shape = boxShape;
     }
 
-    private static void resize(float size){
+    private void resize(float size){
         circleShape.setRadius(size/2.0f);
         resize(size, size);
-
     }
 
     /**
@@ -72,7 +75,23 @@ public class Shadow extends SimpleObstacle {
      *
      * Reset the polygon vertices in the shape to match the dimension.
      */
-    private static void resize(float width, float height) {
+    private void transform(float offset) {
+        // Make the box with the center in the center
+        vertices[1] += offset;
+        vertices[3] +=  offset;
+        vertices[5] +=  offset;
+        vertices[7] += offset;
+        boxShape.set(vertices);
+    }
+
+
+    /**
+     * Helper function for resizing the box
+     *
+     * Reset the polygon vertices in the shape to match the dimension.
+     */
+    private void resize(float width, float height) {
+        circleShape.setRadius(size/2.0f);
         // Make the box with the center in the center
         vertices[0] = -width/2.0f;
         vertices[1] = -height/2.0f;
@@ -122,13 +141,24 @@ public class Shadow extends SimpleObstacle {
 
         releaseFixtures();
 
+        //dimension.y is width
+        float offset = size - dimension.y;
+        temp.set(0,offset);
 
-        if (shape.equals(ShadowShape.CIRCLE)){
-            fixture = circleFixture;
+
+        if (shadowShape.equals(ShadowShape.CIRCLE)){
+            (circleShape).setPosition(temp);
+            fixture.shape = circleShape;
         }
         else {
-            fixture = boxFixture;
+            transform(offset);
+            shape = boxShape;
+            fixture.shape = shape;
+
         }
+
+
+
 
         // Create the fixture
         //fixture.shape = shape;
@@ -166,13 +196,25 @@ public class Shadow extends SimpleObstacle {
      * @param canvas Drawing context
      */
     public void drawDebug(GameCanvas canvas) {
-        if(shape.equals(ShadowShape.CIRCLE)){
-            canvas.drawPhysics(circleShape, Color.YELLOW,getX(),getY(),drawScale.x,drawScale.y);
+
+        float offset = size - dimension.y;
+        if(shadowShape.equals(ShadowShape.CIRCLE)){
+            canvas.drawPhysics(circleShape, Color.YELLOW,getX(),getY()+offset,drawScale.x,drawScale.y);
         }
-        else if(shape.equals(ShadowShape.SQUARE)){
-            canvas.drawPhysics(boxShape,Color.YELLOW,getX(),getY(),getAngle(),drawScale.x,drawScale.y);
+        else if(shadowShape.equals(ShadowShape.SQUARE)){
+            canvas.drawPhysics(boxShape,Color.YELLOW,getX(),getY()+offset,getAngle(),drawScale.x,drawScale.y);
         }
 
-    };
+    }
+
+    public void setBehind(boolean bool){
+        this.isBelow = bool;
+    }
+
+    public boolean getBehind(){
+        return isBelow;
+    }
+
+    ;
 
 }

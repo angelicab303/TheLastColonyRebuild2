@@ -4,6 +4,7 @@ import box2dLight.ConeLight;
 import box2dLight.Light;
 import box2dLight.PointLight;
 import box2dLight.RayHandler;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.physics.box2d.Box2D;
 import com.badlogic.gdx.physics.box2d.Filter;
@@ -20,6 +21,8 @@ import static com.mygdx.game.Obstacles.GameObstacle.CATEGORY_ENV;
 public class Lights {
     static RayHandler rayHandler;
     static int rays;
+
+    private static final float  MUSH_DIST = 10f;
 
 
     protected static List<Light> lightsList;
@@ -59,6 +62,19 @@ public class Lights {
 
     public static PointLight createPointLight(com.badlogic.gdx.graphics.Color color, float distance, float x, float y){
         PointLight light = new PointLight(rayHandler, rays, color, distance, x, y);
+        //lightsList.add(light);
+
+        Filter filter = new Filter();
+        filter.categoryBits = 0x1000;
+        filter.maskBits = 0;
+        light.setContactFilter(filter);
+        return light;
+
+    }
+
+
+    public static PointLight createMushroomLight(float x, float y){
+        PointLight light = new PointLight(rayHandler, rays, Color.PINK, MUSH_DIST, x*32+24, y*32+16);
         //lightsList.add(light);
 
         Filter filter = new Filter();

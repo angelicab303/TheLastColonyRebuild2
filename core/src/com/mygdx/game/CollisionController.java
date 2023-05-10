@@ -25,6 +25,7 @@ import com.badlogic.gdx.utils.*;
 import com.badlogic.gdx.math.*;
 import com.mygdx.game.Obstacles.*;
 import com.mygdx.game.Obstacles.Enemies.Enemy;
+import com.mygdx.game.Obstacles.Enemies.ScoutEnemy;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -40,7 +41,6 @@ public class CollisionController{
     Vector2 temp3;
     Vector2 zerovector;
     List<Smog> smogList;
-    Array<Smog> tempSmogList;
 
     /** stores a temporary smog*/
     Smog tempSmog;
@@ -58,6 +58,8 @@ public class CollisionController{
     private float width;
     /** Height of the collision geometry */
     private float height;
+
+
 
     ShapeRenderer shapeRenderer;
 
@@ -92,13 +94,15 @@ public class CollisionController{
         RayCastCallback callback = new RayCastCallback() {
             @Override
             public float reportRayFixture(Fixture fixture, Vector2 point, Vector2 normal, float fraction) {
-                Object obstacle = fixture.getBody().getUserData();
-                if(obstacle instanceof Obstacles){
-                    //System.out.println("Well at least something is working");
-                    tempSmog = null;
-                    curr_fraction = fraction;
-                    //System.out.println(fraction);
-                    return fraction;
+                if (!fixture.isSensor()) {
+                    Object obstacle = fixture.getBody().getUserData();
+                    if (obstacle instanceof Obstacles) {
+                        //System.out.println("Well at least something is working");
+                        tempSmog = null;
+                        curr_fraction = fraction + 0.06f;
+                        //System.out.println(fraction);
+                        return curr_fraction;
+                    }
                 }
 
                 return -1;
@@ -186,6 +190,19 @@ public class CollisionController{
                         ((PurifiedQueue.PurifiedAir) objA).collide();
                     }
                     break;
+                case GameObstacle.CATEGORY_PURIFIED | GameObstacle.CATEGORY_VINE:
+                    System.out.println("VINE COLLISION");
+                    if(objA.getType() == GameObstacle.ObstacleType.VINE){
+                        ((ScoutEnemy.VineTile) objA).setStunned(true);
+//                        ((ScoutEnemy.VineTile) objA).incToStunTime();
+                        ((PurifiedQueue.PurifiedAir) objB).collide();
+                    }
+                    else {
+                        ((ScoutEnemy.VineTile) objB).setStunned(true);
+//                        ((ScoutEnemy.VineTile) objB).incToStunTime();
+                        ((PurifiedQueue.PurifiedAir) objA).collide();
+                    }
+                    break;
                 case GameObstacle.CATEGORY_PURIFIED | GameObstacle.CATEGORY_ENV:
                     if(objA.getType() == GameObstacle.ObstacleType.PURIFIED_AIR){
                         ((PurifiedQueue.PurifiedAir) objA).collide();
@@ -256,7 +273,7 @@ public class CollisionController{
                         survivor = (Survivor) objB;
                         ((ToxicQueue.ToxicAir) objA).collide();
                     }
-                    if (survivor.canLoseLife()){
+                    if (survivor.isFollowing() && survivor.canLoseLife()){
                         survivor.loseLife();
                         survivor.coolDown(false);
                     }
@@ -267,6 +284,20 @@ public class CollisionController{
                     }
                     else {
                         ((ToxicQueue.ToxicAir) objB).collide();
+                    }
+                    break;
+                case GameObstacle.CATEGORY_ENV | GameObstacle.CATEGORY_PLAYER:
+                case GameObstacle.CATEGORY_ENV | GameObstacle.CATEGORY_ENEMY:
+                case GameObstacle.CATEGORY_ENV | GameObstacle.CATEGORY_SURVIVOR:
+                    if(objA.getType() == GameObstacle.ObstacleType.OBSTACLE){
+                        if (contact.getFixtureA().isSensor()){
+                            (objB).incBehind(1);
+                        }
+                    }
+                    else {
+                        if (contact.getFixtureB().isSensor()){
+                            (objA).incBehind(1);
+                        }
                     }
                     break;
             }
@@ -296,6 +327,22 @@ public class CollisionController{
                     else {
                         ((Survivor) objB).setInteractable(false);
                     }
+                    break;
+                case GameObstacle.CATEGORY_ENV | GameObstacle.CATEGORY_PLAYER:
+                case GameObstacle.CATEGORY_ENV | GameObstacle.CATEGORY_ENEMY:
+                case GameObstacle.CATEGORY_ENV | GameObstacle.CATEGORY_SURVIVOR:
+                    if(objA.getType() == GameObstacle.ObstacleType.OBSTACLE){
+                        if (contact.getFixtureA().isSensor()){
+                            (objB).incBehind(-1);
+                        }
+
+                    }
+                    else {
+                        if (contact.getFixtureB().isSensor()){
+                            (objA).incBehind(-1);
+                        }
+                    }
+                    break;
             }
         }
 
@@ -308,8 +355,16 @@ public class CollisionController{
             int collision = objA.getCatagoricalBits() | objB.getCatagoricalBits();
             switch (collision){
                 case GameObstacle.CATEGORY_SMOG | GameObstacle.CATEGORY_ENEMY:
+                    if (objA.getType() == GameObstacle.ObstacleType.ENEMY){
+                        ((Enemy) objA).setRevealed(false);
+                    }
+                    else {
+                        ((Enemy) objB).setRevealed(false);
+                    }
                 case GameObstacle.CATEGORY_PURIFIED | GameObstacle.CATEGORY_ENEMY:
                 case GameObstacle.CATEGORY_PLAYER | GameObstacle.CATEGORY_SURVIVOR:
+                case GameObstacle.CATEGORY_SMOG | GameObstacle.CATEGORY_ENV:
+                case GameObstacle.CATEGORY_PURIFIED | GameObstacle.CATEGORY_VINE:
                     contact.setEnabled(false);
             }
         }
