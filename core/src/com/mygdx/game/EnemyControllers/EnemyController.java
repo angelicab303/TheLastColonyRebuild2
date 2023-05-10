@@ -317,6 +317,11 @@ public class EnemyController {
                     {
                         if (enemy.isRevealed())
                         {
+                            // Find out if the enemy is near enough to the player to hear them
+                            // Enemies should chase the player when they can hear them,
+                            //  but they should hear differently in and out of smog
+                            //  and if they were just chasing the player (stunned), then they should
+                            //  know where they were going and continue to search for some time period
                             state = FSMState.CHASE;
                         }
                         else { state = FSMState.IDLE; }

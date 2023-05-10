@@ -69,9 +69,9 @@ public class SurvivorController {
      */
     public SurvivorController(Survivor survivor, Vector2 caravanPos, Vector2 playerPos, boolean[][] board, boolean[][] smogBoard, int tileSize, int tileOffset) {
         this.survivor = survivor;
-        this.board = board;
         this.playerPos = playerPos;
         this.caravanPos = caravanPos;
+        this.board = board;
         this.tileSize = tileSize;
         this.tileOffset = tileOffset;
 
@@ -244,7 +244,7 @@ public class SurvivorController {
                 goalLoc = setGoal(nextTile);
             }
             
-//            System.out.println(nextTile.isBlocked());
+            System.out.println(nextTile.isBlocked());
 
             int action = 0;
             if (nextTile.getX() == startTile.getX() + 1 && nextTile.getY() == startTile.getY() + 1) {

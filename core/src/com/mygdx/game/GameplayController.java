@@ -214,7 +214,7 @@ public class GameplayController implements Screen {
 	private boolean unpausing = false;
 	private boolean paused = false;
 	private int curLevel = 0;
-	private int maxLevels = 6;
+	private int maxLevels = 7;
 	private int level;
 
 
@@ -602,9 +602,11 @@ public class GameplayController implements Screen {
 		int[] startingBox = { 6, 4 };
 
 		// Arrays used to find tiles to place smog at
-		boolean[][] tiles = new boolean[canvas.getWidth() / tileSize][canvas.getHeight() / tileSize];
+		tileGrid = new boolean[canvas.getWidth() / tileSize][canvas.getHeight() / tileSize];
+		boolean[][] smogTiles = new boolean[canvas.getWidth() / tileSize][canvas.getHeight() / tileSize];
 		boolean[][] smogLocations = new boolean[canvas.getWidth() / smogTileSize][canvas.getHeight() / smogTileSize];
-		smogGrid = new boolean[canvas.getWidth() * 2/tileSize][canvas.getHeight() * 2/tileSize];
+		smogGrid = new boolean[canvas.getWidth() * smogTileSize][canvas.getHeight() * smogTileSize];
+
 
 		// Testing tiles array:
 		// System.out.println("Canvas width: " + canvas.getWidth() + "\tTile Size: " +
@@ -622,8 +624,8 @@ public class GameplayController implements Screen {
 //		System.out.println("Width: " + canvas.getWidth() + "\t\tHeight: " + canvas.getHeight());
 		// Here we will instantiate the objects in the level using the JSONLevelReader.
 		JSONLevelReader reader = new JSONLevelReader(directory, bounds, world, level, canvas.camera, input,
-				objects, movObjects, floorArr, SCALE, tileGrid, smogGrid, tileSize, tileOffset, smogTileSize, smogTileOffset,
-				playerDirectionTextures, survivorDirectionTextures, enemyDirectionTextures, toxicAir,
+				objects, movObjects, floorArr, SCALE, tileGrid, smogTiles, smogGrid, tileSize, tileOffset, smogTileSize, smogTileOffset,
+				playerDirectionTextures, survivorDirectionTextures, enemyDirectionTextures, toxicAir, survivorITexture,
 				displayFontInteract, fHeartTexture, player, weapon);
 
 //		if (caravan.getX() < 400f) {
@@ -636,7 +638,10 @@ public class GameplayController implements Screen {
 
 
 		objects = reader.getObjects();
+		movObjects = reader.getMovObjects();
+		floorArr = reader.getFloorArr();
 		tileGrid = reader.getTileGrid();
+		smogTiles = reader.getSmogTiles();
 		smogGrid = reader.getSmogGrid();
 //		canvas.camera = reader.getCamera();
 		caravan = reader.getCaravan();
@@ -680,9 +685,9 @@ public class GameplayController implements Screen {
 		// Instantiate the smog array:
 		smogArr = new Array<Smog>();
 		// Determine where the smog is and log it in smogLocations:
-		for (int i = 0; i < tiles.length; i++) {
-			for (int j = 0; j < tiles[0].length; j++) {
-				if (!tiles[i][j]) {
+		for (int i = 0; i < smogTiles.length; i++) {
+			for (int j = 0; j < smogTiles[0].length; j++) {
+				if (smogTiles[i][j]) {
 					smogLocations[2 * i][2 * j] = true;
 					smogLocations[2 * i + 1][2 * j] = true;
 					smogLocations[2 * i][2 * j + 1] = true;
@@ -879,7 +884,7 @@ public class GameplayController implements Screen {
 		}
 
 		if (input.isNextLevel()) {
-			reset(level + 1 % 2);
+			reset(level + 1);
 		}
 
 		if (input.didPressAbsorb()) {
