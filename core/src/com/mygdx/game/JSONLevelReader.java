@@ -635,7 +635,7 @@ public class JSONLevelReader {
             enemyArr.add(enemyTemp);
             addMovObject(enemyTemp);
 
-            enemyControllers.add(new FloatingEnemyController(tileGrid, tileSize, tileOffset, enemyTemp, player, shriekerArr, toxicAir));
+            enemyControllers.add(new FloatingEnemyController(tileGrid, tileSize, tileOffset, enemyTemp, player, toxicAir));
         } else if (id == enemyIDs[1]) {
             // Scout
             ScoutEnemy enemyTemp = new ScoutEnemy(x * tileSize + tileOffset, y * tileSize + tileOffset, enemyDirectionTextures, vineTextures, scale, imageTileSize, world);
@@ -643,7 +643,7 @@ public class JSONLevelReader {
             enemyArr.add(enemyTemp);
             addMovObject(enemyTemp);
 
-            enemyControllers.add(new ScoutEnemyController(tileGrid, tileSize, tileOffset, enemyTemp, player, shriekerArr));
+            enemyControllers.add(new ScoutEnemyController(tileGrid, tileSize, tileOffset, enemyTemp, player));
         } else if (id == enemyIDs[2]) {
             // Chaser
             Enemy enemyTemp = new Enemy(x * tileSize + tileOffset, y * tileSize + tileOffset, enemyDirectionTextures, scale, imageTileSize);
@@ -651,7 +651,7 @@ public class JSONLevelReader {
             enemyArr.add(enemyTemp);
             addMovObject(enemyTemp);
 
-            enemyControllers.add(new ChaserEnemyController(tileGrid, tileSize, tileOffset, enemyTemp, player, shriekerArr));
+            enemyControllers.add(new ChaserEnemyController(tileGrid, tileSize, tileOffset, enemyTemp, player));
         } else if (id == enemyIDs[3]) {
             // Shrieker
             ShriekerEnemy enemyTemp = new ShriekerEnemy(x * tileSize + tileOffset, y * tileSize + tileOffset, enemyDirectionTextures, scale, imageTileSize);
@@ -660,7 +660,7 @@ public class JSONLevelReader {
             enemyArr.add(enemyTemp);
             addMovObject(enemyTemp);
 
-            enemyControllers.add(new ShriekerEnemyController(tileGrid, tileSize, tileOffset, enemyTemp, player, shriekerArr));
+            enemyControllers.add(new ShriekerEnemyController(tileGrid, tileSize, tileOffset, enemyTemp, player));
         }
     }
 
