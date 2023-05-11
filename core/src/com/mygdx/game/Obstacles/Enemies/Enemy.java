@@ -200,7 +200,7 @@ public class Enemy extends Shadow implements GameObstacle {
 
         stunned = false;
         canAttack = true;
-        revealed = false;
+        revealed = true;
 
         if (filter == null){
             filter = new Filter();
