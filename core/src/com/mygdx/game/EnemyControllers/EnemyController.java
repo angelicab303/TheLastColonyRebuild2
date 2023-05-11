@@ -115,6 +115,10 @@ public class EnemyController {
         ticks = 0;
     }
 
+    public void setBoard(boolean[][] board){
+        this.board = board;
+    }
+
     protected void initTiles(Vector2 enemyTarget) {
         tiles = new Tile[board.length][board[0].length];
         for (int i = 0; i < tiles.length; i++) {

@@ -142,6 +142,9 @@ public class SurvivorController {
         float y = tilePath.get(1).getY() * tileSize + tileOffset;
         goalLoc = new Vector2(x, y);
     }
+    public void setBoard(boolean[][] board){
+        this.board = board;
+    }
 
         /** Returns an int value representing the survivor's next movement action:
          * 0 = no move, 1 = right, 2 = left, 3 = down, 4 = up */

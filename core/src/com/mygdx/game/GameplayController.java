@@ -33,9 +33,9 @@ import obstacle.BoxObstacle;
 import obstacle.Obstacle;
 import util.*;
 
+import java.util.HashMap;
 import java.util.Iterator;
-
-
+import java.util.Map;
 
 
 /**
@@ -59,28 +59,6 @@ public class GameplayController implements Screen {
 	private FilmStrip[] survivorDirectionTextures;
 	/** Texture asset for enemy avatar */
 	private FilmStrip[] enemyDirectionTextures;
-	private Texture vineTextureVertical;
-	private Texture vineTextureHorizontal;
-	private Texture vineTextureLeftBottom;
-	private Texture vineTextureLeftTop;
-	private Texture vineTextureRightBottom;
-	private Texture vineTextureRightTop;
-	private Texture vineTextureHeadLeft;
-	private Texture vineTextureHeadRight;
-	private Texture vineTextureHeadDown;
-	private Texture vineTextureHeadUp;
-	private Texture vineTextureHeadLeftBottom;
-	private Texture vineTextureHeadLeftTop;
-	private Texture vineTextureHeadRightBottom;
-	private Texture vineTextureHeadRightTop;
-	private Texture vineTextureClosedLeft;
-	private Texture vineTextureClosedRight;
-	private Texture vineTextureClosedDown;
-	private Texture vineTextureClosedUp;
-	private Texture vineTextureClosedLeftBottom;
-	private Texture vineTextureClosedLeftTop;
-	private Texture vineTextureClosedRightBottom;
-	private Texture vineTextureClosedRightTop;
 	private Texture[] vineTextures;
 	/** Texture asset for survivor avatar */
 	private TextureRegion survivorTexture;
@@ -163,6 +141,8 @@ public class GameplayController implements Screen {
 	private JsonValue constants;
 
 	private AssetDirectory directory;
+
+	private Map<String, TextureRegion> assetTextures;
 
 	/** Reference to the player avatar */
 	protected Player player;
@@ -372,6 +352,7 @@ public class GameplayController implements Screen {
 		world = new World(gravity, false);
 		this.bounds = new Rectangle(bounds);
 		this.scale = new Vector2(1, 1);
+		this.assetTextures = new HashMap<>();
 		complete = false;
 		failed = false;
 		debug = false;
@@ -418,105 +399,147 @@ public class GameplayController implements Screen {
 	public void gatherAssets(AssetDirectory directory) {
 		this.directory = directory;
 
+		//All textures not corresponding to UI elements/player/survivor/enemy will be loaded differently -V
+
 		// Player, Enemy, and Survivor Textures
 		survivorTexture = new TextureRegion(directory.getEntry("images:survivorSprite", Texture.class));
 		survivorITexture = directory.getEntry("images:sInteract", Texture.class);
 
-		// Smog, Purified Air, and Air Bar Textures
-		mushroomTexture = new TextureRegion(directory.getEntry("images:mushroom", Texture.class));
-		smogTexture = directory.getEntry("images:testSmog", Texture.class);
-		toxicAirTexture = directory.getEntry("images:testSmog", Texture.class);
-		pureAirTexture = directory.getEntry("images:weaponProjectile", Texture.class);
-		smogTexture2 = new TextureRegion(directory.getEntry("images:smog2", Texture.class));
-		airBarTexture = directory.getEntry("images:airBar", Texture.class);
-		// pureAirTexture = new TextureRegion(directory.getEntry("images:smog1",
-		// Texture.class));
-		pureAirTexture = directory.getEntry("images:testSmog", Texture.class);
-
-		// Floor Textures
-		grassTexture = new TextureRegion(directory.getEntry("tiles:4a_grass1", Texture.class));
-		dirtTexture = new TextureRegion(directory.getEntry("tiles:4c_dirt1", Texture.class));
-		dirtMushroomTexture = new TextureRegion(directory.getEntry("tiles:4c_dirt2", Texture.class));
-		rockTexture = new TextureRegion(directory.getEntry("tiles:4b_rocks", Texture.class));
-		brickFloorTexture = new TextureRegion(directory.getEntry("tiles:4d_brick1", Texture.class));
-		brickFloorCrackedTexture = new TextureRegion(directory.getEntry("tiles:4d_brick3", Texture.class));
-		brickFloorCrackedTopTexture = new TextureRegion(directory.getEntry("tiles:4d_brick2", Texture.class));
-
-		// Wall Textures
-		cliffTexture = new TextureRegion(directory.getEntry("images:cliff3", Texture.class));
-		cliffTexture2 = new TextureRegion(directory.getEntry("images:cliff4", Texture.class));
-		brickWallTexture = new TextureRegion(directory.getEntry("tiles:5a_brick1", Texture.class));
-		brickWallTopOpenTexture = new TextureRegion(directory.getEntry("tiles:5a_brick4", Texture.class));
-		brickWallSidesOpenTexture = new TextureRegion(directory.getEntry("tiles:5a_brick3", Texture.class));
-		brickWallCrackedTexture = new TextureRegion(directory.getEntry("tiles:5a_brick2", Texture.class));
-		brickWallTopTexture = new TextureRegion(directory.getEntry("tiles:5a_brick5", Texture.class));
-		borderSmogTexture = new TextureRegion(directory.getEntry("tiles:5c_borderSmog", Texture.class));
-
-		// Caravan, Trees, and Mushroom Textures
-		caravanTexture = new TextureRegion(directory.getEntry("tiles:0_caravan", Texture.class));
-		treeTexture = new TextureRegion(directory.getEntry("tiles:6a_mediumTree", Texture.class));
-		treeTallTexture = new TextureRegion(directory.getEntry("tiles:6b_tallTree", Texture.class));
-		treeWideTexture = new TextureRegion(directory.getEntry("images:tree2", Texture.class));
-		treeBallTexture = new TextureRegion(directory.getEntry("tiles:6c_shortTree", Texture.class));
-		treeBallFadedTexture = new TextureRegion(directory.getEntry("images:tree3", Texture.class));
-		mushroomTexture = new TextureRegion(directory.getEntry("images:mushroom", Texture.class));
-
-		// UI Textures
-		fHeartTexture = directory.getEntry("images:fullHeart", Texture.class);
-		sHeartTexture = directory.getEntry("images:slashedHeart", Texture.class);
-
-		// Unnecessary atm?
-
 		playerDirectionTextures = importCharacterFilmstrip("player");
 		survivorDirectionTextures = importCharacterFilmstrip("survivorP");
 		enemyDirectionTextures = importCharacterFilmstrip("maskEnemy");
-		vineTextureVertical = directory.getEntry("images:vineVertical", Texture.class);
-		vineTextureHorizontal = directory.getEntry("images:vineHorizontal", Texture.class);
-		vineTextureLeftBottom = directory.getEntry("images:vineBottomLeft", Texture.class);
-		vineTextureLeftTop = directory.getEntry("images:vineTopLeft", Texture.class);
-		vineTextureRightBottom = directory.getEntry("images:vineBottomRight", Texture.class);
-		vineTextureRightTop = directory.getEntry("images:vineTopRight", Texture.class);
-		vineTextureHeadLeft = directory.getEntry("images:vineStraightHeadLeft", Texture.class);
-		vineTextureHeadRight = directory.getEntry("images:vineStraightHeadRight", Texture.class);
-		vineTextureHeadDown = directory.getEntry("images:vineStraightHeadDown", Texture.class);
-		vineTextureHeadUp = directory.getEntry("images:vineStraightHeadUp", Texture.class);
-		vineTextureHeadLeftBottom = directory.getEntry("images:vineCornerHeadLeftDown", Texture.class);
-		vineTextureHeadLeftTop = directory.getEntry("images:vineCornerHeadLeftUp", Texture.class);
-		vineTextureHeadRightBottom = directory.getEntry("images:vineCornerHeadRightDown", Texture.class);
-		vineTextureHeadRightTop = directory.getEntry("images:vineCornerHeadRightUp", Texture.class);
 
-		vineTextureClosedLeft = directory.getEntry("images:vineStraightClosedLeft", Texture.class);
-		vineTextureClosedRight = directory.getEntry("images:vineStraightClosedRight", Texture.class);
-		vineTextureClosedDown = directory.getEntry("images:vineStraightClosedDown", Texture.class);
-		vineTextureClosedUp = directory.getEntry("images:vineStraightClosedUp", Texture.class);
-		vineTextureClosedLeftBottom = directory.getEntry("images:vineCornerClosedLeftDown", Texture.class);
-		vineTextureClosedLeftTop = directory.getEntry("images:vineCornerClosedLeftUp", Texture.class);
-		vineTextureClosedRightBottom = directory.getEntry("images:vineCornerClosedRightDown", Texture.class);
-		vineTextureClosedRightTop = directory.getEntry("images:vineCornerClosedRightUp", Texture.class);
+		//Vines for enemies (Have shortened the code a bit) -V
 
 		vineTextures = new Texture[22];
-		vineTextures[0] = vineTextureVertical;
-		vineTextures[1] = vineTextureHorizontal;
-		vineTextures[2] = vineTextureLeftBottom;
-		vineTextures[3] = vineTextureLeftTop;
-		vineTextures[4] = vineTextureRightBottom;
-		vineTextures[5] = vineTextureRightTop;
-		vineTextures[6] = vineTextureHeadLeft;
-		vineTextures[7] = vineTextureHeadRight;
-		vineTextures[8] = vineTextureHeadDown;
-		vineTextures[9] = vineTextureHeadUp;
-		vineTextures[10] = vineTextureHeadLeftBottom;
-		vineTextures[11] = vineTextureHeadLeftTop;
-		vineTextures[12] = vineTextureHeadRightBottom;
-		vineTextures[13] = vineTextureHeadRightTop;
-		vineTextures[14] = vineTextureClosedLeft;
-		vineTextures[15] = vineTextureClosedRight;
-		vineTextures[16] = vineTextureClosedDown;
-		vineTextures[17] = vineTextureClosedUp;
-		vineTextures[18] = vineTextureClosedLeftTop;
-		vineTextures[19] = vineTextureClosedLeftBottom;
-		vineTextures[20] = vineTextureClosedRightTop;
-		vineTextures[21] = vineTextureClosedRightBottom;
+		vineTextures[0] = directory.getEntry("images:vineVertical", Texture.class);
+		vineTextures[1] = directory.getEntry("images:vineHorizontal", Texture.class);
+		vineTextures[2] = directory.getEntry("images:vineBottomLeft", Texture.class);
+		vineTextures[3] = directory.getEntry("images:vineTopLeft", Texture.class);
+		vineTextures[4] = directory.getEntry("images:vineBottomRight", Texture.class);
+		vineTextures[5] = directory.getEntry("images:vineTopRight", Texture.class);
+		vineTextures[6] = directory.getEntry("images:vineStraightHeadLeft", Texture.class);
+		vineTextures[7] = directory.getEntry("images:vineStraightHeadRight", Texture.class);
+		vineTextures[8] = directory.getEntry("images:vineStraightHeadDown", Texture.class);
+		vineTextures[9] = directory.getEntry("images:vineStraightHeadUp", Texture.class);
+		vineTextures[10] = directory.getEntry("images:vineCornerHeadLeftDown", Texture.class);
+		vineTextures[11] = directory.getEntry("images:vineCornerHeadLeftUp", Texture.class);
+		vineTextures[12] = directory.getEntry("images:vineCornerHeadRightDown", Texture.class);
+		vineTextures[13] = directory.getEntry("images:vineCornerHeadRightUp", Texture.class);
+		vineTextures[14] = directory.getEntry("images:vineStraightClosedLeft", Texture.class);
+		vineTextures[15] = directory.getEntry("images:vineStraightClosedRight", Texture.class);
+		vineTextures[16] = directory.getEntry("images:vineStraightClosedDown", Texture.class);
+		vineTextures[17] = directory.getEntry("images:vineStraightClosedUp", Texture.class);
+		vineTextures[18] = directory.getEntry("images:vineCornerClosedLeftDown", Texture.class);
+		vineTextures[19] = directory.getEntry("images:vineCornerClosedLeftUp", Texture.class);
+		vineTextures[20] = directory.getEntry("images:vineCornerClosedRightDown", Texture.class);
+		vineTextures[21] = directory.getEntry("images:vineCornerClosedRightUp", Texture.class);
+
+		//Toxic air for enemies
+		toxicAirTexture = directory.getEntry("images:testSmog", Texture.class);
+
+		//purified air for player
+		pureAirTexture = directory.getEntry("images:testSmog", Texture.class);
+
+
+		//UI elements
+		airBarTexture = directory.getEntry("images:airBar", Texture.class);
+		fHeartTexture = directory.getEntry("images:fullHeart", Texture.class);
+		sHeartTexture = directory.getEntry("images:slashedHeart", Texture.class);
+
+		//This code is terrible but beggers can't be choosers - V
+
+		String key;
+		//grass -> # grass tiles = 20 for a, 9 for b
+		for(int i = 1; i < 21; i++){
+			key = "tiles:4a_grass" + i;
+			assetTextures.put(key , new TextureRegion(directory.getEntry(key, Texture.class)));
+		}
+
+		for(int i = 1; i < 10; i++){
+			key = "tiles:4b_grass" + i;
+			assetTextures.put(key , new TextureRegion(directory.getEntry(key, Texture.class)));
+		}
+
+		//bricks -> # brick tiles = 10
+		for(int i = 1; i < 11; i++){
+			key = "tiles:5a_brick" + i;
+			assetTextures.put(key , new TextureRegion(directory.getEntry(key, Texture.class)));
+		}
+		//steel??? What?-> # steel tiles = 4
+		for(int i = 1; i < 5; i++){
+			key = "tiles:5b_steel" + i;
+			assetTextures.put(key , new TextureRegion(directory.getEntry(key, Texture.class)));
+		}
+
+		key = "tiles:5c_borderSmog";
+		assetTextures.put(key , new TextureRegion(directory.getEntry(key, Texture.class)));
+
+		//fences -> # fence tiles = 9
+		for(int i = 1; i < 10; i++){
+			key = "tiles:5d_fence" + i;
+			assetTextures.put(key , new TextureRegion(directory.getEntry(key, Texture.class)));
+		}
+
+		//tree -> # tree tiles = 6
+		for(int i = 1; i < 7; i++){
+			key = "tiles:6a_tree" + i;
+			assetTextures.put(key , new TextureRegion(directory.getEntry(key, Texture.class)));
+		}
+
+		key = "tiles:9a_torch";
+		assetTextures.put(key , new TextureRegion(directory.getEntry(key, Texture.class)));
+
+		key = "tiles:9a_mushroom";
+		assetTextures.put(key , new TextureRegion(directory.getEntry(key, Texture.class)));
+
+
+
+
+
+
+		// Smog, Purified Air, and Air Bar Textures
+		//mushroomTexture = new TextureRegion(directory.getEntry("images:mushroom", Texture.class));
+		smogTexture = directory.getEntry("images:testSmog", Texture.class);
+		smogTexture2 = new TextureRegion(directory.getEntry("images:smog2", Texture.class));
+
+		// pureAirTexture = new TextureRegion(directory.getEntry("images:smog1",
+		// Texture.class));
+//
+//		// Floor Textures
+//		grassTexture = new TextureRegion(directory.getEntry("tiles:4a_grass1", Texture.class));
+//		dirtTexture = new TextureRegion(directory.getEntry("tiles:4c_dirt1", Texture.class));
+//		dirtMushroomTexture = new TextureRegion(directory.getEntry("tiles:4c_dirt2", Texture.class));
+//		rockTexture = new TextureRegion(directory.getEntry("tiles:4b_rocks", Texture.class));
+//		brickFloorTexture = new TextureRegion(directory.getEntry("tiles:4d_brick1", Texture.class));
+//		brickFloorCrackedTexture = new TextureRegion(directory.getEntry("tiles:4d_brick3", Texture.class));
+//		brickFloorCrackedTopTexture = new TextureRegion(directory.getEntry("tiles:4d_brick2", Texture.class));
+//
+//		// Wall Textures
+//		cliffTexture = new TextureRegion(directory.getEntry("images:cliff3", Texture.class));
+//		cliffTexture2 = new TextureRegion(directory.getEntry("images:cliff4", Texture.class));
+//		brickWallTexture = new TextureRegion(directory.getEntry("tiles:5a_brick1", Texture.class));
+//		brickWallTopOpenTexture = new TextureRegion(directory.getEntry("tiles:5a_brick4", Texture.class));
+//		brickWallSidesOpenTexture = new TextureRegion(directory.getEntry("tiles:5a_brick3", Texture.class));
+//		brickWallCrackedTexture = new TextureRegion(directory.getEntry("tiles:5a_brick2", Texture.class));
+//		brickWallTopTexture = new TextureRegion(directory.getEntry("tiles:5a_brick5", Texture.class));
+//		borderSmogTexture = new TextureRegion(directory.getEntry("tiles:5c_borderSmog", Texture.class));
+//
+//		// Caravan, Trees, and Mushroom Textures
+//		caravanTexture = new TextureRegion(directory.getEntry("tiles:0_caravan", Texture.class));
+//		treeTexture = new TextureRegion(directory.getEntry("tiles:6a_mediumTree", Texture.class));
+//		treeTallTexture = new TextureRegion(directory.getEntry("tiles:6b_tallTree", Texture.class));
+//		treeWideTexture = new TextureRegion(directory.getEntry("images:tree2", Texture.class));
+//		treeBallTexture = new TextureRegion(directory.getEntry("tiles:6c_shortTree", Texture.class));
+//		treeBallFadedTexture = new TextureRegion(directory.getEntry("images:tree3", Texture.class));
+//		mushroomTexture = new TextureRegion(directory.getEntry("images:mushroom", Texture.class));
+//
+//
+//
+
+
+
+		//Sound
 
 		fireSound = directory.getEntry("platform:pew", Sound.class);
 
@@ -625,7 +648,7 @@ public class GameplayController implements Screen {
 		// Here we will instantiate the objects in the level using the JSONLevelReader.
 		JSONLevelReader reader = new JSONLevelReader(directory, bounds, world, level, canvas.camera, input,
 				objects, movObjects, floorArr, SCALE, tileGrid, smogTiles, smogGrid, tileSize, tileOffset, smogTileSize, smogTileOffset,
-				playerDirectionTextures, survivorDirectionTextures, enemyDirectionTextures, toxicAir, survivorITexture,
+				playerDirectionTextures, survivorDirectionTextures, enemyDirectionTextures, vineTextures, toxicAir, survivorITexture, assetTextures,
 				displayFontInteract, fHeartTexture, player, weapon);
 
 //		if (caravan.getX() < 400f) {

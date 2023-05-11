@@ -16,391 +16,781 @@
          "id":0,
          "image":"0_caravan.png",
          "imageheight":55,
-         "imagewidth":90
+         "imagewidth":90,
+          "properties":[
+            {
+              "name":"Caravan",
+              "type":"string",
+              "value":""
+            }]
         }, 
         {
          "id":1,
          "image":"1_player.png",
          "imageheight":48,
-         "imagewidth":38
+         "imagewidth":38,
+          "properties":[
+            {
+              "name":"Player",
+              "type":"string",
+              "value":""
+            }]
         }, 
         {
          "id":2,
          "image":"2_survivor.png",
          "imageheight":48,
-         "imagewidth":35
+         "imagewidth":35,
+          "properties":[
+            {
+              "name":"Survivor",
+              "type":"string",
+              "value":""
+            }]
         }, 
         {
          "id":3,
          "image":"3a_floater.png",
          "imageheight":32,
-         "imagewidth":32
+         "imagewidth":32,
+          "properties":[
+            {
+              "name":"Enemy",
+              "type":"string",
+              "value":""
+            }]
         }, 
         {
          "id":4,
          "image":"3b_scout.png",
          "imageheight":32,
-         "imagewidth":32
+         "imagewidth":32,
+          "properties":[
+            {
+              "name":"Enemy",
+              "type":"string",
+              "value":""
+            }]
         }, 
         {
          "id":5,
          "image":"3c_chaser.png",
          "imageheight":32,
-         "imagewidth":32
+         "imagewidth":32,
+          "properties":[
+            {
+              "name":"Enemy",
+              "type":"string",
+              "value":""
+            }]
         }, 
         {
          "id":6,
          "image":"3d_shrieker.png",
          "imageheight":54,
-         "imagewidth":54
+         "imagewidth":54,
+          "properties":[
+            {
+              "name":"Enemy",
+              "type":"string",
+              "value":""
+            }]
         }, 
         {
          "id":7,
          "image":"4a_grass1.png",
          "imageheight":32,
-         "imagewidth":32
+         "imagewidth":32,
+          "properties":[
+            {
+              "name":"Floor",
+              "type":"string",
+              "value":""
+            }]
         }, 
         {
          "id":8,
          "image":"4a_grass2.png",
          "imageheight":32,
-         "imagewidth":32
+         "imagewidth":32,
+          "properties":[
+            {
+              "name":"Floor",
+              "type":"string",
+              "value":""
+            }]
         }, 
         {
          "id":9,
          "image":"4a_grass3.png",
          "imageheight":32,
-         "imagewidth":32
+         "imagewidth":32,
+          "properties":[
+            {
+              "name":"Floor",
+              "type":"string",
+              "value":""
+            }]
         }, 
         {
          "id":10,
          "image":"4a_grass4.png",
          "imageheight":32,
-         "imagewidth":32
+         "imagewidth":32,
+          "properties":[
+            {
+              "name":"Floor",
+              "type":"string",
+              "value":""
+            }]
         }, 
         {
          "id":11,
          "image":"4a_grass5.png",
          "imageheight":32,
-         "imagewidth":32
+         "imagewidth":32,
+          "properties":[
+            {
+              "name":"Floor",
+              "type":"string",
+              "value":""
+            }]
         }, 
         {
          "id":12,
          "image":"4a_grass6.png",
          "imageheight":32,
-         "imagewidth":32
+         "imagewidth":32,
+          "properties":[
+            {
+              "name":"Floor",
+              "type":"string",
+              "value":""
+            }]
         }, 
         {
          "id":13,
          "image":"4a_grass7.png",
          "imageheight":32,
-         "imagewidth":32
+         "imagewidth":32,
+          "properties":[
+            {
+              "name":"Floor",
+              "type":"string",
+              "value":""
+            }]
         }, 
         {
          "id":14,
          "image":"4a_grass8.png",
          "imageheight":32,
-         "imagewidth":32
+         "imagewidth":32,
+          "properties":[
+            {
+              "name":"Floor",
+              "type":"string",
+              "value":""
+            }]
         }, 
         {
          "id":15,
          "image":"4a_grass9.png",
          "imageheight":32,
-         "imagewidth":32
+         "imagewidth":32,
+          "properties":[
+            {
+              "name":"Floor",
+              "type":"string",
+              "value":""
+            }]
         }, 
         {
          "id":16,
          "image":"4a_grass10.png",
          "imageheight":32,
-         "imagewidth":32
+         "imagewidth":32,
+          "properties":[
+            {
+              "name":"Floor",
+              "type":"string",
+              "value":""
+            }]
         }, 
         {
          "id":17,
          "image":"4a_grass11.png",
          "imageheight":32,
-         "imagewidth":32
+         "imagewidth":32,
+          "properties":[
+            {
+              "name":"Floor",
+              "type":"string",
+              "value":""
+            }]
         }, 
         {
          "id":18,
          "image":"4a_grass12.png",
          "imageheight":32,
-         "imagewidth":32
+         "imagewidth":32,
+          "properties":[
+            {
+              "name":"Floor",
+              "type":"string",
+              "value":""
+            }]
         }, 
         {
          "id":19,
          "image":"4a_grass13.png",
          "imageheight":32,
-         "imagewidth":32
+         "imagewidth":32,
+          "properties":[
+            {
+              "name":"Floor",
+              "type":"string",
+              "value":""
+            }]
         }, 
         {
          "id":20,
          "image":"4a_grass14.png",
          "imageheight":32,
-         "imagewidth":32
+         "imagewidth":32,
+          "properties":[
+            {
+              "name":"Floor",
+              "type":"string",
+              "value":""
+            }]
         }, 
         {
          "id":21,
          "image":"4a_grass15.png",
          "imageheight":32,
-         "imagewidth":32
+         "imagewidth":32,
+          "properties":[
+            {
+              "name":"Floor",
+              "type":"string",
+              "value":""
+            }]
         }, 
         {
          "id":22,
          "image":"4a_grass16.png",
          "imageheight":32,
-         "imagewidth":32
+         "imagewidth":32,
+          "properties":[
+            {
+              "name":"Floor",
+              "type":"string",
+              "value":""
+            }]
         }, 
         {
          "id":23,
          "image":"4b_grass1.png",
          "imageheight":32,
-         "imagewidth":32
+         "imagewidth":32,
+          "properties":[
+            {
+              "name":"Floor",
+              "type":"string",
+              "value":""
+            }]
         }, 
         {
          "id":24,
          "image":"4b_grass2.png",
          "imageheight":32,
-         "imagewidth":32
+         "imagewidth":32,
+          "properties":[
+            {
+              "name":"Floor",
+              "type":"string",
+              "value":""
+            }]
         }, 
         {
          "id":25,
          "image":"4b_grass3.png",
          "imageheight":32,
-         "imagewidth":32
+         "imagewidth":32,
+          "properties":[
+            {
+              "name":"Floor",
+              "type":"string",
+              "value":""
+            }]
         }, 
         {
          "id":26,
          "image":"4b_grass4.png",
          "imageheight":32,
-         "imagewidth":32
+         "imagewidth":32,
+          "properties":[
+            {
+              "name":"Floor",
+              "type":"string",
+              "value":""
+            }]
         }, 
         {
          "id":27,
          "image":"4b_grass5.png",
          "imageheight":32,
-         "imagewidth":32
+         "imagewidth":32,
+          "properties":[
+            {
+              "name":"Floor",
+              "type":"string",
+              "value":""
+            }]
         }, 
         {
          "id":28,
          "image":"4b_grass6.png",
          "imageheight":32,
-         "imagewidth":32
+         "imagewidth":32,
+          "properties":[
+            {
+              "name":"Floor",
+              "type":"string",
+              "value":""
+            }]
         }, 
         {
          "id":29,
          "image":"4b_grass7.png",
          "imageheight":32,
-         "imagewidth":32
+         "imagewidth":32,
+          "properties":[
+            {
+              "name":"Floor",
+              "type":"string",
+              "value":""
+            }]
         }, 
         {
          "id":30,
          "image":"4b_grass8.png",
          "imageheight":32,
-         "imagewidth":32
+         "imagewidth":32,
+          "properties":[
+            {
+              "name":"Floor",
+              "type":"string",
+              "value":""
+            }]
         }, 
         {
          "id":31,
          "image":"4b_grass9.png",
          "imageheight":32,
-         "imagewidth":32
+         "imagewidth":32,
+          "properties":[
+            {
+              "name":"Floor",
+              "type":"string",
+              "value":""
+            }]
         }, 
         {
          "id":32,
          "image":"5a_brick1.png",
          "imageheight":64,
-         "imagewidth":32
+         "imagewidth":32,
+          "properties":[
+            {
+              "name":"Obstacle",
+              "type":"string",
+              "value":""
+            }]
         }, 
         {
          "id":33,
          "image":"5a_brick3.png",
          "imageheight":64,
-         "imagewidth":32
+         "imagewidth":32,
+          "properties":[
+            {
+              "name":"Obstacle",
+              "type":"string",
+              "value":""
+            }]
         }, 
         {
          "id":34,
          "image":"5a_brick4.png",
          "imageheight":64,
-         "imagewidth":32
+         "imagewidth":32,
+          "properties":[
+            {
+              "name":"Obstacle",
+              "type":"string",
+              "value":""
+            }]
         }, 
         {
          "id":35,
          "image":"5a_brick5.png",
          "imageheight":64,
-         "imagewidth":32
+         "imagewidth":32,
+          "properties":[
+            {
+              "name":"Obstacle",
+              "type":"string",
+              "value":""
+            }]
         }, 
         {
          "id":36,
          "image":"5a_brick6.png",
          "imageheight":64,
-         "imagewidth":32
+         "imagewidth":32,
+          "properties":[
+            {
+              "name":"Obstacle",
+              "type":"string",
+              "value":""
+            }]
         }, 
         {
          "id":37,
          "image":"5a_brick7.png",
          "imageheight":64,
-         "imagewidth":32
+         "imagewidth":32,
+          "properties":[
+            {
+              "name":"Obstacle",
+              "type":"string",
+              "value":""
+            }]
         }, 
         {
          "id":38,
          "image":"5a_brick8.png",
          "imageheight":32,
-         "imagewidth":32
+         "imagewidth":32,
+          "properties":[
+            {
+              "name":"Obstacle",
+              "type":"string",
+              "value":""
+            }]
         }, 
         {
          "id":39,
          "image":"5a_brick9.png",
          "imageheight":32,
-         "imagewidth":32
+         "imagewidth":32,
+          "properties":[
+            {
+              "name":"Obstacle",
+              "type":"string",
+              "value":""
+            }]
         }, 
         {
          "id":40,
          "image":"5a_brick10.png",
          "imageheight":32,
-         "imagewidth":32
+         "imagewidth":32,
+          "properties":[
+            {
+              "name":"Obstacle",
+              "type":"string",
+              "value":""
+            }]
         }, 
         {
          "id":41,
          "image":"5b_steel1.png",
          "imageheight":32,
-         "imagewidth":64
+         "imagewidth":64,
+          "properties":[
+            {
+              "name":"Obstacle",
+              "type":"string",
+              "value":""
+            }]
         }, 
         {
          "id":42,
          "image":"5b_steel2.png",
          "imageheight":32,
-         "imagewidth":64
+         "imagewidth":64,
+          "properties":[
+            {
+              "name":"Obstacle",
+              "type":"string",
+              "value":""
+            }]
         }, 
         {
          "id":43,
          "image":"5b_steel3.png",
          "imageheight":32,
-         "imagewidth":64
+         "imagewidth":64,
+          "properties":[
+            {
+              "name":"Obstacle",
+              "type":"string",
+              "value":""
+            }]
         }, 
         {
          "id":44,
          "image":"5b_steel4.png",
          "imageheight":32,
-         "imagewidth":64
+         "imagewidth":64,
+          "properties":[
+            {
+              "name":"Obstacle",
+              "type":"string",
+              "value":""
+            }]
         }, 
         {
          "id":45,
          "image":"5c_borderSmog.png",
          "imageheight":35,
-         "imagewidth":35
+         "imagewidth":35,
+          "properties":[
+            {
+              "name":"Obstacle",
+              "type":"string",
+              "value":""
+            }]
         }, 
         {
          "id":46,
          "image":"5d_fence1.png",
          "imageheight":32,
-         "imagewidth":32
+         "imagewidth":32,
+          "properties":[
+            {
+              "name":"Obstacle",
+              "type":"string",
+              "value":""
+            }]
         }, 
         {
          "id":47,
          "image":"5d_fence2.png",
          "imageheight":32,
-         "imagewidth":32
+         "imagewidth":32,
+          "properties":[
+            {
+              "name":"Obstacle",
+              "type":"string",
+              "value":""
+            }]
         }, 
         {
          "id":48,
          "image":"5d_fence3.png",
          "imageheight":32,
-         "imagewidth":32
+         "imagewidth":32,
+          "properties":[
+            {
+              "name":"Obstacle",
+              "type":"string",
+              "value":""
+            }]
         }, 
         {
          "id":49,
          "image":"5d_fence4.png",
          "imageheight":32,
-         "imagewidth":32
+         "imagewidth":32,
+          "properties":[
+            {
+              "name":"Obstacle",
+              "type":"string",
+              "value":""
+            }]
         }, 
         {
          "id":50,
          "image":"5d_fence5.png",
          "imageheight":32,
-         "imagewidth":32
+         "imagewidth":32,
+          "properties":[
+            {
+              "name":"Obstacle",
+              "type":"string",
+              "value":""
+            }]
         }, 
         {
          "id":51,
          "image":"5d_fence6.png",
          "imageheight":32,
-         "imagewidth":32
+         "imagewidth":32,
+          "properties":[
+            {
+              "name":"Obstacle",
+              "type":"string",
+              "value":""
+            }]
         }, 
         {
          "id":52,
          "image":"5d_fence7.png",
          "imageheight":32,
-         "imagewidth":32
+         "imagewidth":32,
+          "properties":[
+            {
+              "name":"Obstacle",
+              "type":"string",
+              "value":""
+            }]
         }, 
         {
          "id":53,
          "image":"5d_fence8.png",
          "imageheight":32,
-         "imagewidth":32
+         "imagewidth":32,
+          "properties":[
+            {
+              "name":"Obstacle",
+              "type":"string",
+              "value":""
+            }]
         }, 
         {
          "id":54,
          "image":"5d_fence9.png",
          "imageheight":32,
-         "imagewidth":32
+         "imagewidth":32,
+          "properties":[
+            {
+              "name":"Obstacle",
+              "type":"string",
+              "value":""
+            }]
         }, 
         {
          "id":55,
          "image":"6a_tree1.png",
          "imageheight":52,
-         "imagewidth":32
+         "imagewidth":32,
+          "properties":[
+            {
+              "name":"Obstacle",
+              "type":"string",
+              "value":""
+            }]
         }, 
         {
          "id":56,
          "image":"6a_tree2.png",
          "imageheight":50,
-         "imagewidth":32
+         "imagewidth":32,
+          "properties":[
+            {
+              "name":"Obstacle",
+              "type":"string",
+              "value":""
+            }]
         }, 
         {
          "id":57,
          "image":"6a_tree3.png",
          "imageheight":48,
-         "imagewidth":32
+         "imagewidth":32,
+          "properties":[
+            {
+              "name":"Obstacle",
+              "type":"string",
+              "value":""
+            }]
         }, 
         {
          "id":58,
          "image":"6a_tree4.png",
          "imageheight":46,
-         "imagewidth":32
+         "imagewidth":32,
+          "properties":[
+            {
+              "name":"Obstacle",
+              "type":"string",
+              "value":""
+            }]
         }, 
         {
          "id":59,
          "image":"6a_tree5.png",
          "imageheight":44,
-         "imagewidth":32
+         "imagewidth":32,
+          "properties":[
+            {
+              "name":"Obstacle",
+              "type":"string",
+              "value":""
+            }]
         }, 
         {
          "id":60,
          "image":"6a_tree6.png",
          "imageheight":57,
-         "imagewidth":32
+         "imagewidth":32,
+          "properties":[
+            {
+              "name":"Obstacle",
+              "type":"string",
+              "value":""
+            }]
         }, 
         {
          "id":61,
          "image":"7_smog.png",
          "imageheight":32,
-         "imagewidth":32
+         "imagewidth":32,
+          "properties":[
+            {
+              "name":"Smog",
+              "type":"string",
+              "value":""
+            }]
         }, 
         {
          "id":62,
          "image":"9a_torch.png",
          "imageheight":32,
-         "imagewidth":32
+         "imagewidth":32,
+          "properties":[
+            {
+              "name":"Torch",
+              "type":"string",
+              "value":""
+            }]
         }, 
         {
          "id":63,
          "image":"9a_mushroom.png",
          "imageheight":32,
-         "imagewidth":32
+         "imagewidth":32,
+          "properties":[
+            {
+              "name":"Mushroom",
+              "type":"string",
+              "value":""
+            }]
         }, 
         {
          "id":64,
          "image":"9b_key.png",
          "imageheight":32,
-         "imagewidth":32
+         "imagewidth":32,
+          "properties":[
+            {
+              "name":"Key",
+              "type":"string",
+              "value":""
+            }]
         }],
  "tilewidth":90,
  "type":"tileset",
