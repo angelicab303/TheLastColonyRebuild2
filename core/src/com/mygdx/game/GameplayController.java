@@ -358,7 +358,7 @@ public class GameplayController implements Screen {
 		debug = false;
 		active = false;
 		countdown = -1;
-		setDebug(true);
+		setDebug(false);
 	}
 
 	/**
@@ -1444,7 +1444,7 @@ public class GameplayController implements Screen {
 				obj.drawDebug(canvas);
 			}
 			for (Obstacle obj : smogs) {
-				//obj.drawDebug(canvas);
+				obj.drawDebug(canvas);
 			}
 			toxicAir.drawDebug(canvas);
 

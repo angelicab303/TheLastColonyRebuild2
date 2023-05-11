@@ -370,7 +370,6 @@ public class CollisionController{
                     else {
                         ((Enemy) objB).setRevealed(false);
                     }
-                    contact.setEnabled(false);
                     break;
                 case GameObstacle.CATEGORY_SMOG | GameObstacle.CATEGORY_SURVIVOR:
                     if (objA.getType() == GameObstacle.ObstacleType.SURVIVOR){

@@ -91,16 +91,16 @@ public class Shadow extends SimpleObstacle{
      * Reset the polygon vertices in the shape to match the dimension.
      */
     private void resize(float width, float height) {
-        circleShape.setRadius(size/2.0f/((float)Math.sqrt(2.5)));
+        circleShape.setRadius(size/2.0f);
         // Make the box with the center in the center
         vertices[0] = -width/2.0f;
-        vertices[1] = 0;//-height/2.0f;
+        vertices[1] = -height/2.0f;
         vertices[2] = -width/2.0f;
         vertices[3] =  height/2.0f;
         vertices[4] =  width/2.0f;
         vertices[5] =  height/2.0f;
         vertices[6] =  width/2.0f;
-        vertices[7] = 0;//-height/2.0f;
+        vertices[7] = -height/2.0f;
         boxShape.set(vertices);
     }
 
