@@ -274,20 +274,28 @@ public class SurvivorController {
             }
             else if (nextTile.getX() == startTile.getX() && nextTile.getY() == startTile.getY()) {
                 if ((int) goalLoc.x > (int) survivor.getX() && (int) goalLoc.y > (int) survivor.getY()) {
+                    // Right, Up
                     action = 5;
                 } else if ((int) goalLoc.x > (int) survivor.getX() && (int) goalLoc.y < (int) survivor.getY()) {
+                    // Right, Down
                     action = 6;
                 } else if ((int) goalLoc.x < (int) survivor.getX() && (int) goalLoc.y > (int) survivor.getY()) {
+                    // Left, Up
                     action = 7;
                 } else if ((int) goalLoc.x < (int) survivor.getX() && (int) goalLoc.y < (int) survivor.getY()) {
+                    // Left, Down
                     action = 8;
                 } else if ((int) goalLoc.x > (int) survivor.getX()) {
+                    // Right
                     action = 1;
                 } else if ((int) goalLoc.x < (int) survivor.getX()) {
+                    // Left
                     action = 2;
                 } else if ((int) goalLoc.y > (int) survivor.getY()) {
+                    // Up
                     action = 3;
                 } else if ((int) goalLoc.y < (int) survivor.getY()) {
+                    // Down
                     action = 4;
                 }
             }
@@ -311,5 +319,14 @@ public class SurvivorController {
             return true;
         }
         return false;
+    }
+
+    private int getMoveFromDetect() {
+        for(int i = 0; i < survivor.getDirectionVacant().length; i++) {
+            if (survivor.getDirectionVacant()[i]) {
+                return i + 1;
+            }
+        }
+        return 0;
     }
 }
