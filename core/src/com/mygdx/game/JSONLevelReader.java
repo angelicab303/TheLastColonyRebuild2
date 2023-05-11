@@ -269,7 +269,7 @@ public class JSONLevelReader {
             System.out.println("Width: " + width + "\t\tHeight: " + height);
 
 //            this.tileGrid = new boolean[canvas.getWidth() / tileSize][canvas.getHeight() / tileSize];
-//            this.tileGrid = new boolean[width][height];
+            this.tileGrid = new boolean[width][height];
 
             // this.camera.setToOrtho(false, width * tileSize, height * tileSize);
             // this.tileGrid = new boolean[width][height];
@@ -278,10 +278,10 @@ public class JSONLevelReader {
             // player, in that order.
 
             //I can't mentally deal with it, and it works (for now), so I'm going to ignore this - V
-            float caravanX = 0;
-            float caravanY = 0;
-            float playerX = 0;
-            float playerY = 0;
+            int caravanX = 0;
+            int caravanY = 0;
+            int playerX = 0;
+            int playerY = 0;
             for (int i = 0; i < layers.size; i++) {
                 // Loop through the layer's data and retrieve each data array
                 if (!layers.get(i).getString("type").equals("tilelayer")) {
@@ -436,7 +436,8 @@ public class JSONLevelReader {
         // obj.activatePhysics(world);
     }
 
-    public void createObject(float x, float y, int id) {
+    public void createObject(int x, int y, int id) {
+        y = y -1;
         String type = tiles[id].get("properties").get(0).getString("name");
         if(type.equals("Caravan")){
             createCaravan(x, y, scale);
@@ -504,12 +505,12 @@ public class JSONLevelReader {
         return camera;
     }
 
-    public void createCaravan(float x, float y, float scale) {
+    public void createCaravan(int x, int y, float scale) {
 //        System.out.println("Creating caravan");
         if (didCreateCaravan) {
             return;
         }
-        caravan = new Caravan(x * tileSize + tileOffset, y * tileSize + tileOffset, getSurvivors().size, getTextureRegionKey(0), scale, displayFontInteract);
+        caravan = new Caravan(x * tileSize , y * tileSize , getSurvivors().size, getTextureRegionKey(0), scale, displayFontInteract);
         addObject(caravan);
 //        caravan.activatePhysics(world);
     } 
@@ -518,13 +519,13 @@ public class JSONLevelReader {
         return caravan;
     }
          
-    public void createPlayer(float x, float y, float scale) {
+    public void createPlayer(int x, int y, float scale) {
 //        System.out.println("Creating player");
         // Instantiate the player:
         if (didCreatePlayer) {
             return;
         }
-        player = new Player(x * tileSize + tileOffset, y * tileSize + tileOffset, playerDirectionTextures, input, scale, imageTileSize);
+        player = new Player(x * tileSize, y * tileSize , playerDirectionTextures, input, scale, imageTileSize);
         addMovObject(player);
         player.setAwake(true);
 
@@ -542,10 +543,10 @@ public class JSONLevelReader {
         return weapon;
     }
 
-    public void createSurvivor(float x, float y, int id, float scale) {
+    public void createSurvivor(int x, int y, int id, float scale) {
 //        System.out.println("Creating survivor");
         Survivor survivorTemp;
-        survivorTemp = new Survivor(survivorArr.size, x * tileSize + tileOffset, y * tileSize + tileOffset, survivorDirectionTextures, heart, displayFontInteract, scale);
+        survivorTemp = new Survivor(survivorArr.size, x * tileSize , y * tileSize , survivorDirectionTextures, heart, displayFontInteract, scale);
         survivorArr.add(survivorTemp);
 
 //        addObject(survivorTemp);
@@ -562,11 +563,11 @@ public class JSONLevelReader {
         return survivorControllers;
     }
 
-    public void createEnemy(float x, float y, int id, float scale) {
+    public void createEnemy(int x, int y, int id, float scale) {
 //        System.out.println("Creating enemy");
         if (id == enemyIDs[0]) {
             // Floater
-            FloatingEnemy enemyTemp = new FloatingEnemy(x * tileSize + tileOffset, y * tileSize + tileOffset, enemyDirectionTextures, scale, imageTileSize);
+            FloatingEnemy enemyTemp = new FloatingEnemy(x * tileSize , y * tileSize, enemyDirectionTextures, scale, imageTileSize);
 
             enemyArr.add(enemyTemp);
             addMovObject(enemyTemp);
@@ -574,7 +575,7 @@ public class JSONLevelReader {
             enemyControllers.add(new FloatingEnemyController(tileGrid, tileSize, tileOffset, enemyTemp, player, toxicAir));
         } else if (id == enemyIDs[1]) {
             // Scout
-            ScoutEnemy enemyTemp = new ScoutEnemy(x * tileSize + tileOffset, y * tileSize + tileOffset, enemyDirectionTextures, vineTextures, scale, imageTileSize, world);
+            ScoutEnemy enemyTemp = new ScoutEnemy(x * tileSize, y * tileSize , enemyDirectionTextures, vineTextures, scale, imageTileSize, world);
 
             enemyArr.add(enemyTemp);
             addMovObject(enemyTemp);
@@ -582,7 +583,7 @@ public class JSONLevelReader {
             enemyControllers.add(new ScoutEnemyController(tileGrid, tileSize, tileOffset, enemyTemp, player));
         } else if (id == enemyIDs[2]) {
             // Chaser
-            Enemy enemyTemp = new Enemy(x * tileSize + tileOffset, y * tileSize + tileOffset, enemyDirectionTextures, scale, imageTileSize);
+            Enemy enemyTemp = new Enemy(x * tileSize , y * tileSize , enemyDirectionTextures, scale, imageTileSize);
 
             enemyArr.add(enemyTemp);
             addMovObject(enemyTemp);
@@ -590,7 +591,7 @@ public class JSONLevelReader {
             enemyControllers.add(new ChaserEnemyController(tileGrid, tileSize, tileOffset, enemyTemp, player));
         } else if (id == enemyIDs[3]) {
             // Shrieker
-            ShriekerEnemy enemyTemp = new ShriekerEnemy(x * tileSize + tileOffset, y * tileSize + tileOffset, enemyDirectionTextures, scale, imageTileSize);
+            ShriekerEnemy enemyTemp = new ShriekerEnemy(x * tileSize , y * tileSize , enemyDirectionTextures, scale, imageTileSize);
             shriekerArr.add((ShriekerEnemy) enemyTemp);
 
             enemyArr.add(enemyTemp);
@@ -600,7 +601,7 @@ public class JSONLevelReader {
         }
         else{
             // Floater
-            FloatingEnemy enemyTemp = new FloatingEnemy(x * tileSize + tileOffset, y * tileSize + tileOffset, enemyDirectionTextures, scale, imageTileSize);
+            FloatingEnemy enemyTemp = new FloatingEnemy(x * tileSize , y * tileSize , enemyDirectionTextures, scale, imageTileSize);
 
             enemyArr.add(enemyTemp);
             addMovObject(enemyTemp);
@@ -617,16 +618,16 @@ public class JSONLevelReader {
         return enemyControllers;
     }
 
-    public void createFloor(float x, float y, int id, float scale) {
+    public void createFloor(int x, int y, int id, float scale) {
 //        System.out.println("Creating floor");
-        floorTemp = new FloorTile(x * tileSize + (tileSize / 2), y * tileSize + (tileSize / 2), getTextureRegionKey(id), scale);
+        floorTemp = new FloorTile(x * tileSize, y * tileSize, getTextureRegionKey(id), scale);
         floorArr.add(floorTemp);
         // cliffTemp.setAwake(true);
         // floorTemp.setBodyType(BodyDef.BodyType.StaticBody);
         addFloor(floorTemp);
     }
 
-    public void createMushroom(float x, float y, int id, float scale) {
+    public void createMushroom(int x, int y, int id, float scale) {
         Lights.createMushroomLight(x, y);
     }
 
@@ -636,11 +637,14 @@ public class JSONLevelReader {
         return floorArr;
     }
 
-    public void createWall(float x, float y, int id, float scale) {
+    public void createWall(int x, int y, int id, float scale) {
 //        System.out.println("Creating wall");
-        wallTemp = new Obstacles(x * tileSize + (tileSize / 2), y * tileSize + (tileSize / 2), getTextureRegionKey(id), scale);
+        wallTemp = new Obstacles(x * tileSize, y * tileSize, getTextureRegionKey(id), scale);
         wallArr.add(wallTemp);
-        tileGrid[(int)(x / tileSize)][(int)(y / tileSize)] = true;
+        if(x >= 0 && y >= 0 && x < width && y < height){
+            tileGrid[(int)x ][(int)y] = true;
+        }
+
         wallTemp.setBodyType(BodyDef.BodyType.StaticBody);
         addObject(wallTemp);
 
@@ -650,16 +654,16 @@ public class JSONLevelReader {
     }
 
     
-    public void createObstacle(float x, float y, int id, float scale) {
+    public void createObstacle(int x, int y, int id, float scale) {
 //        System.out.println("Creating obstacle (tree / fence)");
-        obstacleTemp = new Obstacles(x * tileSize + (tileSize / 2), y * tileSize + (tileSize / 2), getTextureRegionKey(id), scale);
+        obstacleTemp = new Obstacles(x * tileSize  , y * tileSize, getTextureRegionKey(id), scale);
         obstacleArr.add(obstacleTemp);
-        tileGrid[(int)(x / tileSize)][(int)(y / tileSize)] = true;
+        tileGrid[(int)x ][(int)y] = true;
         obstacleTemp.setBodyType(BodyDef.BodyType.StaticBody);
         addObject(obstacleTemp);
     }
 
-    public void createSmog(float x, float y, int id, float scale) {
+    public void createSmog(int x, int y, int id, float scale) {
         smogTiles[(int)x][(int)y] = true;
 //        System.out.println("Smog id: " + id);
     }
