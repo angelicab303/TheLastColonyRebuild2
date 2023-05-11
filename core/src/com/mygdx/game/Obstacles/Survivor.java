@@ -131,7 +131,7 @@ public class Survivor extends Shadow implements GameObstacle {
         displayFontInteract = font;
         safeInCaravan = false;
         this.scale = scale;
-        revealed = false;
+        revealed = true;
 
         //stexture = svalue;
         //setTexture(stexture);
