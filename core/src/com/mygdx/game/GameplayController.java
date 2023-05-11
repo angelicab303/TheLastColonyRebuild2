@@ -433,34 +433,6 @@ public class GameplayController implements Screen {
 		// Texture.class));
 		pureAirTexture = directory.getEntry("images:testSmog", Texture.class);
 
-		// Floor Textures
-		grassTexture = new TextureRegion(directory.getEntry("tiles:4a_grass1", Texture.class));
-		dirtTexture = new TextureRegion(directory.getEntry("tiles:4c_dirt1", Texture.class));
-		dirtMushroomTexture = new TextureRegion(directory.getEntry("tiles:4c_dirt2", Texture.class));
-		rockTexture = new TextureRegion(directory.getEntry("tiles:4b_rocks", Texture.class));
-		brickFloorTexture = new TextureRegion(directory.getEntry("tiles:4d_brick1", Texture.class));
-		brickFloorCrackedTexture = new TextureRegion(directory.getEntry("tiles:4d_brick3", Texture.class));
-		brickFloorCrackedTopTexture = new TextureRegion(directory.getEntry("tiles:4d_brick2", Texture.class));
-
-		// Wall Textures
-		cliffTexture = new TextureRegion(directory.getEntry("images:cliff3", Texture.class));
-		cliffTexture2 = new TextureRegion(directory.getEntry("images:cliff4", Texture.class));
-		brickWallTexture = new TextureRegion(directory.getEntry("tiles:5a_brick1", Texture.class));
-		brickWallTopOpenTexture = new TextureRegion(directory.getEntry("tiles:5a_brick4", Texture.class));
-		brickWallSidesOpenTexture = new TextureRegion(directory.getEntry("tiles:5a_brick3", Texture.class));
-		brickWallCrackedTexture = new TextureRegion(directory.getEntry("tiles:5a_brick2", Texture.class));
-		brickWallTopTexture = new TextureRegion(directory.getEntry("tiles:5a_brick5", Texture.class));
-		borderSmogTexture = new TextureRegion(directory.getEntry("tiles:5c_borderSmog", Texture.class));
-
-		// Caravan, Trees, and Mushroom Textures
-		caravanTexture = new TextureRegion(directory.getEntry("tiles:0_caravan", Texture.class));
-		treeTexture = new TextureRegion(directory.getEntry("tiles:6a_mediumTree", Texture.class));
-		treeTallTexture = new TextureRegion(directory.getEntry("tiles:6b_tallTree", Texture.class));
-		treeWideTexture = new TextureRegion(directory.getEntry("images:tree2", Texture.class));
-		treeBallTexture = new TextureRegion(directory.getEntry("tiles:6c_shortTree", Texture.class));
-		treeBallFadedTexture = new TextureRegion(directory.getEntry("images:tree3", Texture.class));
-		mushroomTexture = new TextureRegion(directory.getEntry("images:mushroom", Texture.class));
-
 		// UI Textures
 		fHeartTexture = directory.getEntry("images:fullHeart", Texture.class);
 		sHeartTexture = directory.getEntry("images:slashedHeart", Texture.class);
