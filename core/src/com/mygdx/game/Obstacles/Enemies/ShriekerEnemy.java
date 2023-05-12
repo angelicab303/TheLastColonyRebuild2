@@ -2,6 +2,7 @@ package com.mygdx.game.Obstacles.Enemies;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.mygdx.game.GameCanvas;
@@ -65,6 +66,8 @@ public class ShriekerEnemy extends Enemy {
         justShrieked = false;
         canWake = true;
         currentTexture = textureIdle;
+
+        setBodyType(BodyDef.BodyType.StaticBody);
 
         animatorAlert = animator[2];
         animatorShriek = animator[1];

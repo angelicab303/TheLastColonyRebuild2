@@ -379,6 +379,7 @@ public class CollisionController{
                     else {
                         ((Survivor) objB).setRevealed(false);
                     }
+                //case GameObstacle.CATEGORY_ENEMY| GameObstacle.CATEGORY_ENEMY:
                 case GameObstacle.CATEGORY_PURIFIED | GameObstacle.CATEGORY_ENEMY:
                 case GameObstacle.CATEGORY_PLAYER | GameObstacle.CATEGORY_SURVIVOR:
                 case GameObstacle.CATEGORY_SMOG | GameObstacle.CATEGORY_ENV:
