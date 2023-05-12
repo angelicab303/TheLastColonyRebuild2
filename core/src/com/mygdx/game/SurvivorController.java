@@ -322,6 +322,10 @@ public class SurvivorController {
     }
 
     private int getMoveFromDetect() {
+        int pathfindMove = getMove();
+        if (survivor.getDirectionVacant()[pathfindMove - 1]) {
+            return pathfindMove;
+        }
         for(int i = 0; i < survivor.getDirectionVacant().length; i++) {
             if (survivor.getDirectionVacant()[i]) {
                 return i + 1;

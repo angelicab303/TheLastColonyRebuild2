@@ -51,7 +51,7 @@ public class Survivor extends Shadow implements GameObstacle {
     /** zerovector for calculations **/
     private Vector2 zerovector;
 
-    private float DEFAULT_DETECTION_RADIUS = 60f;
+    private float DEFAULT_DETECTION_RADIUS = 50f;
 
     /** Whether survivor is alive or dead */
     private boolean isAlive;
@@ -131,7 +131,7 @@ public class Survivor extends Shadow implements GameObstacle {
      *      If there IS collision between smog and a vertex:
      *      parameter index = index of the vertex, parameter value = false
      *
-     * Index 1 of smogDetection does NOT collide with smog => ACTION 1 => directionVacant[0] true
+     *  Index 1 of smogDetection does NOT collide with smog => ACTION 1 => directionVacant[0] true
      *  Index 2 of smogDetection does NOT collide with smog => ACTION 5 => directionVacant[4] true
      *  Index 3 of smogDetection does NOT collide with smog => ACTION 3 => directionVacant[2] true
      *  Index 4 of smogDetection does NOT collide with smog => ACTION 7 => directionVacant[6] true
@@ -258,7 +258,6 @@ public class Survivor extends Shadow implements GameObstacle {
             smogDetectionVertices[i+1].set(temp1.cpy().add(getPosition()));
             temp1.rotateDeg(angle_change);
         }
-        int x = 0;
     }
 
     /**
