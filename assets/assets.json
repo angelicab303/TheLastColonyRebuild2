@@ -129,6 +129,42 @@
         }
       }
     },
+    "images:playerWalkAttackUp": {
+      "file" : "images/player/upShootWalk.png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 9
+        }
+      }
+    },
+    "images:playerWalkAttackDown": {
+      "file" : "images/player/downShootWalk.png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 9
+        }
+      }
+    },
+    "images:playerWalkAttackRight": {
+      "file" : "images/player/rightShootWalk.png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 9
+        }
+      }
+    },
+    "images:playerWalkAttackLeft": {
+      "file" : "images/player/leftShootWalk.png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 9
+        }
+      }
+    },
     "images:survivorPUp": {
       "file" : "images/survivors/survivorUp.png",
       "sprites" : {

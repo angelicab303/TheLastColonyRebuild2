@@ -511,10 +511,10 @@ public class GameplayController implements Screen {
 	 * @return 2D array of all filmstrips for the player
 	 */
 	private FilmStrip[][] importPlayerFilmstrip(){
-		FilmStrip[][] playerFilmStrip = new FilmStrip[3][4];
+		FilmStrip[][] playerFilmStrip = new FilmStrip[4][4];
 		//String[] directions = {"Up", "Down", "Right", "Left"};
-		String[] actions = {"Movement", "Idle", "IdleAttack"};
-		for (int i = 0; i < 3; i++){
+		String[] actions = {"Movement", "Idle", "IdleAttack", "WalkAttack"};
+		for (int i = 0; i < 4; i++){
 			FilmStrip up = directory.getEntry("images:player" + actions[i] + "Up.fire", FilmStrip.class );
 			FilmStrip down = directory.getEntry("images:player" + actions[i] + "Down.fire", FilmStrip.class );
 			FilmStrip right = directory.getEntry("images:player" + actions[i] + "Right.fire", FilmStrip.class );

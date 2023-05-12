@@ -49,6 +49,7 @@ public class Player extends Shadow implements GameObstacle{
     protected FilmStrip[] movementStrips;
     protected FilmStrip[] idleStrips;
     protected FilmStrip[] attackIdleStrips;
+    protected FilmStrip[] attackWalkStrips;
     protected FilmStrip textureDown;
     protected FilmStrip textureRight;
     protected FilmStrip textureLeft;
@@ -158,6 +159,7 @@ public class Player extends Shadow implements GameObstacle{
         movementStrips = player[0];
         idleStrips = player[1];
         attackIdleStrips = player[2];
+        attackWalkStrips = player[3];
         currentStrip = idleStrips;
         animator = movementStrips;
         isAlive = true;
@@ -393,7 +395,12 @@ public class Player extends Shadow implements GameObstacle{
      */
     public void updateDirection(float h, float v){
         if (h != 0 || v != 0){
-            currentStrip = movementStrips;
+            if (pressFire){
+                currentStrip = attackWalkStrips;
+            }
+            else{
+                currentStrip = movementStrips;
+            }
         }
         else{
             if (pressFire){
@@ -518,7 +525,12 @@ public class Player extends Shadow implements GameObstacle{
                     fireTime = 0;
                 }
                 else if (pressFire){
-                    aframe--;
+                    if (currentStrip == attackWalkStrips){
+                        aframe = 4;
+                    }
+                    else{
+                        aframe--;
+                    }
                 }
                 else{
                     aframe -= NUM_ANIM_FRAMES-1;
