@@ -69,9 +69,9 @@ public class SurvivorController {
      */
     public SurvivorController(Survivor survivor, Vector2 caravanPos, Vector2 playerPos, boolean[][] board, boolean[][] smogBoard, int tileSize, int tileOffset) {
         this.survivor = survivor;
-        this.board = board;
         this.playerPos = playerPos;
         this.caravanPos = caravanPos;
+        this.board = board;
         this.tileSize = tileSize;
         this.tileOffset = tileOffset;
 
@@ -170,7 +170,7 @@ public class SurvivorController {
             switch (state) {
                 case IDLE:
                     // code for state change in spawn state
-                    if (survivor.isFollowing()) {
+                    if (survivor.isFollowing() && survivor.isRevealed()) {
                         state = FSMState.FOLLOW;
                     }
                     break;
@@ -178,6 +178,9 @@ public class SurvivorController {
                     // code for state change in follow state
                     if (survivor.getBody().getFixtureList().peek().testPoint(caravanPos.x, caravanPos.y)) {
                         state = FSMState.SAFE;
+                    }
+                    if (!survivor.isRevealed()) {
+                        state = FSMState.IDLE;
                     }
                     break;
                 case FIND:
@@ -241,7 +244,7 @@ public class SurvivorController {
                 goalLoc = setGoal(nextTile);
             }
             
-//            System.out.println(nextTile.isBlocked());
+            System.out.println(nextTile.isBlocked());
 
             int action = 0;
             if (nextTile.getX() == startTile.getX() + 1 && nextTile.getY() == startTile.getY() + 1) {

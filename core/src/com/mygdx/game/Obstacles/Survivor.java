@@ -91,6 +91,16 @@ public class Survivor extends Shadow implements GameObstacle {
     private float width;
     private boolean safeInCaravan;
 
+    protected boolean revealed;
+
+    public boolean isRevealed() {
+        return revealed;
+    }
+
+    public void setRevealed(boolean value) {
+        revealed = value;
+    }
+
     public boolean isSafeInCaravan() {
         return safeInCaravan;
     }
@@ -121,6 +131,7 @@ public class Survivor extends Shadow implements GameObstacle {
         displayFontInteract = font;
         safeInCaravan = false;
         this.scale = scale;
+        revealed = true;
 
         //stexture = svalue;
         //setTexture(stexture);
@@ -445,6 +456,7 @@ public class Survivor extends Shadow implements GameObstacle {
             //System.out.println("Updating");
             //updateInteractable();
         }
+//        System.out.println(isRevealed());
         damageCooldown--;
         // Determine how we are moving.
 
@@ -504,7 +516,7 @@ public class Survivor extends Shadow implements GameObstacle {
 
         //geometry.setUserData("survivor");
         setFilterData(filter);
-
+        setAwake(true);
         getBody().setUserData(this);
         return true;
     }

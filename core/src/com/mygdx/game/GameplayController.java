@@ -214,7 +214,7 @@ public class GameplayController implements Screen {
 	private boolean unpausing = false;
 	private boolean paused = false;
 	private int curLevel = 0;
-	private int maxLevels = 6;
+	private int maxLevels = 7;
 	private int level;
 
 
@@ -368,6 +368,7 @@ public class GameplayController implements Screen {
 	 * @param gravity The gravitational force on this Box2d world
 	 */
 	protected GameplayController(Rectangle bounds, Vector2 gravity) {
+
 		world = new World(gravity, false);
 		this.bounds = new Rectangle(bounds);
 		this.scale = new Vector2(1, 1);
@@ -376,6 +377,7 @@ public class GameplayController implements Screen {
 		debug = false;
 		active = false;
 		countdown = -1;
+		setDebug(false);
 	}
 
 	/**
@@ -430,34 +432,6 @@ public class GameplayController implements Screen {
 		// pureAirTexture = new TextureRegion(directory.getEntry("images:smog1",
 		// Texture.class));
 		pureAirTexture = directory.getEntry("images:testSmog", Texture.class);
-
-		// Floor Textures
-		grassTexture = new TextureRegion(directory.getEntry("tiles:4a_grass1", Texture.class));
-		dirtTexture = new TextureRegion(directory.getEntry("tiles:4c_dirt1", Texture.class));
-		dirtMushroomTexture = new TextureRegion(directory.getEntry("tiles:4c_dirt2", Texture.class));
-		rockTexture = new TextureRegion(directory.getEntry("tiles:4b_rocks", Texture.class));
-		brickFloorTexture = new TextureRegion(directory.getEntry("tiles:4d_brick1", Texture.class));
-		brickFloorCrackedTexture = new TextureRegion(directory.getEntry("tiles:4d_brick3", Texture.class));
-		brickFloorCrackedTopTexture = new TextureRegion(directory.getEntry("tiles:4d_brick2", Texture.class));
-
-		// Wall Textures
-		cliffTexture = new TextureRegion(directory.getEntry("images:cliff3", Texture.class));
-		cliffTexture2 = new TextureRegion(directory.getEntry("images:cliff4", Texture.class));
-		brickWallTexture = new TextureRegion(directory.getEntry("tiles:5a_brick1", Texture.class));
-		brickWallTopOpenTexture = new TextureRegion(directory.getEntry("tiles:5a_brick4", Texture.class));
-		brickWallSidesOpenTexture = new TextureRegion(directory.getEntry("tiles:5a_brick3", Texture.class));
-		brickWallCrackedTexture = new TextureRegion(directory.getEntry("tiles:5a_brick2", Texture.class));
-		brickWallTopTexture = new TextureRegion(directory.getEntry("tiles:5a_brick5", Texture.class));
-		borderSmogTexture = new TextureRegion(directory.getEntry("tiles:5c_borderSmog", Texture.class));
-
-		// Caravan, Trees, and Mushroom Textures
-		caravanTexture = new TextureRegion(directory.getEntry("tiles:0_caravan", Texture.class));
-		treeTexture = new TextureRegion(directory.getEntry("tiles:6a_mediumTree", Texture.class));
-		treeTallTexture = new TextureRegion(directory.getEntry("tiles:6b_tallTree", Texture.class));
-		treeWideTexture = new TextureRegion(directory.getEntry("images:tree2", Texture.class));
-		treeBallTexture = new TextureRegion(directory.getEntry("tiles:6c_shortTree", Texture.class));
-		treeBallFadedTexture = new TextureRegion(directory.getEntry("images:tree3", Texture.class));
-		mushroomTexture = new TextureRegion(directory.getEntry("images:mushroom", Texture.class));
 
 		// UI Textures
 		fHeartTexture = directory.getEntry("images:fullHeart", Texture.class);
@@ -600,9 +574,11 @@ public class GameplayController implements Screen {
 		int[] startingBox = { 6, 4 };
 
 		// Arrays used to find tiles to place smog at
-		boolean[][] tiles = new boolean[canvas.getWidth() / tileSize][canvas.getHeight() / tileSize];
+		tileGrid = new boolean[canvas.getWidth() / tileSize][canvas.getHeight() / tileSize];
+		boolean[][] smogTiles = new boolean[canvas.getWidth() / tileSize][canvas.getHeight() / tileSize];
 		boolean[][] smogLocations = new boolean[canvas.getWidth() / smogTileSize][canvas.getHeight() / smogTileSize];
-		smogGrid = new boolean[canvas.getWidth() * 2/tileSize][canvas.getHeight() * 2/tileSize];
+		smogGrid = new boolean[canvas.getWidth() * smogTileSize][canvas.getHeight() * smogTileSize];
+
 
 		// Testing tiles array:
 		// System.out.println("Canvas width: " + canvas.getWidth() + "\tTile Size: " +
@@ -620,8 +596,8 @@ public class GameplayController implements Screen {
 //		System.out.println("Width: " + canvas.getWidth() + "\t\tHeight: " + canvas.getHeight());
 		// Here we will instantiate the objects in the level using the JSONLevelReader.
 		JSONLevelReader reader = new JSONLevelReader(directory, bounds, world, level, canvas.camera, input,
-				objects, movObjects, floorArr, SCALE, tileGrid, smogGrid, tileSize, tileOffset, smogTileSize, smogTileOffset,
-				playerDirectionTextures, survivorDirectionTextures, enemyDirectionTextures, toxicAir,
+				objects, movObjects, floorArr, SCALE, tileGrid, smogTiles, smogGrid, tileSize, tileOffset, smogTileSize, smogTileOffset,
+				playerDirectionTextures, survivorDirectionTextures, enemyDirectionTextures, toxicAir, survivorITexture,
 				displayFontInteract, fHeartTexture, player, weapon);
 
 //		if (caravan.getX() < 400f) {
@@ -634,7 +610,10 @@ public class GameplayController implements Screen {
 
 
 		objects = reader.getObjects();
+		movObjects = reader.getMovObjects();
+		floorArr = reader.getFloorArr();
 		tileGrid = reader.getTileGrid();
+		smogTiles = reader.getSmogTiles();
 		smogGrid = reader.getSmogGrid();
 //		canvas.camera = reader.getCamera();
 		caravan = reader.getCaravan();
@@ -678,9 +657,9 @@ public class GameplayController implements Screen {
 		// Instantiate the smog array:
 		smogArr = new Array<Smog>();
 		// Determine where the smog is and log it in smogLocations:
-		for (int i = 0; i < tiles.length; i++) {
-			for (int j = 0; j < tiles[0].length; j++) {
-				if (!tiles[i][j]) {
+		for (int i = 0; i < smogTiles.length; i++) {
+			for (int j = 0; j < smogTiles[0].length; j++) {
+				if (smogTiles[i][j]) {
 					smogLocations[2 * i][2 * j] = true;
 					smogLocations[2 * i + 1][2 * j] = true;
 					smogLocations[2 * i][2 * j + 1] = true;
@@ -700,7 +679,7 @@ public class GameplayController implements Screen {
 
 		for (int i = 0; i < column; i++) {
 			for (int j = 0; j < column; j++) {
-				if (smogLocations[i][j]) {
+				if (smogLocations[i][j] && Vector2.dst(i * smogTileSize + smogTileOffset, j * smogTileSize + smogTileOffset, player.getX(), player.getY()) > 90) {
 					// Primary Grid
 					// Later get data from json file
 					float maxFrame = 4;
@@ -732,7 +711,7 @@ public class GameplayController implements Screen {
 			}
 
 			for (int j = 0; j < smogLocations[0].length; j++) {
-				if (smogLocations[i][j]) {
+				if (smogLocations[i][j] && Vector2.dst(i * smogTileSize + smogTileOffset, j * smogTileSize + smogTileOffset, player.getX(), player.getY()) > 90) {
 
 					// Secondary Grid
 					float maxFrame = 4;
@@ -877,7 +856,7 @@ public class GameplayController implements Screen {
 		}
 
 		if (input.isNextLevel()) {
-			reset(level + 1 % 2);
+			reset(level + 1);
 		}
 
 		if (input.didPressAbsorb()) {
@@ -915,7 +894,6 @@ public class GameplayController implements Screen {
 
 		if (weapon.fire()) {
 			purifiedAir.attack(weapon.getBullets(), weapon.getPosition(), weapon.getImpulses());
-			weapon.incrementAmmo(-weapon.getBullets());
 		}
 		purifiedAir.update();
 		toxicAir.update();
@@ -1433,7 +1411,7 @@ public class GameplayController implements Screen {
 			canvas.begin(); // DO NOT SCALE
 			canvas.drawText("VICTORY!", displayFont, canvas.camera.position.x - 195, canvas.camera.position.y);
 
-			canvas.drawText("Press 'R' to restart", displayFontSub, canvas.camera.position.x - 120, canvas.camera.position.y - 100);
+			canvas.drawText("Press 'N' for next level", displayFontSub, canvas.camera.position.x - 170, canvas.camera.position.y - 100);
 			canvas.end();
 		} else if (failed) {
 			displayFont.setColor(Color.RED);
