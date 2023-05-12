@@ -58,7 +58,7 @@ public class GameplayController implements Screen {
 	/** Texture assets for survivor avatar */
 	private FilmStrip[] survivorDirectionTextures;
 	/** Texture asset for enemy avatar */
-	private FilmStrip[] enemyDirectionTextures;
+	private FilmStrip[][] enemyDirectionTextures;
 	private Texture vineTextureVertical;
 	private Texture vineTextureHorizontal;
 	private Texture vineTextureLeftBottom;
@@ -441,7 +441,7 @@ public class GameplayController implements Screen {
 
 		playerDirectionTextures = importCharacterFilmstrip("player");
 		survivorDirectionTextures = importCharacterFilmstrip("survivorP");
-		enemyDirectionTextures = importCharacterFilmstrip("maskEnemy");
+		enemyDirectionTextures = importEnemyFilmstrips();
 		vineTextureVertical = directory.getEntry("images:vineVertical", Texture.class);
 		vineTextureHorizontal = directory.getEntry("images:vineHorizontal", Texture.class);
 		vineTextureLeftBottom = directory.getEntry("images:vineBottomLeft", Texture.class);
@@ -506,6 +506,36 @@ public class GameplayController implements Screen {
 		FilmStrip left = directory.getEntry("images:" + str + "Left.fire", FilmStrip.class );
 		FilmStrip idle = directory.getEntry("images:" + str + "Idle.fire", FilmStrip.class );
 		return new FilmStrip[] {up, down, right, left, idle };
+	}
+
+	/**
+	 * Returns a 2D array of all enemy filmstrips to be passed into the json loader.
+	 * [0]: Shrieker enemy
+	 * [1]: Floating enemy
+	 * [2]: Chaser enemy
+	 * [3]: Scout enemy
+	 * @return 2D array of enemy filmstrips
+	 */
+	private FilmStrip[][] importEnemyFilmstrips(){
+		FilmStrip[][] enemyStrips = new FilmStrip[4][5];
+
+		FilmStrip shriekIdle = directory.getEntry("images:shriekerIdle.fire", FilmStrip.class );
+		FilmStrip shriekShriek = directory.getEntry("images:shriekerShriek.fire", FilmStrip.class );
+		System.out.println("Two assets loaded");
+		FilmStrip shriekTransform = directory.getEntry("images:shriekerTransform.fire", FilmStrip.class );
+		enemyStrips[0] = new FilmStrip[] {shriekIdle, shriekShriek, shriekTransform};
+
+		String[] enemyNames = new String[] {"maskEnemy"};
+
+		for (int i = 1; i < 2; i++){
+			FilmStrip up = directory.getEntry("images:" + enemyNames[i-1] + "Up.fire", FilmStrip.class );
+			FilmStrip down = directory.getEntry("images:" + enemyNames[i-1] + "Down.fire", FilmStrip.class );
+			FilmStrip right = directory.getEntry("images:" + enemyNames[i-1] + "Right.fire", FilmStrip.class );
+			FilmStrip left = directory.getEntry("images:" + enemyNames[i-1] + "Left.fire", FilmStrip.class );
+			FilmStrip idle = directory.getEntry("images:" + enemyNames[i-1] + "Idle.fire", FilmStrip.class );
+			enemyStrips[i] = new FilmStrip[] {up, down, right, left, idle };
+		}
+		return enemyStrips;
 	}
 
 	/**
@@ -996,9 +1026,9 @@ public class GameplayController implements Screen {
 			caravan.setInteractable(false);
 		}
 //		if (caravan.isInteractable() && input.didDropSurvivors()) {
-			if (caravan.getCurrentCapacity() == caravan.getMaxCapacity()) {
-				setComplete(true);
-			}
+		if (caravan.getCurrentCapacity() == caravan.getMaxCapacity()) {
+			setComplete(true);
+		}
 //			for (int i = 0; i < survivorArr.size; i++) {
 //				if (survivorArr.get(i).isFollowing()) {
 //					survivorArr.get(i).rescue();

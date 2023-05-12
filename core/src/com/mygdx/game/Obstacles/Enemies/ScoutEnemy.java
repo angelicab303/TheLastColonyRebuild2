@@ -398,7 +398,7 @@ public class ScoutEnemy extends Enemy{
      * @param scale
      */
     public ScoutEnemy(float x, float y, FilmStrip[] animator, Texture[] vineTextures, float scale, float tileSize, World world) {
-        super(x, y, animator, scale, tileSize);
+        super(x, y, animator, scale, tileSize, false);
         vines = new Array<>();
         this.world = world;
         vineTick = 0;

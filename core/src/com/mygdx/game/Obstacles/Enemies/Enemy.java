@@ -179,7 +179,7 @@ public class Enemy extends Shadow implements GameObstacle {
      * @param animator the collection of filmstrips (up, down, right, left, idle)
      * @param scale the scale to be drawn to
      */
-    public Enemy (float x, float y, FilmStrip[] animator, float scale, float tileSize)
+    public Enemy (float x, float y, FilmStrip[] animator, float scale, float tileSize, Boolean isShrieker)
     {
         super(x, y, animator[0].getRegionWidth()*scale, animator[0].getRegionHeight()*scale, ShadowShape.CIRCLE);
         this.height = animator[0].getRegionHeight();
@@ -194,12 +194,7 @@ public class Enemy extends Shadow implements GameObstacle {
         lastVelocity = new Vector2();
         zerovector = new Vector2(0,0);
         this.scale = scale;
-
-        this.animator = animator;
-        this.behind = 0;
-
         stunned = false;
-        canAttack = true;
         revealed = true;
 
         if (filter == null){
@@ -208,8 +203,14 @@ public class Enemy extends Shadow implements GameObstacle {
             filter.maskBits = getMaskBits();
         }
 
-        currentAnimator = animator[IDLE];
-        aframe = 0.0f;
+        this.behind = 0;
+
+        if (!isShrieker){
+            this.animator = animator;
+            canAttack = true;
+            currentAnimator = animator[IDLE];
+            aframe = 0.0f;
+        }
 
 
     }
@@ -330,17 +331,17 @@ public class Enemy extends Shadow implements GameObstacle {
         }
 
         if (!isStunned()) {
-        // Determine how we are moving.
+            // Determine how we are moving.
             setVX(velocity.x);
             setVY(velocity.y);
-    //        position.add(velocity);
-    //        setPosition(position);
+            //        position.add(velocity);
+            //        setPosition(position);
             body.setLinearVelocity(velocity);
             body.applyLinearImpulse(velocity, body.getWorldCenter(), true);
             setX(body.getWorldCenter().x);
             setY(body.getWorldCenter().y);
 
-        // Set enemy texture based on direction from movement
+            // Set enemy texture based on direction from movement
             updateDirection(velocity.x, velocity.y);
         }
 

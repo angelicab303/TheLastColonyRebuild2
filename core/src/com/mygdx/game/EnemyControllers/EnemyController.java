@@ -38,7 +38,7 @@ public class EnemyController {
     protected final float ALERT_DISTANCE = 600.0f;
 
     /** The array of shrieker enemies */
-    private Array<ShriekerEnemy> shriekerArr;
+    protected Array<ShriekerEnemy> shriekerArr;
 
 
     protected Vector2 target;
@@ -77,7 +77,7 @@ public class EnemyController {
     protected int moveTime;
 
 
-    private boolean alertAllEnemies;
+    protected boolean alertAllEnemies;
 
 
     protected Player player;
@@ -246,6 +246,7 @@ public class EnemyController {
             }
         }
     }
+
     /** Changes the state encoding of this enemy */
     protected void changeStateIfApplicable()
     {
