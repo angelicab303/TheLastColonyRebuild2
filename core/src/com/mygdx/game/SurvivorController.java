@@ -60,6 +60,10 @@ public class SurvivorController {
 
     private int moveTime;
 
+    private int prevMove;
+
+    private int secondPrevMove;
+
     /**
      * Creates a SurvivorController for the survivor with the given id.
      *
@@ -74,6 +78,8 @@ public class SurvivorController {
         this.board = board;
         this.tileSize = tileSize;
         this.tileOffset = tileOffset;
+        secondPrevMove = 0;
+        prevMove = 0;
 
         state = FSMState.IDLE;
         ticks = 0;
@@ -148,14 +154,14 @@ public class SurvivorController {
         public int getAction () {
             ticks++;
             moveTime++;
-
+//            System.out.println(actionToString(getMoveFromDetect()));
             if (ticks % 10 == 0) {
                 changeStateIfApplicable();
             }
 
             int action = 0;
             if (state == FSMState.FOLLOW || state == FSMState.FIND) {
-                action = getMove();
+                action = getMoveFromDetect();
             }
             if (state == FSMState.SAFE) {
                 survivor.rescue();
@@ -170,7 +176,7 @@ public class SurvivorController {
             switch (state) {
                 case IDLE:
                     // code for state change in spawn state
-                    if (survivor.isFollowing() && survivor.isRevealed()) {
+                    if (survivor.isFollowing() /*&& survivor.isRevealed()*/) {
                         state = FSMState.FOLLOW;
                     }
                     break;
@@ -179,9 +185,9 @@ public class SurvivorController {
                     if (survivor.getBody().getFixtureList().peek().testPoint(caravanPos.x, caravanPos.y)) {
                         state = FSMState.SAFE;
                     }
-                    if (!survivor.isRevealed()) {
+                    /*if (!survivor.isRevealed()) {
                         state = FSMState.IDLE;
-                    }
+                    }*/
                     break;
                 case FIND:
                     // code for state change in find state
@@ -274,20 +280,28 @@ public class SurvivorController {
             }
             else if (nextTile.getX() == startTile.getX() && nextTile.getY() == startTile.getY()) {
                 if ((int) goalLoc.x > (int) survivor.getX() && (int) goalLoc.y > (int) survivor.getY()) {
+                    // Right, Up
                     action = 5;
                 } else if ((int) goalLoc.x > (int) survivor.getX() && (int) goalLoc.y < (int) survivor.getY()) {
+                    // Right, Down
                     action = 6;
                 } else if ((int) goalLoc.x < (int) survivor.getX() && (int) goalLoc.y > (int) survivor.getY()) {
+                    // Left, Up
                     action = 7;
                 } else if ((int) goalLoc.x < (int) survivor.getX() && (int) goalLoc.y < (int) survivor.getY()) {
+                    // Left, Down
                     action = 8;
                 } else if ((int) goalLoc.x > (int) survivor.getX()) {
+                    // Right
                     action = 1;
                 } else if ((int) goalLoc.x < (int) survivor.getX()) {
+                    // Left
                     action = 2;
                 } else if ((int) goalLoc.y > (int) survivor.getY()) {
+                    // Up
                     action = 3;
                 } else if ((int) goalLoc.y < (int) survivor.getY()) {
+                    // Down
                     action = 4;
                 }
             }
@@ -311,5 +325,194 @@ public class SurvivorController {
             return true;
         }
         return false;
+    }
+
+    private String actionToString(int action) {
+        switch(action) {
+            case 1:
+                return "RIGHT";
+            case 2:
+                return "LEFT";
+            case 3:
+                return "UP";
+            case 4:
+                return "DOWN";
+            case 5:
+                return "RIGHT, UP";
+            case 6:
+                return "RIGHT DOWN";
+            case 7:
+                return "LEFT UP";
+            case 8:
+                return "LEFT DOWN";
+        }
+        return "NO ACTION";
+    }
+
+    private int clockwise(int attemptedMove) {
+        switch(attemptedMove) {
+            // RIGHT
+            case 1:
+                // RIGHT DOWN
+                return 6;
+            // LEFT
+            case 2:
+                // LEFT UP
+                return 7;
+            // UP
+            case 3:
+                // RIGHT UP
+                return 5;
+            // DOWN
+            case 4:
+                // LEFT DOWN
+                return 8;
+            // RIGHT UP
+            case 5:
+                // RIGHT
+                return 1;
+            // RIGHT DOWN
+            case 6:
+                // DOWN
+                return 4;
+            // LEFT UP
+            case 7:
+                // UP
+                return 3;
+            // LEFT DOWN
+            case 8:
+                // LEFT
+                return 2;
+            default:
+                // out of options ;-;
+                return attemptedMove;
+        }
+    }
+
+    private int oppositeDirection(int direction) {
+        switch (direction) {
+            // RIGHT
+            case 1:
+                // LEFT
+                return 2;
+            // LEFT
+            case 2:
+                // RIGHT
+                return 1;
+            // UP
+            case 3:
+                // DOWN
+                return 4;
+            // DOWN
+            case 4:
+                // UP
+                return 3;
+            // RIGHT UP
+            case 5:
+                // LEFT DOWN
+                return 8;
+            // RIGHT DOWN
+            case 6:
+                // LEFT UP
+                return 7;
+            // LEFT UP
+            case 7:
+                // RIGHT DOWN
+                return 6;
+            // LEFT DOWN
+            case 8:
+                // RIGHT UP
+                return 5;
+            default:
+                // no direction
+                return 0;
+        }
+    }
+
+    private int nextBest(int pathfindMove) {
+        switch (pathfindMove) {
+            //RIGHT
+            case 1:
+                if (survivor.getDirectionVacant()[5]) {
+                    return 6;
+                }
+                if (survivor.getDirectionVacant()[4]) {
+                    return 5;
+                }
+            // LEFT
+            case 2:
+                if (survivor.getDirectionVacant()[6]) {
+                    return 7;
+                }
+                if (survivor.getDirectionVacant()[7]) {
+                    return 8;
+                }
+            // UP
+            case 3:
+                if (survivor.getDirectionVacant()[6]) {
+                    return 7;
+                }
+                if (survivor.getDirectionVacant()[4]) {
+                    return 5;
+                }
+            // DOWN
+            case 4:
+                if (survivor.getDirectionVacant()[5]) {
+                    return 6;
+                }
+                if (survivor.getDirectionVacant()[7]) {
+                    return 8;
+                }
+            // RIGHT UP
+            case 5:
+                if (survivor.getDirectionVacant()[2]) {
+                    return 3;
+                }
+                if (survivor.getDirectionVacant()[0]) {
+                    return 1;
+                }
+            // RIGHT DOWN
+            case 6:
+                if (survivor.getDirectionVacant()[0]) {
+                    return 1;
+                }
+                if (survivor.getDirectionVacant()[3]) {
+                    return 4;
+                }
+            // LEFT UP
+            case 7:
+                if (survivor.getDirectionVacant()[2]) {
+                    return 3;
+                }
+                if (survivor.getDirectionVacant()[1]) {
+                    return 2;
+                }
+            // LEFT DOWN
+            case 8:
+                if (survivor.getDirectionVacant()[3]) {
+                    return 4;
+                }
+                if (survivor.getDirectionVacant()[1]) {
+                    return 2;
+                }
+            default:
+                // no direction
+                return 0;
+        }
+    }
+
+    private int getMoveFromDetect() {
+        int pathfindMove = getMove();
+        // first option, using A*
+        if (ticks % 20 == 0 && pathfindMove > 0 && survivor.getDirectionVacant()[pathfindMove - 1]) {
+            prevMove = pathfindMove;
+            return pathfindMove;
+        }
+        if (prevMove > 0 && survivor.getDirectionVacant()[prevMove - 1]) {
+            return prevMove;
+        }
+        int nextBest = nextBest(prevMove);
+        prevMove = nextBest;
+        return nextBest;
     }
 }

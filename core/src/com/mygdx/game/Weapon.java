@@ -468,8 +468,6 @@ public class Weapon {
             if (!r.equals(ray_start)){
                 canvas.drawLine(Color.RED, ray_start, r);
             }
-
-
         }
     }
 }

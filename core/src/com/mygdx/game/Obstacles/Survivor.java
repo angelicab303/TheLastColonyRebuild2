@@ -51,6 +51,8 @@ public class Survivor extends Shadow implements GameObstacle {
     /** zerovector for calculations **/
     private Vector2 zerovector;
 
+    private float DEFAULT_DETECTION_RADIUS = 45f;
+
     /** Whether survivor is alive or dead */
     private boolean isAlive;
     /** Whether survivor has been found and rescued by player */
@@ -85,13 +87,17 @@ public class Survivor extends Shadow implements GameObstacle {
     private float scale;
 
     private int behind;
-
+    private Vector2 temp1;
+    private Vector2 temp2;
     private boolean isTargetOfEnemy;
     private float height;
     private float width;
     private boolean safeInCaravan;
 
     protected boolean revealed;
+
+    private Vector2[] smogDetectionVertices;
+    private boolean[] directionVacant;
 
     public boolean isRevealed() {
         return revealed;
@@ -108,6 +114,64 @@ public class Survivor extends Shadow implements GameObstacle {
     public void setSafeInCaravan(boolean val) {
         safeInCaravan = val;
     }
+
+    public Vector2[] getSmogDetectionVertices() {
+        calculateDetectionRay();
+        return smogDetectionVertices;
+    }
+
+    public boolean[] getDirectionVacant() {
+        return directionVacant;
+    }
+
+    /**
+     * FROM COLLISION CONTROLLER:
+     *      If there IS NO collision between smog and a vertex:
+     *      parameter index = index of the vertex, parameter value = true
+     *
+     *      If there IS collision between smog and a vertex:
+     *      parameter index = index of the vertex, parameter value = false
+     *
+     *  Index 1 of smogDetection does NOT collide with smog => ACTION 1 => directionVacant[0] true
+     *  Index 2 of smogDetection does NOT collide with smog => ACTION 5 => directionVacant[4] true
+     *  Index 3 of smogDetection does NOT collide with smog => ACTION 3 => directionVacant[2] true
+     *  Index 4 of smogDetection does NOT collide with smog => ACTION 7 => directionVacant[6] true
+     *  Index 5 of smogDetection does NOT collide with smog => ACTION 2 => directionVacant[1] true
+     *  Index 6 of smogDetection does NOT collide with smog => ACTION 8 => directionVacant[7] true
+     *  Index 7 of smogDetection does NOT collide with smog => ACTION 4 => directionVacant[3] true
+     *  Index 8 of smogDetection does NOT collide with smog => ACTION 6 => directionVacant[5] true
+     * */
+    public void setDirectionVacant(int index, boolean value) {
+        int i = 0;
+        switch(index) {
+            case 1:
+                i = 0;
+                break;
+            case 2:
+                i = 4;
+                break;
+            case 3:
+                i = 2;
+                break;
+            case 4:
+                i = 6;
+                break;
+            case 5:
+                i = 1;
+                break;
+            case 6:
+                i = 7;
+                break;
+            case 7:
+                i = 3;
+                break;
+            case 8:
+                i = 5;
+                break;
+        }
+        directionVacant[i] = value;
+    }
+
     /**
      * Create survivor at the given position.
      *
@@ -131,7 +195,17 @@ public class Survivor extends Shadow implements GameObstacle {
         displayFontInteract = font;
         safeInCaravan = false;
         this.scale = scale;
-        revealed = true;
+        revealed = false;
+        smogDetectionVertices = new Vector2[9];
+        directionVacant = new boolean[8];
+        temp1 = new Vector2();
+        temp2 = new Vector2();
+        for(int i = 0; i <  9; i++){
+            smogDetectionVertices[i] = new Vector2();
+        }
+        for(int i = 0; i < 8; i++) {
+            directionVacant[i] = false;
+        }
 
         //stexture = svalue;
         //setTexture(stexture);
@@ -167,6 +241,24 @@ public class Survivor extends Shadow implements GameObstacle {
      */
     public float getHeight() {
         return texture.getRegionHeight()*scale;
+    }
+
+    public void calculateDetectionRay(){
+        // Start position for raycasts
+        temp2.set(position);
+//        temp2.scl(-1f);
+        smogDetectionVertices[0].set(temp2);
+        // End positions for raycasts
+
+        float angle_change = 45f;
+        float angle = 0f;
+        temp1.set(DEFAULT_DETECTION_RADIUS, 0);
+//        temp1.rotateDeg(absorbRange.x);
+        temp1.rotateDeg(angle);
+        for(int i = 0; i < 8; i ++){
+            smogDetectionVertices[i+1].set(temp1.cpy().add(getPosition()));
+            temp1.rotateDeg(angle_change);
+        }
     }
 
     /**
@@ -445,18 +537,15 @@ public class Survivor extends Shadow implements GameObstacle {
             this.die();
             //survivorArr.removeValue(survivorArr.get(i), false);
         }
-
+        calculateDetectionRay();
         // If we are dead do nothing.
         if (!isAlive) {
             return;
         }
-        //System.out.println("Updating");
 
         if (isInteractable) {
-            //System.out.println("Updating");
             //updateInteractable();
         }
-//        System.out.println(isRevealed());
         damageCooldown--;
         // Determine how we are moving.
 
@@ -588,8 +677,6 @@ public class Survivor extends Shadow implements GameObstacle {
             return;
         }
 
-        //System.out.println(body.getFixtureList().size);
-
         if (isInteractable) {
         }
 
@@ -646,6 +733,13 @@ public class Survivor extends Shadow implements GameObstacle {
     @Override
     public void drawDebug(GameCanvas canvas) {
         super.drawDebug(canvas);
+//        canvas.drawLine(Color.BLUE, position, smogDetectionVertices[0]);
+        Vector2 ray_start = smogDetectionVertices[0];
+        for(Vector2 r : smogDetectionVertices){
+            if (!r.equals(ray_start)){
+                canvas.drawLine(Color.PURPLE, ray_start, r);
+            }
+        }
         //canvas.drawPhysics(shape, Color.RED, getX(), getY(), getAngle(), drawScale.x, drawScale.y);
         canvas.drawPhysics(sensorShape, Color.BLUE, getX(), getY(), getAngle(), drawScale.x, drawScale.y);
     }

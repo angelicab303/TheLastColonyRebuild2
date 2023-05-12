@@ -1171,13 +1171,22 @@ public class GameCanvas {
     }
 
     public void drawLine(Color color, Vector2 p1, Vector2 p2){
-        //debugRender.begin(ShapeRenderer.ShapeType.Line);
+//        debugRender.begin(ShapeRenderer.ShapeType.Line);
         debugRender.setColor(color);
         if(p1 != null && p2 != null){
             debugRender.line(p1,p2);
         }
+//        debugRender.end();
 
+    }
 
+    public void drawLine2(Color color, Vector2 p1, Vector2 p2){
+        debugRender.begin(ShapeRenderer.ShapeType.Line);
+        debugRender.setColor(color);
+        if(p1 != null && p2 != null){
+            debugRender.line(p1,p2);
+        }
+        debugRender.end();
     }
     /**
      * Draws the outline of the given shape in the specified color

@@ -59,6 +59,8 @@ public class CollisionController{
     /** Height of the collision geometry */
     private float height;
 
+    private boolean called;
+
 
 
     ShapeRenderer shapeRenderer;
@@ -80,8 +82,41 @@ public class CollisionController{
         world.setContactListener(new WorldContactListener());
     }
 
-    void update(World world, Player player, Weapon weapon){
+    void update(World world, Player player, Weapon weapon, Array<Survivor> survivorList){
         absorbSmog(world, player, weapon);
+        updateSurvivorSmog(world, survivorList);
+    }
+
+    void updateSurvivorSmog(World world, Array<Survivor> survivorList){
+
+
+        RayCastCallback callback = new RayCastCallback() {
+            @Override
+            public float reportRayFixture(Fixture fixture, Vector2 point, Vector2 normal, float fraction) {
+                if (!fixture.isSensor()) {
+                    Object obstacle = fixture.getBody().getUserData();
+                    if (obstacle instanceof Smog) {
+                        //System.out.println("Well at least something is working");
+                        called = false;
+                        //System.out.println(fraction);
+                        return 0;
+                    }
+                }
+
+                return -1;
+            }
+        };
+
+        for(Survivor s : survivorList){
+            //false smog true no smog
+            Vector2[] vertices = s.getSmogDetectionVertices();
+            temp1.set(vertices[0]);
+            for(int i = 1; i <= 8; i++){
+                called = true;
+                world.rayCast(callback, temp1, vertices[i]);
+                s.setDirectionVacant(i, called);
+            }
+        }
     }
 
 
@@ -329,7 +364,6 @@ public class CollisionController{
                     }
                     break;
                 case GameObstacle.CATEGORY_SMOG | GameObstacle.CATEGORY_SURVIVOR:
-//                    System.out.println("SURVIVOR + SMOG");
                     if (objA.getType() == GameObstacle.ObstacleType.SURVIVOR){
                         ((Survivor) objA).setRevealed(true);
                     }
@@ -344,7 +378,6 @@ public class CollisionController{
                         if (contact.getFixtureA().isSensor()){
                             (objB).incBehind(-1);
                         }
-
                     }
                     else {
                         if (contact.getFixtureB().isSensor()){
