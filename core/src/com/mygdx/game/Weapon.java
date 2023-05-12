@@ -32,7 +32,7 @@ public class Weapon {
     private int bullets = 1;// must be odd
 
     /** The max amount of purified air pellets fired with each press*/
-    private final int MAX_BULLETS = 1;// must be odd
+    private final int MAX_BULLETS = 5;// must be odd
 
     /** How far this weapon can shoot purified air from the player's location */
     private float shootingRadius;
@@ -319,10 +319,17 @@ public class Weapon {
         return absorbRange.y - absorbRange.x;
     }
 
+    public void upgradeBullets(){
+        bullets += 2;
+        if(bullets > 5){
+            bullets = 5;
+        }
+    }
+
     public void calculateAbsorptionRange(Vector2 mouseRelPos){
         // Start position for raycasts
         temp2.set(mouseRelPos);
-        temp2.nor().scl(15f);
+        temp2.nor().scl(15f); //Correction for smog absorb
         temp2.sub(position);
         temp2.scl(-1f);
         absorptionVertices[0].set(temp2);
