@@ -122,6 +122,16 @@ public class Shadow extends SimpleObstacle{
         return dimension.y;
     }
 
+    public float getXCoord(){
+        return super.getX();
+    }
+
+    public float getYCoord(){
+        float offset = size - dimension.y;
+        return super.getY()+offset;
+
+    }
+
     /**
      * Returns the type of this object.
      * We use this instead of runtime-typing for performance reasons.
@@ -197,12 +207,11 @@ public class Shadow extends SimpleObstacle{
      */
     public void drawDebug(GameCanvas canvas) {
 
-        float offset = size - dimension.y;
         if(shadowShape.equals(ShadowShape.CIRCLE)){
-            canvas.drawPhysics(circleShape, Color.YELLOW,getX(),getY()+offset,drawScale.x,drawScale.y);
+            canvas.drawPhysics(circleShape, Color.YELLOW,getXCoord(),getYCoord(),drawScale.x,drawScale.y);
         }
         else if(shadowShape.equals(ShadowShape.SQUARE)){
-            canvas.drawPhysics(boxShape,Color.YELLOW,getX(),getY()+offset,getAngle(),drawScale.x,drawScale.y);
+            canvas.drawPhysics(boxShape,Color.YELLOW,getXCoord(),getYCoord(),getAngle(),drawScale.x,drawScale.y);
         }
 
     }
