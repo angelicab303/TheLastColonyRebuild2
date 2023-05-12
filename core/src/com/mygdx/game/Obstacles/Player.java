@@ -105,6 +105,16 @@ public class Player extends Shadow implements GameObstacle{
     private float scale;
     /** Max amount of health for the player */
     private int maxHealth;
+    /** Whether the player has fired the weapon or not */
+    private boolean pressFire;
+    /** Whether or not the player has finished firing */
+    private boolean doneFiring;
+    /** How long the firing animation should play for */
+    private final float FIRE_TIME = 50.0f;
+    /** How long the firing animation is playing for after player releases fire button */
+    private float fireTime = 0;
+    /** Indicates whether to start the firing timer */
+    private boolean startFireTimer = false;
 
     private float height;
     private float width;
@@ -156,6 +166,8 @@ public class Player extends Shadow implements GameObstacle{
         prevPosition = position;
         maxHealth = 5;
         blinkTime = 0;
+        pressFire = false;
+        doneFiring = true;
 
         behind = 0;
 
@@ -384,37 +396,43 @@ public class Player extends Shadow implements GameObstacle{
             currentStrip = movementStrips;
         }
         else{
-            currentStrip = idleStrips;
+            if (pressFire){
+                currentStrip = attackIdleStrips;
+            }
+            else{
+                currentStrip = idleStrips;
+            }
         }
 
         if (h > 0){
             direction = Direction.RIGHT;
-            currentAnimator = movementStrips[RIGHT];
+            currentAnimator = currentStrip[RIGHT];
         }
         else if (h < 0){
             direction = Direction.LEFT;
-            currentAnimator = movementStrips[LEFT];
+            currentAnimator = currentStrip[LEFT];
         }
         else if (v > 0){
             direction = Direction.UP;
-            currentAnimator = movementStrips[UP];
+            currentAnimator = currentStrip[UP];
         }
         else if (v < 0){
             direction = Direction.DOWN;
-            currentAnimator = movementStrips[DOWN];
+            currentAnimator = currentStrip[DOWN];
         }
         else{
             if (direction == Direction.RIGHT){
-                currentAnimator = idleStrips[RIGHT];
+                currentAnimator = currentStrip[RIGHT];
             }
             else if (direction == Direction.LEFT){
-                currentAnimator = idleStrips[LEFT];
+                currentAnimator = currentStrip[LEFT];
             }
             else if (direction == Direction.UP){
-                currentAnimator = idleStrips[UP];
+                currentAnimator = currentStrip[UP];
             }
             else if (direction == Direction.DOWN){
-                currentAnimator = idleStrips[DOWN];
+                currentAnimator = currentStrip[DOWN];
+
             }
         }
     }
@@ -445,6 +463,26 @@ public class Player extends Shadow implements GameObstacle{
         // Determine how we are moving.
         float hVelocity = controller.getHorizontal();
         float vVelocity = controller.getVertical();
+
+        if (controller.didPressFire() || controller.didPressAbsorb()){
+            pressFire = true;
+            doneFiring = false;
+        }
+        else {
+            if (pressFire){
+                startFireTimer = true;
+            }
+        }
+        if (doneFiring){
+            pressFire = false;
+            startFireTimer = false;
+        }
+
+        if (startFireTimer){
+            fireTime++;
+        }
+
+
 //        boolean isMoving = hVelocity + vVelocity != 0;
 
         velocity.x = hVelocity * MOVE_SPEED;
@@ -474,7 +512,17 @@ public class Player extends Shadow implements GameObstacle{
 
         if (aframe >= NUM_ANIM_FRAMES-1) {
             if (currentStrip != idleStrips){
-                aframe -= NUM_ANIM_FRAMES-1;
+                if (pressFire && fireTime >= FIRE_TIME){
+                    doneFiring = true;
+                    aframe -= NUM_ANIM_FRAMES-1;
+                    fireTime = 0;
+                }
+                else if (pressFire){
+                    aframe--;
+                }
+                else{
+                    aframe -= NUM_ANIM_FRAMES-1;
+                }
             }
             else{
                 aframe = NUM_ANIM_FRAMES-1;
