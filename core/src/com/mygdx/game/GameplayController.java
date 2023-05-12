@@ -894,7 +894,6 @@ public class GameplayController implements Screen {
 
 		if (weapon.fire()) {
 			purifiedAir.attack(weapon.getBullets(), weapon.getPosition(), weapon.getImpulses());
-			weapon.incrementAmmo(-weapon.getBullets());
 		}
 		purifiedAir.update();
 		toxicAir.update();

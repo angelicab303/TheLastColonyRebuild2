@@ -15,6 +15,8 @@ public class Weapon {
     private float DEFAULT_ABSORB_RADIUS = 100f;
     private float ABSORB_FREQUENCY = 4;
 
+    private int NUM_AIR_FIRED = 100;
+
     // constants for the weapon
     /** True if this weapon is absorbing */
     private boolean absorbing;
@@ -111,8 +113,9 @@ public class Weapon {
      * @return whether bullet was fired successfully for chaining
      */
     public boolean fire(){
-        if(isFiring() && numAmmo > 0 && (refire > RELOAD_RATE)){
+        if(isFiring() && numAmmo > NUM_AIR_FIRED && (refire > RELOAD_RATE)){
             refire = 0;
+            numAmmo -= NUM_AIR_FIRED;
             return true;
         }
         else {
@@ -372,7 +375,7 @@ public class Weapon {
      * @param posY             The initial y-coordinate of the weapon
      */
     public Weapon(float posX, float posY) {
-        numAmmo = MAX_AMMO_CAPACITY;
+        numAmmo = 0;
         firing = false;
         position = new Vector2();
         position.x = posX;
