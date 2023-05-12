@@ -90,142 +90,6 @@
         50
       ]
     ],
-    "images:playerUp": {
-      "file" : "images/backwalk2-Sheet.png",
-      "sprites" : {
-        "fire": {
-          "rows": 1,
-          "cols": 9
-        }
-      }
-    },
-    "images:playerDown": {
-      "file" : "images/frontWalk2-Sheet.png",
-      "sprites" : {
-        "fire": {
-          "rows": 1,
-          "cols": 9
-        }
-      }
-    },
-    "images:playerRight": {
-      "file" : "images/rightSideWalk2-Sheet.png",
-      "sprites" : {
-        "fire": {
-          "rows": 1,
-          "cols": 9
-        }
-      }
-    },
-    "images:playerLeft": {
-      "file" : "images/leftSideWalk2-Sheet.png",
-      "sprites" : {
-        "fire": {
-          "rows": 1,
-          "cols": 9
-        }
-      }
-    },
-    "images:playerIdle": {
-      "file" : "images/idel2-Sheet.png",
-      "sprites" : {
-        "fire": {
-          "rows": 1,
-          "cols": 9
-        }
-      }
-    },
-    "images:survivorPUp": {
-      "file" : "images/survivors/survivorUp.png",
-      "sprites" : {
-        "fire": {
-          "rows": 1,
-          "cols": 9
-        }
-      }
-    },
-    "images:survivorPDown": {
-      "file" : "images/survivors/survivorDown.png",
-      "sprites" : {
-        "fire": {
-          "rows": 1,
-          "cols": 9
-        }
-      }
-    },
-    "images:survivorPRight": {
-      "file" : "images/survivors/survivorRight.png",
-      "sprites" : {
-        "fire": {
-          "rows": 1,
-          "cols": 9
-        }
-      }
-    },
-    "images:survivorPLeft": {
-      "file" : "images/survivors/survivorLeft.png",
-      "sprites" : {
-        "fire": {
-          "rows": 1,
-          "cols": 9
-        }
-      }
-    },
-    "images:survivorPIdle": {
-      "file" : "images/survivors/survivorIdle.png",
-      "sprites" : {
-        "fire": {
-          "rows": 1,
-          "cols": 6
-        }
-      }
-    },
-    "images:maskEnemyUp": {
-      "file" : "images/MaskUp-Sheet.png",
-      "sprites" : {
-        "fire": {
-          "rows": 1,
-          "cols": 12
-        }
-      }
-    },
-    "images:maskEnemyDown": {
-      "file" : "images/MaskDown-Sheet.png",
-      "sprites" : {
-        "fire": {
-          "rows": 1,
-          "cols": 12
-        }
-      }
-    },
-    "images:maskEnemyRight": {
-      "file" : "images/MaskRight(Corrected).png",
-      "sprites" : {
-        "fire": {
-          "rows": 1,
-          "cols": 12
-        }
-      }
-    },
-    "images:maskEnemyLeft": {
-      "file" : "images/MaskLeft(Corrected).png",
-      "sprites" : {
-        "fire": {
-          "rows": 1,
-          "cols": 12
-        }
-      }
-    },
-    "images:maskEnemyIdle": {
-      "file" : "images/MaskIdle-Sheet.png",
-      "sprites" : {
-        "fire": {
-          "rows": 1,
-          "cols": 12
-        }
-      }
-    },
-
     "images:cliff": "images/updatedCliff.png",
     "images:cliffLeft": "images/cliffLeft.png",
     "images:cliffRight": "images/cliffRight.png",
@@ -239,15 +103,23 @@
     "images:smog1": "images/SmogSprite2.png",
     "images:smog2": "images/SmogSprite3.png",
     "images:caravan1": "images/caravan-1.png",
-    "images:caravanClosed": "images/caravan-1000.png",
-    "images:caravanOpen": "images/caravan-open-1000.png",
     "images:sInteract": "images/sInteractable_sheet2.png",
     "images:testSmog": "images/test_green_smog-sheet2.png",
     "images:weaponProjectile": "images/weaponProjectile-Sheet.png",
     "images:airBar": "images/AirMeterFilling-Sheet-export2.png",
+    "images:playerUp": "images/backwalk2-Sheet.png",
+    "images:playerDown": "images/frontWalk2-Sheet.png",
+    "images:playerRight": "images/rightSideWalk2-Sheet.png",
+    "images:playerLeft": "images/leftSideWalk2-Sheet.png",
+    "images:playerIdle": "images/idel2-Sheet.png",
     "images:fullHeart": "images/NewHeart.png",
     "images:slashedHeart": "images/EmptyHeart.png",
     "images:plantEnemy": "images/Enemy1Idle.png",
+    "images:maskEnemyIdle": "images/MaskIdle-Sheet.png",
+    "images:maskEnemyUp": "images/MaskUp-Sheet.png",
+    "images:maskEnemyDown": "images/MaskDown-Sheet.png",
+    "images:maskEnemyRight": "images/MaskRight(Corrected).png",
+    "images:maskEnemyLeft": "images/MaskLeft(Corrected).png",
     "images:survivorSprite": "images/survivorSprite.png",
     "images:vineVertical": "images/straightVine-export1.png",
     "images:vineHorizontal": "images/straightVineLeftRight.png",

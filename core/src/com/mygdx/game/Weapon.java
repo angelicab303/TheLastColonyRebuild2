@@ -9,7 +9,7 @@ import com.badlogic.gdx.math.Vector2;
  *
  */
 public class Weapon {
-    public static int MAX_AMMO_CAPACITY = 500;
+    public static int MAX_AMMO_CAPACITY = 100;
     private float DEFAULT_SHOOT_RADIUS = 200f;
     private Vector2 DEFAULT_ANGLE_RANGE = new Vector2(-35f, 35f);
     private float DEFAULT_ABSORB_RADIUS = 100f;

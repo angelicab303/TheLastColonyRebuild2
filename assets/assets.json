@@ -20,7 +20,76 @@
     "levelSelect:title": "images/levelSelect/LevelSelect.png",
     "levelSelect:back": "images/levelSelect/Back.png",
     "levelSelect:backDown": "images/levelSelect/BackDown.png",
+    "shared:earth": {
+      "file": "shared/earthtile.png",
+      "wrapU": "repeated",
+      "wrapV": "repeated"
+    },
+    "shared:goal": "shared/goaldoor.png",
+    "rocket:rocket": "rocket/rocket.png",
+    "rocket:main": {
+      "file": "rocket/flames.png",
+      "sprites": {
+        "fire": {
+          "rows": 1,
+          "cols": 4
+        }
+      }
+    },
+    "rocket:left": {
+      "file": "rocket/flames-left.png",
+      "sprites": {
+        "fire": {
+          "rows": 1,
+          "cols": 4
+        }
+      }
+    },
+    "rocket:right": {
+      "file": "rocket/flames-right.png",
+      "sprites": {
+        "fire": {
+          "rows": 1,
+          "cols": 4
+        }
+      }
+    },
+    "rocket:crate01": "rocket/crate01.png",
+    "rocket:crate02": "rocket/crate02.png",
+    "platform:dude": "platform/dude.png",
+    "platform:rope": "platform/ropebridge.png",
+    "platform:barrier": "platform/barrier.png",
+    "platform:bullet": "platform/bullet.png",
+    "ragdoll:bubble": "ragdoll/bubble.png",
+    "ragdoll:torso": "ragdoll/tux_body.png",
+    "ragdoll:head": "ragdoll/ProfWhite.png",
+    "ragdoll:thigh": "ragdoll/tux_thigh.png",
+    "ragdoll:shin": "ragdoll/tux_shin.png",
+    "ragdoll:arm": "ragdoll/tux_arm.png",
+    "ragdoll:forearm": "ragdoll/tux_forearm.png",
+    "ragdoll:crosshair": "ragdoll/crosshair.png",
+    "ragdoll:foreground": "ragdoll/foreground.png",
+    "ragdoll:background": "ragdoll/background.png",
+    "images:ice": "images/ice.png",
+    "images:tree": "images/deadTree.png",
+    "images:tree1": "images/tree-1a.png",
+    "images:tree2": "images/tree-1c.png",
+    "images:tree3": "images/tree-2a.png",
     "images:mushroom": "images/target.png",
+    "tree:positions": [
+      [
+        100,
+        100
+      ],
+      [
+        250,
+        300
+      ],
+      [
+        50,
+        50
+      ]
+    ],
     "images:playerUp": {
       "file" : "images/backwalk2-Sheet.png",
       "sprites" : {
@@ -157,8 +226,21 @@
       }
     },
 
+    "images:cliff": "images/updatedCliff.png",
+    "images:cliffLeft": "images/cliffLeft.png",
+    "images:cliffRight": "images/cliffRight.png",
+    "images:cliffMiddle1": "images/cliffMiddle1.png",
+    "images:cliffMiddle2": "images/cliffMiddle2.png",
+    "images:cliffMiddle3": "images/cliffMiddle3.png",
+    "images:cliffMiddle4": "images/cliffMiddle4.png",
+    "images:cliff2": "images/cliff2.png",
+    "images:cliff3": "images/9x9Indoor2.png",
+    "images:cliff4": "images/cliff-1a.png",
     "images:smog1": "images/SmogSprite2.png",
     "images:smog2": "images/SmogSprite3.png",
+    "images:caravan1": "images/caravan-1.png",
+    "images:caravanClosed": "images/caravan-1000.png",
+    "images:caravanOpen": "images/caravan-open-1000.png",
     "images:sInteract": "images/sInteractable_sheet2.png",
     "images:testSmog": "images/test_green_smog-sheet2.png",
     "images:weaponProjectile": "images/weaponProjectile-Sheet.png",
@@ -327,7 +409,17 @@
     "mediumLevel": "levels/LastColonyMedLevel.json"
   },
   "sounds": {
-
+    "rocket:bump": "rocket/bump.mp3",
+    "rocket:mainburn": "rocket/afterburner.mp3",
+    "rocket:leftburn": "rocket/sideburner-left.mp3",
+    "rocket:rightburn": "rocket/sideburner-right.mp3",
+    "platform:jump": "platform/jump.mp3",
+    "platform:pew": "platform/pew.mp3",
+    "platform:plop": "platform/plop.mp3",
+    "ragdoll:glub1": "ragdoll/bubble01.mp3",
+    "ragdoll:glub2": "ragdoll/bubble02.mp3",
+    "ragdoll:glub3": "ragdoll/bubble03.mp3",
+    "ragdoll:glub4": "ragdoll/bubble04.mp3"
   },
   "fonts": {
     "shared:retro": {
