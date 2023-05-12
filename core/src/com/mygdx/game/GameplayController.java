@@ -923,7 +923,7 @@ public class GameplayController implements Screen {
 		toxicAir.update();
 
 		// Process Collisions
-		collisionController.update(world, player, weapon);
+		collisionController.update(world, player, weapon, survivorArr);
 		// This detects and resolves all collisions between the weapon sensor and any
 		// collided smog tiles
 		// if (weapon.isFiring()) {
