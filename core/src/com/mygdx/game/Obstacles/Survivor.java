@@ -70,7 +70,7 @@ public class Survivor extends Shadow implements GameObstacle {
     /** Filmstrip for interact prompt. */
     protected Texture textureHeart;
     /** How fast we change frames (one frame per 10 calls to update) */
-    private static final float ANIMATION_SPEED = 0.04f;
+    private static final float ANIMATION_SPEED = 0.2f;
     /** The number of animation frames in our filmstrip */
     private static final int   NUM_MOVE_ANIM_FRAMES = 9;
     private static final int   NUM_IDLE_ANIM_FRAMES = 6;

@@ -54,11 +54,11 @@ public class GameplayController implements Screen {
 	// *************************** Player, Enemy, and Survivor Textures
 	// ***************************
 	/** Texture assets for player avatar */
-	private FilmStrip[] playerDirectionTextures;
+	private FilmStrip[][] playerDirectionTextures;
 	/** Texture assets for survivor avatar */
 	private FilmStrip[] survivorDirectionTextures;
 	/** Texture asset for enemy avatar */
-	private FilmStrip[] enemyDirectionTextures;
+	private FilmStrip[][] enemyDirectionTextures;
 	private Texture vineTextureVertical;
 	private Texture vineTextureHorizontal;
 	private Texture vineTextureLeftBottom;
@@ -214,7 +214,7 @@ public class GameplayController implements Screen {
 	private boolean unpausing = false;
 	private boolean paused = false;
 	private int curLevel = 0;
-	private int maxLevels = 6;
+	private int maxLevels = 7;
 	private int level;
 
 
@@ -433,43 +433,15 @@ public class GameplayController implements Screen {
 		// Texture.class));
 		pureAirTexture = directory.getEntry("images:testSmog", Texture.class);
 
-		// Floor Textures
-		grassTexture = new TextureRegion(directory.getEntry("tiles:4a_grass1", Texture.class));
-		dirtTexture = new TextureRegion(directory.getEntry("tiles:4c_dirt1", Texture.class));
-		dirtMushroomTexture = new TextureRegion(directory.getEntry("tiles:4c_dirt2", Texture.class));
-		rockTexture = new TextureRegion(directory.getEntry("tiles:4b_rocks", Texture.class));
-		brickFloorTexture = new TextureRegion(directory.getEntry("tiles:4d_brick1", Texture.class));
-		brickFloorCrackedTexture = new TextureRegion(directory.getEntry("tiles:4d_brick3", Texture.class));
-		brickFloorCrackedTopTexture = new TextureRegion(directory.getEntry("tiles:4d_brick2", Texture.class));
-
-		// Wall Textures
-		cliffTexture = new TextureRegion(directory.getEntry("images:cliff3", Texture.class));
-		cliffTexture2 = new TextureRegion(directory.getEntry("images:cliff4", Texture.class));
-		brickWallTexture = new TextureRegion(directory.getEntry("tiles:5a_brick1", Texture.class));
-		brickWallTopOpenTexture = new TextureRegion(directory.getEntry("tiles:5a_brick4", Texture.class));
-		brickWallSidesOpenTexture = new TextureRegion(directory.getEntry("tiles:5a_brick3", Texture.class));
-		brickWallCrackedTexture = new TextureRegion(directory.getEntry("tiles:5a_brick2", Texture.class));
-		brickWallTopTexture = new TextureRegion(directory.getEntry("tiles:5a_brick5", Texture.class));
-		borderSmogTexture = new TextureRegion(directory.getEntry("tiles:5c_borderSmog", Texture.class));
-
-		// Caravan, Trees, and Mushroom Textures
-		caravanTexture = new TextureRegion(directory.getEntry("tiles:0_caravan", Texture.class));
-		treeTexture = new TextureRegion(directory.getEntry("tiles:6a_mediumTree", Texture.class));
-		treeTallTexture = new TextureRegion(directory.getEntry("tiles:6b_tallTree", Texture.class));
-		treeWideTexture = new TextureRegion(directory.getEntry("images:tree2", Texture.class));
-		treeBallTexture = new TextureRegion(directory.getEntry("tiles:6c_shortTree", Texture.class));
-		treeBallFadedTexture = new TextureRegion(directory.getEntry("images:tree3", Texture.class));
-		mushroomTexture = new TextureRegion(directory.getEntry("images:mushroom", Texture.class));
-
 		// UI Textures
 		fHeartTexture = directory.getEntry("images:fullHeart", Texture.class);
 		sHeartTexture = directory.getEntry("images:slashedHeart", Texture.class);
 
 		// Unnecessary atm?
 
-		playerDirectionTextures = importCharacterFilmstrip("player");
+		playerDirectionTextures = importPlayerFilmstrip();
 		survivorDirectionTextures = importCharacterFilmstrip("survivorP");
-		enemyDirectionTextures = importCharacterFilmstrip("maskEnemy");
+		enemyDirectionTextures = importEnemyFilmstrips();
 		vineTextureVertical = directory.getEntry("images:vineVertical", Texture.class);
 		vineTextureHorizontal = directory.getEntry("images:vineHorizontal", Texture.class);
 		vineTextureLeftBottom = directory.getEntry("images:vineBottomLeft", Texture.class);
@@ -527,6 +499,30 @@ public class GameplayController implements Screen {
 		constants = directory.getEntry("platform:constants", JsonValue.class);
 	}
 
+	/**
+	 * Returns a 2D array of all player filmstrips.
+	 * Each entry represents the filmstrips for the direction of the player
+	 *
+	 * Examples:
+	 * playerFilmStrip[0][1] = down direction for idle animation
+	 * playerFilmStrip[0][0] = up direction for idle animation
+	 * playerFilmStrip[1][0] = up direction for movement animation
+	 *
+	 * @return 2D array of all filmstrips for the player
+	 */
+	private FilmStrip[][] importPlayerFilmstrip(){
+		FilmStrip[][] playerFilmStrip = new FilmStrip[4][4];
+		//String[] directions = {"Up", "Down", "Right", "Left"};
+		String[] actions = {"Movement", "Idle", "IdleAttack", "WalkAttack"};
+		for (int i = 0; i < 4; i++){
+			FilmStrip up = directory.getEntry("images:player" + actions[i] + "Up.fire", FilmStrip.class );
+			FilmStrip down = directory.getEntry("images:player" + actions[i] + "Down.fire", FilmStrip.class );
+			FilmStrip right = directory.getEntry("images:player" + actions[i] + "Right.fire", FilmStrip.class );
+			FilmStrip left = directory.getEntry("images:player" + actions[i] + "Left.fire", FilmStrip.class );
+			playerFilmStrip[i] = new FilmStrip[] {up, down, right, left};
+		}
+		return playerFilmStrip;
+	}
 	private FilmStrip[] importCharacterFilmstrip(String str){
 		FilmStrip up = directory.getEntry("images:" + str + "Up.fire", FilmStrip.class );
 		FilmStrip down = directory.getEntry("images:" + str + "Down.fire", FilmStrip.class );
@@ -534,6 +530,36 @@ public class GameplayController implements Screen {
 		FilmStrip left = directory.getEntry("images:" + str + "Left.fire", FilmStrip.class );
 		FilmStrip idle = directory.getEntry("images:" + str + "Idle.fire", FilmStrip.class );
 		return new FilmStrip[] {up, down, right, left, idle };
+	}
+
+	/**
+	 * Returns a 2D array of all enemy filmstrips to be passed into the json loader.
+	 * [0]: Shrieker enemy
+	 * [1]: Floating enemy
+	 * [2]: Chaser enemy
+	 * [3]: Scout enemy
+	 * @return 2D array of enemy filmstrips
+	 */
+	private FilmStrip[][] importEnemyFilmstrips(){
+		FilmStrip[][] enemyStrips = new FilmStrip[4][5];
+
+		FilmStrip shriekIdle = directory.getEntry("images:shriekerIdle.fire", FilmStrip.class );
+		FilmStrip shriekShriek = directory.getEntry("images:shriekerShriek.fire", FilmStrip.class );
+		System.out.println("Two assets loaded");
+		FilmStrip shriekTransform = directory.getEntry("images:shriekerTransform.fire", FilmStrip.class );
+		enemyStrips[0] = new FilmStrip[] {shriekIdle, shriekShriek, shriekTransform};
+
+		String[] enemyNames = new String[] {"maskEnemy"};
+
+		for (int i = 1; i < 2; i++){
+			FilmStrip up = directory.getEntry("images:" + enemyNames[i-1] + "Up.fire", FilmStrip.class );
+			FilmStrip down = directory.getEntry("images:" + enemyNames[i-1] + "Down.fire", FilmStrip.class );
+			FilmStrip right = directory.getEntry("images:" + enemyNames[i-1] + "Right.fire", FilmStrip.class );
+			FilmStrip left = directory.getEntry("images:" + enemyNames[i-1] + "Left.fire", FilmStrip.class );
+			FilmStrip idle = directory.getEntry("images:" + enemyNames[i-1] + "Idle.fire", FilmStrip.class );
+			enemyStrips[i] = new FilmStrip[] {up, down, right, left, idle };
+		}
+		return enemyStrips;
 	}
 
 	/**
@@ -602,9 +628,11 @@ public class GameplayController implements Screen {
 		int[] startingBox = { 6, 4 };
 
 		// Arrays used to find tiles to place smog at
-		boolean[][] tiles = new boolean[canvas.getWidth() / tileSize][canvas.getHeight() / tileSize];
+		tileGrid = new boolean[canvas.getWidth() / tileSize][canvas.getHeight() / tileSize];
+		boolean[][] smogTiles = new boolean[canvas.getWidth() / tileSize][canvas.getHeight() / tileSize];
 		boolean[][] smogLocations = new boolean[canvas.getWidth() / smogTileSize][canvas.getHeight() / smogTileSize];
-		smogGrid = new boolean[canvas.getWidth() * 2/tileSize][canvas.getHeight() * 2/tileSize];
+		smogGrid = new boolean[canvas.getWidth() * smogTileSize][canvas.getHeight() * smogTileSize];
+
 
 		// Testing tiles array:
 		// System.out.println("Canvas width: " + canvas.getWidth() + "\tTile Size: " +
@@ -622,8 +650,8 @@ public class GameplayController implements Screen {
 //		System.out.println("Width: " + canvas.getWidth() + "\t\tHeight: " + canvas.getHeight());
 		// Here we will instantiate the objects in the level using the JSONLevelReader.
 		JSONLevelReader reader = new JSONLevelReader(directory, bounds, world, level, canvas.camera, input,
-				objects, movObjects, floorArr, SCALE, tileGrid, smogGrid, tileSize, tileOffset, smogTileSize, smogTileOffset,
-				playerDirectionTextures, survivorDirectionTextures, enemyDirectionTextures, toxicAir,
+				objects, movObjects, floorArr, SCALE, tileGrid, smogTiles, smogGrid, tileSize, tileOffset, smogTileSize, smogTileOffset,
+				playerDirectionTextures, survivorDirectionTextures, enemyDirectionTextures, toxicAir, survivorITexture,
 				displayFontInteract, fHeartTexture, player, weapon);
 
 //		if (caravan.getX() < 400f) {
@@ -636,7 +664,10 @@ public class GameplayController implements Screen {
 
 
 		objects = reader.getObjects();
+		movObjects = reader.getMovObjects();
+		floorArr = reader.getFloorArr();
 		tileGrid = reader.getTileGrid();
+		smogTiles = reader.getSmogTiles();
 		smogGrid = reader.getSmogGrid();
 //		canvas.camera = reader.getCamera();
 		caravan = reader.getCaravan();
@@ -680,9 +711,9 @@ public class GameplayController implements Screen {
 		// Instantiate the smog array:
 		smogArr = new Array<Smog>();
 		// Determine where the smog is and log it in smogLocations:
-		for (int i = 0; i < tiles.length; i++) {
-			for (int j = 0; j < tiles[0].length; j++) {
-				if (!tiles[i][j]) {
+		for (int i = 0; i < smogTiles.length; i++) {
+			for (int j = 0; j < smogTiles[0].length; j++) {
+				if (smogTiles[i][j]) {
 					smogLocations[2 * i][2 * j] = true;
 					smogLocations[2 * i + 1][2 * j] = true;
 					smogLocations[2 * i][2 * j + 1] = true;
@@ -879,7 +910,7 @@ public class GameplayController implements Screen {
 		}
 
 		if (input.isNextLevel()) {
-			reset(level + 1 % 2);
+			reset(level + 1);
 		}
 
 		if (input.didPressAbsorb()) {
@@ -917,7 +948,6 @@ public class GameplayController implements Screen {
 
 		if (weapon.fire()) {
 			purifiedAir.attack(weapon.getBullets(), weapon.getPosition(), weapon.getImpulses());
-			weapon.incrementAmmo(-weapon.getBullets());
 		}
 		purifiedAir.update();
 		toxicAir.update();
@@ -1020,9 +1050,9 @@ public class GameplayController implements Screen {
 			caravan.setInteractable(false);
 		}
 //		if (caravan.isInteractable() && input.didDropSurvivors()) {
-			if (caravan.getCurrentCapacity() == caravan.getMaxCapacity()) {
-				setComplete(true);
-			}
+		if (caravan.getCurrentCapacity() == caravan.getMaxCapacity()) {
+			setComplete(true);
+		}
 //			for (int i = 0; i < survivorArr.size; i++) {
 //				if (survivorArr.get(i).isFollowing()) {
 //					survivorArr.get(i).rescue();

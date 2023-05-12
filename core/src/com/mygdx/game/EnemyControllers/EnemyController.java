@@ -38,7 +38,7 @@ public class EnemyController {
     protected final float ALERT_DISTANCE = 600.0f;
 
     /** The array of shrieker enemies */
-    private Array<ShriekerEnemy> shriekerArr;
+    protected Array<ShriekerEnemy> shriekerArr;
 
 
     protected Vector2 target;
@@ -77,7 +77,7 @@ public class EnemyController {
     protected int moveTime;
 
 
-    private boolean alertAllEnemies;
+    protected boolean alertAllEnemies;
 
 
     protected Player player;
@@ -246,6 +246,7 @@ public class EnemyController {
             }
         }
     }
+
     /** Changes the state encoding of this enemy */
     protected void changeStateIfApplicable()
     {
@@ -314,6 +315,11 @@ public class EnemyController {
                     {
                         if (enemy.isRevealed())
                         {
+                            // Find out if the enemy is near enough to the player to hear them
+                            // Enemies should chase the player when they can hear them,
+                            //  but they should hear differently in and out of smog
+                            //  and if they were just chasing the player (stunned), then they should
+                            //  know where they were going and continue to search for some time period
                             state = FSMState.CHASE;
                         }
                         else { state = FSMState.IDLE; }
