@@ -62,6 +62,8 @@ public class SurvivorController {
 
     private int prevMove;
 
+    private int secondPrevMove;
+
     /**
      * Creates a SurvivorController for the survivor with the given id.
      *
@@ -76,6 +78,7 @@ public class SurvivorController {
         this.caravanPos = caravanPos;
         this.tileSize = tileSize;
         this.tileOffset = tileOffset;
+        secondPrevMove = 0;
         prevMove = 0;
 
         state = FSMState.IDLE;
@@ -426,40 +429,92 @@ public class SurvivorController {
         }
     }
 
+    private int nextBest(int pathfindMove) {
+        switch (pathfindMove) {
+            //RIGHT
+            case 1:
+                if (survivor.getDirectionVacant()[5]) {
+                    return 6;
+                }
+                if (survivor.getDirectionVacant()[4]) {
+                    return 5;
+                }
+            // LEFT
+            case 2:
+                if (survivor.getDirectionVacant()[6]) {
+                    return 7;
+                }
+                if (survivor.getDirectionVacant()[7]) {
+                    return 8;
+                }
+            // UP
+            case 3:
+                if (survivor.getDirectionVacant()[6]) {
+                    return 7;
+                }
+                if (survivor.getDirectionVacant()[4]) {
+                    return 5;
+                }
+            // DOWN
+            case 4:
+                if (survivor.getDirectionVacant()[5]) {
+                    return 6;
+                }
+                if (survivor.getDirectionVacant()[7]) {
+                    return 8;
+                }
+            // RIGHT UP
+            case 5:
+                if (survivor.getDirectionVacant()[2]) {
+                    return 3;
+                }
+                if (survivor.getDirectionVacant()[0]) {
+                    return 1;
+                }
+            // RIGHT DOWN
+            case 6:
+                if (survivor.getDirectionVacant()[0]) {
+                    return 1;
+                }
+                if (survivor.getDirectionVacant()[3]) {
+                    return 4;
+                }
+            // LEFT UP
+            case 7:
+                if (survivor.getDirectionVacant()[2]) {
+                    return 3;
+                }
+                if (survivor.getDirectionVacant()[1]) {
+                    return 2;
+                }
+            // LEFT DOWN
+            case 8:
+                if (survivor.getDirectionVacant()[3]) {
+                    return 4;
+                }
+                if (survivor.getDirectionVacant()[1]) {
+                    return 2;
+                }
+            default:
+                // no direction
+                return 0;
+        }
+    }
+
     private int getMoveFromDetect() {
         int pathfindMove = getMove();
         // first option, using A*
-        if (pathfindMove > 0 && survivor.getDirectionVacant()[pathfindMove - 1]) {
-//            System.out.println("GOING FOR PATHFIND MOVE");
-            if (prevMove != oppositeDirection(pathfindMove)) {
+        if (ticks % 10 == 0) {
+            if (ticks % 20 == 0 && pathfindMove > 0 && survivor.getDirectionVacant()[pathfindMove - 1]) {
                 prevMove = pathfindMove;
                 return pathfindMove;
-            } else if (survivor.getDirectionVacant()[prevMove - 1]) {
-                return prevMove;
             }
         }
-        if (clockwise(pathfindMove) > 0 && survivor.getDirectionVacant()[clockwise(pathfindMove) - 1]){
-            prevMove = clockwise(pathfindMove);
-            return clockwise(pathfindMove);
+        if (prevMove > 0 && survivor.getDirectionVacant()[prevMove - 1]) {
+            return prevMove;
         }
-        // if the current trajectory of walking is clear, keep going that way
-//        else if (prevMove > 0 && survivor.getDirectionVacant()[prevMove - 1]) {
-//            return prevMove;
-//        }
-//        int secondBest = nextBestMove(pathfindMove);
-//        // next best option based on best option
-//        if (secondBest > 0 && secondBest != pathfindMove && survivor.getDirectionVacant()[secondBest - 1]) {
-//            prevMove = secondBest;
-//            return secondBest;
-//        }
-        // keep passing through until we find another location free of smog
-        for(int i = 0; i < survivor.getDirectionVacant().length; i++) {
-            if (survivor.getDirectionVacant()[i]) {
-                prevMove = i + 1;
-                return i + 1;
-            }
-        }
-        // or don't
-        return 0;
+        int nextBest = nextBest(prevMove);
+        prevMove = nextBest;
+        return nextBest;
     }
 }

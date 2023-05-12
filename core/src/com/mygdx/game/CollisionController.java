@@ -115,9 +115,7 @@ public class CollisionController{
                 called = true;
                 world.rayCast(callback, temp1, vertices[i]);
                 s.setDirectionVacant(i, called);
-                System.out.println(i + "vacant:" + called);
             }
-            System.out.println("----------");
         }
     }
 
