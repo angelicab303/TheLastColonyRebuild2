@@ -117,6 +117,7 @@ public class CollisionController{
                 s.setDirectionVacant(i, called);
                 System.out.println(i + "vacant:" + called);
             }
+            System.out.println("----------");
         }
     }
 

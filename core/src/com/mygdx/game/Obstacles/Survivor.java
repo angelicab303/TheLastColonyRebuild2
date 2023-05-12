@@ -51,7 +51,7 @@ public class Survivor extends Shadow implements GameObstacle {
     /** zerovector for calculations **/
     private Vector2 zerovector;
 
-    private float DEFAULT_DETECTION_RADIUS = 45f;
+    private float DEFAULT_DETECTION_RADIUS = 40f;
 
     /** Whether survivor is alive or dead */
     private boolean isAlive;
