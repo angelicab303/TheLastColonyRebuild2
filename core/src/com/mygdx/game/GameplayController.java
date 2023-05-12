@@ -730,13 +730,13 @@ public class GameplayController implements Screen {
 
 		for (int i = 0; i < column; i++) {
 			for (int j = 0; j < column; j++) {
-				if (smogLocations[i][j] && Vector2.dst(i * smogTileSize + smogTileOffset, j * smogTileSize + smogTileOffset, player.getX(), player.getY()) > 90) {
+				if (Vector2.dst(i * smogTileSize + smogTileOffset, j * smogTileSize + smogTileOffset, player.getX(), player.getY()) > 90) {
 					// Primary Grid
 					// Later get data from json file
 					float maxFrame = 4;
 					float minFrame = 0;
 					float frameNum = (float) (Math.random() * (maxFrame - minFrame + 1) + minFrame);
-					smogT = new Smog(i * smogTileSize + smogTileOffset, j * smogTileSize + smogTileOffset, smogTexture, frameNum,
+					smogT = new Smog(i * smogTileSize, j * smogTileSize, smogTexture, frameNum,
 							SCALE);
 					smogT.setAwake(true);
 					smogArr.add(smogT);
@@ -754,6 +754,10 @@ public class GameplayController implements Screen {
 					}
 
 					tempSmogArray[j] = smogT;
+					if(!smogLocations[i][j]){
+						smogT.setAbsorbed(true);
+						smogT.setTransparent();
+					}
 				}
 
 				else {
@@ -762,13 +766,13 @@ public class GameplayController implements Screen {
 			}
 
 			for (int j = 0; j < smogLocations[0].length; j++) {
-				if (smogLocations[i][j] && Vector2.dst(i * smogTileSize + smogTileOffset, j * smogTileSize + smogTileOffset, player.getX(), player.getY()) > 90) {
+				if (Vector2.dst(i * smogTileSize + smogTileOffset, j * smogTileSize + smogTileOffset, player.getX(), player.getY()) > 90) {
 
 					// Secondary Grid
 					float maxFrame = 4;
 					float minFrame = 0;
 					float frameNum = (float) (Math.random() * (maxFrame - minFrame + 1) + minFrame);
-					smogTO = new Smog(i * smogTileSize + smogTileSize, j * smogTileSize + smogTileSize, smogTexture, frameNum,
+					smogTO = new Smog(i * smogTileSize + smogTileOffset, j * smogTileSize + smogTileOffset, smogTexture, frameNum,
 							SCALE);
 					smogTO.setAwake(true);
 					smogArr.add(smogTO);
@@ -783,6 +787,11 @@ public class GameplayController implements Screen {
 					smogTO.addNeighboringSmog(tempSmogArrayO[j], smogTO);
 
 					tempSmogArrayO[j] = smogTO;
+
+					if(!smogLocations[i][j]){
+						smogTO.setAbsorbed(true);
+						smogTO.setTransparent();
+					}
 				}
 				else {
 					tempSmogArrayO[j] = null;

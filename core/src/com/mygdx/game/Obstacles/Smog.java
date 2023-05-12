@@ -189,6 +189,11 @@ public class Smog extends BoxObstacle implements GameObstacle{
         return;
     }
 
+
+    public void setTransparent(){
+        fadeTime = MAX_FADE_TIME;
+
+    }
     /**
      * Draws this obstacle to the canvas with varying alpha values for smog fading
      * <p>
