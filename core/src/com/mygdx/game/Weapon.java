@@ -29,7 +29,10 @@ public class Weapon {
     /** The amount of ammunition units this weapon currently has */
     private int numAmmo;
     /** The amount of purified air pellets fired with each press*/
-    private final int bullets = 1;// must be odd
+    private int bullets = 1;// must be odd
+
+    /** The max amount of purified air pellets fired with each press*/
+    private final int MAX_BULLETS = 1;// must be odd
 
     /** How far this weapon can shoot purified air from the player's location */
     private float shootingRadius;
@@ -343,15 +346,40 @@ public class Weapon {
 
 
     public void calculateImpulses(Vector2 mouseRelPos){
-        float angle = mouseRelPos.angleDeg();
-        impulses[0].setAngleDeg(angle);
-        if (bullets - 1 > 0){
-            float angle_change = (absorbRange.y - absorbRange.x)/ ((float) getBullets() - 1);
-            for(int ii = 1; ii < getBullets(); ii++){
-                impulses[ii].setAngleDeg(angle + shootingRange.x + angle_change*((float) ii));
-            }
+        float angle = impulses[0].angleDeg(mouseRelPos);
+        float angle_change = mouseRelPos.angleDeg(impulses[0]);
+        for(int ii = 0; ii < MAX_BULLETS; ii++){
+            impulses[ii].rotateDeg(angle_change);
         }
 
+//        impulses[0].setAngleDeg(angle);
+//        if (bullets - 1 > 0){
+//            float angle_change = (absorbRange.y - absorbRange.x)/ ((float) getBullets() - 1);
+//            for(int ii = 1; ii < getBullets(); ii++){
+//                impulses[ii].setAngleDeg(angle + shootingRange.x + angle_change*((float) ii));
+//            }
+//        }
+
+    }
+
+    /** Creates impulses in the form of [Straight, less straight, -less straight, even less straight...]
+     * int bullets must be odd*/
+    private Vector2[] createBullets(int bullets){
+        impulses = new Vector2[bullets];
+        impulses[0] = new Vector2(power, 0);
+        float angle_change = (absorbRange.y - absorbRange.x)/ ((float)(bullets - 1));
+        for(int i = 1; i <  bullets; i++){
+            temp1 = impulses[0].cpy();
+            if(i%2 == 1){
+                temp1.rotateDeg(-1*((i+1)/2)*angle_change);
+            }
+            else {
+                temp1.rotateDeg(((i+1)/2)*angle_change);
+            }
+            System.out.println(temp1);
+            impulses[i] = temp1;
+        }
+        return impulses;
     }
 
     public Vector2[] getImpulses(){
@@ -375,6 +403,10 @@ public class Weapon {
      * @param posY             The initial y-coordinate of the weapon
      */
     public Weapon(float posX, float posY) {
+        temp1 = new Vector2();
+        temp2 = new Vector2();
+        mousePos = new Vector2();
+
         numAmmo = 0;
         firing = false;
         position = new Vector2();
@@ -392,13 +424,8 @@ public class Weapon {
         for(int i = 0; i <  raycasts + 1; i++){
             absorptionVertices[i] = new Vector2();
         }
-        impulses = new Vector2[bullets];
-        for(int i = 0; i <  bullets; i++){
-            impulses[i] = new Vector2(power, 0);
-        }
-        temp1 = new Vector2();
-        temp2 = new Vector2();
-        mousePos = new Vector2();
+        impulses = createBullets(MAX_BULLETS);
+
         refire = RELOAD_RATE;
         absorbSensor = Lights.createConeLight(Color.BLUE, absorbRadius*2, position.x, position.y, getAbsorbAngleChange()/2);
     }
