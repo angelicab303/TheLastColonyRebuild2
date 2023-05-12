@@ -116,6 +116,7 @@ public class Survivor extends Shadow implements GameObstacle {
     }
 
     public Vector2[] getSmogDetectionVertices() {
+        calculateDetectionRay();
         return smogDetectionVertices;
     }
 
