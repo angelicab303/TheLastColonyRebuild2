@@ -55,22 +55,20 @@ public class ShriekerEnemy extends Enemy {
      *
      * @param x the x-coordinate of this enemy
      * @param y the y-coordinate of this enemy
-     * @param alert the texture used for this enemy
-     * @param shriek the texture used for this enemy
-     * @param idle the texture used for this enemy
+     * @param animator the filstrips for this enemy
      * @param scale the scale used to draw for this enemy
      */
     public ShriekerEnemy(float x, float y, FilmStrip[] animator, float scale, float tileSize){
-        super(x, y, animator, scale, tileSize);
+        super(x, y, animator, scale, tileSize, true);
         isShrieking = false;
         canShriek = false;
         justShrieked = false;
         canWake = true;
         currentTexture = textureIdle;
 
-        animatorAlert = new FilmStrip(textureAlert,1,NUM_ANIM_FRAMES,NUM_ANIM_FRAMES);
-        animatorShriek = new FilmStrip(textureShriek,1,NUM_ANIM_FRAMES,NUM_ANIM_FRAMES);
-        animatorIdle = new FilmStrip(textureIdle,1,NUM_ANIM_FRAMES,NUM_ANIM_FRAMES);
+        animatorAlert = animator[2];
+        animatorShriek = animator[1];
+        animatorIdle = animator[0];
         currentAnimator = animatorIdle;
         aframe = 0.0f;
 
@@ -165,7 +163,21 @@ public class ShriekerEnemy extends Enemy {
      */
     public void update(int action)
     {
-        super.update(action);
+        if(toStunTime >= MAX_TO_STUN_TIME){
+            toStunTime = 0;
+            this.setStunned(true);
+        }
+        body.setAwake(true);
+        if (damaged)
+        {
+            stunCooldown++;
+            if (stunCooldown >= MAX_STUN_COOLDOWN)
+            {
+                stunCooldown = 0;
+                damaged = false;
+            }
+        }
+//        super.update(action);
         // Count down for when the shrieker can wake again after shrieking
         if (justShrieked){
             postShriekTime++;
@@ -174,6 +186,7 @@ public class ShriekerEnemy extends Enemy {
                 justShrieked = false;
                 postShriekTime = 0;
             }
+
             else {
                 canWake = false;
             }
@@ -185,8 +198,16 @@ public class ShriekerEnemy extends Enemy {
             canWake = false;
             isShrieking = false;
             isWaking = false;
+            stunTime++;
             wakeTime = 0;
             shriekTime = 0;
+            if (stunTime >= MAX_STUN_TIME)
+            {
+                canWake = true;
+                stunned = false;
+                stunTime = 0;
+                body.setActive(true);
+            }
         }
         if (isWaking){
             wakeTime++;
@@ -195,7 +216,6 @@ public class ShriekerEnemy extends Enemy {
                 canWake = false;
                 wakeTime = 0;
             }
-
         }
         if (isShrieking){
             shriekTime++;
@@ -205,8 +225,6 @@ public class ShriekerEnemy extends Enemy {
                 shriekTime = 0;
             }
         }
-
-
         // Set enemy texture based on direction from movement
         if (!isStunned()) {
             // updateDirection(hVelocity, vVelocity);
@@ -216,6 +234,17 @@ public class ShriekerEnemy extends Enemy {
 
         // Update animator
         updateAnimator();
+
+        if (behind < 0){
+            behind = 0;
+        }
+
+        if(behind > 0){
+            setBehind(true);
+        }
+        else {
+            setBehind(false);
+        }
     }
     /**
      * Returns whether the shrieker is shrieking.
