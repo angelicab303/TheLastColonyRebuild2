@@ -996,9 +996,9 @@ public class GameplayController implements Screen {
 			caravan.setInteractable(false);
 		}
 //		if (caravan.isInteractable() && input.didDropSurvivors()) {
-			if (caravan.getCurrentCapacity() == caravan.getMaxCapacity()) {
-				setComplete(true);
-			}
+		if (caravan.getCurrentCapacity() == caravan.getMaxCapacity()) {
+			setComplete(true);
+		}
 //			for (int i = 0; i < survivorArr.size; i++) {
 //				if (survivorArr.get(i).isFollowing()) {
 //					survivorArr.get(i).rescue();
