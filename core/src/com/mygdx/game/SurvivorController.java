@@ -73,7 +73,7 @@ public class SurvivorController {
         this.caravanPos = caravanPos;
         this.board = board;
         this.tileSize = tileSize;
-        this.tileOffset = tileOffset;
+        this.tileOffset = 0;
 
         state = FSMState.IDLE;
         ticks = 0;
@@ -138,8 +138,8 @@ public class SurvivorController {
 
         nextTile = tilePath.get(1);
 
-        float x = tilePath.get(1).getX() * tileSize + tileOffset;
-        float y = tilePath.get(1).getY() * tileSize + tileOffset;
+        float x = tilePath.get(1).getX() * tileSize + this.tileOffset;
+        float y = tilePath.get(1).getY() * tileSize + this.tileOffset;
         goalLoc = new Vector2(x, y);
     }
     public void setBoard(boolean[][] board){

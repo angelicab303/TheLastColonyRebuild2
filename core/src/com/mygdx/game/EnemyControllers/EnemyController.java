@@ -104,7 +104,7 @@ public class EnemyController {
         this.enemy = enemy;
         this.board = board;
         this.tileSize = tileSize;
-        this.tileOffset = tileOffset;
+        this.tileOffset = 0;
         this.player = player;
         target = new Vector2(player.getX(), player.getY());
 //        target = player;
