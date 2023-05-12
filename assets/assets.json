@@ -21,8 +21,8 @@
     "levelSelect:back": "images/levelSelect/Back.png",
     "levelSelect:backDown": "images/levelSelect/BackDown.png",
     "images:mushroom": "images/target.png",
-    "images:playerUp": {
-      "file" : "images/backwalk2-Sheet.png",
+    "images:playerMovementUp": {
+      "file" : "images/player/backwalk2-Sheet.png",
       "sprites" : {
         "fire": {
           "rows": 1,
@@ -30,8 +30,8 @@
         }
       }
     },
-    "images:playerDown": {
-      "file" : "images/frontWalk2-Sheet.png",
+    "images:playerMovementDown": {
+      "file" : "images/player/frontWalk2-Sheet.png",
       "sprites" : {
         "fire": {
           "rows": 1,
@@ -39,8 +39,8 @@
         }
       }
     },
-    "images:playerRight": {
-      "file" : "images/rightSideWalk2-Sheet.png",
+    "images:playerMovementRight": {
+      "file" : "images/player/rightSideWalk2-Sheet.png",
       "sprites" : {
         "fire": {
           "rows": 1,
@@ -48,8 +48,8 @@
         }
       }
     },
-    "images:playerLeft": {
-      "file" : "images/leftSideWalk2-Sheet.png",
+    "images:playerMovementLeft": {
+      "file" : "images/player/leftSideWalk2-Sheet.png",
       "sprites" : {
         "fire": {
           "rows": 1,
@@ -57,8 +57,71 @@
         }
       }
     },
-    "images:playerIdle": {
-      "file" : "images/idel2-Sheet.png",
+    "images:playerIdleUp": {
+      "file" : "images/player/idleUp-Sheet.png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 9
+        }
+      }
+    },
+    "images:playerIdleDown": {
+      "file" : "images/player/idleDown-Sheet.png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 9
+        }
+      }
+    },
+    "images:playerIdleRight": {
+      "file" : "images/player/idleRight-Sheet.png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 9
+        }
+      }
+    },
+    "images:playerIdleLeft": {
+      "file" : "images/player/idleLeft-Sheet.png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 9
+        }
+      }
+    },
+    "images:playerIdleAttackUp": {
+      "file" : "images/player/idleAttackUp-Sheet.png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 9
+        }
+      }
+    },
+    "images:playerIdleAttackDown": {
+      "file" : "images/player/idleAttackDown-Sheet.png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 9
+        }
+      }
+    },
+    "images:playerIdleAttackRight": {
+      "file" : "images/player/idleAttackRight-Sheet.png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 9
+        }
+      }
+    },
+    "images:playerIdleAttackLeft": {
+      "file" : "images/player/idleAttackLeft-Sheet.png",
       "sprites" : {
         "fire": {
           "rows": 1,

@@ -98,7 +98,7 @@ public class JSONLevelReader {
     private Obstacles wallTemp;
     private Obstacles obstacleTemp;
     private Obstacles placeableTemp;
-    private FilmStrip[] playerDirectionTextures;
+    private FilmStrip[][] playerDirectionTextures;
     private FilmStrip[] survivorDirectionTextures;
     private FilmStrip[][] enemyDirectionTextures;
     private FilmStrip[] shriekerTextures;
@@ -136,7 +136,7 @@ public class JSONLevelReader {
     public JSONLevelReader(AssetDirectory directory, Rectangle bounds, World world, int level,
                            OrthographicCamera camera, InputController input, PooledList<Obstacle> objects, PooledList<Obstacle> movObjects, Array<FloorTile> floorArr,
                            float scale, boolean[][] tileGrid, boolean[][] smogTiles, boolean[][] smogGrid, int tileSize,
-                           int tileOffset, int smogTileSize, int smogTileOffset, FilmStrip[] playerDirectionTextures,
+                           int tileOffset, int smogTileSize, int smogTileOffset, FilmStrip[][] playerDirectionTextures,
                            FilmStrip[] survivorDirectionTextures, FilmStrip[][] enemyDirectionTextures, ToxicQueue toxicAir,
                            Texture survivorITexture, BitmapFont displayFontInteractive, Texture heart, Player player, Weapon weapon) {
         this.directory = directory;
