@@ -377,7 +377,7 @@ public class GameplayController implements Screen {
 		debug = false;
 		active = false;
 		countdown = -1;
-		setDebug(true);
+//		setDebug(true);
 	}
 
 	/**

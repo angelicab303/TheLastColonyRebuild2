@@ -148,7 +148,7 @@ public class SurvivorController {
         public int getAction () {
             ticks++;
             moveTime++;
-
+            System.out.println(actionToString(getMoveFromDetect()));
             if (ticks % 10 == 0) {
                 changeStateIfApplicable();
             }
@@ -319,6 +319,28 @@ public class SurvivorController {
             return true;
         }
         return false;
+    }
+
+    private String actionToString(int action) {
+        switch(action) {
+            case 1:
+                return "RIGHT";
+            case 2:
+                return "LEFT";
+            case 3:
+                return "UP";
+            case 4:
+                return "DOWN";
+            case 5:
+                return "RIGHT, UP";
+            case 6:
+                return "RIGHT DOWN";
+            case 7:
+                return "LEFT UP";
+            case 8:
+                return "LEFT DOWN";
+        }
+        return "NO ACTION";
     }
 
     private int getMoveFromDetect() {

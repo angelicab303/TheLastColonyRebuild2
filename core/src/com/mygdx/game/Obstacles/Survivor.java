@@ -51,7 +51,7 @@ public class Survivor extends Shadow implements GameObstacle {
     /** zerovector for calculations **/
     private Vector2 zerovector;
 
-    private float DEFAULT_DETECTION_RADIUS = 50f;
+    private float DEFAULT_DETECTION_RADIUS = 45f;
 
     /** Whether survivor is alive or dead */
     private boolean isAlive;
@@ -622,16 +622,6 @@ public class Survivor extends Shadow implements GameObstacle {
             damageCooldown--;
         } else if (!flag) {
             damageCooldown = COOLDOWN;
-        }
-    }
-
-    public void drawDebugRay(GameCanvas canvas) {
-        canvas.drawLine(Color.BLUE, position, smogDetectionVertices[0]);
-        Vector2 ray_start = smogDetectionVertices[0];
-        for(Vector2 r : smogDetectionVertices){
-            if (!r.equals(ray_start)){
-                canvas.drawLine(Color.RED, ray_start, r);
-            }
         }
     }
 
