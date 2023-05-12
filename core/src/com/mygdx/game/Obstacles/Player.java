@@ -46,7 +46,9 @@ public class Player extends Shadow implements GameObstacle{
     /** How far forward the player can move */
     private static final float MOVE_SPEED = 500.0f;
     /** The texture for the player. */
-    protected FilmStrip textureUp;
+    protected FilmStrip[] movementStrips;
+    protected FilmStrip[] idleStrips;
+    protected FilmStrip[] attackIdleStrips;
     protected FilmStrip textureDown;
     protected FilmStrip textureRight;
     protected FilmStrip textureLeft;
@@ -86,6 +88,7 @@ public class Player extends Shadow implements GameObstacle{
     /** Filmstrip for player */
     protected FilmStrip[] animator;
     protected FilmStrip currentAnimator;
+    protected FilmStrip[] currentStrip;
     /** How fast we change frames (one frame per 10 calls to update) */
     private static final float ANIMATION_SPEED = 0.25f;
     /** How fast we change frames (one frame per 10 calls to update) */
@@ -128,10 +131,10 @@ public class Player extends Shadow implements GameObstacle{
      * @param x The initial x-coordinate of the player in box2d units
      * @param y The initial y-coordinate of the player in box2d units
      */
-    public Player(float x, float y, FilmStrip[] player, InputController input, float scale, float tileSize) {
-        super(x, y, player[0].getRegionWidth()*scale, player[0].getRegionHeight()*scale, ShadowShape.CIRCLE);
-        this.height = player[0].getRegionHeight();
-        this.width = player[0].getRegionWidth();
+    public Player(float x, float y, FilmStrip[][] player, InputController input, float scale, float tileSize) {
+        super(x, y, player[0][0].getRegionWidth()*scale, player[0][0].getRegionHeight()*scale, ShadowShape.CIRCLE);
+        this.height = player[0][0].getRegionHeight();
+        this.width = player[0][0].getRegionWidth();
         // setTexture(value);
         setDensity(1);
         setFriction(0.1f);
@@ -142,8 +145,11 @@ public class Player extends Shadow implements GameObstacle{
         lastVelocity = new Vector2();
         zerovector = new Vector2(0,0);
         health = 5;
-        animator = player;
-        currentTexture = textureRight;
+        movementStrips = player[0];
+        idleStrips = player[1];
+        attackIdleStrips = player[2];
+        currentStrip = idleStrips;
+        animator = movementStrips;
         isAlive = true;
         controller = input;
         direction = Direction.IDLE;
@@ -163,7 +169,7 @@ public class Player extends Shadow implements GameObstacle{
         //shadow = new Shadow(position, 0, -10, 10);
 
 
-        currentAnimator = animator[IDLE];
+        currentAnimator = currentStrip[DOWN];
         aframe = 0.0f;
         this.scale = scale;
     }
@@ -374,25 +380,42 @@ public class Player extends Shadow implements GameObstacle{
      *  Updates the direction that the player sprite faces.
      */
     public void updateDirection(float h, float v){
+        if (h != 0 || v != 0){
+            currentStrip = movementStrips;
+        }
+        else{
+            currentStrip = idleStrips;
+        }
+
         if (h > 0){
             direction = Direction.RIGHT;
-            currentAnimator = animator[RIGHT];
+            currentAnimator = movementStrips[RIGHT];
         }
         else if (h < 0){
             direction = Direction.LEFT;
-            currentAnimator = animator[LEFT];
+            currentAnimator = movementStrips[LEFT];
         }
         else if (v > 0){
             direction = Direction.UP;
-            currentAnimator = animator[UP];
+            currentAnimator = movementStrips[UP];
         }
         else if (v < 0){
             direction = Direction.DOWN;
-            currentAnimator = animator[DOWN];
+            currentAnimator = movementStrips[DOWN];
         }
         else{
-            direction = Direction.IDLE;
-            currentAnimator = animator[IDLE];
+            if (direction == Direction.RIGHT){
+                currentAnimator = idleStrips[RIGHT];
+            }
+            else if (direction == Direction.LEFT){
+                currentAnimator = idleStrips[LEFT];
+            }
+            else if (direction == Direction.UP){
+                currentAnimator = idleStrips[UP];
+            }
+            else if (direction == Direction.DOWN){
+                currentAnimator = idleStrips[DOWN];
+            }
         }
     }
 
@@ -442,7 +465,7 @@ public class Player extends Shadow implements GameObstacle{
 
 
         // Increase animation frame
-        if (currentAnimator != animator[IDLE]){
+        if (currentStrip != idleStrips){
             aframe += ANIMATION_SPEED;
         }
         else{
@@ -450,7 +473,7 @@ public class Player extends Shadow implements GameObstacle{
         }
 
         if (aframe >= NUM_ANIM_FRAMES-1) {
-            if (currentAnimator != animator[IDLE]){
+            if (currentStrip != idleStrips){
                 aframe -= NUM_ANIM_FRAMES-1;
             }
             else{

@@ -54,7 +54,7 @@ public class GameplayController implements Screen {
 	// *************************** Player, Enemy, and Survivor Textures
 	// ***************************
 	/** Texture assets for player avatar */
-	private FilmStrip[] playerDirectionTextures;
+	private FilmStrip[][] playerDirectionTextures;
 	/** Texture assets for survivor avatar */
 	private FilmStrip[] survivorDirectionTextures;
 	/** Texture asset for enemy avatar */
@@ -439,7 +439,7 @@ public class GameplayController implements Screen {
 
 		// Unnecessary atm?
 
-		playerDirectionTextures = importCharacterFilmstrip("player");
+		playerDirectionTextures = importPlayerFilmstrip();
 		survivorDirectionTextures = importCharacterFilmstrip("survivorP");
 		enemyDirectionTextures = importEnemyFilmstrips();
 		vineTextureVertical = directory.getEntry("images:vineVertical", Texture.class);
@@ -499,6 +499,30 @@ public class GameplayController implements Screen {
 		constants = directory.getEntry("platform:constants", JsonValue.class);
 	}
 
+	/**
+	 * Returns a 2D array of all player filmstrips.
+	 * Each entry represents the filmstrips for the direction of the player
+	 *
+	 * Examples:
+	 * playerFilmStrip[0][1] = down direction for idle animation
+	 * playerFilmStrip[0][0] = up direction for idle animation
+	 * playerFilmStrip[1][0] = up direction for movement animation
+	 *
+	 * @return 2D array of all filmstrips for the player
+	 */
+	private FilmStrip[][] importPlayerFilmstrip(){
+		FilmStrip[][] playerFilmStrip = new FilmStrip[3][4];
+		//String[] directions = {"Up", "Down", "Right", "Left"};
+		String[] actions = {"Movement", "Idle", "IdleAttack"};
+		for (int i = 0; i < 3; i++){
+			FilmStrip up = directory.getEntry("images:player" + actions[i] + "Up.fire", FilmStrip.class );
+			FilmStrip down = directory.getEntry("images:player" + actions[i] + "Down.fire", FilmStrip.class );
+			FilmStrip right = directory.getEntry("images:player" + actions[i] + "Right.fire", FilmStrip.class );
+			FilmStrip left = directory.getEntry("images:player" + actions[i] + "Left.fire", FilmStrip.class );
+			playerFilmStrip[i] = new FilmStrip[] {up, down, right, left};
+		}
+		return playerFilmStrip;
+	}
 	private FilmStrip[] importCharacterFilmstrip(String str){
 		FilmStrip up = directory.getEntry("images:" + str + "Up.fire", FilmStrip.class );
 		FilmStrip down = directory.getEntry("images:" + str + "Down.fire", FilmStrip.class );
