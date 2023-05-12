@@ -419,17 +419,22 @@ public class GameCanvas {
 
 
         camera.zoom = 0.4f;
-        if (camera.viewportHeight/2*camera.zoom > height-camera.viewportHeight/2*camera.zoom)
-        {
-            camera.position.set(MathUtils.clamp(x, camera.viewportWidth/2*camera.zoom, width-camera.viewportWidth/2*camera.zoom),
-                    MathUtils.clamp(y, height-camera.viewportHeight/2*camera.zoom, camera.viewportHeight/2*camera.zoom), 0);
-            camera.update();
+
+        float minHeight =camera.viewportHeight/2*camera.zoom;
+        float maxHeight = height-camera.viewportHeight/2*camera.zoom;
+        float minWidth = camera.viewportWidth / 2 * camera.zoom;
+        float maxWidth = width - camera.viewportWidth / 2 * camera.zoom;
+
+        if(maxHeight < minHeight){
+            maxHeight = minHeight;
         }
-        else {
-            camera.position.set(MathUtils.clamp(x, camera.viewportWidth / 2 * camera.zoom, width - camera.viewportWidth / 2 * camera.zoom),
-                    MathUtils.clamp(y, camera.viewportHeight / 2 * camera.zoom, height - camera.viewportHeight / 2 * camera.zoom), 0);
-            camera.update();
+
+        if(maxWidth < minWidth){
+            maxWidth = minWidth;
         }
+
+        camera.position.set(MathUtils.clamp(x, minWidth, maxWidth), MathUtils.clamp(y, minHeight, maxHeight), 0);
+        camera.update();
 
     }
 
