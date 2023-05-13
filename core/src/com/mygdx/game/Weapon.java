@@ -15,7 +15,7 @@ public class Weapon {
     private float DEFAULT_ABSORB_RADIUS = 100f;
     private float ABSORB_FREQUENCY = 4;
 
-    private int NUM_AIR_FIRED = 100;
+    private int NUM_AIR_FIRED = 20;
 
     // constants for the weapon
     /** True if this weapon is absorbing */
@@ -153,14 +153,14 @@ public class Weapon {
             if (numAmmo < 4) {
                 numAmmo = 0;
             } else {
-                numAmmo += addedAmmo * 4;
+                numAmmo += addedAmmo;
             }
         } else {
             if (absorbCounter >= ABSORB_FREQUENCY) {
                 if (numAmmo + addedAmmo >= MAX_AMMO_CAPACITY) {
                     numAmmo = MAX_AMMO_CAPACITY;
                 } else {
-                    numAmmo += addedAmmo;
+                    numAmmo += addedAmmo*4;
                 }
                 absorbCounter = 0;
             } else {

@@ -368,7 +368,7 @@ public class GameplayController implements Screen {
 		this.assetTextures = new HashMap<>();
 		complete = false;
 		failed = false;
-		debug = true;
+		debug = false;
 		active = false;
 		countdown = -1;
 	}
