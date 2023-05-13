@@ -22,6 +22,7 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.JsonValue;
+import com.badlogic.gdx.utils.Sort;
 import com.mygdx.game.EnemyControllers.EnemyController;
 import com.mygdx.game.EnemyControllers.ScoutEnemyController;
 import com.mygdx.game.Obstacles.*;
@@ -33,9 +34,7 @@ import obstacle.BoxObstacle;
 import obstacle.Obstacle;
 import util.*;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 
 /**
@@ -354,7 +353,7 @@ public class GameplayController implements Screen {
 		debug = false;
 		active = false;
 		countdown = -1;
-		//setDebug(true);
+		setDebug(true);
 	}
 
 	/**
@@ -1359,6 +1358,19 @@ public class GameplayController implements Screen {
 		canvas.updateLights();
 	}
 
+
+
+	/**Attempts draw order stuff */
+	static class SortbyY implements Comparator<Obstacle>
+	{
+		// Used for sorting in ascending order of
+		// roll number
+		public int compare(Obstacle a, Obstacle b)
+		{
+			return (int)(b.getY()-a.getY());
+		}
+	}
+
 	/**
 	 * Draw the physics objects to the canvas
 	 *
@@ -1385,21 +1397,23 @@ public class GameplayController implements Screen {
 			flr.draw(canvas);
 		}
 
-		for(Obstacle obj : movObjects){
-			if(obj.getBehind()){
-				obj.draw(canvas);
-			}
-		}
+		Collections.sort(objects, new SortbyY());
+
+//		for(Obstacle obj : movObjects){
+//			if(obj.getBehind()){
+//				obj.draw(canvas);
+//			}
+//		}
 
 		for (Obstacle obj : objects) {
 			obj.draw(canvas);
 		}
 
-		for(Obstacle obj : movObjects){
-			if(!obj.getBehind()){
-				obj.draw(canvas);
-			}
-		}
+//		for(Obstacle obj : movObjects){
+//			if(!obj.getBehind()){
+//				obj.draw(canvas);
+//			}
+//		}
 
 		for (Obstacle obj : smogs){
 			obj.draw(canvas);

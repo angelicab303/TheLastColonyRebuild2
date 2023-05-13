@@ -426,6 +426,7 @@ public class Enemy extends Shadow implements GameObstacle {
      * @param canvas Drawing context
      */
     public void draw(GameCanvas canvas) {
+        super.draw(canvas, width*scale, height*scale);
         currentAnimator.setFrame((int)aframe);
 //        System.out.println((body.getWorldCenter().x*drawScale.x - currentAnimator.getRegionWidth()*scale/2) + ", " + (body.getWorldCenter().y*drawScale.y- currentAnimator.getRegionHeight()*scale/2));
         if (stunCooldown > 0 && stunCooldown % 10 == 0)

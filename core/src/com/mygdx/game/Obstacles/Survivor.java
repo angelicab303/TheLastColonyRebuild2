@@ -545,6 +545,7 @@ public class Survivor extends Shadow implements GameObstacle {
     public void draw(GameCanvas canvas) {
         currentAnimator.setFrame((int)aframe);
         if (!isRescued && isAlive) {
+            super.draw(canvas, width*scale, height*scale);
             if (damageCooldown > 0) {
                 if (damageCooldown % 10 == 0) {
                     canvas.draw(currentAnimator, Color.CLEAR, origin.x, origin.y, body.getWorldCenter().x*drawScale.x - height*scale/2, body.getWorldCenter().y*drawScale.y- height*scale/2, width*scale, height*scale);

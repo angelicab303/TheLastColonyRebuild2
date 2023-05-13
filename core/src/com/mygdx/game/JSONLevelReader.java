@@ -526,7 +526,7 @@ public class JSONLevelReader {
             return;
         }
         player = new Player(x * tileSize, y * tileSize , playerDirectionTextures, input, scale, imageTileSize);
-        addMovObject(player);
+        addObject(player);
         player.setAwake(true);
 
         // Instantiate the weapon:
@@ -552,7 +552,7 @@ public class JSONLevelReader {
 //        addObject(survivorTemp);
 //        survivorControllers.add(new SurvivorController(survivorTemp, caravan.getPosition(), player.getPosition(), tileGrid, smogGrid, tileSize, tileOffset));
 
-        addMovObject(survivorTemp);
+        addObject(survivorTemp);
 //        survivorControllers.add(new SurvivorController(survivorTemp, caravan.getPosition(), player.getPosition(), tileGrid, smogGrid, tileSize, tileOffset));
     }
 
@@ -570,7 +570,7 @@ public class JSONLevelReader {
             FloatingEnemy enemyTemp = new FloatingEnemy(x * tileSize , y * tileSize, enemyDirectionTextures, scale, imageTileSize);
 
             enemyArr.add(enemyTemp);
-            addMovObject(enemyTemp);
+            addObject(enemyTemp);
 
             enemyControllers.add(new FloatingEnemyController(tileGrid, tileSize, tileOffset, enemyTemp, player, toxicAir));
         } else if (id == enemyIDs[1]) {
@@ -578,7 +578,7 @@ public class JSONLevelReader {
             ScoutEnemy enemyTemp = new ScoutEnemy(x * tileSize, y * tileSize , enemyDirectionTextures, vineTextures, scale, imageTileSize, world);
 
             enemyArr.add(enemyTemp);
-            addMovObject(enemyTemp);
+            addObject(enemyTemp);
 
             enemyControllers.add(new ScoutEnemyController(tileGrid, tileSize, tileOffset, enemyTemp, player));
         } else if (id == enemyIDs[2]) {
@@ -586,7 +586,7 @@ public class JSONLevelReader {
             Enemy enemyTemp = new Enemy(x * tileSize , y * tileSize , enemyDirectionTextures, scale, imageTileSize);
 
             enemyArr.add(enemyTemp);
-            addMovObject(enemyTemp);
+            addObject(enemyTemp);
 
             enemyControllers.add(new ChaserEnemyController(tileGrid, tileSize, tileOffset, enemyTemp, player));
         } else if (id == enemyIDs[3]) {
@@ -595,7 +595,7 @@ public class JSONLevelReader {
             shriekerArr.add((ShriekerEnemy) enemyTemp);
 
             enemyArr.add(enemyTemp);
-            addMovObject(enemyTemp);
+            addObject(enemyTemp);
 
             enemyControllers.add(new ShriekerEnemyController(tileGrid, tileSize, tileOffset, enemyTemp, player));
         }
@@ -604,7 +604,7 @@ public class JSONLevelReader {
             FloatingEnemy enemyTemp = new FloatingEnemy(x * tileSize , y * tileSize , enemyDirectionTextures, scale, imageTileSize);
 
             enemyArr.add(enemyTemp);
-            addMovObject(enemyTemp);
+            addObject(enemyTemp);
 
             enemyControllers.add(new FloatingEnemyController(tileGrid, tileSize, tileOffset, enemyTemp, player, toxicAir));
         }

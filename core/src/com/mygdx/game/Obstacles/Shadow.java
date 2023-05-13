@@ -202,7 +202,10 @@ public class Shadow extends SimpleObstacle{
      *
      * @param canvas Drawing context
      */
-    public void draw(GameCanvas canvas) {
+    public void draw(GameCanvas canvas, float width, float height) {
+        if (shadowShape.equals(ShadowShape.CIRCLE)){
+            canvas.draw(textureRegion, Color.WHITE, 0, 0, getX() - width/2, getY()-height/2, size, size);
+        }
 
     };
 

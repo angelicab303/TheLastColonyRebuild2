@@ -499,6 +499,7 @@ public class Player extends Shadow implements GameObstacle{
      * @param canvas Drawing context
      */
     public void draw(GameCanvas canvas) {
+        super.draw(canvas,width*scale, height*scale);
 //        canvas.draw(texture, Color.WHITE, origin.x, origin.y, body.getWorldCenter().x*drawScale.x, body.getWorldCenter().y*drawScale.y, getAngle(), 1, 1);
 //        canvas.draw(texture, getX(), getY());
 //        if (direction == Direction.IDLE){
