@@ -420,43 +420,9 @@ public class GameplayController implements Screen {
 		survivorTexture = new TextureRegion(directory.getEntry("images:survivorSprite", Texture.class));
 		survivorITexture = directory.getEntry("images:sInteract", Texture.class);
 
-		playerDirectionTextures = importCharacterFilmstrip("player");
-		survivorDirectionTextures = importCharacterFilmstrip("survivorP");
-		enemyDirectionTextures = importCharacterFilmstrip("maskEnemy");
-		// Smog, Purified Air, and Air Bar Textures
-		mushroomTexture = new TextureRegion(directory.getEntry("images:mushroom", Texture.class));
-		smogTexture = directory.getEntry("images:testSmog", Texture.class);
-		toxicAirTexture = directory.getEntry("images:testSmog", Texture.class);
-		pureAirTexture = directory.getEntry("images:weaponProjectile", Texture.class);
-		smogTexture2 = new TextureRegion(directory.getEntry("images:smog2", Texture.class));
-		airBarTexture = directory.getEntry("images:airBar", Texture.class);
-		// pureAirTexture = new TextureRegion(directory.getEntry("images:smog1",
-		// Texture.class));
-		pureAirTexture = directory.getEntry("images:testSmog", Texture.class);
-
-		// UI Textures
-		fHeartTexture = directory.getEntry("images:fullHeart", Texture.class);
-		sHeartTexture = directory.getEntry("images:slashedHeart", Texture.class);
-
-		// Unnecessary atm?
-
 		playerDirectionTextures = importPlayerFilmstrip();
 		survivorDirectionTextures = importCharacterFilmstrip("survivorP");
 		enemyDirectionTextures = importEnemyFilmstrips();
-		vineTextureVertical = directory.getEntry("images:vineVertical", Texture.class);
-		vineTextureHorizontal = directory.getEntry("images:vineHorizontal", Texture.class);
-		vineTextureLeftBottom = directory.getEntry("images:vineBottomLeft", Texture.class);
-		vineTextureLeftTop = directory.getEntry("images:vineTopLeft", Texture.class);
-		vineTextureRightBottom = directory.getEntry("images:vineBottomRight", Texture.class);
-		vineTextureRightTop = directory.getEntry("images:vineTopRight", Texture.class);
-		vineTextureHeadLeft = directory.getEntry("images:vineStraightHeadLeft", Texture.class);
-		vineTextureHeadRight = directory.getEntry("images:vineStraightHeadRight", Texture.class);
-		vineTextureHeadDown = directory.getEntry("images:vineStraightHeadDown", Texture.class);
-		vineTextureHeadUp = directory.getEntry("images:vineStraightHeadUp", Texture.class);
-		vineTextureHeadLeftBottom = directory.getEntry("images:vineCornerHeadLeftDown", Texture.class);
-		vineTextureHeadLeftTop = directory.getEntry("images:vineCornerHeadLeftUp", Texture.class);
-		vineTextureHeadRightBottom = directory.getEntry("images:vineCornerHeadRightDown", Texture.class);
-		vineTextureHeadRightTop = directory.getEntry("images:vineCornerHeadRightUp", Texture.class);
 
 		//Vines for enemies (Have shortened the code a bit) -V
 

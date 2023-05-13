@@ -140,8 +140,8 @@ public class JSONLevelReader {
     public JSONLevelReader(AssetDirectory directory, Rectangle bounds, World world, int level,
                            OrthographicCamera camera, InputController input, PooledList<Obstacle> objects, PooledList<Obstacle> movObjects, Array<FloorTile> floorArr,
                            float scale, boolean[][] tileGrid, boolean[][] smogTiles, boolean[][] smogGrid, int tileSize,
-                           int tileOffset, int smogTileSize, int smogTileOffset, FilmStrip[] playerDirectionTextures,
-                           FilmStrip[] survivorDirectionTextures, FilmStrip[] enemyDirectionTextures, Texture[] vineTextures, ToxicQueue toxicAir,
+                           int tileOffset, int smogTileSize, int smogTileOffset, FilmStrip[][] playerDirectionTextures,
+                           FilmStrip[] survivorDirectionTextures, FilmStrip[][] enemyDirectionTextures, Texture[] vineTextures, ToxicQueue toxicAir,
                            Texture survivorITexture, Map<String, TextureRegion> assetTextures, BitmapFont displayFontInteractive, Texture heart, Player player, Weapon weapon) {
         this.directory = directory;
         this.bounds = bounds;
@@ -603,7 +603,7 @@ public class JSONLevelReader {
         }
         else{
             // Floater
-            FloatingEnemy enemyTemp = new FloatingEnemy(x * tileSize , y * tileSize , enemyDirectionTextures, scale, imageTileSize);
+            FloatingEnemy enemyTemp = new FloatingEnemy(x * tileSize , y * tileSize , enemyDirectionTextures[1], scale, imageTileSize);
 
             enemyArr.add(enemyTemp);
             addObject(enemyTemp);
