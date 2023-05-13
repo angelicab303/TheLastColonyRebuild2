@@ -226,6 +226,17 @@
       }
     },
 
+    "images:stun": {
+      "file" : "images/stun.png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 4
+        }
+      }
+    },
+
+    "images:shadow": "images/shadow.png",
     "images:cliff": "images/updatedCliff.png",
     "images:cliffLeft": "images/cliffLeft.png",
     "images:cliffRight": "images/cliffRight.png",

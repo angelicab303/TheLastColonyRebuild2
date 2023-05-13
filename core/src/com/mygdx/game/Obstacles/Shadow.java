@@ -1,6 +1,7 @@
 package com.mygdx.game.Obstacles;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.mygdx.game.GameCanvas;
@@ -30,6 +31,8 @@ public class Shadow extends SimpleObstacle{
     private boolean isBelow;
 
     ShadowShape shadowShape;
+
+    private static TextureRegion textureRegion;
 
     private Vector2 temp;
 
@@ -63,6 +66,11 @@ public class Shadow extends SimpleObstacle{
         size = new_size;
 
         vertices = new float[8];
+    }
+
+    /** Sets the shadow drawing shape */
+    public static void setTextureRegion(TextureRegion newTextureRegion){
+        textureRegion = newTextureRegion;
     }
 
     private void resize(float size){

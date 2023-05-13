@@ -214,14 +214,10 @@ public class GameplayController implements Screen {
 	protected BitmapFont displayFontInteract;
 	/** The actual assets to be loaded */
 	protected AssetDirectory assets;
-	/** Texture atlas to support a progress bar */
-	private Texture statusBar;
-
-	// statusBar is a "texture atlas." Break it up into parts.
-	/** Left cap to the status background (grey region) */
-	private TextureRegion statusBkgLeft;
-	/** Middle portion of the status background (grey region) */
-	private TextureRegion statusBkgMiddle;
+	/** Stun animation for enemies */
+	private FilmStrip stunAnimation;
+	/** Shadows for displaying hitboxes */
+	private TextureRegion shadow;
 	/** Right cap to the status background (grey region) */
 	private TextureRegion statusBkgRight;
 	/** Left cap to the status forground (colored region) */
@@ -358,7 +354,7 @@ public class GameplayController implements Screen {
 		debug = false;
 		active = false;
 		countdown = -1;
-		setDebug(true);
+		//setDebug(true);
 	}
 
 	/**
@@ -493,8 +489,8 @@ public class GameplayController implements Screen {
 		key = "tiles:9a_mushroom";
 		assetTextures.put(key , new TextureRegion(directory.getEntry(key, Texture.class)));
 
-
-
+		stunAnimation = directory.getEntry("images:stun.fire", FilmStrip.class );
+		shadow = new TextureRegion(directory.getEntry("images:shadow", Texture.class));
 
 
 
@@ -642,6 +638,10 @@ public class GameplayController implements Screen {
 
 		// Setting the size of the tiles
 		Shadow.setSize(32f);
+		Shadow.setTextureRegion(shadow);
+
+		//sets the stun animation for all enemies
+		Enemy.setStunFilmStrip(stunAnimation);
 
 //		canvas.setSize(32 * tileSize, 26 * tileSize);
 //		System.out.println("Width: " + canvas.getWidth() + "\t\tHeight: " + canvas.getHeight());
