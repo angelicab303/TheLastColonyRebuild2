@@ -195,9 +195,6 @@ public class GameplayController implements Screen {
 	private Array<Smog> smogArr;
 	/** Enemy list */
 	private Array<Enemy> enemyArr;
-
-	/** ShriekerEnemy list */
-	private Array<ShriekerEnemy> shriekerArr;
 	/** Survivor list **/
 	private Array<Survivor> survivorArr;
 	/** List of all tree positions **/
@@ -645,6 +642,7 @@ public class GameplayController implements Screen {
 		for (Obstacle obj : movObjects) {
 			obj.deactivatePhysics(world);
 		}
+		EnemyController.clearShriekers();
 		enemyControllers.clear();
 		survivorControllers.clear();
 		smogs.clear();
