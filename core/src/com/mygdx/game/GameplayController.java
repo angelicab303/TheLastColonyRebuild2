@@ -1421,6 +1421,19 @@ public class GameplayController implements Screen {
 		canvas.updateLights();
 	}
 
+
+	static class SortbyY implements Comparator<Obstacle>
+	{
+		// Used for sorting in ascending order of
+		// roll number
+		public int compare(Obstacle a, Obstacle b)
+		{
+			return (int)(b.getY()-a.getY());
+		}
+	}
+
+
+
 	/**
 	 * Draw the physics objects to the canvas
 	 *
@@ -1435,6 +1448,8 @@ public class GameplayController implements Screen {
 //		System.out.println("Started Drawing");
 		canvas.clear();
 
+		Collections.sort(objects, new SortbyY());
+
 		if (isActive()) {
 			canvas.begin(player.getX(), player.getY(), tileGrid.length * tileSize, tileGrid[0].length * tileSize);
 		} else {
@@ -1447,20 +1462,8 @@ public class GameplayController implements Screen {
 			flr.draw(canvas);
 		}
 
-		for(Obstacle obj : movObjects){
-			if(obj.getBehind()){
-				obj.draw(canvas);
-			}
-		}
-
 		for (Obstacle obj : objects) {
 			obj.draw(canvas);
-		}
-
-		for(Obstacle obj : movObjects){
-			if(!obj.getBehind()){
-				obj.draw(canvas);
-			}
 		}
 
 		for (Obstacle obj : smogs){
