@@ -290,6 +290,14 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
                 }
             };
         } );
+        buttons.get(2).addListener( new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                if (buttons.get(2).isChecked()) {
+                    buttonState = EXIT_2;
+                }
+            };
+        } );
 
         if (!populated){
             populated = true;

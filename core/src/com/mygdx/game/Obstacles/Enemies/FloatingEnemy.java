@@ -14,7 +14,7 @@ public class FloatingEnemy extends Enemy {
 
     public FloatingEnemy (float x, float y, FilmStrip[] animator, float scale, float tileSize)
     {
-        super(x, y, animator, scale, tileSize);
+        super(x, y, animator, scale, tileSize, false);
     }
 
     @Override

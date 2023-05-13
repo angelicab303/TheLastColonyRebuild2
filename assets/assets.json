@@ -76,22 +76,8 @@
     "images:tree2": "images/tree-1c.png",
     "images:tree3": "images/tree-2a.png",
     "images:mushroom": "images/target.png",
-    "tree:positions": [
-      [
-        100,
-        100
-      ],
-      [
-        250,
-        300
-      ],
-      [
-        50,
-        50
-      ]
-    ],
-    "images:playerUp": {
-      "file" : "images/backwalk2-Sheet.png",
+    "images:playerMovementUp": {
+      "file" : "images/player/backwalk2-Sheet.png",
       "sprites" : {
         "fire": {
           "rows": 1,
@@ -99,8 +85,8 @@
         }
       }
     },
-    "images:playerDown": {
-      "file" : "images/frontWalk2-Sheet.png",
+    "images:playerMovementDown": {
+      "file" : "images/player/frontWalk2-Sheet.png",
       "sprites" : {
         "fire": {
           "rows": 1,
@@ -108,8 +94,8 @@
         }
       }
     },
-    "images:playerRight": {
-      "file" : "images/rightSideWalk2-Sheet.png",
+    "images:playerMovementRight": {
+      "file" : "images/player/rightSideWalk2-Sheet.png",
       "sprites" : {
         "fire": {
           "rows": 1,
@@ -117,8 +103,8 @@
         }
       }
     },
-    "images:playerLeft": {
-      "file" : "images/leftSideWalk2-Sheet.png",
+    "images:playerMovementLeft": {
+      "file" : "images/player/leftSideWalk2-Sheet.png",
       "sprites" : {
         "fire": {
           "rows": 1,
@@ -126,8 +112,107 @@
         }
       }
     },
-    "images:playerIdle": {
-      "file" : "images/idel2-Sheet.png",
+    "images:playerIdleUp": {
+      "file" : "images/player/idleUp-Sheet.png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 9
+        }
+      }
+    },
+    "images:playerIdleDown": {
+      "file" : "images/player/idleDown-Sheet.png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 9
+        }
+      }
+    },
+    "images:playerIdleRight": {
+      "file" : "images/player/idleRight-Sheet.png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 9
+        }
+      }
+    },
+    "images:playerIdleLeft": {
+      "file" : "images/player/idleLeft-Sheet.png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 9
+        }
+      }
+    },
+    "images:playerIdleAttackUp": {
+      "file" : "images/player/idleAttackUp-Sheet.png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 9
+        }
+      }
+    },
+    "images:playerIdleAttackDown": {
+      "file" : "images/player/idleAttackDown-Sheet.png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 9
+        }
+      }
+    },
+    "images:playerIdleAttackRight": {
+      "file" : "images/player/idleAttackRight-Sheet.png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 9
+        }
+      }
+    },
+    "images:playerIdleAttackLeft": {
+      "file" : "images/player/idleAttackLeft-Sheet.png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 9
+        }
+      }
+    },
+    "images:playerWalkAttackUp": {
+      "file" : "images/player/upShootWalk.png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 9
+        }
+      }
+    },
+    "images:playerWalkAttackDown": {
+      "file" : "images/player/downShootWalk.png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 9
+        }
+      }
+    },
+    "images:playerWalkAttackRight": {
+      "file" : "images/player/rightShootWalk.png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 9
+        }
+      }
+    },
+    "images:playerWalkAttackLeft": {
+      "file" : "images/player/leftShootWalk.png",
       "sprites" : {
         "fire": {
           "rows": 1,
@@ -222,6 +307,33 @@
         "fire": {
           "rows": 1,
           "cols": 12
+        }
+      }
+    },
+    "images:shriekerIdle": {
+      "file" : "images/enemies/sunflowerIdle-Sheet.png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 9
+        }
+      }
+    },
+    "images:shriekerShriek": {
+      "file" : "images/enemies/sunflowerShriek-Sheet.png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 9
+        }
+      }
+    },
+    "images:shriekerTransform": {
+      "file" : "images/enemies/sunflowerTransform-Sheet.png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 9
         }
       }
     },

@@ -62,6 +62,15 @@ public class FloatingEnemyController extends EnemyController {
         Tile enemyTile = tiles[(int) (enemy.getX() / tileSize)][(int) (enemy.getY() / tileSize)];
         Tile targetTile = tiles[(int) (target.x / tileSize)][(int) (target.y / tileSize)];
         Vector2 enemyPos = new Vector2(enemy.getX(), enemy.getY());
+
+        alertAllEnemies = false;
+        ShriekerEnemy activeShrieker = null;
+        for (ShriekerEnemy shrieker : shriekerArr){
+            if (shrieker.getShrieking()){
+                alertAllEnemies = true;
+                activeShrieker = shrieker;
+            }
+        }
         switch(state) {
             case SPAWN:
                 state = FSMState.IDLE;
@@ -77,6 +86,15 @@ public class FloatingEnemyController extends EnemyController {
                     if (enemy.canAttack())
                     {
                         state = FSMState.ATTACK;
+                    }
+                }
+                else if (alertAllEnemies)
+                {
+                    Vector2 enemyLoc = new Vector2(enemy.getX(), enemy.getY());
+                    Vector2 shriekerLoc = new Vector2(activeShrieker.getX(), activeShrieker.getY());
+                    if (enemyLoc.dst(shriekerLoc) <= ALERT_DISTANCE){
+                        state = FSMState.CHASE;
+                        target = new Vector2 (player.getX(), player.getY());
                     }
                 }
                 break;
