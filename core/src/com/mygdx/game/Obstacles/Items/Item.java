@@ -74,5 +74,8 @@ public class Item extends BoxObstacle implements GameObstacle {
 
     }
 
+    public void collect(){
+        markRemoved(true);
+    }
 
 }
