@@ -259,7 +259,7 @@ public class Caravan extends obstacle.BoxObstacle implements GameObstacle {
 
     @Override
     public short getMaskBits() {
-        return 0x0;
+        return MASK_CARAVAN;
     }
 
     @Override

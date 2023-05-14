@@ -95,7 +95,7 @@ public class CollisionController{
             public float reportRayFixture(Fixture fixture, Vector2 point, Vector2 normal, float fraction) {
                 if (!fixture.isSensor()) {
                     Object obstacle = fixture.getBody().getUserData();
-                    if (obstacle instanceof Smog) {
+                    if (obstacle instanceof Smog || obstacle instanceof Obstacles) {
                         //System.out.println("Well at least something is working");
                         called = false;
                         //System.out.println(fraction);
