@@ -60,6 +60,8 @@ public class Weapon {
      * and endpoints of raycasts. Index 0 is the start position and the rest are the endpoints of the raycasts */
     private Vector2[] absorptionVertices;
 
+    private boolean shootOrAbsorb;
+
     /** Light cones */
     Light absorbSensor;
     Light attackSensor;
@@ -69,6 +71,8 @@ public class Weapon {
 
     /** impulse magnitude */
     private final float power = 300;
+    /** impulse scaling per upgrade */
+    private final float SCALE_FACTOR = 1.2f;
     private Vector2 temp1;
     private Vector2 temp2;
 
@@ -319,6 +323,11 @@ public class Weapon {
         return absorbRange.y - absorbRange.x;
     }
 
+    public void upgradeRange(){
+        for(Vector2 impulse : impulses){
+            impulse.scl(SCALE_FACTOR);
+        }
+    }
     public void upgradeBullets(){
         bullets += 2;
         if(bullets > 5){
@@ -387,6 +396,10 @@ public class Weapon {
             impulses[i] = temp1;
         }
         return impulses;
+    }
+
+    public boolean isShootingOrAbsorbing(){
+        return shootOrAbsorb;
     }
 
     public Vector2[] getImpulses(){
