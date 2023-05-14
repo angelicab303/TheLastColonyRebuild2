@@ -95,7 +95,6 @@ public class Lights {
         filter.maskBits = CATEGORY_ENV;
         light.setContactFilter(filter);
         return light;
-
     }
 
     public static ConeLight createConeLight(com.badlogic.gdx.graphics.Color color, float distance, float x, float y, float coneDegree){

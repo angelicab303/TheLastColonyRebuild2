@@ -125,6 +125,9 @@ public class Player extends Shadow implements GameObstacle{
 
     private int behind;
 
+    private int torch;
+    private int key;
+
 
     private Array<Survivor> survivorsFollowing;
 
@@ -175,6 +178,8 @@ public class Player extends Shadow implements GameObstacle{
         doneFiring = true;
 
         behind = 0;
+        key = 0;
+        torch = 0;
 
         if (filter == null){
             filter = new Filter();
@@ -191,6 +196,33 @@ public class Player extends Shadow implements GameObstacle{
         this.scale = scale;
 
         this.weapon = new Weapon(getPosition().x, getPosition().y);
+    }
+
+
+    public void collectTorch(){
+        torch++;
+    }
+
+    /**Returns whether a torch was successfully used*/
+    public boolean useTorch(){
+        if(torch > 0){
+            torch--;
+            return true;
+        }
+        return false;
+    }
+
+    public void collectKey(){
+        key++;
+    }
+
+    /**Returns whether a key was successfully used*/
+    public boolean useKey(){
+        if(key > 0){
+            key--;
+            return true;
+        }
+        return false;
     }
 
 

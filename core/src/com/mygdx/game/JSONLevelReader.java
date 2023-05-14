@@ -17,6 +17,8 @@ import com.mygdx.game.Obstacles.Enemies.Enemy;
 import com.mygdx.game.Obstacles.Enemies.FloatingEnemy;
 import com.mygdx.game.Obstacles.Enemies.ScoutEnemy;
 import com.mygdx.game.Obstacles.Enemies.ShriekerEnemy;
+import com.mygdx.game.Obstacles.Items.Key;
+import com.mygdx.game.Obstacles.Items.Torch;
 import obstacle.Obstacle;
 import util.FilmStrip;
 import util.PooledList;
@@ -451,12 +453,16 @@ public class JSONLevelReader {
             createEnemy(x, y, id, scale);
         } else if (type.equals("Floor")) {
             createFloor(x, y, id, scale);
-        }else if(type.equals("Obstacle")) {
+        }else if(type.equals("Obstacle")) {//IDK how doors are going to be implemented, so Imma hold off on this for now -V
             createObstacle(x, y, id, scale);
         }else if(type.equals("Smog")){
             createSmog(x, y, id, scale);
         }else if(type.equals("Mushroom")){
             createMushroom(x, y, id, scale);
+        }else if(type.equals("Torch")){
+            createTorch(x, y, id, scale);
+        }else if(type.equals("Key")){
+            createKey(x, y, id, scale);
         }
         else {
             System.out.println("Error - ID " + id + " tile not found");
@@ -520,6 +526,13 @@ public class JSONLevelReader {
     public Caravan getCaravan() {
         return caravan;
     }
+
+    public void createKey(int x, int y, int id, float scale) {
+        addObject(new Key(x,y,getTextureRegionKey(id), scale));
+    }
+    public void createTorch(int x, int y, int id, float scale) {
+        addObject(new Torch(x,y,getTextureRegionKey(id), scale));
+    }
          
     public void createPlayer(int x, int y, float scale) {
 //        System.out.println("Creating player");
@@ -529,8 +542,6 @@ public class JSONLevelReader {
         }
         player = new Player(x * tileSize, y * tileSize , playerDirectionTextures, input, scale, imageTileSize);
         addObject(player);
-        player.setAwake(true);
-
         // Instantiate the weapon:
         //weapon = new Weapon(player.getPosition().x, player.getPosition().y);
         //player.attachLightToPlayer(weapon.getAbsorbSensor());
