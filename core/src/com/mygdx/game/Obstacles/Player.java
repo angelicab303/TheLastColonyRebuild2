@@ -12,6 +12,7 @@ import com.badlogic.gdx.utils.Array;
 import com.mygdx.game.GameCanvas;
 import com.mygdx.game.InputController;
 import com.mygdx.game.Lights;
+import com.mygdx.game.Weapon;
 import obstacle.BoxObstacle;
 import obstacle.WheelObstacle;
 import util.FilmStrip;
@@ -120,6 +121,8 @@ public class Player extends Shadow implements GameObstacle{
     private float height;
     private float width;
 
+    public Weapon weapon;
+
     private int behind;
 
 
@@ -186,6 +189,8 @@ public class Player extends Shadow implements GameObstacle{
         currentAnimator = currentStrip[DOWN];
         aframe = 0.0f;
         this.scale = scale;
+
+        this.weapon = new Weapon(getPosition().x, getPosition().y);
     }
 
 
@@ -395,7 +400,7 @@ public class Player extends Shadow implements GameObstacle{
      */
     public void updateDirection(float h, float v){
         if (h != 0 || v != 0){
-            if (pressFire){
+            if (weapon.isFiring()){
                 currentStrip = attackWalkStrips;
             }
             else{
@@ -403,7 +408,7 @@ public class Player extends Shadow implements GameObstacle{
             }
         }
         else{
-            if (pressFire){
+            if (weapon.isFiring()){
                 currentStrip = attackIdleStrips;
             }
             else{
@@ -476,7 +481,7 @@ public class Player extends Shadow implements GameObstacle{
             doneFiring = false;
         }
         else {
-            if (pressFire){
+            if (weapon.isFiring()){
                 startFireTimer = true;
             }
         }
@@ -519,12 +524,12 @@ public class Player extends Shadow implements GameObstacle{
 
         if (aframe >= NUM_ANIM_FRAMES-1) {
             if (currentStrip != idleStrips){
-                if (pressFire && fireTime >= FIRE_TIME){
+                if (weapon.isFiring() && fireTime >= FIRE_TIME){
                     doneFiring = true;
                     aframe -= NUM_ANIM_FRAMES-1;
                     fireTime = 0;
                 }
-                else if (pressFire){
+                else if (weapon.isFiring()){
                     if (currentStrip == attackWalkStrips){
                         aframe = 4;
                     }

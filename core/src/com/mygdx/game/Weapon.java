@@ -54,6 +54,10 @@ public class Weapon {
     /** Countdown to limit refire rate */
     protected int refire;
 
+    private int absorb_cooldown = 0;
+    private int fire_cooldown = 0;
+    private int NUM_ANIMATION_FRAMES = 9;
+
     /** number of raycasts used to determine range*/
     private final int raycasts = 20; //must be >1
     /** The area on the screen where it is possible for the weapon to absorb smog as represented by the start
@@ -90,12 +94,24 @@ public class Weapon {
         return absorbing;
     }
 
+    public void absorbSmog(){
+        incrementAmmo(2);
+    }
+
     /**
      * Sets absorbing to value.
      * @param value the new value of absorbing.
      */
     public void setAbsorbing(boolean value) {
-        absorbing = value;
+        if(!canAbsorb()){
+            absorbing = false;
+        }
+        else {
+            if(value){
+                fire_cooldown = NUM_ANIMATION_FRAMES;
+            }
+            absorbing = value;
+        }
     }
 
     /**
@@ -112,7 +128,15 @@ public class Weapon {
      * @param value the new value of firing.
      */
     public void setFiring(boolean value) {
-        firing = value;
+        if(!canFire()){
+            firing = false;
+        }
+        else {
+            if(value){
+                absorb_cooldown = NUM_ANIMATION_FRAMES;
+            }
+            firing = value;
+        }
     }
 
     /**
@@ -120,7 +144,7 @@ public class Weapon {
      * @return whether bullet was fired successfully for chaining
      */
     public boolean fire(){
-        if(isFiring() && numAmmo > NUM_AIR_FIRED && (refire > RELOAD_RATE)){
+        if(isFiring() && numAmmo > NUM_AIR_FIRED && (refire > RELOAD_RATE) && canFire()){
             refire = 0;
             numAmmo -= NUM_AIR_FIRED;
             return true;
@@ -457,6 +481,20 @@ public class Weapon {
         return absorbSensor;
     }
 
+    public boolean canAbsorb(){
+        if(absorb_cooldown > 0){
+            return false;
+        }
+        return true;
+    }
+
+    public boolean canFire(){
+        if(fire_cooldown > 0){
+            return false;
+        }
+        return true;
+    }
+
     void update(Vector2 playerPos, Vector2 mousePos, Vector2 shootingDir){
         position = playerPos;
         this.shootingDir = shootingDir;
@@ -471,6 +509,9 @@ public class Weapon {
         if (refire <= RELOAD_RATE) {
             refire++;
         }
+
+        fire_cooldown--;
+        absorb_cooldown--;
 
     }
 

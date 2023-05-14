@@ -532,7 +532,7 @@ public class JSONLevelReader {
         player.setAwake(true);
 
         // Instantiate the weapon:
-        weapon = new Weapon(player.getPosition().x, player.getPosition().y);
+        //weapon = new Weapon(player.getPosition().x, player.getPosition().y);
         //player.attachLightToPlayer(weapon.getAbsorbSensor());
 
     }
