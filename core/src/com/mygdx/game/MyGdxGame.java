@@ -1,9 +1,14 @@
 package com.mygdx.game;
 
+import audio.AudioEngine;
+import audio.AudioSource;
+import audio.MusicQueue;
+import com.badlogic.gdx.Audio;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.utils.JsonValue;
 import com.mygdx.game.ScreenModes.LevelSelectMode;
 import com.mygdx.game.ScreenModes.LoadingMode;
 import com.mygdx.game.ScreenModes.MainMenuMode;
@@ -31,6 +36,9 @@ public class MyGdxGame extends Game implements ScreenListener {
 	/** Input Controller **/
 	private InputController input = new InputController();
 
+	private AudioSource samples[];
+	private MusicQueue music;
+
 	public MyGdxGame () { }
 	
 	@Override
@@ -41,8 +49,6 @@ public class MyGdxGame extends Game implements ScreenListener {
 
 		canvas  = new GameCanvas();
 		loading = new LoadingMode("assets.json",canvas,1);
-		mainMenu = new MainMenuMode(canvas);
-		levelSelect = new LevelSelectMode(canvas);
 
 		 //Initialize the three game worlds
 		 //controllers = new WorldController[1];
