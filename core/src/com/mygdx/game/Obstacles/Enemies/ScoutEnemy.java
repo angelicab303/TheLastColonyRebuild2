@@ -20,6 +20,8 @@ public class ScoutEnemy extends Enemy{
         private float y;
         private int behind = 0;
 
+        private int NUM_ANIM_FRAMES = 2;
+
         public enum Direction {
             /** The enemy is not moving */
             IDLE,
@@ -53,7 +55,6 @@ public class ScoutEnemy extends Enemy{
         }
         public VineTile(float x, float y, float width, float height, FilmStrip animator, float scale, Direction direction) {
             super(x, y, width, height);
-//            this.currentTexture = texture;
             isStunned = false;
             currentAnimator = animator;
             this.direction = direction;
@@ -91,10 +92,9 @@ public class ScoutEnemy extends Enemy{
             aframe = ((int)currFrame % 2 == 0 ? 0 : 1);
             currentAnimator.setFrame((int)aframe);
             canvas.draw(currentAnimator, Color.WHITE,body.getWorldCenter().x*drawScale.x, body.getWorldCenter().y*drawScale.y,
-                    body.getWorldCenter().x,
+                    body.getWorldCenter().x + (getWidth() * drawScale.x),
                     body.getWorldCenter().y,
                     0.0f, scale, scale);
-
         }
 
         @Override
@@ -515,6 +515,14 @@ public class ScoutEnemy extends Enemy{
             }
         }
         super.draw(canvas);
+    }
+
+    @Override
+    public void drawDebug(GameCanvas canvas) {
+        for(int i = 0; i < vines.size; i++) {
+            vines.get(i).drawDebug(canvas);
+        }
+        super.drawDebug(canvas);
     }
 
     public Enemy.EnemyType getEnemyType() {

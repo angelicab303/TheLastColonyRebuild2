@@ -431,7 +431,7 @@ public class GameplayController implements Screen {
 		airBarTexture = directory.getEntry("images:airBar", Texture.class);
 		// pureAirTexture = new TextureRegion(directory.getEntry("images:smog1",
 		// Texture.class));
-		pureAirTexture = directory.getEntry("images:testSmog", Texture.class);
+//		pureAirTexture = directory.getEntry("images:testSmog", Texture.class);
 
 		// UI Textures
 		fHeartTexture = directory.getEntry("images:fullHeart", Texture.class);
