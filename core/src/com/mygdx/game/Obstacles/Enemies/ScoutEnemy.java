@@ -490,6 +490,10 @@ public class ScoutEnemy extends Enemy{
             super.update(0);
 //            updateVines();
         }
+        if (vines.size > 0 && vines.peek().isStunned) {
+            vinesShrinking = true;
+            stunned = true;
+        }
         if(vinesShrinking && vineTick>10) {
             vineTick = 0;
             shrinkVines();
