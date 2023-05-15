@@ -240,6 +240,7 @@ public class ScoutEnemy extends Enemy{
         VineTile.Direction d;
         d = VineTile.Direction.RIGHT;
         currentVineAnimator = vineAnimatorHorizontal;
+        if ((vines.size > 0 && !vines.get(vines.size - 1).isStunned) || vines.isEmpty()) {
         switch(direction) {
             case(0):
                 d = VineTile.Direction.RIGHT;
@@ -371,15 +372,16 @@ public class ScoutEnemy extends Enemy{
         }
         else {
             canAttack = false;
-            if(vines.size >= MAX_VINES) {
+            if (vines.size >= MAX_VINES) {
                 vinesShrinking = true;
             }
-            if(vines.size == 0) {
+            if (vines.size == 0) {
                 vinesShrinking = false;
                 canAttack = true;
             }
 //            shrinkVines();
 //            vines.clear();
+        }
         }
     }
 //
