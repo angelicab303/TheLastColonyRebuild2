@@ -139,6 +139,10 @@ public class GameplayController implements Screen {
 	private Texture fHeartTexture;
 	/** Texture asset for the slashed heart texture */
 	private Texture sHeartTexture;
+	/** Texture asset for the full egg texture */
+	private Texture fEggTexture;
+	/** Texture asset for the broken egg texture */
+	private Texture bEggTexture;
 
 	// *************************** END OF TEXTURES ***************************
 
@@ -436,6 +440,8 @@ public class GameplayController implements Screen {
 		// UI Textures
 		fHeartTexture = directory.getEntry("images:fullHeart", Texture.class);
 		sHeartTexture = directory.getEntry("images:slashedHeart", Texture.class);
+		fEggTexture = directory.getEntry("images:fullEgg", Texture.class);
+		bEggTexture = directory.getEntry("images:brokenEgg", Texture.class);
 
 		// Unnecessary atm?
 
@@ -805,9 +811,9 @@ public class GameplayController implements Screen {
 
 		for (int i = 0; i < numLives; i++) {
 			if (i > 0) {
-				spacing += 13.0f;
+				spacing += 15.0f;
 			}
-			Heart tempHeart = new Heart(fHeartTexture, heartX, heartY, spacing);
+			Heart tempHeart = new Heart(fEggTexture, heartX, heartY, spacing);
 			heartArr.add(tempHeart);
 		}
 	}
@@ -1095,7 +1101,7 @@ public class GameplayController implements Screen {
 		// Update hearts
 		for (int i = player.getMaxHealth() - 1; i >= 0; i--) {
 			if (player.getHealth() <= i) {
-				heartArr.get(i).setTexture(sHeartTexture);
+				heartArr.get(i).setTexture(bEggTexture);
 			}
 		}
 
