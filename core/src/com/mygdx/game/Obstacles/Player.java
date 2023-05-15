@@ -432,7 +432,7 @@ public class Player extends Shadow implements GameObstacle{
      */
     public void updateDirection(float h, float v){
         if (h != 0 || v != 0){
-            if (weapon.isFiring()){
+            if (pressFire){
                 currentStrip = attackWalkStrips;
             }
             else{
@@ -440,7 +440,7 @@ public class Player extends Shadow implements GameObstacle{
             }
         }
         else{
-            if (weapon.isFiring()){
+            if (pressFire){
                 currentStrip = attackIdleStrips;
             }
             else{
@@ -509,11 +509,12 @@ public class Player extends Shadow implements GameObstacle{
         float vVelocity = controller.getVertical();
 
         if (controller.didPressFire() || controller.didPressAbsorb()){
+            //System.out.println("Absorbed: " + controller.didPressAbsorb());
             pressFire = true;
             doneFiring = false;
         }
         else {
-            if (weapon.isFiring()){
+            if (pressFire){
                 startFireTimer = true;
             }
         }
@@ -556,12 +557,12 @@ public class Player extends Shadow implements GameObstacle{
 
         if (aframe >= NUM_ANIM_FRAMES-1) {
             if (currentStrip != idleStrips){
-                if (weapon.isFiring() && fireTime >= FIRE_TIME){
+                if (pressFire && fireTime >= FIRE_TIME){
                     doneFiring = true;
                     aframe -= NUM_ANIM_FRAMES-1;
                     fireTime = 0;
                 }
-                else if (weapon.isFiring()){
+                else if (pressFire){
                     if (currentStrip == attackWalkStrips){
                         aframe = 4;
                     }
