@@ -368,6 +368,8 @@
     "images:testSmog": "images/test_green_smog-sheet2.png",
     "images:weaponProjectile": "images/weaponProjectile-Sheet.png",
     "images:airBar": "images/AirMeterFilling-Sheet-export2.png",
+    "images:fullEgg": "images/Egg.png",
+    "images:brokenEgg": "images/EggDamaged.png",
     "images:fullHeart": "images/NewHeart.png",
     "images:slashedHeart": "images/EmptyHeart.png",
     "images:plantEnemy": "images/Enemy1Idle.png",
