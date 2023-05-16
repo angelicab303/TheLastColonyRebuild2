@@ -364,7 +364,7 @@ public class ScoutEnemy extends Enemy{
                 currentVineAnimator = vineAnimatorHeadRightTop;
                 break;
         }
-        tempVineTile = new VineTile(x, y, currentVineTexture.getWidth()*scale, currentVineTexture.getHeight()*scale, currentVineAnimator, scale, d);
+        tempVineTile = new VineTile(x, y, currentVineTexture.getWidth()*scale, currentVineTexture.getHeight()*scale/2, currentVineAnimator, scale, d);
         tempVineTile.activatePhysics(world);
         tempVineTile.createFixtures(world);
         if (vines.size < MAX_VINES && !vinesShrinking) {

@@ -279,7 +279,7 @@ public class CollisionController{
                         survivor = (Survivor) objB;
                         enemy = (Enemy) objA;
                     }
-                    if(survivor.canLoseLife()){
+                    if(survivor.canLoseLife() && survivor.isFollowing()){
                         survivor.loseLife();
                         survivor.coolDown(false);
                         enemy.setAttack(false);
