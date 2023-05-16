@@ -1,5 +1,6 @@
 package com.mygdx.game.Obstacles;
 
+import box2dLight.Light;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -10,6 +11,7 @@ import com.badlogic.gdx.physics.box2d.Filter;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 import com.mygdx.game.GameCanvas;
+import com.mygdx.game.Lights;
 import obstacle.BoxObstacle;
 import util.FilmStrip;
 
@@ -95,6 +97,8 @@ public class Survivor extends Shadow implements GameObstacle {
     private boolean safeInCaravan;
 
     protected boolean revealed;
+
+    private Light torchLight;
 
     private Vector2[] smogDetectionVertices;
     private boolean[] directionVacant;
@@ -460,6 +464,9 @@ public class Survivor extends Shadow implements GameObstacle {
      * Sets the survivor to be rescued and isFollowing to false.
      */
     public void rescue() {
+        if(torchLight != null){
+            torchLight.remove();
+        }
         this.isRescued = true;
         this.isFollowing = false;
     }
@@ -484,6 +491,7 @@ public class Survivor extends Shadow implements GameObstacle {
      * Sets isFollowing to true.
      */
     public void follow() {
+        torchLight = Lights.createTorchLight(body);
         isFollowing = true;
     }
 
@@ -634,6 +642,7 @@ public class Survivor extends Shadow implements GameObstacle {
     public void draw(GameCanvas canvas) {
         currentAnimator.setFrame((int)aframe);
         if (!isRescued && isAlive) {
+            super.draw(canvas, width*scale, height*scale);
             if (damageCooldown > 0) {
                 if (damageCooldown % 10 == 0) {
                     canvas.draw(currentAnimator, Color.CLEAR, origin.x, origin.y, body.getWorldCenter().x*drawScale.x - height*scale/2, body.getWorldCenter().y*drawScale.y- height*scale/2, width*scale, height*scale);

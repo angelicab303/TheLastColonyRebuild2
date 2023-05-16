@@ -22,6 +22,9 @@ public class Smog extends BoxObstacle implements GameObstacle{
     /** Whether this smog unit has fully faded */
     private boolean faded;
 
+    /** Whether this smog can reappear */
+    private boolean canReappear;
+
     /** Maximum time it will take for this smog unit to fade */
     private final float MAX_FADE_TIME = 60;
 
@@ -43,6 +46,8 @@ public class Smog extends BoxObstacle implements GameObstacle{
     private float aframe;
     /** Scale of the object */
     private float scale;
+
+    private int updateColor;
 
     private Array<Smog> neighbors;
 
@@ -101,12 +106,15 @@ public class Smog extends BoxObstacle implements GameObstacle{
         //setTexture(value);
         absorbed = false;
         faded = false;
+        canReappear = true;
 
         if (filter == null){
             filter = new Filter();
             filter.categoryBits = getCatagoricalBits();
             filter.maskBits = getMaskBits();
         }
+
+        updateColor = 0;
 
 
         animator = new FilmStrip(value,1,NUM_ANIM_FRAMES,NUM_ANIM_FRAMES);
@@ -127,10 +135,28 @@ public class Smog extends BoxObstacle implements GameObstacle{
         }
 
          */
+        if(!canReappear && (updateColor != 0)){
+            fadeTime = MAX_FADE_TIME;
+            faded = true;
+            setActive(false);
+            reappearanceTime = 0;
+            updateColor = 0;
+        }
+        if(updateColor > 0){
+            updateColor++;
+        }
+        if(updateColor >= 10){
+            fadeTime = 0;
+            updateColor = 0;
+        }
+
         if (reappearanceTime >= REAPPEAR_TIME){
             reappear();
+            fadeTime = MAX_FADE_TIME;
+            updateColor = 1;
             reappearanceTime = 0;
         }
+
 
 
         //Adds absorption time if absorbed
@@ -171,9 +197,13 @@ public class Smog extends BoxObstacle implements GameObstacle{
                 reappearanceTime = 0;
             }
         }
-        if (isFaded()){
+        if (isFaded() &&!(reappearanceTime >= REAPPEAR_TIME)){
             setActive(false);
         }
+    }
+
+    public void setCanReappear(boolean bool){
+        canReappear = bool;
     }
 
     public static void addNeighboringSmog(Smog s1, Smog s2){
@@ -189,6 +219,11 @@ public class Smog extends BoxObstacle implements GameObstacle{
         return;
     }
 
+
+    public void setTransparent(){
+        fadeTime = MAX_FADE_TIME;
+
+    }
     /**
      * Draws this obstacle to the canvas with varying alpha values for smog fading
      * <p>
@@ -233,7 +268,7 @@ public class Smog extends BoxObstacle implements GameObstacle{
         body.setActive(true);
         setAbsorbed(false);
         faded = false;
-        fadeTime = 0;
+        //fadeTime = 0;
     }
 
     @Override

@@ -26,6 +26,7 @@ import com.badlogic.gdx.math.*;
 import com.mygdx.game.Obstacles.*;
 import com.mygdx.game.Obstacles.Enemies.Enemy;
 import com.mygdx.game.Obstacles.Enemies.ScoutEnemy;
+import com.mygdx.game.Obstacles.Items.*;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -95,7 +96,7 @@ public class CollisionController{
             public float reportRayFixture(Fixture fixture, Vector2 point, Vector2 normal, float fraction) {
                 if (!fixture.isSensor()) {
                     Object obstacle = fixture.getBody().getUserData();
-                    if (obstacle instanceof Smog) {
+                    if (obstacle instanceof Smog || obstacle instanceof Obstacles) {
                         //System.out.println("Well at least something is working");
                         called = false;
                         //System.out.println(fraction);
@@ -182,7 +183,7 @@ public class CollisionController{
         if(weapon.isAbsorbing()) {
             for (Smog s : smogList) {
                 if (!s.isAbsorbed()){
-                    weapon.incrementAmmo(2);
+                    weapon.absorbSmog();
                 }
                 s.setAbsorbed(true);
             }
@@ -299,6 +300,46 @@ public class CollisionController{
                         player.coolDown(false);
                     }
                     break;
+                case GameObstacle.CATEGORY_PLAYER | GameObstacle.CATEGORY_ITEM:
+                    Item item;
+                    if (objA.getType() == GameObstacle.ObstacleType.PLAYER){
+                        player = (Player) objA;
+                        item = ((Item) objB);
+                    }
+                    else {
+                        player = (Player) objB;
+                        item = ((Item) objA);
+                    }
+                    switch (item.getItemType()){
+                        case KEY:
+                            player.collectKey();
+                            item.markRemoved(true);
+                            break;
+                        case TORCH:
+                            player.collectTorch();
+                            item.markRemoved(true);
+                            break;
+                        case COFFEE:
+                            break;
+
+                    }
+
+                    break;
+                case GameObstacle.CATEGORY_SURVIVOR | GameObstacle.CATEGORY_SMOG:
+                    Smog smog;
+                    if (objA.getType() == GameObstacle.ObstacleType.SURVIVOR){
+                        survivor = (Survivor) objA;
+                        smog = (Smog) objB;
+                    }
+                    else {
+                        survivor = (Survivor) objB;
+                        smog = (Smog) objA;
+                    }
+                    if(survivor.isFollowing()){
+                        smog.setCanReappear(false);
+                    }
+
+                    break;
                 case GameObstacle.CATEGORY_SURVIVOR | GameObstacle.CATEGORY_TOXIC:
                     if (objA.getType() == GameObstacle.ObstacleType.SURVIVOR){
                         survivor = (Survivor) objA;
@@ -366,10 +407,13 @@ public class CollisionController{
                 case GameObstacle.CATEGORY_SMOG | GameObstacle.CATEGORY_SURVIVOR:
                     if (objA.getType() == GameObstacle.ObstacleType.SURVIVOR){
                         ((Survivor) objA).setRevealed(true);
+                        ((Smog) objB).setCanReappear(true);
                     }
                     else {
                         ((Survivor) objB).setRevealed(true);
+                        ((Smog) objA).setCanReappear(true);
                     }
+
                     break;
                 case GameObstacle.CATEGORY_ENV | GameObstacle.CATEGORY_PLAYER:
                 case GameObstacle.CATEGORY_ENV | GameObstacle.CATEGORY_ENEMY:
@@ -417,6 +461,7 @@ public class CollisionController{
                 case GameObstacle.CATEGORY_PLAYER | GameObstacle.CATEGORY_SURVIVOR:
                 case GameObstacle.CATEGORY_SMOG | GameObstacle.CATEGORY_ENV:
                 case GameObstacle.CATEGORY_PURIFIED | GameObstacle.CATEGORY_VINE:
+                case GameObstacle.CATEGORY_ITEM| GameObstacle.CATEGORY_PLAYER:
                     contact.setEnabled(false);
             }
         }

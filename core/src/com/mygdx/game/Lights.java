@@ -6,10 +6,7 @@ import box2dLight.PointLight;
 import box2dLight.RayHandler;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.physics.box2d.Box2D;
-import com.badlogic.gdx.physics.box2d.Filter;
-import com.badlogic.gdx.physics.box2d.Fixture;
-import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.physics.box2d.*;
 import com.mygdx.game.Obstacles.GameObstacle;
 
 import java.awt.*;
@@ -23,6 +20,8 @@ public class Lights {
     static int rays;
 
     private static final float  MUSH_DIST = 10f;
+
+    private static final float TORCH_DIST = 30f;
 
 
     protected static List<Light> lightsList;
@@ -74,7 +73,7 @@ public class Lights {
 
 
     public static PointLight createMushroomLight(float x, float y){
-        PointLight light = new PointLight(rayHandler, rays, Color.PINK, MUSH_DIST, x*32+24, y*32+16);
+        PointLight light = new PointLight(rayHandler, rays, Color.PINK, MUSH_DIST, x*32, y*32);
         //lightsList.add(light);
 
         Filter filter = new Filter();
@@ -83,6 +82,19 @@ public class Lights {
         light.setContactFilter(filter);
         return light;
 
+    }
+
+    public static PointLight createTorchLight(Body body){
+        PointLight light = new PointLight(rayHandler, rays, Color.ORANGE, TORCH_DIST, 0, 0);
+        light.attachToBody(body);
+        //lightsList.add(light);
+        light.setSoft(true);
+
+        Filter filter = new Filter();
+        filter.categoryBits = 0x1000;
+        filter.maskBits = CATEGORY_ENV;
+        light.setContactFilter(filter);
+        return light;
     }
 
     public static ConeLight createConeLight(com.badlogic.gdx.graphics.Color color, float distance, float x, float y, float coneDegree){

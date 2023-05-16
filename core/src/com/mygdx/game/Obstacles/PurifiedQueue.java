@@ -135,10 +135,10 @@ public class PurifiedQueue {
 
             setActive(false);
             animator = new FilmStrip(PurifiedQueue.texture,1,NUM_ANIM_FRAMES,NUM_ANIM_FRAMES);
-            float maxFrame = 4;
-            float minFrame = 0;
-            float frameNum = (float)(Math.random()*(maxFrame-minFrame+1)+minFrame);
-            aframe = frameNum;
+//            float maxFrame = 4;
+//            float minFrame = 0;
+//            float frameNum = (float)(Math.random()*(maxFrame-minFrame+1)+minFrame);
+            aframe = 0;
             this.scale = scale;
         }
 

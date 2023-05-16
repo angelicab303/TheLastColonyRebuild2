@@ -22,6 +22,7 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.JsonValue;
+import com.badlogic.gdx.utils.Sort;
 import com.mygdx.game.EnemyControllers.EnemyController;
 import com.mygdx.game.EnemyControllers.ScoutEnemyController;
 import com.mygdx.game.Obstacles.*;
@@ -33,9 +34,7 @@ import obstacle.BoxObstacle;
 import obstacle.Obstacle;
 import util.*;
 
-import java.util.Iterator;
-
-
+import java.util.*;
 
 
 /**
@@ -139,6 +138,10 @@ public class GameplayController implements Screen {
 	private Texture fHeartTexture;
 	/** Texture asset for the slashed heart texture */
 	private Texture sHeartTexture;
+	/** Texture asset for the full egg texture */
+	private Texture fEggTexture;
+	/** Texture asset for the broken egg texture */
+	private Texture bEggTexture;
 
 	// *************************** END OF TEXTURES ***************************
 
@@ -164,9 +167,10 @@ public class GameplayController implements Screen {
 
 	private AssetDirectory directory;
 
+	private Map<String, TextureRegion> assetTextures;
+
 	/** Reference to the player avatar */
 	protected Player player;
-	protected Weapon weapon;
 	/** Reference to the caravan avatar */
 	private Caravan caravan;
 	// /** Reference to the smog bar asset */
@@ -194,9 +198,6 @@ public class GameplayController implements Screen {
 	private Array<Smog> smogArr;
 	/** Enemy list */
 	private Array<Enemy> enemyArr;
-
-	/** ShriekerEnemy list */
-	private Array<ShriekerEnemy> shriekerArr;
 	/** Survivor list **/
 	private Array<Survivor> survivorArr;
 	/** List of all tree positions **/
@@ -234,14 +235,10 @@ public class GameplayController implements Screen {
 	protected BitmapFont displayFontInteract;
 	/** The actual assets to be loaded */
 	protected AssetDirectory assets;
-	/** Texture atlas to support a progress bar */
-	private Texture statusBar;
-
-	// statusBar is a "texture atlas." Break it up into parts.
-	/** Left cap to the status background (grey region) */
-	private TextureRegion statusBkgLeft;
-	/** Middle portion of the status background (grey region) */
-	private TextureRegion statusBkgMiddle;
+	/** Stun animation for enemies */
+	private FilmStrip stunAnimation;
+	/** Shadows for displaying hitboxes */
+	private TextureRegion shadow;
 	/** Right cap to the status background (grey region) */
 	private TextureRegion statusBkgRight;
 	/** Left cap to the status forground (colored region) */
@@ -368,16 +365,15 @@ public class GameplayController implements Screen {
 	 * @param gravity The gravitational force on this Box2d world
 	 */
 	protected GameplayController(Rectangle bounds, Vector2 gravity) {
-
 		world = new World(gravity, false);
 		this.bounds = new Rectangle(bounds);
 		this.scale = new Vector2(1, 1);
+		this.assetTextures = new HashMap<>();
 		complete = false;
 		failed = false;
 		debug = false;
 		active = false;
 		countdown = -1;
-//		setDebug(true);
 	}
 
 	/**
@@ -418,9 +414,12 @@ public class GameplayController implements Screen {
 	public void gatherAssets(AssetDirectory directory) {
 		this.directory = directory;
 
+		//All textures not corresponding to UI elements/player/survivor/enemy will be loaded differently -V
+
 		// Player, Enemy, and Survivor Textures
 		survivorTexture = new TextureRegion(directory.getEntry("images:survivorSprite", Texture.class));
 		survivorITexture = directory.getEntry("images:sInteract", Texture.class);
+
 
 		// Smog, Purified Air, and Air Bar Textures
 		mushroomTexture = new TextureRegion(directory.getEntry("images:mushroom", Texture.class));
@@ -442,53 +441,140 @@ public class GameplayController implements Screen {
 		playerDirectionTextures = importPlayerFilmstrip();
 		survivorDirectionTextures = importCharacterFilmstrip("survivorP");
 		enemyDirectionTextures = importEnemyFilmstrips();
-		vineTextureVertical = directory.getEntry("images:vineVertical", Texture.class);
-		vineTextureHorizontal = directory.getEntry("images:vineHorizontal", Texture.class);
-		vineTextureLeftBottom = directory.getEntry("images:vineBottomLeft", Texture.class);
-		vineTextureLeftTop = directory.getEntry("images:vineTopLeft", Texture.class);
-		vineTextureRightBottom = directory.getEntry("images:vineBottomRight", Texture.class);
-		vineTextureRightTop = directory.getEntry("images:vineTopRight", Texture.class);
-		vineTextureHeadLeft = directory.getEntry("images:vineStraightHeadLeft", Texture.class);
-		vineTextureHeadRight = directory.getEntry("images:vineStraightHeadRight", Texture.class);
-		vineTextureHeadDown = directory.getEntry("images:vineStraightHeadDown", Texture.class);
-		vineTextureHeadUp = directory.getEntry("images:vineStraightHeadUp", Texture.class);
-		vineTextureHeadLeftBottom = directory.getEntry("images:vineCornerHeadLeftDown", Texture.class);
-		vineTextureHeadLeftTop = directory.getEntry("images:vineCornerHeadLeftUp", Texture.class);
-		vineTextureHeadRightBottom = directory.getEntry("images:vineCornerHeadRightDown", Texture.class);
-		vineTextureHeadRightTop = directory.getEntry("images:vineCornerHeadRightUp", Texture.class);
 
-		vineTextureClosedLeft = directory.getEntry("images:vineStraightClosedLeft", Texture.class);
-		vineTextureClosedRight = directory.getEntry("images:vineStraightClosedRight", Texture.class);
-		vineTextureClosedDown = directory.getEntry("images:vineStraightClosedDown", Texture.class);
-		vineTextureClosedUp = directory.getEntry("images:vineStraightClosedUp", Texture.class);
-		vineTextureClosedLeftBottom = directory.getEntry("images:vineCornerClosedLeftDown", Texture.class);
-		vineTextureClosedLeftTop = directory.getEntry("images:vineCornerClosedLeftUp", Texture.class);
-		vineTextureClosedRightBottom = directory.getEntry("images:vineCornerClosedRightDown", Texture.class);
-		vineTextureClosedRightTop = directory.getEntry("images:vineCornerClosedRightUp", Texture.class);
+		//Vines for enemies (Have shortened the code a bit) -V
 
 		vineTextures = new Texture[22];
-		vineTextures[0] = vineTextureVertical;
-		vineTextures[1] = vineTextureHorizontal;
-		vineTextures[2] = vineTextureLeftBottom;
-		vineTextures[3] = vineTextureLeftTop;
-		vineTextures[4] = vineTextureRightBottom;
-		vineTextures[5] = vineTextureRightTop;
-		vineTextures[6] = vineTextureHeadLeft;
-		vineTextures[7] = vineTextureHeadRight;
-		vineTextures[8] = vineTextureHeadDown;
-		vineTextures[9] = vineTextureHeadUp;
-		vineTextures[10] = vineTextureHeadLeftBottom;
-		vineTextures[11] = vineTextureHeadLeftTop;
-		vineTextures[12] = vineTextureHeadRightBottom;
-		vineTextures[13] = vineTextureHeadRightTop;
-		vineTextures[14] = vineTextureClosedLeft;
-		vineTextures[15] = vineTextureClosedRight;
-		vineTextures[16] = vineTextureClosedDown;
-		vineTextures[17] = vineTextureClosedUp;
-		vineTextures[18] = vineTextureClosedLeftTop;
-		vineTextures[19] = vineTextureClosedLeftBottom;
-		vineTextures[20] = vineTextureClosedRightTop;
-		vineTextures[21] = vineTextureClosedRightBottom;
+		vineTextures[0] = directory.getEntry("images:vineVertical", Texture.class);
+		vineTextures[1] = directory.getEntry("images:vineHorizontal", Texture.class);
+		vineTextures[2] = directory.getEntry("images:vineBottomLeft", Texture.class);
+		vineTextures[3] = directory.getEntry("images:vineTopLeft", Texture.class);
+		vineTextures[4] = directory.getEntry("images:vineBottomRight", Texture.class);
+		vineTextures[5] = directory.getEntry("images:vineTopRight", Texture.class);
+		vineTextures[6] = directory.getEntry("images:vineStraightHeadLeft", Texture.class);
+		vineTextures[7] = directory.getEntry("images:vineStraightHeadRight", Texture.class);
+		vineTextures[8] = directory.getEntry("images:vineStraightHeadDown", Texture.class);
+		vineTextures[9] = directory.getEntry("images:vineStraightHeadUp", Texture.class);
+		vineTextures[10] = directory.getEntry("images:vineCornerHeadLeftDown", Texture.class);
+		vineTextures[11] = directory.getEntry("images:vineCornerHeadLeftUp", Texture.class);
+		vineTextures[12] = directory.getEntry("images:vineCornerHeadRightDown", Texture.class);
+		vineTextures[13] = directory.getEntry("images:vineCornerHeadRightUp", Texture.class);
+		vineTextures[14] = directory.getEntry("images:vineStraightClosedLeft", Texture.class);
+		vineTextures[15] = directory.getEntry("images:vineStraightClosedRight", Texture.class);
+		vineTextures[16] = directory.getEntry("images:vineStraightClosedDown", Texture.class);
+		vineTextures[17] = directory.getEntry("images:vineStraightClosedUp", Texture.class);
+		vineTextures[18] = directory.getEntry("images:vineCornerClosedLeftDown", Texture.class);
+		vineTextures[19] = directory.getEntry("images:vineCornerClosedLeftUp", Texture.class);
+		vineTextures[20] = directory.getEntry("images:vineCornerClosedRightDown", Texture.class);
+		vineTextures[21] = directory.getEntry("images:vineCornerClosedRightUp", Texture.class);
+
+		//Toxic air for enemies
+		toxicAirTexture = directory.getEntry("images:testSmog", Texture.class);
+
+		//purified air for player
+//		pureAirTexture = directory.getEntry("images:testSmog", Texture.class);
+
+
+		//UI elements
+		airBarTexture = directory.getEntry("images:airBar", Texture.class);
+		fHeartTexture = directory.getEntry("images:fullHeart", Texture.class);
+		sHeartTexture = directory.getEntry("images:slashedHeart", Texture.class);
+		fEggTexture = directory.getEntry("images:fullEgg", Texture.class);
+		bEggTexture = directory.getEntry("images:brokenEgg", Texture.class);
+
+		//This code is terrible but beggers can't be choosers - V
+
+		String key;
+		//grass -> # grass tiles = 20 for a, 9 for b
+		for(int i = 1; i < 21; i++){
+			key = "tiles:4a_grass" + i;
+			assetTextures.put(key , new TextureRegion(directory.getEntry(key, Texture.class)));
+		}
+
+		for(int i = 1; i < 10; i++){
+			key = "tiles:4b_grass" + i;
+			assetTextures.put(key , new TextureRegion(directory.getEntry(key, Texture.class)));
+		}
+
+		//bricks -> # brick tiles = 10
+		for(int i = 1; i < 11; i++){
+			key = "tiles:5a_brick" + i;
+			assetTextures.put(key , new TextureRegion(directory.getEntry(key, Texture.class)));
+		}
+		//steel??? What?-> # steel tiles = 4
+		for(int i = 1; i < 5; i++){
+			key = "tiles:5b_steel" + i;
+			assetTextures.put(key , new TextureRegion(directory.getEntry(key, Texture.class)));
+		}
+
+		key = "tiles:5c_borderSmog";
+		assetTextures.put(key , new TextureRegion(directory.getEntry(key, Texture.class)));
+
+		//fences -> # fence tiles = 9
+		for(int i = 1; i < 10; i++){
+			key = "tiles:5d_fence" + i;
+			assetTextures.put(key , new TextureRegion(directory.getEntry(key, Texture.class)));
+		}
+
+		//tree -> # tree tiles = 6
+		for(int i = 1; i < 7; i++){
+			key = "tiles:6a_tree" + i;
+			assetTextures.put(key , new TextureRegion(directory.getEntry(key, Texture.class)));
+		}
+
+		key = "tiles:9a_torch";
+		assetTextures.put(key , new TextureRegion(directory.getEntry(key, Texture.class)));
+
+		key = "tiles:9a_mushroom";
+		assetTextures.put(key , new TextureRegion(directory.getEntry(key, Texture.class)));
+
+		stunAnimation = directory.getEntry("images:stun.fire", FilmStrip.class );
+		shadow = new TextureRegion(directory.getEntry("images:shadow", Texture.class));
+
+
+
+		// Smog, Purified Air, and Air Bar Textures
+		//mushroomTexture = new TextureRegion(directory.getEntry("images:mushroom", Texture.class));
+		smogTexture = directory.getEntry("images:testSmog", Texture.class);
+		smogTexture2 = new TextureRegion(directory.getEntry("images:smog2", Texture.class));
+
+		// pureAirTexture = new TextureRegion(directory.getEntry("images:smog1",
+		// Texture.class));
+//
+//		// Floor Textures
+//		grassTexture = new TextureRegion(directory.getEntry("tiles:4a_grass1", Texture.class));
+//		dirtTexture = new TextureRegion(directory.getEntry("tiles:4c_dirt1", Texture.class));
+//		dirtMushroomTexture = new TextureRegion(directory.getEntry("tiles:4c_dirt2", Texture.class));
+//		rockTexture = new TextureRegion(directory.getEntry("tiles:4b_rocks", Texture.class));
+//		brickFloorTexture = new TextureRegion(directory.getEntry("tiles:4d_brick1", Texture.class));
+//		brickFloorCrackedTexture = new TextureRegion(directory.getEntry("tiles:4d_brick3", Texture.class));
+//		brickFloorCrackedTopTexture = new TextureRegion(directory.getEntry("tiles:4d_brick2", Texture.class));
+//
+//		// Wall Textures
+//		cliffTexture = new TextureRegion(directory.getEntry("images:cliff3", Texture.class));
+//		cliffTexture2 = new TextureRegion(directory.getEntry("images:cliff4", Texture.class));
+//		brickWallTexture = new TextureRegion(directory.getEntry("tiles:5a_brick1", Texture.class));
+//		brickWallTopOpenTexture = new TextureRegion(directory.getEntry("tiles:5a_brick4", Texture.class));
+//		brickWallSidesOpenTexture = new TextureRegion(directory.getEntry("tiles:5a_brick3", Texture.class));
+//		brickWallCrackedTexture = new TextureRegion(directory.getEntry("tiles:5a_brick2", Texture.class));
+//		brickWallTopTexture = new TextureRegion(directory.getEntry("tiles:5a_brick5", Texture.class));
+//		borderSmogTexture = new TextureRegion(directory.getEntry("tiles:5c_borderSmog", Texture.class));
+//
+//		// Caravan, Trees, and Mushroom Textures
+//		caravanTexture = new TextureRegion(directory.getEntry("tiles:0_caravan", Texture.class));
+//		treeTexture = new TextureRegion(directory.getEntry("tiles:6a_mediumTree", Texture.class));
+//		treeTallTexture = new TextureRegion(directory.getEntry("tiles:6b_tallTree", Texture.class));
+//		treeWideTexture = new TextureRegion(directory.getEntry("images:tree2", Texture.class));
+//		treeBallTexture = new TextureRegion(directory.getEntry("tiles:6c_shortTree", Texture.class));
+//		treeBallFadedTexture = new TextureRegion(directory.getEntry("images:tree3", Texture.class));
+//		mushroomTexture = new TextureRegion(directory.getEntry("images:mushroom", Texture.class));
+//
+//
+//
+
+
+
+		//Sound
 
 		fireSound = directory.getEntry("platform:pew", Sound.class);
 
@@ -579,6 +665,7 @@ public class GameplayController implements Screen {
 		for (Obstacle obj : movObjects) {
 			obj.deactivatePhysics(world);
 		}
+		EnemyController.clearShriekers();
 		enemyControllers.clear();
 		survivorControllers.clear();
 		smogs.clear();
@@ -645,14 +732,18 @@ public class GameplayController implements Screen {
 
 		// Setting the size of the tiles
 		Shadow.setSize(32f);
+		Shadow.setTextureRegion(shadow);
+
+		//sets the stun animation for all enemies
+		Enemy.setStunFilmStrip(stunAnimation);
 
 //		canvas.setSize(32 * tileSize, 26 * tileSize);
 //		System.out.println("Width: " + canvas.getWidth() + "\t\tHeight: " + canvas.getHeight());
 		// Here we will instantiate the objects in the level using the JSONLevelReader.
 		JSONLevelReader reader = new JSONLevelReader(directory, bounds, world, level, canvas.camera, input,
 				objects, movObjects, floorArr, SCALE, tileGrid, smogTiles, smogGrid, tileSize, tileOffset, smogTileSize, smogTileOffset,
-				playerDirectionTextures, survivorDirectionTextures, enemyDirectionTextures, toxicAir, survivorITexture,
-				displayFontInteract, fHeartTexture, player, weapon);
+				playerDirectionTextures, survivorDirectionTextures, enemyDirectionTextures, vineTextures, toxicAir, survivorITexture, assetTextures,
+				displayFontInteract, fHeartTexture, player, null);
 
 //		if (caravan.getX() < 400f) {
 //			int i = 0;
@@ -672,29 +763,17 @@ public class GameplayController implements Screen {
 //		canvas.camera = reader.getCamera();
 		caravan = reader.getCaravan();
 		player = reader.getPlayer();
-		weapon = reader.getWeapon();
 		survivorArr = reader.getSurvivors();
 		enemyArr = reader.getEnemies();
 		survivorControllers = reader.getSurvivorControllers();
 		enemyControllers = reader.getEnemyControllers();
-
-//		for (int i = 0; i < tileGrid.length; i++)
-//		{
-//			for (int j = 0; j < tileGrid[0].length; j++)
-//			{
-//				if (tileGrid[i][j])
-//				{
-//					System.out.println(i + " " + j);
-//				}
-//			}
-//		}
 
 		if (isInvincible) {
 			player.setHealth(10000);
 		}
 		// Gives ammo in debug mode
 		if (isDebug()) {
-			weapon.setNumAmmo(1000);
+			player.weapon.setNumAmmo(1000);
 		}
 
 		// *************************** SMOG OBSTACLES ***************************
@@ -733,15 +812,16 @@ public class GameplayController implements Screen {
 
 		for (int i = 0; i < column; i++) {
 			for (int j = 0; j < column; j++) {
-				if (smogLocations[i][j] && Vector2.dst(i * smogTileSize + smogTileOffset, j * smogTileSize + smogTileOffset, player.getX(), player.getY()) > 90) {
+				if (Vector2.dst(i * smogTileSize + smogTileOffset, j * smogTileSize + smogTileOffset, player.getX(), player.getY()) > 90) {
 					// Primary Grid
 					// Later get data from json file
 					float maxFrame = 4;
 					float minFrame = 0;
 					float frameNum = (float) (Math.random() * (maxFrame - minFrame + 1) + minFrame);
-					smogT = new Smog(i * smogTileSize + smogTileOffset, j * smogTileSize + smogTileOffset, smogTexture, frameNum,
+					smogT = new Smog(i * smogTileSize, j * smogTileSize, smogTexture, frameNum,
 							SCALE);
 					smogT.setAwake(true);
+					smogT.setBodyType(BodyDef.BodyType.StaticBody);
 					smogArr.add(smogT);
 					addSmog(smogT);
 
@@ -757,6 +837,10 @@ public class GameplayController implements Screen {
 					}
 
 					tempSmogArray[j] = smogT;
+					if(!smogLocations[i][j]){
+						smogT.setAbsorbed(true);
+						smogT.setTransparent();
+					}
 				}
 
 				else {
@@ -765,15 +849,16 @@ public class GameplayController implements Screen {
 			}
 
 			for (int j = 0; j < smogLocations[0].length; j++) {
-				if (smogLocations[i][j] && Vector2.dst(i * smogTileSize + smogTileOffset, j * smogTileSize + smogTileOffset, player.getX(), player.getY()) > 90) {
+				if (Vector2.dst(i * smogTileSize + smogTileOffset, j * smogTileSize + smogTileOffset, player.getX(), player.getY()) > 90) {
 
 					// Secondary Grid
 					float maxFrame = 4;
 					float minFrame = 0;
 					float frameNum = (float) (Math.random() * (maxFrame - minFrame + 1) + minFrame);
-					smogTO = new Smog(i * smogTileSize + smogTileSize, j * smogTileSize + smogTileSize, smogTexture, frameNum,
+					smogTO = new Smog(i * smogTileSize + smogTileOffset, j * smogTileSize + smogTileOffset, smogTexture, frameNum,
 							SCALE);
 					smogTO.setAwake(true);
+					smogTO.setBodyType(BodyDef.BodyType.StaticBody);
 					smogArr.add(smogTO);
 					addSmog(smogTO);
 
@@ -786,6 +871,11 @@ public class GameplayController implements Screen {
 					smogTO.addNeighboringSmog(tempSmogArrayO[j], smogTO);
 
 					tempSmogArrayO[j] = smogTO;
+
+					if(!smogLocations[i][j]){
+						smogTO.setAbsorbed(true);
+						smogTO.setTransparent();
+					}
 				}
 				else {
 					tempSmogArrayO[j] = null;
@@ -794,7 +884,7 @@ public class GameplayController implements Screen {
 
 
 		}
-		airBar = new AirBar(airBarTexture, weapon.getMaxNumAmmo(), weapon.getNumAmmo(), canvas);
+		airBar = new AirBar(airBarTexture, player.weapon.getMaxNumAmmo(), player.weapon.getNumAmmo(), canvas);
 
 		// Hearts
 		int numLives = player.getHealth();
@@ -805,9 +895,9 @@ public class GameplayController implements Screen {
 
 		for (int i = 0; i < numLives; i++) {
 			if (i > 0) {
-				spacing += 13.0f;
+				spacing += 15.0f;
 			}
-			Heart tempHeart = new Heart(fHeartTexture, heartX, heartY, spacing);
+			Heart tempHeart = new Heart(fEggTexture, heartX, heartY, spacing);
 			heartArr.add(tempHeart);
 		}
 	}
@@ -914,15 +1004,15 @@ public class GameplayController implements Screen {
 		}
 
 		if (input.didPressAbsorb()) {
-			weapon.setAbsorbing(true);
+			player.weapon.setAbsorbing(true);
 		} else {
-			weapon.setAbsorbing(false);
+			player.weapon.setAbsorbing(false);
 		}
 
 		if (input.didPressFire()) {
-			weapon.setFiring(true);
+			player.weapon.setFiring(true);
 		} else {
-			weapon.setFiring(false);
+			player.weapon.setFiring(false);
 		}
 
 		// Update player and weapon position
@@ -941,19 +1031,19 @@ public class GameplayController implements Screen {
 		}
 
 		// Update UI elements
-		airBar.update(weapon.getNumAmmo());
+		airBar.update(player.weapon.getNumAmmo());
 
-		weapon.update(player.getPosition(), canvas.unproject(input.getMousePos()), input.getShootDir());
+		player.weapon.update(player.getPosition(), canvas.unproject(input.getMousePos()), input.getShootDir());
 		// Check if the weapon is firing
 
-		if (weapon.fire()) {
-			purifiedAir.attack(weapon.getBullets(), weapon.getPosition(), weapon.getImpulses());
+		if (player.weapon.fire()) {
+			purifiedAir.attack(player.weapon.getBullets(), player.weapon.getPosition(), player.weapon.getImpulses());
 		}
 		purifiedAir.update();
 		toxicAir.update();
 
 		// Process Collisions
-		collisionController.update(world, player, weapon, survivorArr);
+		collisionController.update(world, player, player.weapon, survivorArr);
 		// This detects and resolves all collisions between the weapon sensor and any
 		// collided smog tiles
 		// if (weapon.isFiring()) {
@@ -1004,55 +1094,55 @@ public class GameplayController implements Screen {
 		for (int i = 0; i < survivorArr.size; i++) {
 			//System.out.println(caravan.getCurrentCapacity() + " " + caravan.getMaxCapacity());
 			if (!survivorArr.get(i).isRescued()) {
-				// This will be handled by collisionController in the future
-				survivorArr.get(i).update(survivorControllers.get(i).getAction());
-				if (survivorArr.get(i).getX() < 20) {
-					survivorArr.get(i).setPosition(20, survivorArr.get(i).getBody().getPosition().y);
-				}
-				if (survivorArr.get(i).getX() >= tileGrid.length * tileSize - 20) {
-					survivorArr.get(i).setPosition(tileGrid.length * tileSize - 20, survivorArr.get(i).getBody().getPosition().y);
-				}
-				if (survivorArr.get(i).getY() < 20) {
-					survivorArr.get(i).setPosition(survivorArr.get(i).getBody().getPosition().x, 20);
-				}
-				if (survivorArr.get(i).getY() >= tileGrid[0].length * tileSize - 20) {
-					survivorArr.get(i).setPosition(survivorArr.get(i).getBody().getPosition().x, tileGrid[0].length * tileSize - 20);
-				}
-				survivorArr.get(i).update();
-				if (survivorArr.get(i).isInteractable() && input.didCollectSurvivor()) {
-					survivorArr.get(i).setInteractable(false);
-					if (!survivorArr.get(i).isFollowing()) {
-						player.addToFollowing(survivorArr.get(i));
-					}
-					survivorArr.get(i).follow();
-				}
-				if (!survivorArr.get(i).isAlive()) {
-					player.removeFromFollowing(survivorArr.get(i));
-					setFailure(true);
-				}
-				if (survivorArr.get(i).isRescued()) {
-					player.removeFromFollowing(survivorArr.get(i));
-					survivorArr.get(i).deactivatePhysics(world);
-					//survivorArr.removeIndex(i);
-					numRescued++;
-					caravan.incrCap();
-					caravan.setInteractable(false);
-				}
+			// This will be handled by collisionController in the future
+			survivorArr.get(i).update(survivorControllers.get(i).getAction());
+			if (survivorArr.get(i).getX() < 20) {
+				survivorArr.get(i).setPosition(20, survivorArr.get(i).getBody().getPosition().y);
 			}
+			if (survivorArr.get(i).getX() >= tileGrid.length * tileSize - 20) {
+				survivorArr.get(i).setPosition(tileGrid.length * tileSize - 20, survivorArr.get(i).getBody().getPosition().y);
+			}
+			if (survivorArr.get(i).getY() < 20) {
+				survivorArr.get(i).setPosition(survivorArr.get(i).getBody().getPosition().x, 20);
+			}
+			if (survivorArr.get(i).getY() >= tileGrid[0].length * tileSize - 20) {
+				survivorArr.get(i).setPosition(survivorArr.get(i).getBody().getPosition().x, tileGrid[0].length * tileSize - 20);
+			}
+			survivorArr.get(i).update();
+			if (survivorArr.get(i).isInteractable() && input.didCollectSurvivor()) {
+				survivorArr.get(i).setInteractable(false);
+				if (!survivorArr.get(i).isFollowing()) {
+					player.addToFollowing(survivorArr.get(i));
+				}
+				survivorArr.get(i).follow();
+			}
+			if (!survivorArr.get(i).isAlive()) {
+				player.removeFromFollowing(survivorArr.get(i));
+				setFailure(true);
+			}
+			if (survivorArr.get(i).isRescued()) {
+				player.removeFromFollowing(survivorArr.get(i));
+				survivorArr.get(i).deactivatePhysics(world);
+					//survivorArr.removeIndex(i);
+				numRescued++;
+				caravan.incrCap();
+				caravan.setInteractable(false);
+			}
+		}
 
 		}
 		caravan.update();
 		// Update caravan state
-		if (caravan.getBody().getFixtureList().first().testPoint(player.getPosition())) {
+		if (caravan.getBody().getFixtureList().get(1).testPoint(player.getPosition())) {
 			caravan.setInteractable(true);
 		}
 		else {
 			caravan.setInteractable(false);
 		}
 //		if (caravan.isInteractable() && input.didDropSurvivors()) {
-		if (caravan.getCurrentCapacity() == caravan.getMaxCapacity()) {
-			setComplete(true);
-		}
+			if (caravan.getCurrentCapacity() == caravan.getMaxCapacity()) {
+				setComplete(true);
+			}
 //			for (int i = 0; i < survivorArr.size; i++) {
 //				if (survivorArr.get(i).isFollowing()) {
 //					survivorArr.get(i).rescue();
@@ -1071,7 +1161,7 @@ public class GameplayController implements Screen {
 		// Update Ammo Progress Bar
 		// Update SmogBar
 
-		progress = weapon.getNumAmmo() / (Weapon.MAX_AMMO_CAPACITY * 1.0f);
+		progress = player.weapon.getNumAmmo() / (Weapon.MAX_AMMO_CAPACITY * 1.0f);
 
 		// Sort the player into the list of statics and player
 		// for (int i = 0; i < staticsAndPlayer.size; i++) {
@@ -1095,7 +1185,7 @@ public class GameplayController implements Screen {
 		// Update hearts
 		for (int i = player.getMaxHealth() - 1; i >= 0; i--) {
 			if (player.getHealth() <= i) {
-				heartArr.get(i).setTexture(sHeartTexture);
+				heartArr.get(i).setTexture(bEggTexture);
 			}
 		}
 
@@ -1352,6 +1442,19 @@ public class GameplayController implements Screen {
 		canvas.updateLights();
 	}
 
+
+	static class SortbyY implements Comparator<Obstacle>
+	{
+		// Used for sorting in ascending order of
+		// roll number
+		public int compare(Obstacle a, Obstacle b)
+		{
+			return (int)(b.getY()-a.getY());
+		}
+	}
+
+
+
 	/**
 	 * Draw the physics objects to the canvas
 	 *
@@ -1366,6 +1469,8 @@ public class GameplayController implements Screen {
 //		System.out.println("Started Drawing");
 		canvas.clear();
 
+		Collections.sort(objects, new SortbyY());
+
 		if (isActive()) {
 			canvas.begin(player.getX(), player.getY(), tileGrid.length * tileSize, tileGrid[0].length * tileSize);
 		} else {
@@ -1378,20 +1483,8 @@ public class GameplayController implements Screen {
 			flr.draw(canvas);
 		}
 
-		for(Obstacle obj : movObjects){
-			if(obj.getBehind()){
-				obj.draw(canvas);
-			}
-		}
-
 		for (Obstacle obj : objects) {
 			obj.draw(canvas);
-		}
-
-		for(Obstacle obj : movObjects){
-			if(!obj.getBehind()){
-				obj.draw(canvas);
-			}
 		}
 
 		for (Obstacle obj : smogs){
@@ -1450,12 +1543,12 @@ public class GameplayController implements Screen {
 			}
 			toxicAir.drawDebug(canvas);
 
-			weapon.draw(canvas);
+			player.weapon.draw(canvas);
 			canvas.endDebug();
 		}
 		if (paused) {
 			displayFont.setColor(Color.GRAY);
-			canvas.drawText("PAUSED", displayFont, canvas.camera.position.x - 150f, canvas.camera.position.y + 25f);
+			canvas.drawText("PAUSED", displayFont, player.getX() - 150f, player.getY() + 25f);
 		}
 		canvas.end();
 
@@ -1463,15 +1556,15 @@ public class GameplayController implements Screen {
 		if (complete && !failed) {
 			displayFont.setColor(Color.YELLOW);
 			canvas.begin(); // DO NOT SCALE
-			canvas.drawText("VICTORY!", displayFont, canvas.camera.position.x - 195, canvas.camera.position.y);
+			canvas.drawText("VICTORY!", displayFont, player.getX() - 195, player.getY());
 
-			canvas.drawText("Press 'N' for next level", displayFontSub, canvas.camera.position.x - 170, canvas.camera.position.y - 100);
+			canvas.drawText("Press 'R' to restart", displayFontSub, player.getX() - 120, player.getY() - 100);
 			canvas.end();
 		} else if (failed) {
 			displayFont.setColor(Color.RED);
 			canvas.begin(); // DO NOT SCALE
-			canvas.drawText("FAILURE!", displayFont, canvas.camera.position.x - 195, canvas.camera.position.y);
-			canvas.drawText("Press 'R' to restart", displayFontSub, canvas.camera.position.x - 120, canvas.camera.position.y - 100);
+			canvas.drawText("FAILURE!", displayFont, player.getX() - 195, player.getY());
+			canvas.drawText("Press 'R' to restart", displayFontSub, player.getX() - 120, player.getY() - 100);
 
 			canvas.end();
 		}

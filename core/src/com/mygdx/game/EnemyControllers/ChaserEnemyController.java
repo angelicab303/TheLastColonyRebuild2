@@ -26,8 +26,8 @@ public class ChaserEnemyController extends com.mygdx.game.EnemyControllers.Enemy
 
     boolean followingSurvivor;
 
-    public ChaserEnemyController(boolean[][] board, int tileSize, int tileOffset, Enemy enemy, Player player, Array<ShriekerEnemy> shriekArr) {
-        super(board, tileSize, tileOffset, enemy, player, shriekArr);
+    public ChaserEnemyController(boolean[][] board, int tileSize, int tileOffset, Enemy enemy, Player player) {
+        super(board, tileSize, tileOffset, enemy, player);
         target = new Vector2(player.getX(), player.getY());
         super.initTiles(target);
         followingSurvivor = false;
