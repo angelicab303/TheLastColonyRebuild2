@@ -73,7 +73,7 @@ public class Lights {
 
 
     public static PointLight createMushroomLight(float x, float y){
-        PointLight light = new PointLight(rayHandler, rays, Color.PINK, MUSH_DIST, x*32+24, y*32+16);
+        PointLight light = new PointLight(rayHandler, rays, Color.PINK, MUSH_DIST, x*32, y*32);
         //lightsList.add(light);
 
         Filter filter = new Filter();
