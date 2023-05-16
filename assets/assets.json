@@ -13,6 +13,7 @@
     "mainMenu:cursor": "images/mainMenu/SimpleCursor.png",
     "mainMenu:smallCloud": "images/mainMenu/SmallCloud.png",
     "mainMenu:levels": "images/mainMenu/Levels.png",
+    "levelSelect:background": "images/levelSelect/Background0-5.png",
     "levelSelect:1": "images/levelSelect/1.png",
     "levelSelect:2": "images/levelSelect/2.png",
     "levelSelect:1Down": "images/levelSelect/1Down.png",
@@ -20,6 +21,13 @@
     "levelSelect:title": "images/levelSelect/LevelSelect.png",
     "levelSelect:back": "images/levelSelect/Back.png",
     "levelSelect:backDown": "images/levelSelect/BackDown.png",
+    "levelSelect:mushroom": "images/levelSelect/Mushroom1000.png",
+    "levelSelect:mushroomDown": "images/levelSelect/MushroomDown.png",
+    "levelSelect:caravan": "images/levelSelect/LevelSelectCaravan.png",
+    "levelSelect:enter": "images/levelSelect/Enter_Button.png",
+    "images:empty": "images/empty.png",
+    "levelSelect:smogWall": "images/levelSelect/LevelSelectSmogAsset.png",
+
     "shared:earth": {
       "file": "shared/earthtile.png",
       "wrapU": "repeated",
@@ -75,6 +83,7 @@
     "images:tree1": "images/tree-1a.png",
     "images:tree2": "images/tree-1c.png",
     "images:tree3": "images/tree-2a.png",
+
     "images:mushroom": "images/target.png",
     "images:playerMovementUp": {
       "file" : "images/player/backwalk2-Sheet.png",
