@@ -290,6 +290,7 @@
       }
     },
 
+    "images:sampleTutorial": "images/sampleTutorial.png",
     "images:smog1": "images/SmogSprite2.png",
     "images:smog2": "images/SmogSprite3.png",
     "images:sInteract": "images/sInteractable_sheet2.png",
