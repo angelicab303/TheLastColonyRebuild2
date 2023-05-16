@@ -138,6 +138,14 @@ public class ScoutEnemyController extends com.mygdx.game.EnemyControllers.EnemyC
 
     protected void changeStateIfApplicable() {
         dist = Vector2.dst(enemy.getX(), enemy.getY(), target.x, target.y);
+        alertAllEnemies = false;
+        ShriekerEnemy activeShrieker = null;
+        for (ShriekerEnemy shrieker : shriekerArr){
+            if (shrieker.getShrieking()){
+                alertAllEnemies = true;
+                activeShrieker = shrieker;
+            }
+        }
         switch (state) {
             case SPAWN:
                 state = FSMState.IDLE;
@@ -147,6 +155,15 @@ public class ScoutEnemyController extends com.mygdx.game.EnemyControllers.EnemyC
                     state = FSMState.STUNNED;
                 } else if (ticks > 50) {
                     state = FSMState.PATROL;
+                }
+                else if (alertAllEnemies)
+                {
+                    Vector2 enemyLoc = new Vector2(enemy.getX(), enemy.getY());
+                    Vector2 shriekerLoc = new Vector2(activeShrieker.getX(), activeShrieker.getY());
+                    if (enemyLoc.dst(shriekerLoc) <= ALERT_DISTANCE){
+                        state = FSMState.EXTENDVINE;
+                        target = new Vector2 (player.getX(), player.getY());
+                    }
                 }
                 break;
             case PATROL:
