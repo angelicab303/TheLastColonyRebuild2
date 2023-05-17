@@ -13,7 +13,7 @@
     "mainMenu:cursor": "images/mainMenu/SimpleCursor.png",
     "mainMenu:smallCloud": "images/mainMenu/SmallCloud.png",
     "mainMenu:levels": "images/mainMenu/Levels.png",
-    "levelSelect:background": "images/levelSelect/Background0-5.png",
+    "levelSelect:background": "images/levelSelect/Levels0-5.png",
     "levelSelect:1": "images/levelSelect/1.png",
     "levelSelect:2": "images/levelSelect/2.png",
     "levelSelect:1Down": "images/levelSelect/1Down.png",
@@ -346,7 +346,6 @@
         }
       }
     },
-
     "images:stun": {
       "file" : "images/stun.png",
       "sprites" : {
@@ -368,6 +367,7 @@
     "images:cliff2": "images/cliff2.png",
     "images:cliff3": "images/9x9Indoor2.png",
     "images:cliff4": "images/cliff-1a.png",
+    "images:sampleTutorial": "images/sampleTutorial.png",
     "images:smog1": "images/SmogSprite2.png",
     "images:smog2": "images/SmogSprite3.png",
     "images:caravan1": "images/caravan-1.png",

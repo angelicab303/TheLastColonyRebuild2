@@ -271,6 +271,8 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
     public InputController input;
     /** Whether we are ready to switch screens */
     private boolean isReady;
+    private final int MAX_LEVEL = 5;
+    private final int MIN_LEVEL = 0;
 
 
     /**
@@ -519,14 +521,25 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
      * @param delta Number of seconds since last animation frame
      */
     private void update(float delta) {
-        menuCaravan.update(currLevel);
-
         input.readInput();
-        if (input.didPressEnter()){
-            if (!menuCaravan.isMoving){
+        if (!menuCaravan.isMoving){
+            if (input.didPressRightArrow() && currLevel < MAX_LEVEL){
+                if (currLevel+1 <= unlocked){
+                    currLevel++;
+                }
+
+            }
+            if (input.didPressLeftArrow() && currLevel > MIN_LEVEL){
+                currLevel--;
+            }
+            if (input.didPressEnter()) {
                 isReady = true;
             }
         }
+
+        menuCaravan.update(currLevel);
+
+
     }
 
     /**
