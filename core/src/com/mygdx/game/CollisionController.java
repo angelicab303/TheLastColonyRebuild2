@@ -227,7 +227,7 @@ public class CollisionController{
                     }
                     break;
                 case GameObstacle.CATEGORY_PURIFIED | GameObstacle.CATEGORY_VINE:
-//                    System.out.println("VINE COLLISION");
+                    System.out.println("VINE COLLISION");
                     if(objA.getType() == GameObstacle.ObstacleType.VINE){
                         ((ScoutEnemy.VineTile) objA).setStunned(true);
 //                        ((ScoutEnemy.VineTile) objA).incToStunTime();
@@ -280,7 +280,7 @@ public class CollisionController{
                         survivor = (Survivor) objB;
                         enemy = (Enemy) objA;
                     }
-                    if(survivor.canLoseLife()){
+                    if(survivor.canLoseLife() && survivor.isFollowing()){
                         survivor.loseLife();
                         survivor.coolDown(false);
                         enemy.setAttack(false);

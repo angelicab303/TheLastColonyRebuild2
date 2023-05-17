@@ -176,12 +176,12 @@ public class Caravan extends obstacle.BoxObstacle implements GameObstacle {
         if (!super.activatePhysics(world)) {
             return false;
         }
-//        FixtureDef sensorDef = new FixtureDef();
-//        sensorDef.density = 0;
-//        sensorDef.isSensor = true;
-//        sensorShape = new CircleShape();
-//        sensorShape.setRadius(65f);
-//        sensorDef.shape = sensorShape;
+        FixtureDef sensorDef = new FixtureDef();
+        sensorDef.density = 0;
+        sensorDef.isSensor = true;
+        sensorShape = new CircleShape();
+        sensorShape.setRadius(80f);
+        sensorDef.shape = sensorShape;
 
         setFilterData(filter);
         //getBody().setUserData(this);

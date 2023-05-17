@@ -503,16 +503,11 @@ public class SurvivorController {
 
     private int getMoveFromDetect() {
         int pathfindMove = getMove();
+        survivor.setNextAction(pathfindMove);
         // first option, using A*
-        if (ticks % 20 == 0 && pathfindMove > 0 && survivor.getDirectionVacant()[pathfindMove - 1]) {
-            prevMove = pathfindMove;
+        if (pathfindMove > 0 && survivor.getDirectionVacant()[pathfindMove - 1]) {
             return pathfindMove;
         }
-        if (prevMove > 0 && survivor.getDirectionVacant()[prevMove - 1]) {
-            return prevMove;
-        }
-        int nextBest = nextBest(prevMove);
-        prevMove = nextBest;
-        return nextBest;
+        return 0;
     }
 }

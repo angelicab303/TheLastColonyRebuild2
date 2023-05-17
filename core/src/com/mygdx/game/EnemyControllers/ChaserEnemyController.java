@@ -66,7 +66,38 @@ public class ChaserEnemyController extends com.mygdx.game.EnemyControllers.Enemy
     protected void changeStateIfApplicable() {
         float dist = followingSurvivor ? Vector2.dst(survivorTarget.getX(), survivorTarget.getY(), enemy.getX(), enemy.getY()) :
         Vector2.dst(player.getX(), player.getY(), enemy.getX(), enemy.getY());
+        alertAllEnemies = false;
+        ShriekerEnemy activeShrieker = null;
+        for (ShriekerEnemy shrieker : shriekerArr){
+            if (shrieker.getShrieking()){
+                alertAllEnemies = true;
+                activeShrieker = shrieker;
+            }
+        }
         switch (state) {
+            case IDLE:
+                if (enemy.isStunned())
+                {
+                    state = FSMState.STUNNED;
+                }
+                else if (enemy.isRevealed())
+                {
+                    state = FSMState.CHASE;
+                    if (enemy.canAttack())
+                    {
+                        state = FSMState.ATTACK;
+                    }
+                }
+                else if (alertAllEnemies)
+                {
+                    Vector2 enemyLoc = new Vector2(enemy.getX(), enemy.getY());
+                    Vector2 shriekerLoc = new Vector2(activeShrieker.getX(), activeShrieker.getY());
+                    if (enemyLoc.dst(shriekerLoc) <= ALERT_DISTANCE){
+                        state = FSMState.CHASE;
+                        target = new Vector2 (player.getX(), player.getY());
+                    }
+                }
+                break;
             case CHASE:
                 if (enemy.isStunned())
                 {

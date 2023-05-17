@@ -81,6 +81,8 @@ public class GameplayController implements Screen {
 	private Texture vineTextureClosedRightBottom;
 	private Texture vineTextureClosedRightTop;
 	private Texture[] vineTextures;
+
+	private Texture[] survivorDirections;
 	/** Texture asset for survivor avatar */
 	private TextureRegion survivorTexture;
 	/** Texture asset for interactable prompt in survivor avatar */
@@ -420,10 +422,38 @@ public class GameplayController implements Screen {
 		survivorTexture = new TextureRegion(directory.getEntry("images:survivorSprite", Texture.class));
 		survivorITexture = directory.getEntry("images:sInteract", Texture.class);
 
+
+		// Smog, Purified Air, and Air Bar Textures
+		mushroomTexture = new TextureRegion(directory.getEntry("images:mushroom", Texture.class));
+		smogTexture = directory.getEntry("images:testSmog", Texture.class);
+		toxicAirTexture = directory.getEntry("images:testSmog", Texture.class);
+		pureAirTexture = directory.getEntry("images:weaponProjectile", Texture.class);
+		smogTexture2 = new TextureRegion(directory.getEntry("images:smog2", Texture.class));
+		airBarTexture = directory.getEntry("images:airBar", Texture.class);
+		// pureAirTexture = new TextureRegion(directory.getEntry("images:smog1",
+		// Texture.class));
+//		pureAirTexture = directory.getEntry("images:testSmog", Texture.class);
+
+		// UI Textures
+		fHeartTexture = directory.getEntry("images:fullHeart", Texture.class);
+		sHeartTexture = directory.getEntry("images:slashedHeart", Texture.class);
+
+		// Unnecessary atm?
+
 		playerDirectionTextures = importPlayerFilmstrip();
 		survivorDirectionTextures = importCharacterFilmstrip("survivorP");
 		enemyDirectionTextures = importEnemyFilmstrips();
 
+		// directions for survivors
+		survivorDirections = new Texture[8];
+		survivorDirections[0] = directory.getEntry("images:survivorGuideRight", Texture.class);
+		survivorDirections[1] = directory.getEntry("images:survivorGuideLeft", Texture.class);
+		survivorDirections[2] = directory.getEntry("images:survivorGuideUp", Texture.class);
+		survivorDirections[3] = directory.getEntry("images:survivorGuideDown", Texture.class);
+		survivorDirections[4] = directory.getEntry("images:survivorGuideUp", Texture.class);
+		survivorDirections[5] = directory.getEntry("images:survivorGuideUp", Texture.class);
+		survivorDirections[6] = directory.getEntry("images:survivorGuideUp", Texture.class);
+		survivorDirections[7] = directory.getEntry("images:survivorGuideUp", Texture.class);
 		//Vines for enemies (Have shortened the code a bit) -V
 
 		vineTextures = new Texture[22];
@@ -450,11 +480,13 @@ public class GameplayController implements Screen {
 		vineTextures[20] = directory.getEntry("images:vineCornerClosedRightDown", Texture.class);
 		vineTextures[21] = directory.getEntry("images:vineCornerClosedRightUp", Texture.class);
 
+
+
 		//Toxic air for enemies
 		toxicAirTexture = directory.getEntry("images:testSmog", Texture.class);
 
 		//purified air for player
-		pureAirTexture = directory.getEntry("images:testSmog", Texture.class);
+//		pureAirTexture = directory.getEntry("images:testSmog", Texture.class);
 
 
 		//UI elements
@@ -724,7 +756,7 @@ public class GameplayController implements Screen {
 		// Here we will instantiate the objects in the level using the JSONLevelReader.
 		JSONLevelReader reader = new JSONLevelReader(directory, bounds, world, level, canvas.camera, input,
 				objects, movObjects, floorArr, SCALE, tileGrid, smogTiles, smogGrid, tileSize, tileOffset, smogTileSize, smogTileOffset,
-				playerDirectionTextures, survivorDirectionTextures, enemyDirectionTextures, vineTextures, toxicAir, survivorITexture, assetTextures,
+				playerDirectionTextures, survivorDirectionTextures, enemyDirectionTextures, vineTextures, survivorDirections, toxicAir, survivorITexture, assetTextures,
 				displayFontInteract, fHeartTexture, player, null);
 
 //		if (caravan.getX() < 400f) {
@@ -1115,7 +1147,7 @@ public class GameplayController implements Screen {
 		}
 		caravan.update();
 		// Update caravan state
-		if (caravan.getBody().getFixtureList().first().testPoint(player.getPosition())) {
+		if (caravan.getBody().getFixtureList().get(1).testPoint(player.getPosition())) {
 			caravan.setInteractable(true);
 		}
 		else {
