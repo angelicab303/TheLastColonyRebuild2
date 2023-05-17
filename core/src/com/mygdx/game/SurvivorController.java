@@ -503,6 +503,7 @@ public class SurvivorController {
 
     private int getMoveFromDetect() {
         int pathfindMove = getMove();
+        survivor.setNextAction(pathfindMove);
         // first option, using A*
         if (pathfindMove > 0 && survivor.getDirectionVacant()[pathfindMove - 1]) {
             return pathfindMove;

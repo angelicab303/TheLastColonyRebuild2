@@ -405,7 +405,10 @@
     "images:vineStraightClosedLeft": "images/vineStraightClosedLeft.png",
     "images:vineStraightClosedUp": "images/vineStraightClosedUp.png",
     "images:vineStraightClosedRight": "images/vineStraightClosedRight.png",
-
+    "images:survivorGuideDown": "images/downGuide.png",
+    "images:survivorGuideUp": "images/upGuide.png",
+    "images:survivorGuideLeft": "images/leftGuide.png",
+    "images:survivorGuideRight": "images/rightGuide.png",
     "tiles:0_caravan": "tiles/0_caravan.png",
     "tiles:0_caravanOpen": "tiles/0_caravanOpen.png",
     "tiles:1_player": "tiles/1_player.png",

@@ -135,6 +135,7 @@ public class JSONLevelReader {
     private Texture vineTextureClosedRightBottom;
     private Texture vineTextureClosedRightTop;
     private Texture[] vineTextures;
+    private Texture[] directionTextures;
     private Map<String, TextureRegion> assetTextures;
 
     // Texture Stuff
@@ -145,7 +146,7 @@ public class JSONLevelReader {
                            OrthographicCamera camera, InputController input, PooledList<Obstacle> objects, PooledList<Obstacle> movObjects, Array<FloorTile> floorArr,
                            float scale, boolean[][] tileGrid, boolean[][] smogTiles, boolean[][] smogGrid, int tileSize,
                            int tileOffset, int smogTileSize, int smogTileOffset, FilmStrip[][] playerDirectionTextures,
-                           FilmStrip[] survivorDirectionTextures, FilmStrip[][] enemyDirectionTextures, Texture[] vineTextures, ToxicQueue toxicAir,
+                           FilmStrip[] survivorDirectionTextures, FilmStrip[][] enemyDirectionTextures, Texture[] vineTextures, Texture[] directionTextures, ToxicQueue toxicAir,
                            Texture survivorITexture, Map<String, TextureRegion> assetTextures, BitmapFont displayFontInteractive, Texture heart, Player player, Weapon weapon) {
         this.directory = directory;
         this.bounds = bounds;
@@ -177,6 +178,7 @@ public class JSONLevelReader {
         this.player = player;
         this.weapon = weapon;
         this.vineTextures = vineTextures;
+        this.directionTextures = directionTextures;
 
         try {
             // Read the JSON file into a FileReader object
@@ -571,7 +573,7 @@ public class JSONLevelReader {
     public void createSurvivor(int x, int y, int id, float scale) {
 //        System.out.println("Creating survivor");
         Survivor survivorTemp;
-        survivorTemp = new Survivor(survivorArr.size, x * tileSize , y * tileSize , survivorDirectionTextures, heart, displayFontInteract, scale);
+        survivorTemp = new Survivor(survivorArr.size, x * tileSize , y * tileSize , survivorDirectionTextures, heart, displayFontInteract, scale, directionTextures);
         survivorArr.add(survivorTemp);
 
 //        addObject(survivorTemp);

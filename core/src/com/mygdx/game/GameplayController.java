@@ -81,6 +81,8 @@ public class GameplayController implements Screen {
 	private Texture vineTextureClosedRightBottom;
 	private Texture vineTextureClosedRightTop;
 	private Texture[] vineTextures;
+
+	private Texture[] survivorDirections;
 	/** Texture asset for survivor avatar */
 	private TextureRegion survivorTexture;
 	/** Texture asset for interactable prompt in survivor avatar */
@@ -442,6 +444,16 @@ public class GameplayController implements Screen {
 		survivorDirectionTextures = importCharacterFilmstrip("survivorP");
 		enemyDirectionTextures = importEnemyFilmstrips();
 
+		// directions for survivors
+		survivorDirections = new Texture[8];
+		survivorDirections[0] = directory.getEntry("images:survivorGuideRight", Texture.class);
+		survivorDirections[1] = directory.getEntry("images:survivorGuideLeft", Texture.class);
+		survivorDirections[2] = directory.getEntry("images:survivorGuideUp", Texture.class);
+		survivorDirections[3] = directory.getEntry("images:survivorGuideDown", Texture.class);
+		survivorDirections[4] = directory.getEntry("images:survivorGuideUp", Texture.class);
+		survivorDirections[5] = directory.getEntry("images:survivorGuideUp", Texture.class);
+		survivorDirections[6] = directory.getEntry("images:survivorGuideUp", Texture.class);
+		survivorDirections[7] = directory.getEntry("images:survivorGuideUp", Texture.class);
 		//Vines for enemies (Have shortened the code a bit) -V
 
 		vineTextures = new Texture[22];
@@ -467,6 +479,8 @@ public class GameplayController implements Screen {
 		vineTextures[19] = directory.getEntry("images:vineCornerClosedLeftUp", Texture.class);
 		vineTextures[20] = directory.getEntry("images:vineCornerClosedRightDown", Texture.class);
 		vineTextures[21] = directory.getEntry("images:vineCornerClosedRightUp", Texture.class);
+
+
 
 		//Toxic air for enemies
 		toxicAirTexture = directory.getEntry("images:testSmog", Texture.class);
@@ -742,7 +756,7 @@ public class GameplayController implements Screen {
 		// Here we will instantiate the objects in the level using the JSONLevelReader.
 		JSONLevelReader reader = new JSONLevelReader(directory, bounds, world, level, canvas.camera, input,
 				objects, movObjects, floorArr, SCALE, tileGrid, smogTiles, smogGrid, tileSize, tileOffset, smogTileSize, smogTileOffset,
-				playerDirectionTextures, survivorDirectionTextures, enemyDirectionTextures, vineTextures, toxicAir, survivorITexture, assetTextures,
+				playerDirectionTextures, survivorDirectionTextures, enemyDirectionTextures, vineTextures, survivorDirections, toxicAir, survivorITexture, assetTextures,
 				displayFontInteract, fHeartTexture, player, null);
 
 //		if (caravan.getX() < 400f) {
