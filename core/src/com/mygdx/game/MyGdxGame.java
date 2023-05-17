@@ -1,8 +1,9 @@
 package com.mygdx.game;
 
-import audio.AudioEngine;
+import audio.*;
 import audio.AudioSource;
 import audio.MusicQueue;
+import com.badlogic.gdx.*;
 import com.badlogic.gdx.Audio;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
@@ -37,6 +38,7 @@ public class MyGdxGame extends Game implements ScreenListener {
 	private InputController input = new InputController();
 
 	private AudioSource samples[];
+//	private AudioEngine engine;
 	private MusicQueue music;
 
 	public MyGdxGame () { }
@@ -49,10 +51,17 @@ public class MyGdxGame extends Game implements ScreenListener {
 
 		canvas  = new GameCanvas();
 		loading = new LoadingMode("assets.json",canvas,1);
+		levelSelect = new LevelSelectMode(canvas);
+		mainMenu = new MainMenuMode(canvas);
 
 		 //Initialize the three game worlds
 		 //controllers = new WorldController[1];
 		 controller = new GameplayController(canvas);
+
+		samples = new AudioSource[1];
+
+		AudioEngine engine = (AudioEngine)Gdx.audio;
+		music = engine.newMusicBuffer( false, 44100 );
 
 		 //Initialize the first game world
 		//controllers[0] = new RocketController();
@@ -138,6 +147,10 @@ public class MyGdxGame extends Game implements ScreenListener {
 			mainMenu.gatherAssets(directory);
 			mainMenu.setScreenListener(this);
 
+			samples[0] = directory.getEntry( "The_Last_Colony_-_Title_Screen.mp3", AudioSource.class );
+			music.addSource( samples[0] );
+			music.play();
+
 			mainMenu.reset();
 			mainMenu.setCanvas(canvas);
 			setScreen(mainMenu);
@@ -159,6 +172,8 @@ public class MyGdxGame extends Game implements ScreenListener {
 			else{
 				controller.reset(exitCode);
 				setScreen(controller);
+				music.stop();
+				music.reset();
 			}
 		}
 //		else if (exitCode == WorldController.EXIT_NEXT) {

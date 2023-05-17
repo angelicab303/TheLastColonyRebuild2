@@ -546,7 +546,6 @@
     "mediumLevel": "levels/LastColonyMedLevel.json"
   },
   "sounds": {
-<<<<<<< Updated upstream
     "rocket:bump": "rocket/bump.mp3",
     "rocket:mainburn": "rocket/afterburner.mp3",
     "rocket:leftburn": "rocket/sideburner-left.mp3",
@@ -557,10 +556,8 @@
     "ragdoll:glub1": "ragdoll/bubble01.mp3",
     "ragdoll:glub2": "ragdoll/bubble02.mp3",
     "ragdoll:glub3": "ragdoll/bubble03.mp3",
-    "ragdoll:glub4": "ragdoll/bubble04.mp3"
-=======
-    "The_Last_Colony_-_Title_Screen.mp3": "sound/The_Last_Colony_-_Title_Screen.mp3"
->>>>>>> Stashed changes
+    "ragdoll:glub4": "ragdoll/bubble04.mp3",
+    "The_Last_Colony_-_Title_Screen.mp3": "sounds/The_Last_Colony_-_Title_Screen.mp3"
   },
   "fonts": {
     "shared:retro": {
