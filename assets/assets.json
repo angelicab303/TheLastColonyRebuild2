@@ -13,7 +13,7 @@
     "mainMenu:cursor": "images/mainMenu/SimpleCursor.png",
     "mainMenu:smallCloud": "images/mainMenu/SmallCloud.png",
     "mainMenu:levels": "images/mainMenu/Levels.png",
-    "levelSelect:background": "images/levelSelect/Background0-5.png",
+    "levelSelect:background": "images/levelSelect/Levels0-5.png",
     "levelSelect:1": "images/levelSelect/1.png",
     "levelSelect:2": "images/levelSelect/2.png",
     "levelSelect:1Down": "images/levelSelect/1Down.png",
