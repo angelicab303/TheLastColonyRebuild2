@@ -153,7 +153,7 @@ public class PauseMenuMode {
         bgPixmap.setColor(color);
         bgPixmap.fill();
         TextureRegionDrawable drawableBackground = new TextureRegionDrawable(new TextureRegion(new Texture(bgPixmap)));
-        pauseTable.setBackground(drawableBackground);
+        //pauseTable.setBackground(drawableBackground);
         pauseTable.setDebug(false);
 
         Gdx.input.setInputProcessor(stage);
@@ -188,6 +188,7 @@ public class PauseMenuMode {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 if (buttons.get(1).isChecked()) {
+                    buttons.get(1).setChecked(false);
                     buttonState = EXIT_GAME;
 //                    isReady = true;
                 }
@@ -200,6 +201,7 @@ public class PauseMenuMode {
             public void clicked(InputEvent event, float x, float y) {
                 if (buttons.get(2).isChecked()) {
                     buttonState = EXIT_RESTART;
+                    buttons.get(2).setChecked(false);
                 }
             };
         } );
@@ -208,6 +210,7 @@ public class PauseMenuMode {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 if (buttons.get(3).isChecked()) {
+                    buttons.get(3).setChecked(false);
                     buttonState = EXIT_SETTINGS;
                 }
             };
@@ -217,6 +220,7 @@ public class PauseMenuMode {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 if (buttons.get(4).isChecked()) {
+                    buttons.get(4).setChecked(false);
                     buttonState = EXIT_MAINMENU;
                 }
             };
@@ -249,6 +253,9 @@ public class PauseMenuMode {
     public int getButtonState(){
         return buttonState;
     }
+    public void resetButtonState(){
+        this.buttonState = 0;
+    }
 
     /**
      *  Updates the progression of the smog bar depending on how much smog was collected
@@ -262,6 +269,22 @@ public class PauseMenuMode {
 //        if (aframe >= NUM_ANIM_FRAMES) {
 //            aframe -= NUM_ANIM_FRAMES;
 //        }
+    }
+    /**
+     * Resets the status of the game so that we can play again.
+     *
+     * This method disposes of the world and creates a new one.
+     */
+    public void reset() {
+        stage.clear();
+        stage = new Stage();
+        pauseTable.clearActions();
+        pauseTable.clearListeners();
+        pauseTable.clear();
+
+        Gdx.input.setInputProcessor(null);
+        populateMenu();
+        buttonState = 0;
     }
 
     /**

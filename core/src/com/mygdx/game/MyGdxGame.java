@@ -162,6 +162,14 @@ public class MyGdxGame extends Game implements ScreenListener {
 				pauseMenu.populateMenu();
 			}
 		}
+		else if (screen == controller){
+			canvas.camera.zoom = 1.0f;
+			if (exitCode == pauseMenu.EXIT_MAINMENU){
+				//pauseMenu.reset();
+				mainMenu.reset();
+				setScreen(mainMenu);
+			}
+		}
 //		else if (exitCode == WorldController.EXIT_NEXT) {
 //			current = (current+1) % controllers.length;
 //			controllers[current].reset();

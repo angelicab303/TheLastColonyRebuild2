@@ -583,6 +583,7 @@ public class GameplayController implements Screen {
 	 */
 	public void reset() {
 		Vector2 gravity = new Vector2(world.getGravity());
+		paused = false;
 
 		for (Obstacle obj : objects) {
 			obj.deactivatePhysics(world);
@@ -855,7 +856,8 @@ public class GameplayController implements Screen {
 		}
 
 		// Handle resets
-		if (input.didReset()) {
+		if (pauseMenu.getButtonState() == PauseMenuMode.EXIT_RESTART && paused) {
+			pauseMenu.resetButtonState();
 			reset();
 		}
 
@@ -884,7 +886,12 @@ public class GameplayController implements Screen {
 		// Read input
 		input.readInput();
 
-		if (input.didPause() || pauseMenu.getButtonState() == PauseMenuMode.EXIT_GAME) {
+		if (paused && pauseMenu.getButtonState() == PauseMenuMode.EXIT_MAINMENU){
+			listener.exitScreen(this, PauseMenuMode.EXIT_MAINMENU);
+		}
+
+		if (input.didPause() || (pauseMenu.getButtonState() == PauseMenuMode.EXIT_GAME && paused)) {
+			pauseMenu.resetButtonState();
 			if (!paused && !unpausing) {
 				paused = true;
 				pausing = true;
