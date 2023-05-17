@@ -30,6 +30,7 @@ import com.mygdx.game.Obstacles.Enemies.*;
 import com.badlogic.gdx.Screen;
 import com.mygdx.game.UI.AirBar;
 import com.mygdx.game.UI.Heart;
+import com.mygdx.game.UI.TutorialPrompt;
 import obstacle.BoxObstacle;
 import obstacle.Obstacle;
 import util.*;
@@ -54,6 +55,8 @@ public class GameplayController implements Screen {
 	// ***************************
 	/** Texture assets for player avatar */
 	private FilmStrip[][] playerDirectionTextures;
+	private Texture sampleTutorial;
+	private TutorialPrompt sample;
 	/** Texture assets for survivor avatar */
 	private FilmStrip[] survivorDirectionTextures;
 	/** Texture asset for enemy avatar */
@@ -421,6 +424,7 @@ public class GameplayController implements Screen {
 		// Player, Enemy, and Survivor Textures
 		survivorTexture = new TextureRegion(directory.getEntry("images:survivorSprite", Texture.class));
 		survivorITexture = directory.getEntry("images:sInteract", Texture.class);
+		sampleTutorial = directory.getEntry("images:sampleTutorial", Texture.class);
 
 
 		// Smog, Purified Air, and Air Bar Textures
@@ -914,6 +918,8 @@ public class GameplayController implements Screen {
 			Heart tempHeart = new Heart(fEggTexture, heartX, heartY, spacing);
 			heartArr.add(tempHeart);
 		}
+		sample = new TutorialPrompt(sampleTutorial, player.getX(), player.getY()-30);
+
 	}
 
 	/**
@@ -1484,7 +1490,6 @@ public class GameplayController implements Screen {
 		canvas.clear();
 
 		Collections.sort(objects, new SortbyY());
-
 		if (isActive()) {
 			canvas.begin(player.getX(), player.getY(), tileGrid.length * tileSize, tileGrid[0].length * tileSize);
 		} else {
@@ -1504,6 +1509,7 @@ public class GameplayController implements Screen {
 		for (Obstacle obj : smogs){
 			obj.draw(canvas);
 		}
+		sample.draw(canvas);
 
 
 
