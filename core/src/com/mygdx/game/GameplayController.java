@@ -884,7 +884,7 @@ public class GameplayController implements Screen {
 		// Read input
 		input.readInput();
 
-		if (input.didPause()) {
+		if (input.didPause() || pauseMenu.getButtonState() == PauseMenuMode.EXIT_GAME) {
 			if (!paused && !unpausing) {
 				paused = true;
 				pausing = true;
