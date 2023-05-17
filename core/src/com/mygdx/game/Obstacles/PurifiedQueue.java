@@ -113,7 +113,7 @@ public class PurifiedQueue {
         /** How fast we change frames (one frame per 10 calls to update) */
         private static final float ANIMATION_SPEED = 0.02f;
         /** The number of animation frames in our filmstrip */
-        private static final int   NUM_ANIM_FRAMES = 5;
+        private static final int   NUM_ANIM_FRAMES = 1;
         /** Current animation frame for this shell */
         private float aframe;
         /** Scale of the object */
@@ -135,10 +135,10 @@ public class PurifiedQueue {
 
             setActive(false);
             animator = new FilmStrip(PurifiedQueue.texture,1,NUM_ANIM_FRAMES,NUM_ANIM_FRAMES);
-            float maxFrame = 4;
-            float minFrame = 0;
-            float frameNum = (float)(Math.random()*(maxFrame-minFrame+1)+minFrame);
-            aframe = frameNum;
+//            float maxFrame = 4;
+//            float minFrame = 0;
+//            float frameNum = (float)(Math.random()*(maxFrame-minFrame+1)+minFrame);
+            aframe = 0;
             this.scale = scale;
         }
 

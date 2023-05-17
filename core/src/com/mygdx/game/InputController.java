@@ -55,6 +55,9 @@ public class InputController {
 
 	/** Did we press the absorb button */
 	private static boolean pressedAbsorb;
+	private static boolean pressedEnter;
+	private static boolean pressedRightArrow;
+	private static boolean pressedLeftArrow;
 
 	/** Did we press the fire button? */
 	private static boolean pressedFire;
@@ -115,6 +118,30 @@ public class InputController {
 	 */
 	public boolean didPressAbsorb() {
 		return pressedAbsorb;
+	}
+	/**
+	 * Returns whether the enter button was pressed.
+	 *
+	 * @return whether the enter button was pressed.
+	 */
+	public boolean didPressEnter() {
+		return pressedEnter;
+	}
+	/**
+	 * Returns whether the right button was pressed.
+	 *
+	 * @return whether the right button was pressed.
+	 */
+	public boolean didPressRightArrow() {
+		return pressedRightArrow;
+	}
+	/**
+	 * Returns whether the left button was pressed.
+	 *
+	 * @return whether the left button was pressed.
+	 */
+	public boolean didPressLeftArrow() {
+		return pressedLeftArrow;
 	}
 
 	/**
@@ -213,7 +240,7 @@ public class InputController {
 			// Figure out, based on which player we are, which keys
 			// control our actions (depends on player).
 			int up, left, right, down, absorb, shoot, upshoot, leftshoot, rightshoot, downshoot,
-					pickUpSurvivor, shiftControls, restart, pause, next;
+					pickUpSurvivor, shiftControls, restart, pause, next, enter, rightArrow, leftArrow;
 			up    = Input.Keys.W;
 			down  = Input.Keys.S;
 			left  = Input.Keys.A;
@@ -229,6 +256,9 @@ public class InputController {
 			restart = Input.Keys.R;
 			pause = Input.Keys.ESCAPE;
 			next = Input.Keys.N;
+			enter = Input.Keys.ENTER;
+			rightArrow = Input.Keys.RIGHT;
+			leftArrow = Input.Keys.LEFT;
 			// Convert keyboard state into game commands
 			vertical = horizontal =verticalshoot = horizontalshoot = 0;
 			pressedAbsorb = false;
@@ -238,6 +268,9 @@ public class InputController {
 			reset = false;
 			paused = false;
 			nextLevel = false;
+			pressedEnter = false;
+			pressedRightArrow = false;
+			pressedLeftArrow = false;
 			debugPressed = (debugPressed) || (Gdx.input.isKeyPressed(Input.Keys.X));
 			// Movement forward/backward
 			if (Gdx.input.isKeyPressed(up) && !Gdx.input.isKeyPressed(down) && !Gdx.input.isKeyPressed(pause)) {
@@ -313,6 +346,15 @@ public class InputController {
 			// Resetting the level
 			if (Gdx.input.isKeyPressed(restart)) {
 				reset = true;
+			}
+			if (Gdx.input.isKeyPressed(enter)) {
+				pressedEnter = true;
+			}
+			if (Gdx.input.isKeyPressed(rightArrow)) {
+				pressedRightArrow = true;
+			}
+			if (Gdx.input.isKeyPressed(leftArrow)) {
+				pressedLeftArrow = true;
 			}
 			// Pausing the game
 			if (Gdx.input.isKeyPressed(pause))

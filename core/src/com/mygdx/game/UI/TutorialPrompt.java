@@ -5,15 +5,15 @@ import com.badlogic.gdx.graphics.Texture;
 import com.mygdx.game.GameCanvas;
 import util.FilmStrip;
 
-public class Heart {
+public class TutorialPrompt {
     /*
-        UI Class representing player lives
+        UI Class representing tutorial prompts for the player
      */
     /** X position on screen */
     private float xPos;
     /** Y position on screen */
     private float yPos;
-    /** Filmstrip for bar */
+    /** Filmstrip for prompt */
     protected Texture texture;
     protected FilmStrip animator;
     /** How fast we change frames (one frame per 10 calls to update) */
@@ -25,15 +25,13 @@ public class Heart {
     /** Camera zoom factor */
     private float cameraZoom = 0.4f;
     private float scale = 0.1f;
-    /** Spacing between hearts */
-    private float spacing;
 
 
-    public Heart(Texture value, float x, float y, float spacing){
+
+    public TutorialPrompt(Texture value, float x, float y){
         texture = value;
-        this.spacing = spacing;
-//        xPos = x;
-//        yPos = y;
+        xPos = x;
+        yPos = y;
 
 //        animator = new FilmStrip(value,1,NUM_ANIM_FRAMES,NUM_ANIM_FRAMES);
 //        aframe = 0.0f;
@@ -68,11 +66,8 @@ public class Heart {
      */
     public void draw(GameCanvas canvas) {
         // animator.setFrame((int)aframe);
-        xPos = canvas.camera.position.x - (canvas.camera.viewportWidth*cameraZoom)/2.0f + (33.0f * cameraZoom) + spacing;
-        yPos = canvas.camera.position.y + (canvas.camera.viewportHeight*cameraZoom)*0.8f/2.0f - (15.0f * cameraZoom) - texture.getHeight()*scale;
-        canvas.draw(texture, new Color(255, 255, 255, 0.75f), texture.getWidth()*scale, texture.getHeight()*scale/2, xPos, yPos, 0.0f, scale*0.5f, scale*0.5f);
+        canvas.draw(texture, Color.WHITE, texture.getWidth()*scale, texture.getHeight()*scale/2, xPos, yPos, 0.0f, scale*0.5f, scale*0.5f);
 //        xPos = canvas.camera.position.x + (canvas.getWidth()*cameraZoom)/2.0f - (90.0f * cameraZoom) - spacing;
 //        yPos = canvas.camera.position.y + (canvas.getHeight()*cameraZoom)/2.0f - (40.0f * cameraZoom) - texture.getHeight()*scale;
     }
-
 }

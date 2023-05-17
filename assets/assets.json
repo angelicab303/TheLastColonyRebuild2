@@ -13,6 +13,7 @@
     "mainMenu:cursor": "images/mainMenu/SimpleCursor.png",
     "mainMenu:smallCloud": "images/mainMenu/SmallCloud.png",
     "mainMenu:levels": "images/mainMenu/Levels.png",
+    "levelSelect:background": "images/levelSelect/Levels0-5.png",
     "levelSelect:1": "images/levelSelect/1.png",
     "levelSelect:2": "images/levelSelect/2.png",
     "levelSelect:1Down": "images/levelSelect/1Down.png",
@@ -20,6 +21,13 @@
     "levelSelect:title": "images/levelSelect/LevelSelect.png",
     "levelSelect:back": "images/levelSelect/Back.png",
     "levelSelect:backDown": "images/levelSelect/BackDown.png",
+    "levelSelect:mushroom": "images/levelSelect/Mushroom1000.png",
+    "levelSelect:mushroomDown": "images/levelSelect/MushroomDown.png",
+    "levelSelect:caravan": "images/levelSelect/LevelSelectCaravan.png",
+    "levelSelect:enter": "images/levelSelect/Enter_Button.png",
+    "images:empty": "images/empty.png",
+    "levelSelect:smogWall": "images/levelSelect/LevelSelectSmogAsset.png",
+
     "shared:earth": {
       "file": "shared/earthtile.png",
       "wrapU": "repeated",
@@ -75,6 +83,7 @@
     "images:tree1": "images/tree-1a.png",
     "images:tree2": "images/tree-1c.png",
     "images:tree3": "images/tree-2a.png",
+
     "images:mushroom": "images/target.png",
     "images:playerMovementUp": {
       "file" : "images/player/backwalk2-Sheet.png",
@@ -337,7 +346,6 @@
         }
       }
     },
-
     "images:stun": {
       "file" : "images/stun.png",
       "sprites" : {
@@ -359,6 +367,7 @@
     "images:cliff2": "images/cliff2.png",
     "images:cliff3": "images/9x9Indoor2.png",
     "images:cliff4": "images/cliff-1a.png",
+    "images:sampleTutorial": "images/sampleTutorial.png",
     "images:smog1": "images/SmogSprite2.png",
     "images:smog2": "images/SmogSprite3.png",
     "images:caravan1": "images/caravan-1.png",
@@ -368,6 +377,8 @@
     "images:testSmog": "images/test_green_smog-sheet2.png",
     "images:weaponProjectile": "images/weaponProjectile-Sheet.png",
     "images:airBar": "images/AirMeterFilling-Sheet-export2.png",
+    "images:fullEgg": "images/Egg.png",
+    "images:brokenEgg": "images/EggDamaged.png",
     "images:fullHeart": "images/NewHeart.png",
     "images:slashedHeart": "images/EmptyHeart.png",
     "images:plantEnemy": "images/Enemy1Idle.png",
@@ -394,7 +405,10 @@
     "images:vineStraightClosedLeft": "images/vineStraightClosedLeft.png",
     "images:vineStraightClosedUp": "images/vineStraightClosedUp.png",
     "images:vineStraightClosedRight": "images/vineStraightClosedRight.png",
-
+    "images:survivorGuideDown": "images/downGuide.png",
+    "images:survivorGuideUp": "images/upGuide.png",
+    "images:survivorGuideLeft": "images/leftGuide.png",
+    "images:survivorGuideRight": "images/rightGuide.png",
     "tiles:0_caravan": "tiles/0_caravan.png",
     "tiles:0_caravanOpen": "tiles/0_caravanOpen.png",
     "tiles:1_player": "tiles/1_player.png",

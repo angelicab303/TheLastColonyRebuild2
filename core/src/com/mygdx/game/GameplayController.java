@@ -30,6 +30,7 @@ import com.mygdx.game.Obstacles.Enemies.*;
 import com.badlogic.gdx.Screen;
 import com.mygdx.game.UI.AirBar;
 import com.mygdx.game.UI.Heart;
+import com.mygdx.game.UI.TutorialPrompt;
 import obstacle.BoxObstacle;
 import obstacle.Obstacle;
 import util.*;
@@ -54,6 +55,8 @@ public class GameplayController implements Screen {
 	// ***************************
 	/** Texture assets for player avatar */
 	private FilmStrip[][] playerDirectionTextures;
+	private Texture sampleTutorial;
+	private TutorialPrompt sample;
 	/** Texture assets for survivor avatar */
 	private FilmStrip[] survivorDirectionTextures;
 	/** Texture asset for enemy avatar */
@@ -81,6 +84,8 @@ public class GameplayController implements Screen {
 	private Texture vineTextureClosedRightBottom;
 	private Texture vineTextureClosedRightTop;
 	private Texture[] vineTextures;
+
+	private Texture[] survivorDirections;
 	/** Texture asset for survivor avatar */
 	private TextureRegion survivorTexture;
 	/** Texture asset for interactable prompt in survivor avatar */
@@ -138,6 +143,10 @@ public class GameplayController implements Screen {
 	private Texture fHeartTexture;
 	/** Texture asset for the slashed heart texture */
 	private Texture sHeartTexture;
+	/** Texture asset for the full egg texture */
+	private Texture fEggTexture;
+	/** Texture asset for the broken egg texture */
+	private Texture bEggTexture;
 
 	// *************************** END OF TEXTURES ***************************
 
@@ -167,7 +176,6 @@ public class GameplayController implements Screen {
 
 	/** Reference to the player avatar */
 	protected Player player;
-	protected Weapon weapon;
 	/** Reference to the caravan avatar */
 	private Caravan caravan;
 	// /** Reference to the smog bar asset */
@@ -416,11 +424,40 @@ public class GameplayController implements Screen {
 		// Player, Enemy, and Survivor Textures
 		survivorTexture = new TextureRegion(directory.getEntry("images:survivorSprite", Texture.class));
 		survivorITexture = directory.getEntry("images:sInteract", Texture.class);
+		sampleTutorial = directory.getEntry("images:sampleTutorial", Texture.class);
+
+
+		// Smog, Purified Air, and Air Bar Textures
+		mushroomTexture = new TextureRegion(directory.getEntry("images:mushroom", Texture.class));
+		smogTexture = directory.getEntry("images:testSmog", Texture.class);
+		toxicAirTexture = directory.getEntry("images:testSmog", Texture.class);
+		pureAirTexture = directory.getEntry("images:weaponProjectile", Texture.class);
+		smogTexture2 = new TextureRegion(directory.getEntry("images:smog2", Texture.class));
+		airBarTexture = directory.getEntry("images:airBar", Texture.class);
+		// pureAirTexture = new TextureRegion(directory.getEntry("images:smog1",
+		// Texture.class));
+//		pureAirTexture = directory.getEntry("images:testSmog", Texture.class);
+
+		// UI Textures
+		fHeartTexture = directory.getEntry("images:fullHeart", Texture.class);
+		sHeartTexture = directory.getEntry("images:slashedHeart", Texture.class);
+
+		// Unnecessary atm?
 
 		playerDirectionTextures = importPlayerFilmstrip();
 		survivorDirectionTextures = importCharacterFilmstrip("survivorP");
 		enemyDirectionTextures = importEnemyFilmstrips();
 
+		// directions for survivors
+		survivorDirections = new Texture[8];
+		survivorDirections[0] = directory.getEntry("images:survivorGuideRight", Texture.class);
+		survivorDirections[1] = directory.getEntry("images:survivorGuideLeft", Texture.class);
+		survivorDirections[2] = directory.getEntry("images:survivorGuideUp", Texture.class);
+		survivorDirections[3] = directory.getEntry("images:survivorGuideDown", Texture.class);
+		survivorDirections[4] = directory.getEntry("images:survivorGuideUp", Texture.class);
+		survivorDirections[5] = directory.getEntry("images:survivorGuideUp", Texture.class);
+		survivorDirections[6] = directory.getEntry("images:survivorGuideUp", Texture.class);
+		survivorDirections[7] = directory.getEntry("images:survivorGuideUp", Texture.class);
 		//Vines for enemies (Have shortened the code a bit) -V
 
 		vineTextures = new Texture[22];
@@ -447,17 +484,21 @@ public class GameplayController implements Screen {
 		vineTextures[20] = directory.getEntry("images:vineCornerClosedRightDown", Texture.class);
 		vineTextures[21] = directory.getEntry("images:vineCornerClosedRightUp", Texture.class);
 
+
+
 		//Toxic air for enemies
 		toxicAirTexture = directory.getEntry("images:testSmog", Texture.class);
 
 		//purified air for player
-		pureAirTexture = directory.getEntry("images:testSmog", Texture.class);
+//		pureAirTexture = directory.getEntry("images:testSmog", Texture.class);
 
 
 		//UI elements
 		airBarTexture = directory.getEntry("images:airBar", Texture.class);
 		fHeartTexture = directory.getEntry("images:fullHeart", Texture.class);
 		sHeartTexture = directory.getEntry("images:slashedHeart", Texture.class);
+		fEggTexture = directory.getEntry("images:fullEgg", Texture.class);
+		bEggTexture = directory.getEntry("images:brokenEgg", Texture.class);
 
 		//This code is terrible but beggers can't be choosers - V
 
@@ -719,8 +760,8 @@ public class GameplayController implements Screen {
 		// Here we will instantiate the objects in the level using the JSONLevelReader.
 		JSONLevelReader reader = new JSONLevelReader(directory, bounds, world, level, canvas.camera, input,
 				objects, movObjects, floorArr, SCALE, tileGrid, smogTiles, smogGrid, tileSize, tileOffset, smogTileSize, smogTileOffset,
-				playerDirectionTextures, survivorDirectionTextures, enemyDirectionTextures, vineTextures, toxicAir, survivorITexture, assetTextures,
-				displayFontInteract, fHeartTexture, player, weapon);
+				playerDirectionTextures, survivorDirectionTextures, enemyDirectionTextures, vineTextures, survivorDirections, toxicAir, survivorITexture, assetTextures,
+				displayFontInteract, fHeartTexture, player, null);
 
 //		if (caravan.getX() < 400f) {
 //			int i = 0;
@@ -740,7 +781,6 @@ public class GameplayController implements Screen {
 //		canvas.camera = reader.getCamera();
 		caravan = reader.getCaravan();
 		player = reader.getPlayer();
-		weapon = reader.getWeapon();
 		survivorArr = reader.getSurvivors();
 		enemyArr = reader.getEnemies();
 		survivorControllers = reader.getSurvivorControllers();
@@ -751,7 +791,7 @@ public class GameplayController implements Screen {
 		}
 		// Gives ammo in debug mode
 		if (isDebug()) {
-			weapon.setNumAmmo(1000);
+			player.weapon.setNumAmmo(1000);
 		}
 
 		// *************************** SMOG OBSTACLES ***************************
@@ -862,7 +902,7 @@ public class GameplayController implements Screen {
 
 
 		}
-		airBar = new AirBar(airBarTexture, weapon.getMaxNumAmmo(), weapon.getNumAmmo(), canvas);
+		airBar = new AirBar(airBarTexture, player.weapon.getMaxNumAmmo(), player.weapon.getNumAmmo(), canvas);
 
 		// Hearts
 		int numLives = player.getHealth();
@@ -873,11 +913,13 @@ public class GameplayController implements Screen {
 
 		for (int i = 0; i < numLives; i++) {
 			if (i > 0) {
-				spacing += 13.0f;
+				spacing += 15.0f;
 			}
-			Heart tempHeart = new Heart(fHeartTexture, heartX, heartY, spacing);
+			Heart tempHeart = new Heart(fEggTexture, heartX, heartY, spacing);
 			heartArr.add(tempHeart);
 		}
+		sample = new TutorialPrompt(sampleTutorial, player.getX(), player.getY()-30);
+
 	}
 
 	/**
@@ -982,15 +1024,15 @@ public class GameplayController implements Screen {
 		}
 
 		if (input.didPressAbsorb()) {
-			weapon.setAbsorbing(true);
+			player.weapon.setAbsorbing(true);
 		} else {
-			weapon.setAbsorbing(false);
+			player.weapon.setAbsorbing(false);
 		}
 
 		if (input.didPressFire()) {
-			weapon.setFiring(true);
+			player.weapon.setFiring(true);
 		} else {
-			weapon.setFiring(false);
+			player.weapon.setFiring(false);
 		}
 
 		// Update player and weapon position
@@ -1009,20 +1051,19 @@ public class GameplayController implements Screen {
 		}
 
 		// Update UI elements
-		airBar.update(weapon.getNumAmmo());
+		airBar.update(player.weapon.getNumAmmo());
 
-		weapon.update(player.getPosition(), canvas.unproject(input.getMousePos()), input.getShootDir());
+		player.weapon.update(player.getPosition(), canvas.unproject(input.getMousePos()), input.getShootDir());
 		// Check if the weapon is firing
 
-		if (weapon.fire()) {
-			purifiedAir.attack(weapon.getBullets(), weapon.getPosition(), weapon.getImpulses());
-			weapon.incrementAmmo(-weapon.getBullets());
+		if (player.weapon.fire()) {
+			purifiedAir.attack(player.weapon.getBullets(), player.weapon.getPosition(), player.weapon.getImpulses());
 		}
 		purifiedAir.update();
 		toxicAir.update();
 
 		// Process Collisions
-		collisionController.update(world, player, weapon, survivorArr);
+		collisionController.update(world, player, player.weapon, survivorArr);
 		// This detects and resolves all collisions between the weapon sensor and any
 		// collided smog tiles
 		// if (weapon.isFiring()) {
@@ -1112,7 +1153,7 @@ public class GameplayController implements Screen {
 		}
 		caravan.update();
 		// Update caravan state
-		if (caravan.getBody().getFixtureList().first().testPoint(player.getPosition())) {
+		if (caravan.getBody().getFixtureList().get(1).testPoint(player.getPosition())) {
 			caravan.setInteractable(true);
 		}
 		else {
@@ -1140,7 +1181,7 @@ public class GameplayController implements Screen {
 		// Update Ammo Progress Bar
 		// Update SmogBar
 
-		progress = weapon.getNumAmmo() / (Weapon.MAX_AMMO_CAPACITY * 1.0f);
+		progress = player.weapon.getNumAmmo() / (Weapon.MAX_AMMO_CAPACITY * 1.0f);
 
 		// Sort the player into the list of statics and player
 		// for (int i = 0; i < staticsAndPlayer.size; i++) {
@@ -1164,7 +1205,7 @@ public class GameplayController implements Screen {
 		// Update hearts
 		for (int i = player.getMaxHealth() - 1; i >= 0; i--) {
 			if (player.getHealth() <= i) {
-				heartArr.get(i).setTexture(sHeartTexture);
+				heartArr.get(i).setTexture(bEggTexture);
 			}
 		}
 
@@ -1449,7 +1490,6 @@ public class GameplayController implements Screen {
 		canvas.clear();
 
 		Collections.sort(objects, new SortbyY());
-
 		if (isActive()) {
 			canvas.begin(player.getX(), player.getY(), tileGrid.length * tileSize, tileGrid[0].length * tileSize);
 		} else {
@@ -1469,6 +1509,7 @@ public class GameplayController implements Screen {
 		for (Obstacle obj : smogs){
 			obj.draw(canvas);
 		}
+		sample.draw(canvas);
 
 
 
@@ -1522,7 +1563,7 @@ public class GameplayController implements Screen {
 			}
 			toxicAir.drawDebug(canvas);
 
-			weapon.draw(canvas);
+			player.weapon.draw(canvas);
 			canvas.endDebug();
 		}
 		if (paused) {

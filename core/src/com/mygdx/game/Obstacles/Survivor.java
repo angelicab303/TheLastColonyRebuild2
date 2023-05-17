@@ -1,5 +1,6 @@
 package com.mygdx.game.Obstacles;
 
+import box2dLight.Light;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -10,6 +11,7 @@ import com.badlogic.gdx.physics.box2d.Filter;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 import com.mygdx.game.GameCanvas;
+import com.mygdx.game.Lights;
 import obstacle.BoxObstacle;
 import util.FilmStrip;
 
@@ -85,16 +87,29 @@ public class Survivor extends Shadow implements GameObstacle {
     private int damageCooldown;
     Filter filter;
     private float scale;
-
+    private Texture left;
+    private Texture right;
+    private Texture up;
+    private Texture down;
+    private Texture upLeft;
+    private Texture upRight;
+    private Texture downLeft;
+    private Texture downRight;
     private int behind;
     private Vector2 temp1;
     private Vector2 temp2;
     private boolean isTargetOfEnemy;
     private float height;
     private float width;
+
+    private int ticks;
     private boolean safeInCaravan;
 
     protected boolean revealed;
+
+    private Light torchLight;
+
+    private int nextAction;
 
     private Vector2[] smogDetectionVertices;
     private boolean[] directionVacant;
@@ -106,6 +121,8 @@ public class Survivor extends Shadow implements GameObstacle {
     public void setRevealed(boolean value) {
         revealed = value;
     }
+
+    public void setNextAction(int value) {nextAction = value;}
 
     public boolean isSafeInCaravan() {
         return safeInCaravan;
@@ -181,7 +198,7 @@ public class Survivor extends Shadow implements GameObstacle {
      * @param heart The texture for the heart interface
      *
      */
-    public Survivor(int id, float x, float y, FilmStrip[] survivor, Texture heart, BitmapFont font, float scale) {
+    public Survivor(int id, float x, float y, FilmStrip[] survivor, Texture heart, BitmapFont font, float scale, Texture[] directions) {
         super(x, y, survivor[0].getRegionWidth()*scale, survivor[0].getRegionHeight()*scale, ShadowShape.CIRCLE);
         this.width = survivor[0].getRegionWidth();
         this.height = survivor[0].getRegionHeight();
@@ -206,6 +223,15 @@ public class Survivor extends Shadow implements GameObstacle {
         for(int i = 0; i < 8; i++) {
             directionVacant[i] = false;
         }
+
+        left = directions[1];
+        right = directions[0];
+        up = directions[2];
+        down = directions[3];
+        upLeft = directions[0];
+        upRight = directions[0];
+        downLeft = directions[0];
+        downRight = directions[0];
 
         //stexture = svalue;
         //setTexture(stexture);
@@ -460,6 +486,9 @@ public class Survivor extends Shadow implements GameObstacle {
      * Sets the survivor to be rescued and isFollowing to false.
      */
     public void rescue() {
+        if(torchLight != null){
+            torchLight.remove();
+        }
         this.isRescued = true;
         this.isFollowing = false;
     }
@@ -484,6 +513,7 @@ public class Survivor extends Shadow implements GameObstacle {
      * Sets isFollowing to true.
      */
     public void follow() {
+        torchLight = Lights.createTorchLight(body);
         isFollowing = true;
     }
 
@@ -532,6 +562,7 @@ public class Survivor extends Shadow implements GameObstacle {
      *
      */
     public void update() {
+        ticks++;
         //Checks if we are ded
         if (getLives() == 0) {
             this.die();
@@ -632,6 +663,10 @@ public class Survivor extends Shadow implements GameObstacle {
      * @param canvas Drawing context
      */
     public void draw(GameCanvas canvas) {
+        float upOffset = 15f - 5f;
+        float downOffset = -15f - 5f;
+        float rightOffset = currentAnimator != animator[IDLE] ? 20f : 20f;
+        float leftOffset = currentAnimator != animator[IDLE] ? -20f : -20f;
         currentAnimator.setFrame((int)aframe);
         if (!isRescued && isAlive) {
             super.draw(canvas, width*scale, height*scale);
@@ -659,11 +694,43 @@ public class Survivor extends Shadow implements GameObstacle {
             //canvas.draw(animator, Color.WHITE, animator.getRegionWidth()/2, 0, getX()+xspace, getY()+yspace, animator.getRegionWidth(), animator.getRegionHeight()) ;
         }
         if (isFollowing){
+            System.out.println("Draw hearts");
             float spacing = 0.0f;
             for (int i = 0; i < lives; i++){
-                canvas.draw(textureHeart, Color.PURPLE, 0.0f, 0.0f, (getX() * drawScale.x - 20) + spacing, getY() * drawScale.y + currentAnimator.getRegionHeight()*scale/2 - 2, getAngle(), 0.1f, 0.1f);
+                System.out.println("Heart width: " + textureHeart.getWidth());
+                canvas.draw(textureHeart, Color.PURPLE, 0.0f, 0.0f, (getX() * drawScale.x - 20) + spacing, getY() * drawScale.y + currentAnimator.getRegionHeight()*scale/2 - 2, 0, 0.1f, 0.1f);
                 spacing += 8.0f;
             }
+            Color color = (ticks % 20 == 0? Color.CLEAR : Color.WHITE);
+            switch (nextAction) {
+                case 1:
+                    canvas.draw(right, color, 0.0f, 0.0f, (getX() * drawScale.x) - currentAnimator.getRegionWidth()*scale/2 + rightOffset + 10f, getY() * drawScale.y - 5f, getAngle(), 0.065f, 0.075f);
+                    break;
+                case 2:
+                    canvas.draw(left, color, 0.0f, 0.0f, getX() * drawScale.x - currentAnimator.getRegionWidth()*scale/2 + leftOffset, getY() * drawScale.y - 5f, getAngle(), 0.065f, 0.075f);
+                    break;
+                case 3:
+                    canvas.draw(up, color, 0.0f, 0.0f, getX() * drawScale.x - currentAnimator.getRegionWidth()*scale/2, getY() * drawScale.y + upOffset, getAngle(), 0.065f, 0.075f);
+                    break;
+                case 4:
+                    canvas.draw(down, color, 0.0f, 0.0f, getX() * drawScale.x - currentAnimator.getRegionWidth()*scale/2 + 4f, getY() * drawScale.y + downOffset - 15f, getAngle(), 0.065f, 0.075f);
+                    break;
+                case 5:
+                    canvas.draw(left, color, 0.0f, 0.0f, getX() * drawScale.x - currentAnimator.getRegionWidth()*scale/2 + rightOffset + 15f, getY() * drawScale.y + upOffset + 20f, 10f, 0.065f, 0.075f);
+                    break;
+                case 6:
+                    canvas.draw(left, color, 0.0f, 0.0f, getX() * drawScale.x - currentAnimator.getRegionWidth()*scale/2 + rightOffset + 18f, getY() * drawScale.y + downOffset + 2f, 15f, 0.065f, 0.075f);
+                    break;
+                case 7:
+                    canvas.draw(left, color, 0.0f, 0.0f, getX() * drawScale.x - currentAnimator.getRegionWidth()*scale/2 + leftOffset - 2f, getY() * drawScale.y + upOffset + 23f, 18f, 0.065f, 0.075f);
+                    break;
+                case 8:
+                    canvas.draw(left, color, 0.0f, 0.0f, getX() * drawScale.x - currentAnimator.getRegionWidth()*scale/2 + leftOffset + 4f, getY() * drawScale.y + downOffset - 10f, 7f, 0.065f, 0.075f);
+                    break;
+                default:
+                    break;
+            }
+
         }
     }
 

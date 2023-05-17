@@ -12,6 +12,7 @@ import com.badlogic.gdx.utils.Array;
 import com.mygdx.game.GameCanvas;
 import com.mygdx.game.InputController;
 import com.mygdx.game.Lights;
+import com.mygdx.game.Weapon;
 import obstacle.BoxObstacle;
 import obstacle.WheelObstacle;
 import util.FilmStrip;
@@ -120,7 +121,12 @@ public class Player extends Shadow implements GameObstacle{
     private float height;
     private float width;
 
+    public Weapon weapon;
+
     private int behind;
+
+    private int torch;
+    private int key;
 
 
     private Array<Survivor> survivorsFollowing;
@@ -172,6 +178,8 @@ public class Player extends Shadow implements GameObstacle{
         doneFiring = true;
 
         behind = 0;
+        key = 0;
+        torch = 0;
 
         if (filter == null){
             filter = new Filter();
@@ -186,6 +194,35 @@ public class Player extends Shadow implements GameObstacle{
         currentAnimator = currentStrip[DOWN];
         aframe = 0.0f;
         this.scale = scale;
+
+        this.weapon = new Weapon(getPosition().x, getPosition().y);
+    }
+
+
+    public void collectTorch(){
+        torch++;
+    }
+
+    /**Returns whether a torch was successfully used*/
+    public boolean useTorch(){
+        if(torch > 0){
+            torch--;
+            return true;
+        }
+        return false;
+    }
+
+    public void collectKey(){
+        key++;
+    }
+
+    /**Returns whether a key was successfully used*/
+    public boolean useKey(){
+        if(key > 0){
+            key--;
+            return true;
+        }
+        return false;
     }
 
 
@@ -472,6 +509,7 @@ public class Player extends Shadow implements GameObstacle{
         float vVelocity = controller.getVertical();
 
         if (controller.didPressFire() || controller.didPressAbsorb()){
+            //System.out.println("Absorbed: " + controller.didPressAbsorb());
             pressFire = true;
             doneFiring = false;
         }
