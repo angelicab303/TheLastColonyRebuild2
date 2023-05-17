@@ -27,6 +27,7 @@ import com.mygdx.game.EnemyControllers.ScoutEnemyController;
 import com.mygdx.game.Obstacles.*;
 import com.mygdx.game.Obstacles.Enemies.*;
 import com.badlogic.gdx.Screen;
+import com.mygdx.game.ScreenModes.PauseMenuMode;
 import com.mygdx.game.UI.AirBar;
 import com.mygdx.game.UI.Heart;
 import com.mygdx.game.UI.TutorialPrompt;
@@ -336,6 +337,8 @@ public class GameplayController implements Screen {
 	public InputController input;
 	/** Listener that will update the player mode when we are done */
 	private ScreenListener listener;
+	/** Pause menu */
+	private PauseMenuMode pauseMenu;
 
 	/** The Box2D world */
 	protected World world;
@@ -374,11 +377,12 @@ public class GameplayController implements Screen {
 	 * @param bounds  The game bounds in Box2d coordinates
 	 * @param gravity The gravitational force on this Box2d world
 	 */
-	protected GameplayController(Rectangle bounds, Vector2 gravity) {
+	protected GameplayController(Rectangle bounds, Vector2 gravity, PauseMenuMode pauseMenu) {
 
 		world = new World(gravity, false);
 		this.bounds = new Rectangle(bounds);
 		this.scale = new Vector2(1, 1);
+		this.pauseMenu = pauseMenu;
 		complete = false;
 		failed = false;
 		debug = false;
@@ -392,8 +396,8 @@ public class GameplayController implements Screen {
 	 *
 	 * The game has default gravity and other settings
 	 */
-	public GameplayController(GameCanvas canvas) {
-		this(new Rectangle(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT), new Vector2(0, DEFAULT_GRAVITY));
+	public GameplayController(GameCanvas canvas, PauseMenuMode pauseMenu) {
+		this(new Rectangle(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT), new Vector2(0, DEFAULT_GRAVITY), pauseMenu);
 		setComplete(false);
 		setFailure(false);
 		// world.setContactListener(this);
@@ -1426,13 +1430,15 @@ public class GameplayController implements Screen {
 		purifiedAir.draw(canvas);
 		toxicAir.draw(canvas);
 
-		// Draw air bar
-		airBar.draw(canvas);
-
 		// Draw hearts
-		for (int i = 0; i < heartArr.size; i++) {
-			heartArr.get(i).draw(canvas);
+		if (!paused){
+			// Draw air bar
+			airBar.draw(canvas);
+			for (int i = 0; i < heartArr.size; i++) {
+				heartArr.get(i).draw(canvas);
+			}
 		}
+
 
 		String message = "ÆIR: ";
 		// canvas.drawText(message, displayFontBar, BAR_X - (width/2) + 5, BAR_Y + 38);
@@ -1466,8 +1472,11 @@ public class GameplayController implements Screen {
 			canvas.endDebug();
 		}
 		if (paused) {
-			displayFont.setColor(Color.GRAY);
-			canvas.drawText("PAUSED", displayFont, canvas.camera.position.x - 150f, canvas.camera.position.y + 25f);
+//			displayFont.setColor(Color.GRAY);
+//			canvas.drawText("PAUSED", displayFont, canvas.camera.position.x - 150f, canvas.camera.position.y + 25f);
+			pauseMenu.setMenuPosition(canvas.camera.position.x, canvas.camera.position.y);
+			pauseMenu.draw(canvas);
+
 		}
 		canvas.end();
 

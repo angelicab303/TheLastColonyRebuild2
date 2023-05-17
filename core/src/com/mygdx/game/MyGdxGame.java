@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.mygdx.game.ScreenModes.LevelSelectMode;
 import com.mygdx.game.ScreenModes.LoadingMode;
 import com.mygdx.game.ScreenModes.MainMenuMode;
+import com.mygdx.game.ScreenModes.PauseMenuMode;
 import util.*;
 import assets.*;
 
@@ -25,6 +26,8 @@ public class MyGdxGame extends Game implements ScreenListener {
 	private MainMenuMode mainMenu;
 	/** Player mode for the level select menu */
 	private LevelSelectMode levelSelect;
+	/** Player mode for the pause menu */
+	private PauseMenuMode pauseMenu;
 	private int current;
 	/** List of all WorldControllers */
 	private GameplayController controller;
@@ -43,10 +46,11 @@ public class MyGdxGame extends Game implements ScreenListener {
 		loading = new LoadingMode("assets.json",canvas,1);
 		mainMenu = new MainMenuMode(canvas);
 		levelSelect = new LevelSelectMode(canvas);
+		pauseMenu = new PauseMenuMode(0, 0);
 
 		 //Initialize the three game worlds
 		 //controllers = new WorldController[1];
-		 controller = new GameplayController(canvas);
+		 controller = new GameplayController(canvas, pauseMenu);
 
 		 //Initialize the first game world
 		//controllers[0] = new RocketController();
@@ -131,6 +135,8 @@ public class MyGdxGame extends Game implements ScreenListener {
 			// gather assets for main menu
 			mainMenu.gatherAssets(directory);
 			mainMenu.setScreenListener(this);
+			// gather assets for pause menu
+			pauseMenu.gatherAssets(directory);
 
 			mainMenu.reset();
 			mainMenu.setCanvas(canvas);
@@ -153,6 +159,7 @@ public class MyGdxGame extends Game implements ScreenListener {
 			else{
 				controller.reset(exitCode);
 				setScreen(controller);
+				pauseMenu.populateMenu();
 			}
 		}
 //		else if (exitCode == WorldController.EXIT_NEXT) {

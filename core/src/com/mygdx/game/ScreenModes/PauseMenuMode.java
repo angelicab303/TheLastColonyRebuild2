@@ -1,13 +1,21 @@
 package com.mygdx.game.ScreenModes;
 
+import assets.AssetDirectory;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.controllers.ControllerListener;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.game.GameCanvas;
@@ -30,10 +38,14 @@ public class PauseMenuMode {
     private Texture settingsDown;
     private Texture exit;
     private Texture exitDown;
+    private Texture restart;
+    private Texture restartDown;
     /** Table for pause menu buttons and text */
     private Table pauseTable;
     /** Stage for UI */
     private Stage stage;
+    /** the state of which button was pressed */
+    private int buttonState;
 
     /** How fast we change frames (one frame per 10 calls to update) */
     private static final float ANIMATION_SPEED = 0.02f;
@@ -46,117 +58,166 @@ public class PauseMenuMode {
     private float scale = 0.1f;
     /** Spacing between hearts */
     private float spacing;
+    private Array<TextButton> buttons;
+    /** Font to be used as placeholder for buttons */
+    private BitmapFont nullFont;
+    private boolean loaded = false;
+    /** Scaling factor for the buttons. */
+    private float buttonScale = 0.8f;
+    private float titleScale = 0.5f;
+    private boolean populated = false;
+    /** Exit state for returning back to game */
+    public static final int EXIT_GAME = 1;
+    /** Exit state for going to settings */
+    public static final int EXIT_SETTINGS = 2;
+    /** Exit state for returning back to game */
+    public static final int EXIT_MAINMENU = 3;
+    /** Exit state for returning back to game */
+    public static final int EXIT_RESTART = 4;
 
 
-    public PauseMenuMode(Texture background, Array<Texture> texts, float x, float y){
-        this.background = background;
-        this.spacing = spacing;
+
+
+    public PauseMenuMode(float x, float y){
+        //this.background = background;
+        //this.spacing = spacing;
         xPos = x;
         yPos = y;
-        this.hurry = texts.get(0);
-        this.resume = texts.get(1);
-        this.resumeDown = texts.get(2);
-        this.settings = texts.get(3);
-        this.settingsDown = texts.get(4);
-        this.exit = texts.get(5);
-        this.exitDown = texts.get(6);
+//        this.hurry = texts.get(0);
+//        this.resume = texts.get(1);
+//        this.resumeDown = texts.get(2);
+//        this.settings = texts.get(3);
+//        this.settingsDown = texts.get(4);
+//        this.exit = texts.get(5);
+//        this.exitDown = texts.get(6);
 
         stage = new Stage();
         pauseTable = new Table();
+        pauseTable.setFillParent(true);
+        pauseTable.center();
+        buttonState = 0;
 
 //        animator = new FilmStrip(value,1,NUM_ANIM_FRAMES,NUM_ANIM_FRAMES);
 //        aframe = 0.0f;
 
     }
+    public void gatherAssets(AssetDirectory directory) {
+        // Allocate the main menu assets
+        background = directory.getEntry("pauseMenu:background", Texture.class);
+        hurry = directory.getEntry("pauseMenu:hurry", Texture.class);
+        resume = directory.getEntry("pauseMenu:resume", Texture.class);
+        resumeDown = directory.getEntry("pauseMenu:resumeDown", Texture.class);
+        settings = directory.getEntry("pauseMenu:settings", Texture.class);
+        settingsDown = directory.getEntry("pauseMenu:settingsDown", Texture.class);
+        exit = directory.getEntry("pauseMenu:exit", Texture.class);
+        exitDown = directory.getEntry("pauseMenu:exitDown", Texture.class);
+        restart = directory.getEntry("pauseMenu:restart", Texture.class);
+        restartDown = directory.getEntry("pauseMenu:restartDown", Texture.class);
+        nullFont = directory.getEntry("shared:retro" ,BitmapFont.class);
+        loaded = true;
+    }
+    public void setMenuPosition(float x, float y){
+        this.xPos = x;
+        this.yPos = y;
+        //pauseTable.setPosition(xPos, yPos);
+    }
     /** Populates the pause menu */
     public void populateMenu(){
         // Initialize the buttons/titles to be drawn on screen
-        float startX = RIGHT_SPACING + 6;
-        float startY = canvas.getHeight()*.05f;
+//        float startX = RIGHT_SPACING + 6;
+//        float startY = canvas.getHeight()*.05f;
 
         // Title
-        if (!populated){
-            text.add(new LevelSelectMode.Text(enter, RIGHT_SPACING-30, canvas.getHeight()*.1f, false, 0.7f));
-            text.add(new LevelSelectMode.Text(empty, RIGHT_SPACING-30, canvas.getHeight()*.1f, true, 0.7f));
-        }
+//        if (!populated){
+//            text.add(new LevelSelectMode.Text(enter, RIGHT_SPACING-30, canvas.getHeight()*.1f, false, 0.7f));
+//            text.add(new LevelSelectMode.Text(empty, RIGHT_SPACING-30, canvas.getHeight()*.1f, true, 0.7f));
+//        }
 
         // Table for back button
-        Table backTable = new Table();
-        tables.add(backTable);
-        backTable.setPosition(startX-10, canvas.getHeight()*0.90f);
-        backTable.setWidth(back.getWidth());
-        backTable.setHeight(back.getHeight());
-        backTable.setDebug(false);
+//        Table backTable = new Table();
+//        tables.add(backTable);
+//        backTable.setPosition(startX-10, canvas.getHeight()*0.90f);
+//        backTable.setWidth(back.getWidth());
+//        backTable.setHeight(back.getHeight());
+//        backTable.setDebug(false);
 
-        // Table for level select buttons
-        Table tableLevels = new Table();
-        tables.add(tableLevels);
+        // Table for pause select buttons
+//        Table tableLevels = new Table();
+//        tables.add(tableLevels);
         //table.setFillParent(true);
-        tableLevels.setPosition(startX, startY);
-        tableLevels.setWidth(600.0f);
-        tableLevels.setHeight(400.0f);
-        tableLevels.setDebug(false);
+        //pauseTable.setPosition(xPos, yPos);
+        //pauseTable.setWidth(300.0f);
+        //pauseTable.setHeight(400.0f);
+        Pixmap bgPixmap = new Pixmap(1,1, Pixmap.Format.RGB565);
+        Color color = new Color(0,0,0,0.01f);
+        bgPixmap.setColor(color);
+        bgPixmap.fill();
+        TextureRegionDrawable drawableBackground = new TextureRegionDrawable(new TextureRegion(new Texture(bgPixmap)));
+        pauseTable.setBackground(drawableBackground);
+        pauseTable.setDebug(false);
 
         Gdx.input.setInputProcessor(stage);
 
         buttons = new Array<TextButton>();
-        // Back button to return to main menu
+
+
+
+        // Buttons
         TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
         textButtonStyle.font = nullFont;
-        textButtonStyle.up   = new TextureRegionDrawable(back);
-        textButtonStyle.down = new TextureRegionDrawable(backDown);
-        textButtonStyle.checked = new TextureRegionDrawable(back);
+        textButtonStyle.up   = new TextureRegionDrawable(hurry);
+        textButtonStyle.checked = new TextureRegionDrawable(hurry);
+        textButtonStyle.down = new TextureRegionDrawable(hurry);
         buttons.add(new TextButton("", textButtonStyle));
-        backTable.add(buttons.get(0)).left().size(back.getWidth()*textScale, back.getHeight()*textScale);
+        pauseTable.add(buttons.get(0)).spaceBottom(50f).center().size(hurry.getWidth()*titleScale, hurry.getHeight()*titleScale);
+        pauseTable.row();
+
+        addButton(pauseTable, resume, resumeDown, 1);
+        addButton(pauseTable, restart, restartDown, 2);
+        addButton(pauseTable, settings, settingsDown, 3);
+        addButton(pauseTable, exit, exitDown, 4);
 
 
-
-        // Levels
-        for (int i = 0; i < numLevels; i++){
-            addLevel(tableLevels, mushroom, mushroomDown, i);
-        }
-
-
-        tableLevels.left().top();
-        backTable.left().top();
-        stage.addActor(tableLevels);
-        stage.addActor(backTable);
+        //pauseTable.center().top();
+        stage.addActor(pauseTable);
 
 
         // Hook up the buttons
-        // Back button
-        buttons.get(0).addListener( new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                if (buttons.get(0).isChecked()) {
-                    buttonState = EXIT_MAIN;
-                    isReady = true;
-                }
-            };
-        } );
-        // Check clicks for level buttons
-        // Level 0 button
+        // Resume button
         buttons.get(1).addListener( new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 if (buttons.get(1).isChecked()) {
-                    buttons.get(1).setChecked(false);
-                    if (0 <= unlocked){
-                        currLevel = 0;
-                        buttonState = EXIT_0;
-                    }
+                    buttonState = EXIT_GAME;
+//                    isReady = true;
                 }
             };
         } );
+        // Check clicks for level buttons
+        // Restart button
         buttons.get(2).addListener( new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 if (buttons.get(2).isChecked()) {
-                    buttons.get(2).setChecked(false);
-                    currLevel = 1;
-                    if (1 <= unlocked){
-                        buttonState = EXIT_1;
-                    }
+                    buttonState = EXIT_RESTART;
+                }
+            };
+        } );
+        // Settings button
+        buttons.get(3).addListener( new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                if (buttons.get(3).isChecked()) {
+                    buttonState = EXIT_SETTINGS;
+                }
+            };
+        } );
+        // Exit button
+        buttons.get(4).addListener( new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                if (buttons.get(4).isChecked()) {
+                    buttonState = EXIT_MAINMENU;
                 }
             };
         } );
@@ -165,12 +226,29 @@ public class PauseMenuMode {
             populated = true;
         }
 
-        // Add caravan
-        menuCaravan = new LevelSelectMode.MenuCaravan(caravan, tables.get(1).getX()+buttons.get(0).getX()-25, tables.get(1).getHeight()+buttons.get(0).getY()+40);
-
 
     }
+    /**
+     * Adds a button to the pause table.
+     * @param pauseTable table used to hold all pause buttons
+     * @param up the up texture for the button
+     * @param down the down texture for the button
+     * @param num the number of the button in table order
+     */
+    private void addButton(Table pauseTable, Texture up, Texture down, int num){
+        TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
+        textButtonStyle.font = nullFont;
+        textButtonStyle.up   = new TextureRegionDrawable(up);
+        textButtonStyle.checked = new TextureRegionDrawable(up);
+        textButtonStyle.down = new TextureRegionDrawable(down);
+        buttons.add(new TextButton("", textButtonStyle));
+        pauseTable.add(buttons.get(num)).spaceBottom(30f).center().size(up.getWidth()*buttonScale, up.getHeight()*buttonScale);
+        pauseTable.row();
+    }
 
+    public int getButtonState(){
+        return buttonState;
+    }
 
     /**
      *  Updates the progression of the smog bar depending on how much smog was collected
@@ -191,11 +269,8 @@ public class PauseMenuMode {
      * @param canvas
      */
     public void draw(GameCanvas canvas) {
-        // animator.setFrame((int)aframe);
-        xPos = canvas.camera.position.x - (canvas.camera.viewportWidth*cameraZoom)/2.0f + (33.0f * cameraZoom) + spacing;
-        yPos = canvas.camera.position.y + (canvas.camera.viewportHeight*cameraZoom)*0.8f/2.0f - (15.0f * cameraZoom) - texture.getHeight()*scale;
-        canvas.draw(texture, new Color(255, 255, 255, 0.75f), texture.getWidth()*scale, texture.getHeight()*scale/2, xPos, yPos, 0.0f, scale*0.5f, scale*0.5f);
-//        xPos = canvas.camera.position.x + (canvas.getWidth()*cameraZoom)/2.0f - (90.0f * cameraZoom) - spacing;
-//        yPos = canvas.camera.position.y + (canvas.getHeight()*cameraZoom)/2.0f - (40.0f * cameraZoom) - texture.getHeight()*scale;
+        stage.draw();
     }
+
+
 }
