@@ -62,6 +62,10 @@ public class Obstacles extends Shadow implements GameObstacle {
         this.isDoor = isDoor;
     }
 
+    public void unlock(){
+        setActive(false);
+    }
+
     /**
      * Returns the x-coordinate of the tree position
      *

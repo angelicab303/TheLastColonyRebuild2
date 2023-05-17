@@ -388,6 +388,7 @@ public class JSONLevelReader {
                 }
             }
 
+
             for (int i = 0; i < survivorArr.size; i++) {
                 survivorControllers.add(new SurvivorController(survivorArr.get(i), this.caravan.getPosition(), this.player.getPosition(), this.tileGrid, this.smogGrid, tileSize, tileOffset));
             }
@@ -677,7 +678,7 @@ public class JSONLevelReader {
     }
 
     public void createSmog(int x, int y, int id, float scale) {
-        smogTiles[(int)x][(int)y] = true;
+        smogTiles[(int)x+1][(int)y+1] = true;
 //        System.out.println("Smog id: " + id);
     }
 

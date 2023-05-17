@@ -27,6 +27,7 @@ import com.mygdx.game.Obstacles.*;
 import com.mygdx.game.Obstacles.Enemies.Enemy;
 import com.mygdx.game.Obstacles.Enemies.ScoutEnemy;
 import com.mygdx.game.Obstacles.Items.*;
+import obstacle.Obstacle;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -213,7 +214,7 @@ public class CollisionController{
             switch (collision){
                 case GameObstacle.CATEGORY_PURIFIED | GameObstacle.CATEGORY_ENEMY:
                     Enemy enemy;
-                    Player player;
+                    Player player = null;
                     Survivor survivor;
                     if(objA.getType() == GameObstacle.ObstacleType.ENEMY){
                          ((Enemy) objA).setStunned(true);
@@ -363,6 +364,25 @@ public class CollisionController{
                     }
                     break;
                 case GameObstacle.CATEGORY_ENV | GameObstacle.CATEGORY_PLAYER:
+                    player = null;
+                    Obstacles obstacle = null;
+                    if(objA.getType() == GameObstacle.ObstacleType.OBSTACLE){
+                        if (contact.getFixtureA().isSensor()){
+                            player = (Player) objB;
+                            obstacle = (Obstacles) objA;
+                        }
+                    }
+                    else {
+                        if (contact.getFixtureB().isSensor()){
+                            player = (Player) objA;
+                            obstacle = (Obstacles) objB;
+                        }
+                    }
+                    if(player != null && obstacle !=null && obstacle.getIsDoor() && player.useKey()){
+                        //use key already decrements the key count
+                        obstacle.unlock();
+                    }
+                    break;
                 case GameObstacle.CATEGORY_ENV | GameObstacle.CATEGORY_ENEMY:
                 case GameObstacle.CATEGORY_ENV | GameObstacle.CATEGORY_SURVIVOR:
                     if(objA.getType() == GameObstacle.ObstacleType.OBSTACLE){

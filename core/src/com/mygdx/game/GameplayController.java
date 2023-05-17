@@ -733,10 +733,12 @@ public class GameplayController implements Screen {
 		// *************************** STATIC OBSTACLES ***************************
 		int[] startingBox = { 6, 4 };
 
+
+		int border = 2; // # of tiles the border is
 		// Arrays used to find tiles to place smog at
 		tileGrid = new boolean[canvas.getWidth() / tileSize][canvas.getHeight() / tileSize];
-		boolean[][] smogTiles = new boolean[canvas.getWidth() / tileSize][canvas.getHeight() / tileSize];
-		boolean[][] smogLocations = new boolean[canvas.getWidth() / smogTileSize][canvas.getHeight() / smogTileSize];
+		boolean[][] smogTiles = new boolean[canvas.getWidth() / tileSize+border][canvas.getHeight() / tileSize+border];
+		boolean[][] smogLocations = new boolean[canvas.getWidth() / smogTileSize+2*border][canvas.getHeight() / smogTileSize+2*border];
 		smogGrid = new boolean[canvas.getWidth() * smogTileSize][canvas.getHeight() * smogTileSize];
 
 
@@ -873,7 +875,7 @@ public class GameplayController implements Screen {
 					float maxFrame = 4;
 					float minFrame = 0;
 					float frameNum = (float) (Math.random() * (maxFrame - minFrame + 1) + minFrame);
-					smogTO = new Smog(i * smogTileSize + smogTileOffset, j * smogTileSize + smogTileOffset, smogTexture, frameNum,
+					smogTO = new Smog(i * smogTileSize-smogTileOffset, j * smogTileSize-smogTileOffset, smogTexture, frameNum,
 							SCALE);
 					smogTO.setAwake(true);
 					smogTO.setBodyType(BodyDef.BodyType.StaticBody);
