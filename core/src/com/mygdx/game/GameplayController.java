@@ -11,6 +11,8 @@
 package com.mygdx.game;
 
 import assets.AssetDirectory;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
@@ -357,6 +359,8 @@ public class GameplayController implements Screen {
 	private boolean debug;
 	/** Countdown active for winning or losing */
 	private int countdown;
+
+	private Preferences prefs = Gdx.app.getPreferences("save data");
 
 
 	/**
@@ -1162,6 +1166,14 @@ public class GameplayController implements Screen {
 //		if (caravan.isInteractable() && input.didDropSurvivors()) {
 			if (caravan.getCurrentCapacity() == caravan.getMaxCapacity()) {
 				setComplete(true);
+				if (prefs.getInteger("unlocked", 1) <= curLevel) {
+					prefs.putInteger("unlocked", curLevel + 1);
+				}
+				if (!prefs.getBoolean("level" + curLevel + "complete", false)) {
+					prefs.putInteger("survivors", prefs.getInteger("survivors", 0) + survivorArr.size);
+				}
+				prefs.putBoolean("level" + curLevel + "complete", true);
+				prefs.flush();
 			}
 //			for (int i = 0; i < survivorArr.size; i++) {
 //				if (survivorArr.get(i).isFollowing()) {

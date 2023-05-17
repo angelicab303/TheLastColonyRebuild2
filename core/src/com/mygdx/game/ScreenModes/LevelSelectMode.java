@@ -3,6 +3,7 @@ package com.mygdx.game.ScreenModes;
 import assets.AssetDirectory;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.ControllerListener;
@@ -262,8 +263,9 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
     /** All tables used for UI */
     private Array<Table> tables;
     private boolean populated = false;
+    private Preferences prefs = Gdx.app.getPreferences("save data");
     /** Represents the current level that is unlocked */
-    private int unlocked = 1;
+    private int unlocked = prefs.getInteger("unlocked", 1);
     private int currLevel;
     private int numLevels = 6;
     private MenuCaravan menuCaravan;
