@@ -109,6 +109,8 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
         private boolean movingRight;
         /** How fast the caravan moves */
         private float moveSpeed = 2.0f;
+        /** Whether we are just loading in the screen */
+        private boolean loadingIn;
 
 
         /**
@@ -121,17 +123,23 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
             this.texture = texture;
             startX = x;
             this.y = y;
-            this.x = startX;
+            this.x = -150;
             goalX = 0;
             isMoving = false;
             currLevel = 0;
             movingRight = true;
+            loadingIn = true;
 
             animator = new FilmStrip(texture, 1, NUM_ANIM_FRAMES);
             aframe = 0;
         }
 
         private void update(int currLevel){
+            if (loadingIn){
+                loadingIn = false;
+                isMoving = true;
+                goalX = startX;
+            }
             if (this.currLevel != currLevel){
                 isMoving = true;
                 if (currLevel > this.currLevel){
