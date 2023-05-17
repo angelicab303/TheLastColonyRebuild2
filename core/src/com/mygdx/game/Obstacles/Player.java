@@ -130,6 +130,20 @@ public class Player extends Shadow implements GameObstacle{
     private int torch;
     private int key;
 
+    private final int DEFAULT_NOISE = 10;
+
+    private final int MAX_WALK_NOISE = 60;
+
+    private final int MAX_SMOG_NOISE = 30;
+
+    private final int MAX_ABSORB_NOISE = 90;
+
+    private final int MAX_SHOOT_NOISE = 120;
+
+    private float noise;
+
+    private Light light;
+
 
     private Array<Survivor> survivorsFollowing;
 
@@ -183,6 +197,7 @@ public class Player extends Shadow implements GameObstacle{
         behind = 0;
         key = 0;
         torch = 0;
+        noise = DEFAULT_NOISE;
 
         if (filter == null){
             filter = new Filter();
@@ -408,6 +423,8 @@ public class Player extends Shadow implements GameObstacle{
 
     public void setRevealed(boolean revealed) { this.revealed = revealed; }
 
+    public float getNoise() { return noise; }
+
     /**
      * Creates the physics Body(s) for this object, adding them to the world.
      *
@@ -424,13 +441,12 @@ public class Player extends Shadow implements GameObstacle{
         }
 
         setFilterData(filter);
-        //attachLightToPlayer(Lights.createPointLight(Color.WHITE, sightDis, 0,0));
+        light = Lights.createPointLight(Color.BLACK, noise, 0,0);
+        attachLightToPlayer(light);
         return true;
     }
 
-    public void attachLightToPlayer(Light light){
-        light.attachToBody(body);
-    }
+    public void attachLightToPlayer(Light light){ light.attachToBody(body); }
 
     /**
      *  Updates the direction that the player sprite faces.
@@ -531,6 +547,41 @@ public class Player extends Shadow implements GameObstacle{
         if (startFireTimer){
             fireTime++;
         }
+
+        // update player noise
+
+        if (hVelocity == 0 && vVelocity == 0)
+        {
+            noise -= 0.5f;
+            if (noise < DEFAULT_NOISE)
+            {
+                noise = DEFAULT_NOISE;
+            }
+        }
+        else
+        {
+            noise++;
+            if (!revealed && noise > MAX_SMOG_NOISE)
+            {
+                noise = MAX_SMOG_NOISE;
+            }
+            else if (noise > MAX_WALK_NOISE)
+            {
+                noise = MAX_WALK_NOISE;
+            }
+        }
+
+        if (controller.didPressAbsorb())
+        {
+            noise = MAX_ABSORB_NOISE;
+        }
+        else if (controller.didPressFire())
+        {
+            noise = MAX_SHOOT_NOISE;
+        }
+
+        System.out.println(noise);
+        light.setDistance(noise);
 
 
 //        boolean isMoving = hVelocity + vVelocity != 0;
