@@ -13,10 +13,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.*;
 import com.mygdx.game.EnemyControllers.*;
 import com.mygdx.game.Obstacles.*;
-import com.mygdx.game.Obstacles.Enemies.Enemy;
-import com.mygdx.game.Obstacles.Enemies.FloatingEnemy;
-import com.mygdx.game.Obstacles.Enemies.ScoutEnemy;
-import com.mygdx.game.Obstacles.Enemies.ShriekerEnemy;
+import com.mygdx.game.Obstacles.Enemies.*;
 import com.mygdx.game.Obstacles.Items.Key;
 import com.mygdx.game.Obstacles.Items.Torch;
 import obstacle.Obstacle;
@@ -613,10 +610,10 @@ public class JSONLevelReader {
                 enemyControllers.add(new ScoutEnemyController(tileGrid, tileSize, tileOffset,(ScoutEnemy) enemyTemp, player));
                 break;
             case "ChaserEnemy":
-                enemyTemp = new Enemy(x * tileSize + tileOffset, y * tileSize + tileOffset, enemyDirectionTextures[1], scale, imageTileSize, false);
+                enemyTemp = new ChaserEnemy(x * tileSize + tileOffset, y * tileSize + tileOffset, enemyDirectionTextures[1], scale, imageTileSize);
                 enemyArr.add(enemyTemp);
                 addObject(enemyTemp);
-                enemyControllers.add(new ChaserEnemyController(tileGrid, tileSize, tileOffset, enemyTemp, player));
+                enemyControllers.add(new ChaserEnemyController(tileGrid, tileSize, tileOffset, (ChaserEnemy) enemyTemp, player));
                 break;
         }
     }

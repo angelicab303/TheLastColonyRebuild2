@@ -47,7 +47,7 @@ import util.FilmStrip;
 public class PurifiedQueue {
     // Private constants to avoid use of "magic numbers"
     /** Fixed velocity for a photon */
-    private static final float PHOTON_VELOCITY = 5.0f;
+    private static final float PHOTON_VELOCITY = 10.0f;
     /** Number of animation frames a photon lives before deleted */
     private static final int MAX_AGE = 480;
     /** Maximum number of photons allowed on screen at a time. */
@@ -71,6 +71,8 @@ public class PurifiedQueue {
 
     /** Position for moving box2d objects offscreen */
     Vector2 offscreen;
+
+    private Player player;
 
     /**
      * An inner class that represents a single Purified air pellet
@@ -183,8 +185,10 @@ public class PurifiedQueue {
         public void setFaded(boolean faded) { this.faded = faded; }
 
 
-        public void allocate(float x, float y){
+        public void allocate(float x, float y, Vector2 velocity){
             this.setPosition(x,y);
+//            this.setVX(velocity.x);
+//            this.setVY(velocity.y);
             body.setActive(true);
             this.age = 0;
         }
@@ -270,11 +274,14 @@ public class PurifiedQueue {
         }
     }
 
+    public void setPlayer(Player player) {
+        this.player = player;
+    }
 
     /**
      *  Constructs a new (empty) PhotonQueue
      */
-    public PurifiedQueue(Texture texture, World world, float scale) {
+    public PurifiedQueue(Texture texture, World world, float scale, Player player) {
         //Constants
         offscreen = new Vector2(-50, -50);
 
@@ -354,7 +361,7 @@ public class PurifiedQueue {
         // Add a new photon at the end.
         // Already declared, so just initialize.
         tail = ((tail + 1) % MAX_PHOTONS);
-        queue[tail].allocate(position.x,position.y);
+        queue[tail].allocate(position.x,position.y, player.getVelocity());
         queue[tail].applyImpulse(impulse);
         size++;
     }

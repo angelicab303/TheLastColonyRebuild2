@@ -39,7 +39,7 @@ public class Player extends Shadow implements GameObstacle{
 
 
     /** How long the player must wait until it can lose a life again */
-    private static final int COOLDOWN = 200;
+    private static final int COOLDOWN = 400;
 
     /** The player's current direction */
     private Player.Direction direction;

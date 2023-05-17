@@ -3,6 +3,7 @@ package com.mygdx.game.EnemyControllers;
 import com.badlogic.gdx.math.Vector2;
 //import com.mygdx.game.EnemyController;
 
+import com.mygdx.game.Obstacles.Enemies.ChaserEnemy;
 import com.mygdx.game.Obstacles.Enemies.Enemy;
 import com.mygdx.game.Obstacles.Player;
 
@@ -26,7 +27,7 @@ public class ChaserEnemyController extends com.mygdx.game.EnemyControllers.Enemy
 
     boolean followingSurvivor;
 
-    public ChaserEnemyController(boolean[][] board, int tileSize, int tileOffset, Enemy enemy, Player player) {
+    public ChaserEnemyController(boolean[][] board, int tileSize, int tileOffset, ChaserEnemy enemy, Player player) {
         super(board, tileSize, tileOffset, enemy, player);
         target = new Vector2(player.getX(), player.getY());
         super.initTiles(target);
@@ -59,8 +60,33 @@ public class ChaserEnemyController extends com.mygdx.game.EnemyControllers.Enemy
         if (state == FSMState.CHASE) {
             selectTarget();
         }
-        return super.getAction();
+        ticks++;
+        moveTime++;
 
+        if (ticks % 10 == 0)
+        {
+            changeStateIfApplicable();
+        }
+
+        int action = 0;
+        if (state == FSMState.CHASE)
+        {
+            if (firstMove)
+            {
+                action = getMove();
+                firstMove = false;
+            }
+            else {
+                if (goalReached() || moveTime > 30) {
+                    moveTime = 0;
+                    action = getMove();
+                } else {
+                    action = prevAction;
+                }
+            }
+            action = getMove();
+        }
+        return action;
     }
 
     protected void changeStateIfApplicable() {
@@ -80,13 +106,13 @@ public class ChaserEnemyController extends com.mygdx.game.EnemyControllers.Enemy
                 {
                     state = FSMState.STUNNED;
                 }
-                else if (enemy.isRevealed())
+                else if (enemy.isRevealed() && enemy.canAttack())
                 {
                     state = FSMState.CHASE;
-                    if (enemy.canAttack())
-                    {
-                        state = FSMState.ATTACK;
-                    }
+//                    if (enemy.canAttack())
+//                    {
+//                        state = FSMState.ATTACK;
+//                    }
                 }
                 else if (alertAllEnemies)
                 {
@@ -103,7 +129,7 @@ public class ChaserEnemyController extends com.mygdx.game.EnemyControllers.Enemy
                 {
                     state = FSMState.STUNNED;
                 }
-                else if (!enemy.isRevealed() || !enemy.canAttack())
+                else if (!enemy.canAttack())
                 {
                     state = FSMState.IDLE;
                 }

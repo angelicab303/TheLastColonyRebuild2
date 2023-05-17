@@ -741,7 +741,7 @@ public class GameplayController implements Screen {
 		// System.out.println("First element of tiles: " + tiles[0][0]);
 
 		// TO DO: update visuals for purified smog
-		purifiedAir = new PurifiedQueue(pureAirTexture, world, SCALE);
+		purifiedAir = new PurifiedQueue(pureAirTexture, world, SCALE, player);
 		toxicAir = new ToxicQueue(toxicAirTexture, world, SCALE);
 
 		// Setting the size of the tiles
@@ -789,7 +789,7 @@ public class GameplayController implements Screen {
 		if (isDebug()) {
 			player.weapon.setNumAmmo(1000);
 		}
-
+		purifiedAir.setPlayer(player);
 		// *************************** SMOG OBSTACLES ***************************
 
 		// Starting Area:

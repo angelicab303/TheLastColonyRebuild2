@@ -708,10 +708,10 @@ public class Survivor extends Shadow implements GameObstacle {
                     canvas.draw(left, color, 0.0f, 0.0f, getX() * drawScale.x - currentAnimator.getRegionWidth()*scale/2 + leftOffset, getY() * drawScale.y - 5f, getAngle(), 0.065f, 0.075f);
                     break;
                 case 3:
-                    canvas.draw(up, color, 0.0f, 0.0f, getX() * drawScale.x - currentAnimator.getRegionWidth()*scale/2, getY() * drawScale.y + upOffset, getAngle(), 0.065f, 0.075f);
+                    canvas.draw(up, color, 0.0f, 0.0f, getX() * drawScale.x - currentAnimator.getRegionWidth()*scale/2, getY() * drawScale.y + upOffset, getAngle(), 0.075f, 0.075f);
                     break;
                 case 4:
-                    canvas.draw(down, color, 0.0f, 0.0f, getX() * drawScale.x - currentAnimator.getRegionWidth()*scale/2 + 4f, getY() * drawScale.y + downOffset - 15f, getAngle(), 0.065f, 0.075f);
+                    canvas.draw(down, color, 0.0f, 0.0f, getX() * drawScale.x - currentAnimator.getRegionWidth()*scale/2 + 4f, getY() * drawScale.y + downOffset - 15f, getAngle(), 0.075f, 0.065f);
                     break;
                 case 5:
                     canvas.draw(left, color, 0.0f, 0.0f, getX() * drawScale.x - currentAnimator.getRegionWidth()*scale/2 + rightOffset + 15f, getY() * drawScale.y + upOffset + 20f, 10f, 0.065f, 0.075f);
