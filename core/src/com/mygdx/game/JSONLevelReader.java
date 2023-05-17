@@ -203,6 +203,8 @@ public class JSONLevelReader {
                 levelStr = directory.getEntry("tutorialLevel5", JsonValue.class);
             } else if (level == 5) {
                 levelStr = directory.getEntry("mediumLevel", JsonValue.class);
+            } else if (level == 6){
+                levelStr = directory.getEntry("Level7", JsonValue.class);
             }
 
             Array<Vector2> levelBounds = new Array<Vector2>();
