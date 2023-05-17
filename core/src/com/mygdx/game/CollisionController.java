@@ -415,6 +415,14 @@ public class CollisionController{
                     }
 
                     break;
+                case GameObstacle.CATEGORY_SMOG | GameObstacle.CATEGORY_PLAYER:
+                    if (objA.getType() == GameObstacle.ObstacleType.PLAYER){
+                        ((Player) objA).setRevealed(true);
+                    }
+                    else {
+                        ((Player) objB).setRevealed(true);
+                    }
+                    break;
                 case GameObstacle.CATEGORY_ENV | GameObstacle.CATEGORY_PLAYER:
                 case GameObstacle.CATEGORY_ENV | GameObstacle.CATEGORY_ENEMY:
                 case GameObstacle.CATEGORY_ENV | GameObstacle.CATEGORY_SURVIVOR:
@@ -456,6 +464,17 @@ public class CollisionController{
                     else {
                         ((Survivor) objB).setRevealed(false);
                     }
+                    contact.setEnabled(false);
+                    break;
+                case GameObstacle.CATEGORY_SMOG | GameObstacle.CATEGORY_PLAYER:
+                    if (objA.getType() == GameObstacle.ObstacleType.PLAYER){
+                        ((Player) objA).setRevealed(false);
+                    }
+                    else {
+                        ((Player) objB).setRevealed(false);
+                    }
+                    contact.setEnabled(false);
+                    break;
                 //case GameObstacle.CATEGORY_ENEMY| GameObstacle.CATEGORY_ENEMY:
                 case GameObstacle.CATEGORY_PURIFIED | GameObstacle.CATEGORY_ENEMY:
                 case GameObstacle.CATEGORY_PLAYER | GameObstacle.CATEGORY_SURVIVOR:

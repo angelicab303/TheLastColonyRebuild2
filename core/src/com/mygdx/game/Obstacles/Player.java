@@ -45,7 +45,7 @@ public class Player extends Shadow implements GameObstacle{
     private Player.Direction direction;
 
     /** How far forward the player can move */
-    private static final float MOVE_SPEED = 500.0f;
+    private static final float MOVE_SPEED = 100.0f;
     /** The texture for the player. */
     protected FilmStrip[] movementStrips;
     protected FilmStrip[] idleStrips;
@@ -117,6 +117,8 @@ public class Player extends Shadow implements GameObstacle{
     private float fireTime = 0;
     /** Indicates whether to start the firing timer */
     private boolean startFireTimer = false;
+    /** Whether the player is currently in smog */
+    private boolean revealed;
 
     private float height;
     private float width;
@@ -176,6 +178,7 @@ public class Player extends Shadow implements GameObstacle{
         blinkTime = 0;
         pressFire = false;
         doneFiring = true;
+        revealed = true;
 
         behind = 0;
         key = 0;
@@ -403,6 +406,8 @@ public class Player extends Shadow implements GameObstacle{
         return isAlive;
     }
 
+    public void setRevealed(boolean revealed) { this.revealed = revealed; }
+
     /**
      * Creates the physics Body(s) for this object, adding them to the world.
      *
@@ -530,8 +535,17 @@ public class Player extends Shadow implements GameObstacle{
 
 //        boolean isMoving = hVelocity + vVelocity != 0;
 
-        velocity.x = hVelocity * MOVE_SPEED;
-        velocity.y = vVelocity * MOVE_SPEED;
+        // move more slowly if in smog
+        if (!revealed)
+        {
+            velocity.x = hVelocity * MOVE_SPEED / 3;
+            velocity.y = vVelocity * MOVE_SPEED / 3;
+        }
+        // otherwise move normally
+        else {
+            velocity.x = hVelocity * MOVE_SPEED;
+            velocity.y = vVelocity * MOVE_SPEED;
+        }
 
         if (!velocity.equals(zerovector)) {
             lastVelocity  = velocity.cpy();
