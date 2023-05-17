@@ -22,6 +22,8 @@ public class Obstacles extends Shadow implements GameObstacle {
 
     private boolean isBelow;
 
+    private boolean isDoor;
+
     PolygonShape sensorShape;
 
     /**
@@ -30,7 +32,7 @@ public class Obstacles extends Shadow implements GameObstacle {
      * @param x The initial x-coordinate of the tree
      * @param y The initial y-coordinate of the tree
      */
-    public Obstacles(float x, float y, TextureRegion value, float scale) {
+    public Obstacles(float x, float y, TextureRegion value, float scale, boolean isDoor) {
         super(x, y, value.getRegionWidth() * scale, value.getRegionHeight() * scale, ShadowShape.SQUARE);
         setTexture(value);
         setBodyType(BodyDef.BodyType.StaticBody);
@@ -42,12 +44,22 @@ public class Obstacles extends Shadow implements GameObstacle {
         velocity = new Vector2(0.0f, 0.0f);
         this.scale = scale;
         this.isBelow = false;
+        this.isDoor = true;
 
         if (filter == null) {
             filter = new Filter();
             filter.categoryBits = getCatagoricalBits();
             filter.maskBits = getMaskBits();
         }
+    }
+
+
+    public boolean getIsDoor(){
+        return isDoor;
+    }
+
+    public void setIsDoor(boolean isDoor){
+        this.isDoor = isDoor;
     }
 
     /**
