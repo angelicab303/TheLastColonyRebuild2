@@ -77,7 +77,7 @@ public class SurvivorController {
         this.caravanPos = caravanPos;
         this.board = board;
         this.tileSize = tileSize;
-        this.tileOffset = tileOffset;
+        this.tileOffset = 0;
         secondPrevMove = 0;
         prevMove = 0;
 
@@ -144,8 +144,8 @@ public class SurvivorController {
 
         nextTile = tilePath.get(1);
 
-        float x = tilePath.get(1).getX() * tileSize + tileOffset;
-        float y = tilePath.get(1).getY() * tileSize + tileOffset;
+        float x = tilePath.get(1).getX() * tileSize + this.tileOffset;
+        float y = tilePath.get(1).getY() * tileSize + this.tileOffset;
         goalLoc = new Vector2(x, y);
     }
 
@@ -505,7 +505,7 @@ public class SurvivorController {
         int pathfindMove = getMove();
         survivor.setNextAction(pathfindMove);
         // first option, using A*
-        if (pathfindMove > 0 && survivor.getDirectionVacant()[pathfindMove - 1]) {
+        if (pathfindMove > 0) {
             return pathfindMove;
         }
         return 0;

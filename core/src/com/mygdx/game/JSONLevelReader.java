@@ -599,26 +599,26 @@ public class JSONLevelReader {
         switch (id){
             case "FloatingEnemy":
                 Enemy enemyTemp;
-                enemyTemp = new FloatingEnemy(x * tileSize + tileOffset, y * tileSize + tileOffset, enemyDirectionTextures[1], scale, imageTileSize);
+                enemyTemp = new FloatingEnemy(x * tileSize, y * tileSize, enemyDirectionTextures[1], scale, imageTileSize);
                 enemyArr.add(enemyTemp);
                 addObject(enemyTemp);
                 enemyControllers.add(new FloatingEnemyController(tileGrid, tileSize, tileOffset, (FloatingEnemy) enemyTemp, player, toxicAir));
                 break;
             case "ShriekerEnemy":
-                enemyTemp = new ShriekerEnemy(x * tileSize + tileOffset, y * tileSize + tileOffset, shriekerTextures, scale, imageTileSize);
+                enemyTemp = new ShriekerEnemy(x * tileSize, y * tileSize, shriekerTextures, scale, imageTileSize);
                 shriekerArr.add((ShriekerEnemy) enemyTemp);
                 enemyArr.add(enemyTemp);
                 addObject(enemyTemp);
                 enemyControllers.add(new ShriekerEnemyController(tileGrid, tileSize, tileOffset, (ShriekerEnemy) enemyTemp, player));
                 break;
             case "ScoutEnemy":
-                enemyTemp = new ScoutEnemy(x * tileSize + tileOffset, y * tileSize + tileOffset, enemyDirectionTextures[1], vineTextures, scale, imageTileSize, world);
+                enemyTemp = new ScoutEnemy(x * tileSize, y * tileSize, enemyDirectionTextures[1], vineTextures, scale, imageTileSize, world);
                 enemyArr.add(enemyTemp);
                 addObject(enemyTemp);
                 enemyControllers.add(new ScoutEnemyController(tileGrid, tileSize, tileOffset,(ScoutEnemy) enemyTemp, player));
                 break;
             case "ChaserEnemy":
-                enemyTemp = new Enemy(x * tileSize + tileOffset, y * tileSize + tileOffset, enemyDirectionTextures[1], scale, imageTileSize, false);
+                enemyTemp = new Enemy(x * tileSize, y * tileSize, enemyDirectionTextures[1], scale, imageTileSize, false);
                 enemyArr.add(enemyTemp);
                 addObject(enemyTemp);
                 enemyControllers.add(new ChaserEnemyController(tileGrid, tileSize, tileOffset, enemyTemp, player));
@@ -663,6 +663,16 @@ public class JSONLevelReader {
         obstacleArr.add(obstacleTemp);
         if(x >= 0 && y >= 0 && x < width && y < height){
             tileGrid[(int)x ][(int)y] = true;
+            if (id == 47 || id == 50)
+            {
+                tileGrid[(int)(x-1) ][(int)y] = true;
+                tileGrid[(int)(x-1)][(int)(y+1)] = true;
+            }
+            if (id == 48)
+            {
+                tileGrid[(int)(x+1)][(int)y] = true;
+                tileGrid[(int)(x+1)][(int)(y+1)] = true;
+            }
         }
         addObject(obstacleTemp);
     }

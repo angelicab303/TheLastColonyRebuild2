@@ -580,7 +580,7 @@ public class Player extends Shadow implements GameObstacle{
             noise = MAX_SHOOT_NOISE;
         }
 
-        System.out.println(noise);
+        //System.out.println(noise);
         light.setDistance(noise);
 
 
