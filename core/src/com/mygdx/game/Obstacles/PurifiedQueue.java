@@ -457,10 +457,10 @@ public class PurifiedQueue {
             air.animator.setFrame((int)air.aframe);
             air.collisionAnimator.setFrame((int)air.aframeCollision);
             if(air.age >= MAX_AGE) {
-                canvas.draw(air.collisionAnimator,tint,air.getOrigin().x,air.getOrigin().y,air.getPosition().x,air.getPosition().y,0,air.scale,air.scale);
+                canvas.draw(air.collisionAnimator,Color.WHITE,air.getOrigin().x,air.getOrigin().y,air.getPosition().x,air.getPosition().y,0,air.scale,air.scale);
             }
             else {
-                canvas.draw(air.animator,tint,air.getOrigin().x,air.getOrigin().y,air.getPosition().x,air.getPosition().y,0,air.scale,air.scale);
+                canvas.draw(air.animator,Color.WHITE,air.getOrigin().x,air.getOrigin().y,air.getPosition().x,air.getPosition().y,0,air.scale,air.scale);
             }
 
 
