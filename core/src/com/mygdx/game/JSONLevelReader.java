@@ -391,9 +391,6 @@ public class JSONLevelReader {
             }
 
             this.caravan.setMaxCapacity(survivorArr.size);
-            if (this.caravan.getX() < 400f) {
-                System.out.println("Finished loading JSON Level");
-            }
             System.out.println("Finished loading JSON Level");
 
             // Close the map reader
