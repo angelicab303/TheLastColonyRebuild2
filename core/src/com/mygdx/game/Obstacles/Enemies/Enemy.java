@@ -438,7 +438,7 @@ public class Enemy extends Shadow implements GameObstacle {
         {
             canvas.draw(currentAnimator, Color.PINK, origin.x, origin.y, body.getWorldCenter().x*drawScale.x - width*scale/2, body.getWorldCenter().y*drawScale.y- height*scale/2, 0.0f, scale, scale);
             if(stunAnimation != null){
-                System.out.println(stunTime % 4);
+//                System.out.println(stunTime % 4);
                 stunAnimation.setFrame(((int)stunTime/5) % 4); //4 frames of animation, 5 frame rate reduction
                 canvas.draw(stunAnimation, Color.GRAY, origin.x, origin.y, body.getWorldCenter().x * drawScale.x - width*scale/2, body.getWorldCenter().y * drawScale.y, 0.0f, scale, scale);
             }

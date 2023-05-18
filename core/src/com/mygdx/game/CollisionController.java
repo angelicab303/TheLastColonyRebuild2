@@ -228,7 +228,6 @@ public class CollisionController{
                     }
                     break;
                 case GameObstacle.CATEGORY_PURIFIED | GameObstacle.CATEGORY_VINE:
-                    System.out.println("VINE COLLISION");
                     if(objA.getType() == GameObstacle.ObstacleType.VINE){
                         ((ScoutEnemy.VineTile) objA).setStunned(true);
 //                        ((ScoutEnemy.VineTile) objA).incToStunTime();
@@ -341,6 +340,14 @@ public class CollisionController{
                     }
 
                     break;
+                case GameObstacle.CATEGORY_ITEM | GameObstacle.CATEGORY_SMOG:
+                    if(objA.getType() == GameObstacle.ObstacleType.ITEM
+                            && ((Item) objA).getItemType() == Item.ItemType.TORCH){
+                        ((Smog)objB).setCanReappear(false);
+                    }else if(objB.getType() == GameObstacle.ObstacleType.ITEM
+                            && ((Item) objB).getItemType() == Item.ItemType.TORCH){
+                        ((Smog)objA).setCanReappear(false);
+                    }
                 case GameObstacle.CATEGORY_SURVIVOR | GameObstacle.CATEGORY_TOXIC:
                     if (objA.getType() == GameObstacle.ObstacleType.SURVIVOR){
                         survivor = (Survivor) objA;
@@ -498,6 +505,7 @@ public class CollisionController{
                 //case GameObstacle.CATEGORY_ENEMY| GameObstacle.CATEGORY_ENEMY:
                 case GameObstacle.CATEGORY_PURIFIED | GameObstacle.CATEGORY_ENEMY:
                 case GameObstacle.CATEGORY_PLAYER | GameObstacle.CATEGORY_SURVIVOR:
+                case GameObstacle.CATEGORY_SMOG | GameObstacle.CATEGORY_ITEM:
                 case GameObstacle.CATEGORY_SMOG | GameObstacle.CATEGORY_ENV:
                 case GameObstacle.CATEGORY_PURIFIED | GameObstacle.CATEGORY_VINE:
                 case GameObstacle.CATEGORY_ITEM| GameObstacle.CATEGORY_PLAYER:
