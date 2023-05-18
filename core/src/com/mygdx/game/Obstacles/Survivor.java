@@ -212,7 +212,7 @@ public class Survivor extends Shadow implements GameObstacle {
         displayFontInteract = font;
         safeInCaravan = false;
         this.scale = scale;
-        revealed = false;
+        revealed = true;
         smogDetectionVertices = new Vector2[9];
         directionVacant = new boolean[8];
         temp1 = new Vector2();

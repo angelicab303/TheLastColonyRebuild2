@@ -176,7 +176,7 @@ public class SurvivorController {
             switch (state) {
                 case IDLE:
                     // code for state change in spawn state
-                    if (survivor.isFollowing() /*&& survivor.isRevealed()*/) {
+                    if (survivor.isFollowing() && survivor.isRevealed()) {
                         state = FSMState.FOLLOW;
                     }
                     break;
@@ -185,9 +185,9 @@ public class SurvivorController {
                     if (survivor.getBody().getFixtureList().peek().testPoint(caravanPos.x, caravanPos.y)) {
                         state = FSMState.SAFE;
                     }
-                    /*if (!survivor.isRevealed()) {
+                    if (!survivor.isRevealed()) {
                         state = FSMState.IDLE;
-                    }*/
+                    }
                     break;
                 case FIND:
                     // code for state change in find state
