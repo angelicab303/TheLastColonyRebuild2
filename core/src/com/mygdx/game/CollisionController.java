@@ -228,7 +228,6 @@ public class CollisionController{
                     }
                     break;
                 case GameObstacle.CATEGORY_PURIFIED | GameObstacle.CATEGORY_VINE:
-                    System.out.println("VINE COLLISION");
                     if(objA.getType() == GameObstacle.ObstacleType.VINE){
                         ((ScoutEnemy.VineTile) objA).setStunned(true);
 //                        ((ScoutEnemy.VineTile) objA).incToStunTime();
