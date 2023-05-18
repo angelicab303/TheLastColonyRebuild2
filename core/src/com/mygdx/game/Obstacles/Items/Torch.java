@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.mygdx.game.Lights;
 
 public class Torch extends Item{
-    Light torchLight;
+    private Light torchLight;
     public Torch(float x, float y, TextureRegion cvalue, float scale){
         super(x,y,cvalue,scale);
     }

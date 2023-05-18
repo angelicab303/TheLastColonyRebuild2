@@ -271,7 +271,8 @@ public class InputController {
 			pressedEnter = false;
 			pressedRightArrow = false;
 			pressedLeftArrow = false;
-			debugPressed = (debugPressed) || (Gdx.input.isKeyPressed(Input.Keys.X));
+			debugPrevious = debugPressed;
+			debugPressed = (Gdx.input.isKeyPressed(Input.Keys.X));
 			// Movement forward/backward
 			if (Gdx.input.isKeyPressed(up) && !Gdx.input.isKeyPressed(down) && !Gdx.input.isKeyPressed(pause)) {
 				vertical = 1;

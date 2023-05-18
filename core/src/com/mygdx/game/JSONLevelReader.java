@@ -13,10 +13,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.*;
 import com.mygdx.game.EnemyControllers.*;
 import com.mygdx.game.Obstacles.*;
-import com.mygdx.game.Obstacles.Enemies.Enemy;
-import com.mygdx.game.Obstacles.Enemies.FloatingEnemy;
-import com.mygdx.game.Obstacles.Enemies.ScoutEnemy;
-import com.mygdx.game.Obstacles.Enemies.ShriekerEnemy;
+import com.mygdx.game.Obstacles.Enemies.*;
 import com.mygdx.game.Obstacles.Items.Key;
 import com.mygdx.game.Obstacles.Items.Torch;
 import obstacle.Obstacle;
@@ -32,6 +29,8 @@ public class JSONLevelReader {
     private InputController input;
     private PooledList<Obstacle> objects;
     private PooledList<Obstacle> movObjects;
+
+    private TextureRegion smogBorderTexture;
     private float scale;
     private int width;
     private int height;
@@ -143,7 +142,7 @@ public class JSONLevelReader {
     private JsonValue[] tiles;
 
     public JSONLevelReader(AssetDirectory directory, Rectangle bounds, World world, int level,
-                           OrthographicCamera camera, InputController input, PooledList<Obstacle> objects, PooledList<Obstacle> movObjects, Array<FloorTile> floorArr,
+                           OrthographicCamera camera, InputController input, PooledList<Obstacle> objects, TextureRegion smogBorderTexture, Array<FloorTile> floorArr,
                            float scale, boolean[][] tileGrid, boolean[][] smogTiles, boolean[][] smogGrid, int tileSize,
                            int tileOffset, int smogTileSize, int smogTileOffset, FilmStrip[][] playerDirectionTextures,
                            FilmStrip[] survivorDirectionTextures, FilmStrip[][] enemyDirectionTextures, Texture[] vineTextures, Texture[] directionTextures, ToxicQueue toxicAir,
@@ -155,7 +154,7 @@ public class JSONLevelReader {
         this.camera = camera;
         this.input = input;
         this.objects = objects;
-        this.movObjects = movObjects;
+        this.smogBorderTexture = smogBorderTexture;
         this.floorArr = floorArr;
         this.scale = scale;
         this.tileGrid = tileGrid;
@@ -203,6 +202,8 @@ public class JSONLevelReader {
                 levelStr = directory.getEntry("tutorialLevel5", JsonValue.class);
             } else if (level == 5) {
                 levelStr = directory.getEntry("mediumLevel", JsonValue.class);
+            } else if (level == 6){
+                levelStr = directory.getEntry("Level7", JsonValue.class);
             }
 
             Array<Vector2> levelBounds = new Array<Vector2>();
@@ -379,10 +380,11 @@ public class JSONLevelReader {
             for (int i = -4; i < levelBounds.get(level).x + 8; i++) {
                 for (int j = -4; j < levelBounds.get(level).y + 8; j++) {
                     if (i < 0 || i >= levelBounds.get(level).x || j <= 0 || j >= levelBounds.get(level).y) {
-                        createWall(i, j, numBeforeFloors + numFloorIDs + numWallIDs - 1, scale);
+                        createObstacle(i, j, smogBorderTexture, scale, false);
                     }
                 }
             }
+
 
             for (int i = 0; i < survivorArr.size; i++) {
                 survivorControllers.add(new SurvivorController(survivorArr.get(i), this.caravan.getPosition(), this.player.getPosition(), this.tileGrid, this.smogGrid, tileSize, tileOffset));
@@ -467,8 +469,8 @@ public class JSONLevelReader {
             createEnemy(x, y, type, scale);
         } else if (type.equals("Floor")) {
             createFloor(x, y, id, scale);
-        }else if(type.equals("Obstacle")) {//IDK how doors are going to be implemented, so Imma hold off on this for now -V
-            createObstacle(x, y, id, scale);
+        }else if(type.equals("Obstacle") || type.equals("Door")) {//IDK how doors are going to be implemented, so Imma hold off on this for now -V
+            createObstacle(x, y, id, scale, type.equals("Door"));
         }else if(type.equals("Smog")){
             createSmog(x, y, id, scale);
         }else if(type.equals("Mushroom")){
@@ -542,10 +544,10 @@ public class JSONLevelReader {
     }
 
     public void createKey(int x, int y, int id, float scale) {
-        addObject(new Key(x,y,getTextureRegionKey(id), scale));
+        addObject(new Key(x*tileSize,y*tileSize,getTextureRegionKey(id), scale));
     }
     public void createTorch(int x, int y, int id, float scale) {
-        addObject(new Torch(x,y,getTextureRegionKey(id), scale));
+        addObject(new Torch(x*tileSize,y*tileSize,getTextureRegionKey(id), scale));
     }
          
     public void createPlayer(int x, int y, float scale) {
@@ -594,29 +596,29 @@ public class JSONLevelReader {
         switch (id){
             case "FloatingEnemy":
                 Enemy enemyTemp;
-                enemyTemp = new FloatingEnemy(x * tileSize + tileOffset, y * tileSize + tileOffset, enemyDirectionTextures[1], scale, imageTileSize);
+                enemyTemp = new FloatingEnemy(x * tileSize, y * tileSize, enemyDirectionTextures[1], scale, imageTileSize);
                 enemyArr.add(enemyTemp);
                 addObject(enemyTemp);
                 enemyControllers.add(new FloatingEnemyController(tileGrid, tileSize, tileOffset, (FloatingEnemy) enemyTemp, player, toxicAir));
                 break;
             case "ShriekerEnemy":
-                enemyTemp = new ShriekerEnemy(x * tileSize + tileOffset, y * tileSize + tileOffset, shriekerTextures, scale, imageTileSize);
+                enemyTemp = new ShriekerEnemy(x * tileSize, y * tileSize, shriekerTextures, scale, imageTileSize);
                 shriekerArr.add((ShriekerEnemy) enemyTemp);
                 enemyArr.add(enemyTemp);
                 addObject(enemyTemp);
                 enemyControllers.add(new ShriekerEnemyController(tileGrid, tileSize, tileOffset, (ShriekerEnemy) enemyTemp, player));
                 break;
             case "ScoutEnemy":
-                enemyTemp = new ScoutEnemy(x * tileSize + tileOffset, y * tileSize + tileOffset, enemyDirectionTextures[1], vineTextures, scale, imageTileSize, world);
+                enemyTemp = new ScoutEnemy(x * tileSize, y * tileSize, enemyDirectionTextures[1], vineTextures, scale, imageTileSize, world);
                 enemyArr.add(enemyTemp);
                 addObject(enemyTemp);
                 enemyControllers.add(new ScoutEnemyController(tileGrid, tileSize, tileOffset,(ScoutEnemy) enemyTemp, player));
                 break;
             case "ChaserEnemy":
-                enemyTemp = new Enemy(x * tileSize + tileOffset, y * tileSize + tileOffset, enemyDirectionTextures[1], scale, imageTileSize, false);
+                enemyTemp = new ChaserEnemy(x * tileSize, y * tileSize, enemyDirectionTextures[1], scale, imageTileSize);
                 enemyArr.add(enemyTemp);
                 addObject(enemyTemp);
-                enemyControllers.add(new ChaserEnemyController(tileGrid, tileSize, tileOffset, enemyTemp, player));
+                enemyControllers.add(new ChaserEnemyController(tileGrid, tileSize, tileOffset, (ChaserEnemy) enemyTemp, player));
                 break;
         }
     }
@@ -651,48 +653,44 @@ public class JSONLevelReader {
         return floorArr;
     }
 
-    public void createWall(int x, int y, int id, float scale) {
-//        System.out.println("Creating wall");
-        wallTemp = new Obstacles(x * tileSize, y * tileSize, getTextureRegionKey(id), scale);
-        wallArr.add(wallTemp);
+
+    public void createObstacle(float x, float y, int id, float scale, boolean isDoor) {
+//        System.out.println("Creating obstacle (tree / fence)");
+        obstacleTemp = new Obstacles(x * tileSize  , y * tileSize, getTextureRegionKey(id), scale, isDoor);
+        obstacleArr.add(obstacleTemp);
+        if(x >= 0 && y >= 0 && x < width && y < height){
+            tileGrid[(int)x ][(int)y] = true;
+            if (id == 47 || id == 50)
+            {
+                tileGrid[(int)(x-1) ][(int)y] = true;
+                tileGrid[(int)(x-1)][(int)(y+1)] = true;
+            }
+            if (id == 48)
+            {
+                tileGrid[(int)(x+1)][(int)y] = true;
+                tileGrid[(int)(x+1)][(int)(y+1)] = true;
+            }
+        }
+        addObject(obstacleTemp);
+    }
+
+    public void createObstacle(float x, float y, TextureRegion textureRegion, float scale, boolean isDoor) {
+//        System.out.println("Creating obstacle (tree / fence)");
+        obstacleTemp = new Obstacles(x * tileSize  , y * tileSize, textureRegion, scale, isDoor);
+        obstacleArr.add(obstacleTemp);
         if(x >= 0 && y >= 0 && x < width && y < height){
             tileGrid[(int)x ][(int)y] = true;
         }
-
-        wallTemp.setBodyType(BodyDef.BodyType.StaticBody);
-        addObject(wallTemp);
-
-//        tileGrid[(int)x][(int)y] = true;
-//        tiles[wallLocations[i][0]][wallLocations[i][1]] = true;
-//        tileGrid[wallLocations[i][0]][wallLocations[i][1]] = true;
-    }
-
-
-    public void createObstacle(float x, float y, int id, float scale) {
-//        System.out.println("Creating obstacle (tree / fence)");
-        obstacleTemp = new Obstacles(x * tileSize  , y * tileSize, getTextureRegionKey(id), scale);
-        obstacleArr.add(obstacleTemp);
-        tileGrid[(int)x ][(int)y] = true;
-        obstacleTemp.setBodyType(BodyDef.BodyType.StaticBody);
         addObject(obstacleTemp);
     }
 
     public void createSmog(int x, int y, int id, float scale) {
-        smogTiles[(int)x][(int)y] = true;
+        smogTiles[(int)x+1][(int)y+1] = true;
 //        System.out.println("Smog id: " + id);
     }
 
     public boolean[][] getSmogTiles() {
         return smogTiles;
-    }
-
-    public void createPlaceable(float x, float y, int id, float scale) {
-//        System.out.println("Creating placeable");
-        placeableTemp = new Obstacles(x * tileSize + (tileSize / 2), y * tileSize + (tileSize / 2), getTextureRegionKey(id), scale);
-//        System.out.println("Created placeable");
-        placeableArr.add(placeableTemp);
-        placeableTemp.setBodyType(BodyDef.BodyType.StaticBody);
-        addObject(placeableTemp);
     }
 
     public void dispose(){

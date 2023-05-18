@@ -77,7 +77,7 @@ public class SurvivorController {
         this.caravanPos = caravanPos;
         this.board = board;
         this.tileSize = tileSize;
-        this.tileOffset = tileOffset;
+        this.tileOffset = 0;
         secondPrevMove = 0;
         prevMove = 0;
 
@@ -144,8 +144,8 @@ public class SurvivorController {
 
         nextTile = tilePath.get(1);
 
-        float x = tilePath.get(1).getX() * tileSize + tileOffset;
-        float y = tilePath.get(1).getY() * tileSize + tileOffset;
+        float x = tilePath.get(1).getX() * tileSize + this.tileOffset;
+        float y = tilePath.get(1).getY() * tileSize + this.tileOffset;
         goalLoc = new Vector2(x, y);
     }
 
@@ -176,7 +176,7 @@ public class SurvivorController {
             switch (state) {
                 case IDLE:
                     // code for state change in spawn state
-                    if (survivor.isFollowing() /*&& survivor.isRevealed()*/) {
+                    if (survivor.isFollowing() && survivor.isRevealed()) {
                         state = FSMState.FOLLOW;
                     }
                     break;
@@ -185,9 +185,9 @@ public class SurvivorController {
                     if (survivor.getBody().getFixtureList().peek().testPoint(caravanPos.x, caravanPos.y)) {
                         state = FSMState.SAFE;
                     }
-                    /*if (!survivor.isRevealed()) {
+                    if (!survivor.isRevealed()) {
                         state = FSMState.IDLE;
-                    }*/
+                    }
                     break;
                 case FIND:
                     // code for state change in find state
@@ -327,107 +327,6 @@ public class SurvivorController {
         return false;
     }
 
-    private String actionToString(int action) {
-        switch(action) {
-            case 1:
-                return "RIGHT";
-            case 2:
-                return "LEFT";
-            case 3:
-                return "UP";
-            case 4:
-                return "DOWN";
-            case 5:
-                return "RIGHT, UP";
-            case 6:
-                return "RIGHT DOWN";
-            case 7:
-                return "LEFT UP";
-            case 8:
-                return "LEFT DOWN";
-        }
-        return "NO ACTION";
-    }
-
-    private int clockwise(int attemptedMove) {
-        switch(attemptedMove) {
-            // RIGHT
-            case 1:
-                // RIGHT DOWN
-                return 6;
-            // LEFT
-            case 2:
-                // LEFT UP
-                return 7;
-            // UP
-            case 3:
-                // RIGHT UP
-                return 5;
-            // DOWN
-            case 4:
-                // LEFT DOWN
-                return 8;
-            // RIGHT UP
-            case 5:
-                // RIGHT
-                return 1;
-            // RIGHT DOWN
-            case 6:
-                // DOWN
-                return 4;
-            // LEFT UP
-            case 7:
-                // UP
-                return 3;
-            // LEFT DOWN
-            case 8:
-                // LEFT
-                return 2;
-            default:
-                // out of options ;-;
-                return attemptedMove;
-        }
-    }
-
-    private int oppositeDirection(int direction) {
-        switch (direction) {
-            // RIGHT
-            case 1:
-                // LEFT
-                return 2;
-            // LEFT
-            case 2:
-                // RIGHT
-                return 1;
-            // UP
-            case 3:
-                // DOWN
-                return 4;
-            // DOWN
-            case 4:
-                // UP
-                return 3;
-            // RIGHT UP
-            case 5:
-                // LEFT DOWN
-                return 8;
-            // RIGHT DOWN
-            case 6:
-                // LEFT UP
-                return 7;
-            // LEFT UP
-            case 7:
-                // RIGHT DOWN
-                return 6;
-            // LEFT DOWN
-            case 8:
-                // RIGHT UP
-                return 5;
-            default:
-                // no direction
-                return 0;
-        }
-    }
 
     private int nextBest(int pathfindMove) {
         switch (pathfindMove) {
@@ -505,7 +404,7 @@ public class SurvivorController {
         int pathfindMove = getMove();
         survivor.setNextAction(pathfindMove);
         // first option, using A*
-        if (pathfindMove > 0 && survivor.getDirectionVacant()[pathfindMove - 1]) {
+        if (pathfindMove > 0) {
             return pathfindMove;
         }
         return 0;

@@ -376,6 +376,7 @@
     "images:sInteract": "images/sInteractable_sheet2.png",
     "images:testSmog": "images/test_green_smog-sheet2.png",
     "images:weaponProjectile": "images/weaponProjectile-Sheet.png",
+    "images:weaponProjectileCollision": "images/projectileCollision-Sheet.png",
     "images:airBar": "images/AirMeterFilling-Sheet-export2.png",
     "images:fullEgg": "images/Egg.png",
     "images:brokenEgg": "images/EggDamaged.png",
@@ -478,6 +479,8 @@
     "tiles:6a_tree6": "tiles/6a_tree6.png",
     "tiles:9a_torch": "tiles/9a_torch.png",
     "tiles:9a_mushroom": "tiles/9a_mushroom.png",
+    "tiles:8_doorOpen" :"tiles/DoorOpen.png",
+    "tiles:8_doorClosed": "tiles/DoorClosed.png",
 
     "tiles:6a_mediumTree": "tiles/6a_mediumTree.png",
     "tiles:6b_tallTree": "tiles/6b_tallTree.png",
@@ -524,6 +527,7 @@
   },
 
   "tilesets": {
+    "5:16 TileSet.tsx": "tiles/516_TileSet..tsj",
     "5:5 TileSet.tsx": "tiles/LastColonyTiles510.tsj",
     "LastColonyTileset.tsx": "tiles/LastColonyTileset.json"
   },
@@ -533,7 +537,8 @@
     "tutorialLevel3": "levels/LastColonyTutorial3.json",
     "tutorialLevel4": "levels/LastColonyTutorial4.json",
     "tutorialLevel5": "levels/LastColonyTutorial5.json",
-    "mediumLevel": "levels/LastColonyMedLevel.json"
+    "mediumLevel": "levels/LastColonyMedLevel.json",
+    "Level7": "levels/Level_7.tmj"
   },
   "jsons": {
     "5:5 TileSet.tsx": "tiles/LastColonyTiles510.tsj",
@@ -543,7 +548,8 @@
     "tutorialLevel3": "levels/LastColonyTutorial3.json",
     "tutorialLevel4": "levels/LastColonyTutorial4.json",
     "tutorialLevel5": "levels/LastColonyTutorial5.json",
-    "mediumLevel": "levels/LastColonyMedLevel.json"
+    "mediumLevel": "levels/LastColonyMedLevel.json",
+    "Level7": "levels/Level_7.tmj"
   },
   "sounds": {
     "rocket:bump": "rocket/bump.mp3",
