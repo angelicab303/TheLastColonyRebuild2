@@ -95,6 +95,7 @@ public class GameplayController implements Screen {
 
 	// *************************** Smog, Purified Air, and Air Bar Textures
 	// ***************************
+	private Texture projectileCollisionTexture;
 	/** Texture asset for the smog texture */
 	private Texture smogTexture;
 	private TextureRegion smogTexture2;
@@ -488,7 +489,7 @@ public class GameplayController implements Screen {
 		vineTextures[20] = directory.getEntry("images:vineCornerClosedRightDown", Texture.class);
 		vineTextures[21] = directory.getEntry("images:vineCornerClosedRightUp", Texture.class);
 
-
+		projectileCollisionTexture = directory.getEntry("images:weaponProjectileCollision", Texture.class);
 
 		//Toxic air for enemies
 		toxicAirTexture = directory.getEntry("images:testSmog", Texture.class);
@@ -754,7 +755,7 @@ public class GameplayController implements Screen {
 		// System.out.println("First element of tiles: " + tiles[0][0]);
 
 		// TO DO: update visuals for purified smog
-		purifiedAir = new PurifiedQueue(pureAirTexture, world, SCALE, player);
+		purifiedAir = new PurifiedQueue(pureAirTexture, world, SCALE, player, projectileCollisionTexture);
 		toxicAir = new ToxicQueue(toxicAirTexture, world, SCALE);
 
 		// Setting the size of the tiles

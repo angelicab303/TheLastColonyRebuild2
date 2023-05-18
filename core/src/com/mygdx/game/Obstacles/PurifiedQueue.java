@@ -34,6 +34,7 @@ import com.badlogic.gdx.physics.box2d.Filter;
 import com.badlogic.gdx.physics.box2d.World;
 import com.mygdx.game.GameCanvas;
 import obstacle.BoxObstacle;
+import org.w3c.dom.Text;
 import util.FilmStrip;
 
 
@@ -55,6 +56,7 @@ public class PurifiedQueue {
 
     /** Graphic asset representing a single photon. */
     private static Texture texture;
+    private static Texture collisionTexture;
 
     // QUEUE DATA STRUCTURES
     /** Array implementation of a circular queue. */
@@ -112,12 +114,16 @@ public class PurifiedQueue {
         private float timeToFade = 450;
         /** Filmstrip for smog */
         protected FilmStrip animator;
+        protected FilmStrip collisionAnimator;
         /** How fast we change frames (one frame per 10 calls to update) */
         private static final float ANIMATION_SPEED = 0.02f;
         /** The number of animation frames in our filmstrip */
         private static final int   NUM_ANIM_FRAMES = 1;
+
+        private static final int   NUM_ANIM_COLLISION_FRAMES = 13;
         /** Current animation frame for this shell */
         private float aframe;
+        private float aframeCollision;
         /** Scale of the object */
         private float scale;
 
@@ -137,10 +143,12 @@ public class PurifiedQueue {
 
             setActive(false);
             animator = new FilmStrip(PurifiedQueue.texture,1,NUM_ANIM_FRAMES,NUM_ANIM_FRAMES);
+            collisionAnimator = new FilmStrip(PurifiedQueue.collisionTexture, 1, NUM_ANIM_COLLISION_FRAMES, NUM_ANIM_COLLISION_FRAMES);
 //            float maxFrame = 4;
 //            float minFrame = 0;
 //            float frameNum = (float)(Math.random()*(maxFrame-minFrame+1)+minFrame);
             aframe = 0;
+            aframeCollision = 0;
             this.scale = scale;
         }
 
@@ -281,7 +289,7 @@ public class PurifiedQueue {
     /**
      *  Constructs a new (empty) PhotonQueue
      */
-    public PurifiedQueue(Texture texture, World world, float scale, Player player) {
+    public PurifiedQueue(Texture texture, World world, float scale, Player player, Texture collision) {
         //Constants
         offscreen = new Vector2(-50, -50);
 
@@ -293,6 +301,7 @@ public class PurifiedQueue {
         // Construct the queue.
         // this.texture = texture;
         this.texture = texture;
+        this.collisionTexture = collision;
         queue = new PurifiedAir[MAX_PHOTONS];
 
         head = 0;
