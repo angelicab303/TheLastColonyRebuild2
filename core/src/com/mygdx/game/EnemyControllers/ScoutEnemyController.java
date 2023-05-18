@@ -344,9 +344,9 @@ public class ScoutEnemyController extends com.mygdx.game.EnemyControllers.EnemyC
                 action = 4;
             }
         }
-        System.out.println("size: " + enemy.vines.size);
-        System.out.println("next move: " + action);
-        System.out.println("can't add vine?: " + containsVine[(int) nextTile.getX()][(int) nextTile.getY()]);
+//        System.out.println("size: " + enemy.vines.size);
+//        System.out.println("next move: " + action);
+//        System.out.println("can't add vine?: " + containsVine[(int) nextTile.getX()][(int) nextTile.getY()]);
         if (!containsVine[(int) nextTile.getX()][(int) nextTile.getY()]) {
             enemy.addVineTile(nextTile.getX() * tileSize + (tileSize / 2), nextTile.getY() * tileSize + (tileSize / 2), action);
             containsVine[(int) nextTile.getX()][(int) nextTile.getY()] = true;

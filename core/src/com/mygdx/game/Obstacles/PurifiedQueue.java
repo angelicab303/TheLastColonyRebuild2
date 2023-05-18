@@ -76,6 +76,8 @@ public class PurifiedQueue {
 
     private Player player;
 
+    protected int ticks;
+
     /**
      * An inner class that represents a single Purified air pellet
      *
@@ -126,6 +128,7 @@ public class PurifiedQueue {
         private float aframeCollision;
         /** Scale of the object */
         private float scale;
+        private int ticks;
 
         /**
          * Initialize a standard purified air unit
@@ -137,6 +140,7 @@ public class PurifiedQueue {
             // setTexture(PurifiedQueue.texture);
             // setLinearDamping(1); //arbitrary damping coeff.
             this.age = -1;
+            ticks = 0;
 
             this.fading = false;
             this.faded = false;
@@ -219,13 +223,26 @@ public class PurifiedQueue {
         /** Updates the fade time of fading purified air */
         public void update()
         {
-            age++;
-            if (age >= MAX_AGE)
+            if (age != MAX_AGE) {
+                age++;
+            }
+            if (age == MAX_AGE)
             {
+                aframeCollision += ANIMATION_SPEED;
+                if (ticks % 50 == 0) {
+                    aframeCollision += 1;
+                }
+//                faded = true;
+//                reset();
+            }
+            else {
+                aframeCollision = 0;
+            }
+            if (aframeCollision > 12) {
+                aframeCollision = 0;
                 faded = true;
                 reset();
             }
-
 
             setX(body.getWorldCenter().x);
             setY(body.getWorldCenter().y);
@@ -438,7 +455,13 @@ public class PurifiedQueue {
 
             // Use this information to draw.
             air.animator.setFrame((int)air.aframe);
-            canvas.draw(air.animator,tint,air.getOrigin().x,air.getOrigin().y,air.getPosition().x,air.getPosition().y,0,air.scale,air.scale);
+            air.collisionAnimator.setFrame((int)air.aframeCollision);
+            if(air.age >= MAX_AGE) {
+                canvas.draw(air.collisionAnimator,tint,air.getOrigin().x,air.getOrigin().y,air.getPosition().x,air.getPosition().y,0,air.scale,air.scale);
+            }
+            else {
+                canvas.draw(air.animator,tint,air.getOrigin().x,air.getOrigin().y,air.getPosition().x,air.getPosition().y,0,air.scale,air.scale);
+            }
 
 
         }
