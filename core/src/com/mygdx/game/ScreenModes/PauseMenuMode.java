@@ -105,7 +105,7 @@ public class PauseMenuMode {
     public void gatherAssets(AssetDirectory directory) {
         // Allocate the main menu assets
         background = directory.getEntry("pauseMenu:background", Texture.class);
-        hurry = directory.getEntry("pauseMenu:hurryDark", Texture.class);
+        hurry = directory.getEntry("pauseMenu:hurry", Texture.class);
         resume = directory.getEntry("pauseMenu:resume", Texture.class);
         resumeDown = directory.getEntry("pauseMenu:resumeDown", Texture.class);
         settings = directory.getEntry("pauseMenu:settings", Texture.class);
@@ -155,8 +155,8 @@ public class PauseMenuMode {
 //        bgPixmap.fill();
 //        TextureRegionDrawable drawableBackground = new TextureRegionDrawable(new TextureRegion(new Texture(bgPixmap)));
         //pauseTable.setBackground(drawableBackground);
-        Image ibackground = new Image(background);
-        stage.addActor(ibackground);
+//        Image ibackground = new Image(background);
+//        stage.addActor(ibackground);
         pauseTable = new Table();
         pauseTable.setFillParent(true);
         pauseTable.center();

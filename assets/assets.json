@@ -228,8 +228,8 @@
         }
       }
     },
-    "images:maskEnemyUp": {
-      "file" : "images/MaskUp-Sheet.png",
+    "images:floaterMovementRight": {
+      "file" : "images/enemies/newFloater_right.png",
       "sprites" : {
         "fire": {
           "rows": 1,
