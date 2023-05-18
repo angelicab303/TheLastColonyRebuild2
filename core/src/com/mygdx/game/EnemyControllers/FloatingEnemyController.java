@@ -14,9 +14,19 @@ public class FloatingEnemyController extends EnemyController {
 
     boolean shootingSurvivor;
 
+    private final int MAX_BULLETS = 5;
+
     private ToxicQueue toxicQueue;
 
     final Vector2 angle = new Vector2();
+
+    private Vector2 impulse;
+
+    /** impulse magnitude */
+    /** impulse scaling per upgrade */
+    private final float SCALE_FACTOR = 1.2f;
+    private Vector2 temp1;
+    private Vector2 temp2;
 
     public FloatingEnemyController(boolean[][] board, int tileSize, int tileOffset, FloatingEnemy enemy, Player player, ToxicQueue toxicQueue) {
         super(board, tileSize, tileOffset, enemy, player);
@@ -25,6 +35,7 @@ public class FloatingEnemyController extends EnemyController {
         super.initTiles(target);
         shootingSurvivor = false;
         survivorTarget = null;
+        impulse = new Vector2();
     }
 
     @Override
@@ -34,6 +45,23 @@ public class FloatingEnemyController extends EnemyController {
 //        target = new Vector2(player.getX(), player.getY());
         return super.getAction();
     }
+
+//    private Vector2[] createBullets(int bullets){
+//        impulses = new Vector2[bullets];
+//        impulses[0] = new Vector2(power, enemy.getVX()-enemy.getVY());
+//        float angle_change = 0f;//(absorbRange.y - absorbRange.x)/ ((float)(bullets - 1));
+//        for(int i = 1; i <  bullets; i++){
+//            temp1 = impulses[0].cpy();
+//            if(i%2 == 1){
+//                temp1.rotateDeg(-1*((i+1)/2)*angle_change);
+//            }
+//            else {
+//                temp1.rotateDeg(((i+1)/2)*angle_change);
+//            }
+//            impulses[i] = temp1;
+//        }
+//        return impulses;
+//    }
 
     private void selectTarget() {
 //        target.x = player.getX();
@@ -111,7 +139,9 @@ public class FloatingEnemyController extends EnemyController {
             case ATTACK:
                 angle.set(target.cpy().sub(enemyPos));
                 Vector2 attackPos = angle.cpy().scl(2);
-                toxicQueue.attack(1, enemy.getBody().getWorldCenter(), attackPos);
+                impulse.x = angle.x;
+                impulse.y = angle.y;
+                toxicQueue.attack(1, enemy.getBody().getWorldCenter(), impulse);
                 enemy.setAttack(false);
                 if (shootingSurvivor) {
                     survivorTarget.setTargetOfEnemy(false);

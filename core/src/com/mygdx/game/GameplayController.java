@@ -756,7 +756,7 @@ public class GameplayController implements Screen {
 
 		// TO DO: update visuals for purified smog
 		purifiedAir = new PurifiedQueue(pureAirTexture, world, SCALE, player, projectileCollisionTexture);
-		toxicAir = new ToxicQueue(toxicAirTexture, world, SCALE);
+		toxicAir = new ToxicQueue(pureAirTexture, world, SCALE, projectileCollisionTexture);
 
 		// Setting the size of the tiles
 		Shadow.setSize(32f);
