@@ -513,8 +513,11 @@ public class Survivor extends Shadow implements GameObstacle {
      * Sets isFollowing to true.
      */
     public void follow() {
-        torchLight = Lights.createTorchLight(body);
-        isFollowing = true;
+        if(!isFollowing){
+            torchLight = Lights.createTorchLight(body);
+            isFollowing = true;
+        }
+
     }
 
     /**

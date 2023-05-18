@@ -1,5 +1,6 @@
 package com.mygdx.game.Obstacles.Items;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
@@ -16,6 +17,8 @@ public class Item extends BoxObstacle implements GameObstacle {
     /**Filter for filtering */
     private static volatile Filter filter;
 
+    private float scale;
+
     public enum ItemType{
         ITEM,
         KEY,
@@ -29,6 +32,7 @@ public class Item extends BoxObstacle implements GameObstacle {
         setFriction(0);
         setRestitution(0.1f);
         setTexture(cvalue);
+        this.scale = scale;
 
         if (filter == null){
             filter = new Filter();
@@ -57,6 +61,12 @@ public class Item extends BoxObstacle implements GameObstacle {
         setAwake(true);
         getBody().setUserData(this);
         return true;
+    }
+
+    @Override
+    public void draw(GameCanvas canvas) {
+        canvas.draw(texture, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, 0.0f, scale,
+                scale);
     }
 
     @Override

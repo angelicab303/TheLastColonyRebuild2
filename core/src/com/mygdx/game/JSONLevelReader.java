@@ -547,10 +547,10 @@ public class JSONLevelReader {
     }
 
     public void createKey(int x, int y, int id, float scale) {
-        addObject(new Key(x,y,getTextureRegionKey(id), scale));
+        addObject(new Key(x*tileSize,y*tileSize,getTextureRegionKey(id), scale));
     }
     public void createTorch(int x, int y, int id, float scale) {
-        addObject(new Torch(x,y,getTextureRegionKey(id), scale));
+        addObject(new Torch(x*tileSize,y*tileSize,getTextureRegionKey(id), scale));
     }
          
     public void createPlayer(int x, int y, float scale) {
