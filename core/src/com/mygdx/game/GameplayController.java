@@ -150,6 +150,8 @@ public class GameplayController implements Screen {
 	/** Texture asset for the broken egg texture */
 	private Texture bEggTexture;
 
+	private TextureRegion smogBorderTexture;
+
 	// *************************** END OF TEXTURES ***************************
 
 	/** Texture for shrieker enemy */
@@ -317,8 +319,6 @@ public class GameplayController implements Screen {
 	protected GameCanvas canvas;
 	/** All the objects in the world. */
 	protected PooledList<Obstacle> objects = new PooledList<Obstacle>();
-	/** All the movable objects in the world. */
-	protected PooledList<Obstacle> movObjects = new PooledList<Obstacle>();
 	/** All of the smog objects in the world **DO NOT COMBINE, NEEDED FOR CORRECT RENDERING */
 	protected PooledList<Smog> smogs = new PooledList<Smog>();
 	protected Array<FloorTile> floorArr = new Array<FloorTile>();
@@ -530,7 +530,8 @@ public class GameplayController implements Screen {
 		}
 
 		key = "tiles:5c_borderSmog";
-		assetTextures.put(key , new TextureRegion(directory.getEntry(key, Texture.class)));
+		smogBorderTexture = new TextureRegion(directory.getEntry(key, Texture.class));
+		assetTextures.put(key , smogBorderTexture);
 
 		//fences -> # fence tiles = 9
 		for(int i = 1; i < 10; i++){
@@ -549,6 +550,12 @@ public class GameplayController implements Screen {
 
 		key = "tiles:9a_mushroom";
 		assetTextures.put(key , new TextureRegion(directory.getEntry(key, Texture.class)));
+
+		key = "tiles:8_doorOpen";
+		assetTextures.put(key, new TextureRegion(directory.getEntry(key, Texture.class)));
+
+		key = "tiles:8_doorClosed";
+		assetTextures.put(key, new TextureRegion(directory.getEntry(key, Texture.class)));
 
 		stunAnimation = directory.getEntry("images:stun.fire", FilmStrip.class );
 		shadow = new TextureRegion(directory.getEntry("images:shadow", Texture.class));
@@ -684,15 +691,11 @@ public class GameplayController implements Screen {
 		for (Obstacle obj : smogs) {
 			obj.deactivatePhysics(world);
 		}
-		for (Obstacle obj : movObjects) {
-			obj.deactivatePhysics(world);
-		}
 		EnemyController.clearShriekers();
 		enemyControllers.clear();
 		survivorControllers.clear();
 		smogs.clear();
 		objects.clear();
-		movObjects.clear();
 		addQueue.clear();
 		canvas.disposeLights();
 		world.dispose();
@@ -736,10 +739,12 @@ public class GameplayController implements Screen {
 		// *************************** STATIC OBSTACLES ***************************
 		int[] startingBox = { 6, 4 };
 
+
+		int border = 2; // # of tiles the border is
 		// Arrays used to find tiles to place smog at
 		tileGrid = new boolean[canvas.getWidth() / tileSize][canvas.getHeight() / tileSize];
-		boolean[][] smogTiles = new boolean[canvas.getWidth() / tileSize][canvas.getHeight() / tileSize];
-		boolean[][] smogLocations = new boolean[canvas.getWidth() / smogTileSize][canvas.getHeight() / smogTileSize];
+		boolean[][] smogTiles = new boolean[canvas.getWidth() / tileSize+border][canvas.getHeight() / tileSize+border];
+		boolean[][] smogLocations = new boolean[canvas.getWidth() / smogTileSize+2*border][canvas.getHeight() / smogTileSize+2*border];
 		smogGrid = new boolean[canvas.getWidth() * smogTileSize][canvas.getHeight() * smogTileSize];
 
 
@@ -763,7 +768,7 @@ public class GameplayController implements Screen {
 //		System.out.println("Width: " + canvas.getWidth() + "\t\tHeight: " + canvas.getHeight());
 		// Here we will instantiate the objects in the level using the JSONLevelReader.
 		JSONLevelReader reader = new JSONLevelReader(directory, bounds, world, level, canvas.camera, input,
-				objects, movObjects, floorArr, SCALE, tileGrid, smogTiles, smogGrid, tileSize, tileOffset, smogTileSize, smogTileOffset,
+				objects, smogBorderTexture, floorArr, SCALE, tileGrid, smogTiles, smogGrid, tileSize, tileOffset, smogTileSize, smogTileOffset,
 				playerDirectionTextures, survivorDirectionTextures, enemyDirectionTextures, vineTextures, survivorDirections, toxicAir, survivorITexture, assetTextures,
 				displayFontInteract, fHeartTexture, player, null);
 
@@ -777,7 +782,6 @@ public class GameplayController implements Screen {
 
 
 		objects = reader.getObjects();
-		movObjects = reader.getMovObjects();
 		floorArr = reader.getFloorArr();
 		tileGrid = reader.getTileGrid();
 		smogTiles = reader.getSmogTiles();
@@ -877,7 +881,7 @@ public class GameplayController implements Screen {
 					float maxFrame = 4;
 					float minFrame = 0;
 					float frameNum = (float) (Math.random() * (maxFrame - minFrame + 1) + minFrame);
-					smogTO = new Smog(i * smogTileSize + smogTileOffset, j * smogTileSize + smogTileOffset, smogTexture, frameNum,
+					smogTO = new Smog(i * smogTileSize-smogTileOffset, j * smogTileSize-smogTileOffset, smogTexture, frameNum,
 							SCALE);
 					smogTO.setAwake(true);
 					smogTO.setBodyType(BodyDef.BodyType.StaticBody);
@@ -1345,12 +1349,10 @@ public class GameplayController implements Screen {
 		}
 		smogs.clear();
 		objects.clear();
-		movObjects.clear();
 		addQueue.clear();
 		world.dispose();
 		smogs = null;
 		objects = null;
-		movObjects = null;
 		addQueue = null;
 		bounds = null;
 		scale = null;
@@ -1436,18 +1438,6 @@ public class GameplayController implements Screen {
 		// Note how we use the linked list nodes to delete O(1) in place.
 		// This is O(n) without copying.
 		Iterator<PooledList<Obstacle>.Entry> iterator = objects.entryIterator();
-		while (iterator.hasNext()) {
-			PooledList<Obstacle>.Entry entry = iterator.next();
-			Obstacle obj = entry.getValue();
-			if (obj.isRemoved()) {
-				obj.deactivatePhysics(world);
-				entry.remove();
-			} else {
-				// Note that update is called last!
-				obj.update(dt);
-			}
-		}
-		iterator = movObjects.entryIterator();
 		while (iterator.hasNext()) {
 			PooledList<Obstacle>.Entry entry = iterator.next();
 			Obstacle obj = entry.getValue();
@@ -1565,9 +1555,6 @@ public class GameplayController implements Screen {
 		if (debug) {
 			canvas.beginDebug();
 			for (Obstacle obj : objects) {
-				obj.drawDebug(canvas);
-			}
-			for (Obstacle obj : movObjects) {
 				obj.drawDebug(canvas);
 			}
 			for (Obstacle obj : smogs) {
