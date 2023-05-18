@@ -507,6 +507,9 @@ public class GameplayController implements Screen {
 		//This code is terrible but beggers can't be choosers - V
 
 		String key;
+
+		key = "tiles:0_caravan";
+		assetTextures.put(key , new TextureRegion(directory.getEntry(key, Texture.class)));
 		//grass -> # grass tiles = 20 for a, 9 for b
 		for(int i = 1; i < 21; i++){
 			key = "tiles:4a_grass" + i;
@@ -550,6 +553,10 @@ public class GameplayController implements Screen {
 
 		key = "tiles:9a_mushroom";
 		assetTextures.put(key , new TextureRegion(directory.getEntry(key, Texture.class)));
+
+		key = "tiles:9b_key";
+		assetTextures.put(key , new TextureRegion(directory.getEntry(key, Texture.class)));
+
 
 		key = "tiles:8_doorOpen";
 		assetTextures.put(key, new TextureRegion(directory.getEntry(key, Texture.class)));

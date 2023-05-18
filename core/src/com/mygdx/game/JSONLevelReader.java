@@ -494,10 +494,12 @@ public class JSONLevelReader {
 
     public TextureRegion getTextureRegionKey(int id) {
         tiles[id].getString("image");
-        String textureName = tiles[id].getString("image");
+        String fileName = tiles[id].getString("image");
+        String textureName = "tiles:" + fileName.substring(0, fileName.length() - 4);
         TextureRegion region = assetTextures.get(textureName);
         if (region == null){
-            Texture texture = directory.getEntry("tiles:" + textureName.substring(0, textureName.length() - 4), Texture.class);
+            System.out.println("Missing asset" + id);
+            Texture texture = directory.getEntry(textureName, Texture.class);
             if(texture == null){
                 System.out.println("ERROR");
             }
@@ -658,7 +660,10 @@ public class JSONLevelReader {
 
 
     public void createObstacle(float x, float y, int id, float scale, boolean isDoor) {
-//        System.out.println("Creating obstacle (tree / fence)");
+        if(isDoor){
+            System.out.println("Creating door");
+        }
+
         obstacleTemp = new Obstacles(x * tileSize  , y * tileSize, getTextureRegionKey(id), scale, isDoor);
         obstacleArr.add(obstacleTemp);
         if(x >= 0 && y >= 0 && x < width && y < height){
