@@ -34,6 +34,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -41,6 +42,9 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.game.GameCanvas;
 import util.ScreenListener;
+
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.alpha;
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeIn;
 
 
 /**
@@ -387,12 +391,18 @@ public class MainMenuMode implements Screen, InputProcessor, ControllerListener 
         table.left().top();
         stage.addActor(table);
 
+
+
+
+
+
         // Hook up the buttons
         // Play button
         buttons.get(0).addListener( new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 if (buttons.get(0).isChecked()) {
+                    buttons.get(0).setChecked(false);
                     buttonState = 1;
                     System.out.println("Play buttons pressed");
                 }
@@ -442,6 +452,7 @@ public class MainMenuMode implements Screen, InputProcessor, ControllerListener 
      */
     private void update(float delta) {
         // Update cloud positions
+        stage.act();
         if (appearTime <= APPEAR_TIME)
         {
             appearTime+= 0.3;

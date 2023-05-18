@@ -47,10 +47,11 @@ public class MyGdxGame extends Game implements ScreenListener {
 		mainMenu = new MainMenuMode(canvas);
 		levelSelect = new LevelSelectMode(canvas);
 		pauseMenu = new PauseMenuMode(0, 0);
+		//Gdx.graphics.setContinuousRendering(false);
 
 		 //Initialize the three game worlds
 		 //controllers = new WorldController[1];
-		 controller = new GameplayController(canvas, pauseMenu);
+		controller = new GameplayController(canvas, pauseMenu);
 
 		 //Initialize the first game world
 		//controllers[0] = new RocketController();
@@ -140,6 +141,7 @@ public class MyGdxGame extends Game implements ScreenListener {
 
 			mainMenu.reset();
 			mainMenu.setCanvas(canvas);
+
 			setScreen(mainMenu);
 
 			loading.dispose();
@@ -157,15 +159,17 @@ public class MyGdxGame extends Game implements ScreenListener {
 				setScreen(mainMenu);
 			}
 			else{
+				System.out.println("Set game screen from levelSelect");
 				controller.reset(exitCode);
 				setScreen(controller);
 				pauseMenu.populateMenu();
 			}
 		}
 		else if (screen == controller){
-			canvas.camera.zoom = 1.0f;
 			if (exitCode == pauseMenu.EXIT_MAINMENU){
-				//pauseMenu.reset();
+				System.out.println("Set main menu from game screen");
+
+				pauseMenu.reset();
 				mainMenu.reset();
 				setScreen(mainMenu);
 			}

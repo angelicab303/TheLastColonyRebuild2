@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -20,6 +21,9 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.game.GameCanvas;
 import util.FilmStrip;
+
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.alpha;
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeIn;
 
 public class PauseMenuMode {
     /*
@@ -92,9 +96,6 @@ public class PauseMenuMode {
 //        this.exitDown = texts.get(6);
 
         stage = new Stage();
-        pauseTable = new Table();
-        pauseTable.setFillParent(true);
-        pauseTable.center();
         buttonState = 0;
 
 //        animator = new FilmStrip(value,1,NUM_ANIM_FRAMES,NUM_ANIM_FRAMES);
@@ -104,7 +105,7 @@ public class PauseMenuMode {
     public void gatherAssets(AssetDirectory directory) {
         // Allocate the main menu assets
         background = directory.getEntry("pauseMenu:background", Texture.class);
-        hurry = directory.getEntry("pauseMenu:hurry", Texture.class);
+        hurry = directory.getEntry("pauseMenu:hurryDark", Texture.class);
         resume = directory.getEntry("pauseMenu:resume", Texture.class);
         resumeDown = directory.getEntry("pauseMenu:resumeDown", Texture.class);
         settings = directory.getEntry("pauseMenu:settings", Texture.class);
@@ -148,13 +149,20 @@ public class PauseMenuMode {
         //pauseTable.setPosition(xPos, yPos);
         //pauseTable.setWidth(300.0f);
         //pauseTable.setHeight(400.0f);
-        Pixmap bgPixmap = new Pixmap(1,1, Pixmap.Format.RGB565);
-        Color color = new Color(0,0,0,0.01f);
-        bgPixmap.setColor(color);
-        bgPixmap.fill();
-        TextureRegionDrawable drawableBackground = new TextureRegionDrawable(new TextureRegion(new Texture(bgPixmap)));
+//        Pixmap bgPixmap = new Pixmap(1,1, Pixmap.Format.RGB565);
+//        Color color = new Color(0,0,0,0.01f);
+//        bgPixmap.setColor(color);
+//        bgPixmap.fill();
+//        TextureRegionDrawable drawableBackground = new TextureRegionDrawable(new TextureRegion(new Texture(bgPixmap)));
         //pauseTable.setBackground(drawableBackground);
+        Image ibackground = new Image(background);
+        stage.addActor(ibackground);
+        pauseTable = new Table();
+        pauseTable.setFillParent(true);
+        pauseTable.center();
         pauseTable.setDebug(false);
+        pauseTable.addAction(alpha(0.0f));
+        pauseTable.addAction(fadeIn(1f));
 
         Gdx.input.setInputProcessor(stage);
 
@@ -262,6 +270,7 @@ public class PauseMenuMode {
      *  by the player.
      */
     public void update() {
+        stage.act();
 
         // Increase animation frame
 //        aframe += ANIMATION_SPEED;

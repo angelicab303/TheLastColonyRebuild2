@@ -600,6 +600,7 @@ public class GameplayController implements Screen {
 		objects.clear();
 		movObjects.clear();
 		addQueue.clear();
+		addQueue.clear();
 		canvas.disposeLights();
 		world.dispose();
 
@@ -858,6 +859,7 @@ public class GameplayController implements Screen {
 		// Handle resets
 		if (pauseMenu.getButtonState() == PauseMenuMode.EXIT_RESTART && paused) {
 			pauseMenu.resetButtonState();
+			pauseMenu.reset();
 			reset();
 		}
 
@@ -887,11 +889,19 @@ public class GameplayController implements Screen {
 		input.readInput();
 
 		if (paused && pauseMenu.getButtonState() == PauseMenuMode.EXIT_MAINMENU){
+			paused = false;
+			pauseMenu.resetButtonState();
+			pauseMenu.reset();
+			canvas.camera.zoom = 1.0f;
+			canvas.camera.position.x = canvas.getWidth()/2;
+			canvas.camera.position.y = canvas.getHeight()/2;
+			canvas.camera.update();
 			listener.exitScreen(this, PauseMenuMode.EXIT_MAINMENU);
 		}
 
 		if (input.didPause() || (pauseMenu.getButtonState() == PauseMenuMode.EXIT_GAME && paused)) {
 			pauseMenu.resetButtonState();
+			pauseMenu.reset();
 			if (!paused && !unpausing) {
 				paused = true;
 				pausing = true;
@@ -1390,119 +1400,228 @@ public class GameplayController implements Screen {
 		canvas.clear();
 		if (isActive()) {
 			canvas.begin(player.getX(), player.getY(), tileGrid.length * tileSize, tileGrid[0].length * tileSize);
-		} else {
+			for (FloorTile flr : floorArr) {
+				flr.draw(canvas);
+			}
+
+			for(Obstacle obj : movObjects){
+				if(obj.getBehind()){
+					obj.draw(canvas);
+				}
+			}
+
+			for (Obstacle obj : objects) {
+				obj.draw(canvas);
+			}
+
+			for(Obstacle obj : movObjects){
+				if(!obj.getBehind()){
+					obj.draw(canvas);
+				}
+			}
+
+			for (Obstacle obj : smogs){
+				obj.draw(canvas);
+			}
+			sample.draw(canvas);
+
+
+
+			// END remove
+			// drawBar();
+			canvas.end();
+
+
+			canvas.renderLights();
+
+			// Top pass
+
 			canvas.begin();
+
+			purifiedAir.draw(canvas);
+			toxicAir.draw(canvas);
+
+			// Draw hearts
+			if (!paused){
+				// Draw air bar
+				airBar.draw(canvas);
+				for (int i = 0; i < heartArr.size; i++) {
+					heartArr.get(i).draw(canvas);
+				}
+			}
+
+
+			String message = "ÆIR: ";
+			// canvas.drawText(message, displayFontBar, BAR_X - (width/2) + 5, BAR_Y + 38);
+			// Remove later, testing progress movement for now
+			if (isIncrementing) {
+				progress += 0.01;
+				if (progress > 1.0) {
+					isIncrementing = false;
+				}
+			} else {
+				progress -= 0.01;
+				if (progress < 0) {
+					isIncrementing = true;
+				}
+			}
+
+			if (debug) {
+				canvas.beginDebug();
+				for (Obstacle obj : objects) {
+					obj.drawDebug(canvas);
+				}
+				for (Obstacle obj : movObjects) {
+					obj.drawDebug(canvas);
+				}
+				for (Obstacle obj : smogs) {
+					obj.drawDebug(canvas);
+				}
+				toxicAir.drawDebug(canvas);
+
+				weapon.draw(canvas);
+				canvas.endDebug();
+			}
+			if (paused) {
+//			displayFont.setColor(Color.GRAY);
+//			canvas.drawText("PAUSED", displayFont, canvas.camera.position.x - 150f, canvas.camera.position.y + 25f);
+				pauseMenu.setMenuPosition(canvas.camera.position.x, canvas.camera.position.y);
+				pauseMenu.update();
+				pauseMenu.draw(canvas);
+
+
+			}
+			canvas.end();
+
+			// Final message
+			if (complete && !failed) {
+				displayFont.setColor(Color.YELLOW);
+				canvas.begin(); // DO NOT SCALE
+				canvas.drawText("VICTORY!", displayFont, canvas.camera.position.x - 195, canvas.camera.position.y);
+
+				canvas.drawText("Press 'N' for next level", displayFontSub, canvas.camera.position.x - 170, canvas.camera.position.y - 100);
+				canvas.end();
+			} else if (failed) {
+				displayFont.setColor(Color.RED);
+				canvas.begin(); // DO NOT SCALE
+				canvas.drawText("FAILURE!", displayFont, canvas.camera.position.x - 195, canvas.camera.position.y);
+				canvas.drawText("Press 'R' to restart", displayFontSub, canvas.camera.position.x - 120, canvas.camera.position.y - 100);
+
+				canvas.end();
+			}
+		} else {
+			//canvas.begin();
 		}
 //		System.out.println("Started canvas");
 		//canvas.draw(backgroundTexture, Color.BROWN, 0, 0, canvas.getWidth(), canvas.getHeight());
 
-		for (FloorTile flr : floorArr) {
-			flr.draw(canvas);
-		}
-
-		for(Obstacle obj : movObjects){
-			if(obj.getBehind()){
-				obj.draw(canvas);
-			}
-		}
-
-		for (Obstacle obj : objects) {
-			obj.draw(canvas);
-		}
-
-		for(Obstacle obj : movObjects){
-			if(!obj.getBehind()){
-				obj.draw(canvas);
-			}
-		}
-
-		for (Obstacle obj : smogs){
-			obj.draw(canvas);
-		}
-		sample.draw(canvas);
-
-
-
-		// END remove
-		// drawBar();
-		canvas.end();
-
-
-		canvas.renderLights();
-
-		// Top pass
-
-		canvas.begin();
-
-		purifiedAir.draw(canvas);
-		toxicAir.draw(canvas);
-
-		// Draw hearts
-		if (!paused){
-			// Draw air bar
-			airBar.draw(canvas);
-			for (int i = 0; i < heartArr.size; i++) {
-				heartArr.get(i).draw(canvas);
-			}
-		}
-
-
-		String message = "ÆIR: ";
-		// canvas.drawText(message, displayFontBar, BAR_X - (width/2) + 5, BAR_Y + 38);
-		// Remove later, testing progress movement for now
-		if (isIncrementing) {
-			progress += 0.01;
-			if (progress > 1.0) {
-				isIncrementing = false;
-			}
-		} else {
-			progress -= 0.01;
-			if (progress < 0) {
-				isIncrementing = true;
-			}
-		}
-
-		if (debug) {
-			canvas.beginDebug();
-			for (Obstacle obj : objects) {
-				obj.drawDebug(canvas);
-			}
-			for (Obstacle obj : movObjects) {
-				obj.drawDebug(canvas);
-			}
-			for (Obstacle obj : smogs) {
-				obj.drawDebug(canvas);
-			}
-			toxicAir.drawDebug(canvas);
-
-			weapon.draw(canvas);
-			canvas.endDebug();
-		}
-		if (paused) {
-//			displayFont.setColor(Color.GRAY);
-//			canvas.drawText("PAUSED", displayFont, canvas.camera.position.x - 150f, canvas.camera.position.y + 25f);
-			pauseMenu.setMenuPosition(canvas.camera.position.x, canvas.camera.position.y);
-			pauseMenu.draw(canvas);
-
-		}
-		canvas.end();
-
-		// Final message
-		if (complete && !failed) {
-			displayFont.setColor(Color.YELLOW);
-			canvas.begin(); // DO NOT SCALE
-			canvas.drawText("VICTORY!", displayFont, canvas.camera.position.x - 195, canvas.camera.position.y);
-
-			canvas.drawText("Press 'N' for next level", displayFontSub, canvas.camera.position.x - 170, canvas.camera.position.y - 100);
-			canvas.end();
-		} else if (failed) {
-			displayFont.setColor(Color.RED);
-			canvas.begin(); // DO NOT SCALE
-			canvas.drawText("FAILURE!", displayFont, canvas.camera.position.x - 195, canvas.camera.position.y);
-			canvas.drawText("Press 'R' to restart", displayFontSub, canvas.camera.position.x - 120, canvas.camera.position.y - 100);
-
-			canvas.end();
-		}
+//		for (FloorTile flr : floorArr) {
+//			flr.draw(canvas);
+//		}
+//
+//		for(Obstacle obj : movObjects){
+//			if(obj.getBehind()){
+//				obj.draw(canvas);
+//			}
+//		}
+//
+//		for (Obstacle obj : objects) {
+//			obj.draw(canvas);
+//		}
+//
+//		for(Obstacle obj : movObjects){
+//			if(!obj.getBehind()){
+//				obj.draw(canvas);
+//			}
+//		}
+//
+//		for (Obstacle obj : smogs){
+//			obj.draw(canvas);
+//		}
+//		sample.draw(canvas);
+//
+//
+//
+//		// END remove
+//		// drawBar();
+//		canvas.end();
+//
+//
+//		canvas.renderLights();
+//
+//		// Top pass
+//
+//		canvas.begin();
+//
+//		purifiedAir.draw(canvas);
+//		toxicAir.draw(canvas);
+//
+//		// Draw hearts
+//		if (!paused){
+//			// Draw air bar
+//			airBar.draw(canvas);
+//			for (int i = 0; i < heartArr.size; i++) {
+//				heartArr.get(i).draw(canvas);
+//			}
+//		}
+//
+//
+//		String message = "ÆIR: ";
+//		// canvas.drawText(message, displayFontBar, BAR_X - (width/2) + 5, BAR_Y + 38);
+//		// Remove later, testing progress movement for now
+//		if (isIncrementing) {
+//			progress += 0.01;
+//			if (progress > 1.0) {
+//				isIncrementing = false;
+//			}
+//		} else {
+//			progress -= 0.01;
+//			if (progress < 0) {
+//				isIncrementing = true;
+//			}
+//		}
+//
+//		if (debug) {
+//			canvas.beginDebug();
+//			for (Obstacle obj : objects) {
+//				obj.drawDebug(canvas);
+//			}
+//			for (Obstacle obj : movObjects) {
+//				obj.drawDebug(canvas);
+//			}
+//			for (Obstacle obj : smogs) {
+//				obj.drawDebug(canvas);
+//			}
+//			toxicAir.drawDebug(canvas);
+//
+//			weapon.draw(canvas);
+//			canvas.endDebug();
+//		}
+//		if (paused) {
+////			displayFont.setColor(Color.GRAY);
+////			canvas.drawText("PAUSED", displayFont, canvas.camera.position.x - 150f, canvas.camera.position.y + 25f);
+//			pauseMenu.setMenuPosition(canvas.camera.position.x, canvas.camera.position.y);
+//			pauseMenu.draw(canvas);
+//
+//		}
+//		canvas.end();
+//
+//		// Final message
+//		if (complete && !failed) {
+//			displayFont.setColor(Color.YELLOW);
+//			canvas.begin(); // DO NOT SCALE
+//			canvas.drawText("VICTORY!", displayFont, canvas.camera.position.x - 195, canvas.camera.position.y);
+//
+//			canvas.drawText("Press 'N' for next level", displayFontSub, canvas.camera.position.x - 170, canvas.camera.position.y - 100);
+//			canvas.end();
+//		} else if (failed) {
+//			displayFont.setColor(Color.RED);
+//			canvas.begin(); // DO NOT SCALE
+//			canvas.drawText("FAILURE!", displayFont, canvas.camera.position.x - 195, canvas.camera.position.y);
+//			canvas.drawText("Press 'R' to restart", displayFontSub, canvas.camera.position.x - 120, canvas.camera.position.y - 100);
+//
+//			canvas.end();
+//		}
 //		System.out.println("Finished first draw");
 	}
 
