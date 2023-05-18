@@ -427,9 +427,13 @@ public class ToxicQueue {
 
             // Use this information to draw.
             air.animator.setFrame((int)air.aframe);
-            canvas.draw(air.animator,tint,air.getOrigin().x+air.getWidth()*5,air.getOrigin().y+air.getHeight()*5,air.getPosition().x,air.getPosition().y,0,air.scale,air.scale);
-
-
+            air.collisionAnimator.setFrame((int)air.aframeCollision);
+            if(air.age >= MAX_AGE) {
+                canvas.draw(air.collisionAnimator,Color.WHITE,air.getOrigin().x,air.getOrigin().y,air.getPosition().x,air.getPosition().y,0,air.scale,air.scale);
+            }
+            else {
+                canvas.draw(air.animator,Color.WHITE,air.getOrigin().x,air.getOrigin().y,air.getPosition().x,air.getPosition().y,0,air.scale,air.scale);
+            }
         }
     }
 

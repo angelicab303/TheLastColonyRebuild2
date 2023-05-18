@@ -96,6 +96,8 @@ public class GameplayController implements Screen {
 	// *************************** Smog, Purified Air, and Air Bar Textures
 	// ***************************
 	private Texture projectileCollisionTexture;
+
+	private Texture enemyProjectileCollisionTexture;
 	/** Texture asset for the smog texture */
 	private Texture smogTexture;
 	private TextureRegion smogTexture2;
@@ -435,7 +437,7 @@ public class GameplayController implements Screen {
 		// Smog, Purified Air, and Air Bar Textures
 		mushroomTexture = new TextureRegion(directory.getEntry("images:mushroom", Texture.class));
 		smogTexture = directory.getEntry("images:testSmog", Texture.class);
-		toxicAirTexture = directory.getEntry("images:testSmog", Texture.class);
+		toxicAirTexture = directory.getEntry("images:enemyProjectile", Texture.class);
 		pureAirTexture = directory.getEntry("images:weaponProjectile", Texture.class);
 		smogTexture2 = new TextureRegion(directory.getEntry("images:smog2", Texture.class));
 		airBarTexture = directory.getEntry("images:airBar", Texture.class);
@@ -489,10 +491,11 @@ public class GameplayController implements Screen {
 		vineTextures[20] = directory.getEntry("images:vineCornerClosedRightDown", Texture.class);
 		vineTextures[21] = directory.getEntry("images:vineCornerClosedRightUp", Texture.class);
 
+		enemyProjectileCollisionTexture = directory.getEntry("images:enemyProjectileCollision", Texture.class);
 		projectileCollisionTexture = directory.getEntry("images:weaponProjectileCollision", Texture.class);
 
 		//Toxic air for enemies
-		toxicAirTexture = directory.getEntry("images:testSmog", Texture.class);
+//		toxicAirTexture = directory.getEntry("images:testSmog", Texture.class);
 
 		//purified air for player
 //		pureAirTexture = directory.getEntry("images:testSmog", Texture.class);
@@ -756,7 +759,7 @@ public class GameplayController implements Screen {
 
 		// TO DO: update visuals for purified smog
 		purifiedAir = new PurifiedQueue(pureAirTexture, world, SCALE, player, projectileCollisionTexture);
-		toxicAir = new ToxicQueue(pureAirTexture, world, SCALE, projectileCollisionTexture);
+		toxicAir = new ToxicQueue(toxicAirTexture, world, SCALE, enemyProjectileCollisionTexture);
 
 		// Setting the size of the tiles
 		Shadow.setSize(32f);
