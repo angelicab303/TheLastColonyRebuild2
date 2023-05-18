@@ -14,7 +14,7 @@ public class TileConnection implements Connection<Tile> {
     public TileConnection (Tile fromTile, Tile toTile) {
         this.fromTile = fromTile;
         this.toTile = toTile;
-        cost = Math.abs((fromTile.getX() - toTile.getX()) + (fromTile.getY() - toTile.getY()));
+//        cost = Math.abs((fromTile.getX() - toTile.getX()) + (fromTile.getY() - toTile.getY()));
         if (fromTile.isBlocked() || toTile.isBlocked())
         {
             cost = Integer.MAX_VALUE;
