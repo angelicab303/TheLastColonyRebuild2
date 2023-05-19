@@ -396,7 +396,7 @@ public class CollisionController{
                             obstacle = (Obstacles) objB;
                         }
                     }
-                    if(player != null && obstacle !=null && obstacle.getIsDoor()){// && player.useKey()){
+                    if(player != null && obstacle !=null && obstacle.getIsDoor() && player.useKey()){
                         //use key already decrements the key count
                         obstacle.unlock();
                     }

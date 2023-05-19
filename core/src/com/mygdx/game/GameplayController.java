@@ -566,7 +566,10 @@ public class GameplayController implements Screen {
 		assetTextures.put(key, new TextureRegion(directory.getEntry(key, Texture.class)));
 
 		key = "tiles:8_doorClosed";
-		assetTextures.put(key, new TextureRegion(directory.getEntry(key, Texture.class)));
+		assetTextures.put(key, directory.getEntry(key + ".fire", FilmStrip.class));
+
+		key = "tiles:DoorClosed";
+		assetTextures.put(key, directory.getEntry(key + ".fire", FilmStrip.class));
 
 		stunAnimation = directory.getEntry("images:stun.fire", FilmStrip.class );
 		shadow = new TextureRegion(directory.getEntry("images:shadow", Texture.class));
