@@ -84,9 +84,13 @@ public class SurvivorController {
         state = FSMState.IDLE;
         ticks = 0;
         target = caravanPos;
-        tiles = new Tile[board.length][board[0].length];
         moveTime = 0;
 
+        initTiles(caravanPos);
+    }
+
+    private void initTiles(Vector2 survivorTarget) {
+        tiles = new Tile[board.length][board[0].length];
         for (int i = 0; i < tiles.length; i++) {
             for (int j = 0; j < tiles[0].length; j++) {
                 tiles[i][j] = new Tile(i, j, ((board[i][j])));
@@ -147,6 +151,11 @@ public class SurvivorController {
         float x = tilePath.get(1).getX() * tileSize;
         float y = tilePath.get(1).getY() * tileSize + this.tileOffset;
         goalLoc = new Vector2(x, y);
+    }
+
+    public void remakeGraph(boolean[][] grid) {
+        board = grid;
+        initTiles(caravanPos);
     }
 
         /** Returns an int value representing the survivor's next movement action:

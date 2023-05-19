@@ -601,7 +601,7 @@
     "sounds:select": "sounds/Select.wav",
     "sounds:back": "sounds/GoBack.wav",
     "sounds:suck": "sounds/VacuumSuck.wav",
-    "sounds:blow": "sounds/VacuumBlow.wav",
+    "sounds:blow": "sounds/Protagonist_Shooting.wav",
     "sounds:walk": "sounds/Walk16.wav",
     "sounds:ambience": "sounds/IndoorAmbience.wav",
     "sounds:chase": "sounds/HeartBeatChase.wav",

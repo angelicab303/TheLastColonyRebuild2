@@ -19,6 +19,8 @@ public class Obstacles extends Shadow implements GameObstacle {
 
     private boolean unlocked = false;
 
+    private boolean nowUnlocked = false;
+
     /** Filter for filtering */
     private static volatile Filter filter;
     private float scale;
@@ -65,9 +67,17 @@ public class Obstacles extends Shadow implements GameObstacle {
         this.isDoor = isDoor;
     }
 
+    public boolean isUnlocked() { return unlocked; }
+
     public void unlock(){
         System.out.println(isDoor);
         unlocked = true;
+    }
+
+    public boolean isNowUnlocked() { return nowUnlocked; }
+
+    public void setNowUnlocked() {
+        nowUnlocked = true;
     }
 
     /**
