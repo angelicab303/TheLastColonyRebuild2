@@ -20,7 +20,7 @@ public class ScoutEnemy extends Enemy{
         private float y;
         private int behind = 0;
 
-        private int NUM_ANIM_FRAMES = 2;
+        private int VINETILE_NUM_ANIM_FRAMES = 2;
 
         public enum Direction {
             /** The enemy is not moving */
@@ -45,7 +45,7 @@ public class ScoutEnemy extends Enemy{
         private Direction direction;
         private boolean finishedGrowing;
         private float scale;
-        private float aframe;
+        private float vaframe;
         protected FilmStrip currentAnimator;
 
         private static volatile Filter filter;
@@ -67,7 +67,7 @@ public class ScoutEnemy extends Enemy{
             filter.categoryBits = GameObstacle.CATEGORY_VINE;
             filter.maskBits = GameObstacle.MASK_VINE;
 
-            aframe = 0.0f;
+            vaframe = 0.0f;
         }
 
         public boolean activatePhysics(World world) {
@@ -90,8 +90,8 @@ public class ScoutEnemy extends Enemy{
 //        }
 
         public void draw(GameCanvas canvas, float currFrame, float tileSize) {
-            aframe = ((int)currFrame % 2 == 0 ? 0 : 1);
-            currentAnimator.setFrame((int)aframe);
+            vaframe = ((int)currFrame % 2 == 0 ? 0 : 1);
+            currentAnimator.setFrame((int)vaframe);
             canvas.draw(currentAnimator, Color.WHITE,body.getWorldCenter().x*drawScale.x, body.getWorldCenter().y*drawScale.y,
                     body.getWorldCenter().x + (getWidth() * drawScale.x),
                     body.getWorldCenter().y,
@@ -550,13 +550,7 @@ public class ScoutEnemy extends Enemy{
 
     @Override
     public void draw(GameCanvas canvas) {
-        if (!hasAwoken && !wokeOnce && wakeTime <= 20){
-            //System.out.println("Frame Skull");
-            currentAnimator.setFrame(0);
-        }
-        else{
-            currentAnimator.setFrame((int)aframe);
-        }
+
         currentAnimator.setFrame((int)aframe);
 ////        System.out.println((body.getWorldCenter().x*drawScale.x - currentAnimator.getRegionWidth()*scale/2) + ", " + (body.getWorldCenter().y*drawScale.y- currentAnimator.getRegionHeight()*scale/2));
         if (stunCooldown > 0 && stunCooldown % 10 == 0)
@@ -574,6 +568,7 @@ public class ScoutEnemy extends Enemy{
         }
         else {
             canvas.draw(currentAnimator, Color.WHITE, origin.x, origin.y, body.getWorldCenter().x * drawScale.x - width * scale / 2, body.getWorldCenter().y * drawScale.y - height * scale / 2, 0.0f, scale, scale);
+        }
         if(isExtendingVines) {
             if (vines.size > 0) {
                 for (int i = 0; i < vines.size; i++) {
@@ -582,7 +577,7 @@ public class ScoutEnemy extends Enemy{
             }
         }
         super.draw(canvas);
-    }}
+    }
 
     @Override
     public void drawDebug(GameCanvas canvas) {
