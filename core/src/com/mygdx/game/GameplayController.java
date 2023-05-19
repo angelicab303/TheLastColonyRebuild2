@@ -11,8 +11,10 @@
 package com.mygdx.game;
 
 import assets.AssetDirectory;
+import com.badlogic.gdx.Audio;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
@@ -363,6 +365,28 @@ public class GameplayController implements Screen {
 
 	private Preferences prefs = Gdx.app.getPreferences("save data");
 
+	private Sound vacuumSuck;
+	private Sound vacuumBlow;
+	private Sound walk;
+	private long walkId;
+
+	private boolean startedMoving;
+
+	private Sound ambience;
+
+	private long ambienceId;
+
+	private Sound lowHealth;
+
+	private long lowHealthId;
+
+	private boolean startedDying;
+
+	private Sound shriek;
+
+	private long shriekId;
+
+	private boolean startedShrieking;
 
 	/**
 	 * Creates a new game world
@@ -613,6 +637,13 @@ public class GameplayController implements Screen {
 		displayFontInteract = directory.getEntry("shared:light", BitmapFont.class);
 
 		constants = directory.getEntry("platform:constants", JsonValue.class);
+
+		vacuumSuck = directory.getEntry("sounds:suck", Sound.class);
+		vacuumBlow = directory.getEntry("sounds:blow", Sound.class);
+		walk = directory.getEntry("sounds:walk", Sound.class);
+		ambience = directory.getEntry("sounds:ambience", Sound.class);
+		lowHealth = directory.getEntry("sounds:lowhealth", Sound.class);
+		shriek = directory.getEntry("sounds:shriek", Sound.class);
 	}
 
 	/**
@@ -706,6 +737,8 @@ public class GameplayController implements Screen {
 		canvas.createLights(world);
 		setComplete(false);
 		setFailure(false);
+		ambience.stop(ambienceId);
+		ambience.setLooping(ambienceId, false);
 		// System.out.println(1);
 		populateLevel(curLevel);
 		numRescued = 0;
@@ -929,6 +962,8 @@ public class GameplayController implements Screen {
 		}
 		sample = new TutorialPrompt(sampleTutorial, player.getX(), player.getY()-30);
 
+		ambienceId = ambience.play();
+		ambience.setLooping(ambienceId, true);
 	}
 
 	/**
@@ -986,6 +1021,11 @@ public class GameplayController implements Screen {
 	public void update(float dt) {
 		// Read input
 		input.readInput();
+
+		if (!player.isAlive()) {
+			lowHealth.stop(lowHealthId);
+			lowHealth.setLooping(lowHealthId, false);
+		}
 
 		if (input.didPause()) {
 			if (!paused && !unpausing) {
@@ -1046,6 +1086,27 @@ public class GameplayController implements Screen {
 
 		// Update player and weapon position
 		player.update();
+		if (player.getVX() != 0 || player.getVY() != 0)
+		{
+			if (!startedMoving) {
+				startedMoving = true;
+				walkId = walk.play(player.getNoise()/100);
+				walk.setLooping(walkId, true);
+			}
+			walk.setVolume(walkId, player.getNoise()/100);
+			if (!player.isRevealed())
+			{
+				walk.setPitch(walkId, 0.75f);
+			}
+			else {
+				walk.setPitch(walkId, 1);
+			}
+		}
+		else {
+			walk.stop(walkId);
+			walk.setLooping(walkId, false);
+			startedMoving = false;
+		}
 		if (player.getX() < 20) {
 			player.setPosition(20, player.getBody().getPosition().y);
 		}
@@ -1063,9 +1124,19 @@ public class GameplayController implements Screen {
 		airBar.update(player.weapon.getNumAmmo());
 
 		player.weapon.update(player.getPosition(), canvas.unproject(input.getMousePos()), input.getShootDir());
+
+		if (player.weapon.isAbsorbing())
+		{
+			vacuumSuck.stop();
+			vacuumSuck.play(player.getNoise()/100);
+		}
+		else {
+			vacuumSuck.stop();
+		}
 		// Check if the weapon is firing
 
 		if (player.weapon.fire()) {
+			vacuumBlow.play();
 			purifiedAir.attack(player.weapon.getBullets(), player.weapon.getPosition(), player.weapon.getImpulses());
 		}
 		purifiedAir.update();
@@ -1112,6 +1183,26 @@ public class GameplayController implements Screen {
 			}
 			if (enemyArr.get(i).getY() >= tileGrid[0].length * tileSize - 20) {
 				enemyArr.get(i).setPosition(enemyArr.get(i).getBody().getPosition().x, tileGrid[0].length * tileSize - 20);
+			}
+			if (enemyArr.get(i) instanceof ShriekerEnemy)
+			{
+				ShriekerEnemy shrieker = (ShriekerEnemy) enemyArr.get(i);
+				if (shrieker.getShrieking()) {
+					if (!startedShrieking) {
+						startedShrieking = true;
+						shriekId = shriek.play();
+					}
+					if (Vector2.dst(shrieker.getX(), shrieker.getY(), player.getX(), player.getY()) <= player.getHearing()) {
+						shriek.setVolume(shriekId, (player.getHearing() - Vector2.dst(shrieker.getX(), shrieker.getY(), player.getX(), player.getY()))/player.getHearing());
+					}
+					else {
+						shriek.setVolume(shriekId, 0);
+					}
+				}
+				else {
+					shriek.stop();
+					startedShrieking = false;
+				}
 			}
 		}
 
@@ -1223,6 +1314,15 @@ public class GameplayController implements Screen {
 		for (int i = player.getMaxHealth() - 1; i >= 0; i--) {
 			if (player.getHealth() <= i) {
 				heartArr.get(i).setTexture(bEggTexture);
+			}
+		}
+
+		if (player.getHealth() == 1)
+		{
+			if (!startedDying) {
+				startedDying = true;
+				lowHealthId = lowHealth.play();
+				lowHealth.setLooping(lowHealthId, true);
 			}
 		}
 

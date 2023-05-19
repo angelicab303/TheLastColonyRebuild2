@@ -562,7 +562,25 @@
     "ragdoll:glub1": "ragdoll/bubble01.mp3",
     "ragdoll:glub2": "ragdoll/bubble02.mp3",
     "ragdoll:glub3": "ragdoll/bubble03.mp3",
-    "ragdoll:glub4": "ragdoll/bubble04.mp3"
+    "ragdoll:glub4": "ragdoll/bubble04.mp3",
+    "sounds:select": "sounds/Select.wav",
+    "sounds:back": "sounds/GoBack.wav",
+    "sounds:suck": "sounds/VacuumSuck.wav",
+    "sounds:blow": "sounds/VacuumBlow.wav",
+    "sounds:walk": "sounds/Walk16.wav",
+    "sounds:ambience": "sounds/IndoorAmbience.wav",
+    "sounds:chase": "sounds/HeartBeatChase.wav",
+    "sounds:lowhealth": "sounds/HeartbeatAfterTakingDamage_.wav",
+    "sounds:shriek": "sounds/ShrikerShort_16.wav",
+    "sounds:distantchaser": "sounds/DistantMonster.wav",
+    "sounds:distantfloater": "sounds/DistantMonster2_16.wav",
+    "sounds:chasergrowl": "sounds/CreatureGrowl1_16.wav",
+    "sounds:scoutgrowl": "sounds/CreatureGrowl2_16.wav",
+    "sounds:chaserattack": "sounds/CreatureAttack1_16.wav",
+    "sounds:floaterattack": "sounds/CreatureAttack2_16.wav",
+    "sounds:scoutattack": "sounds/CreatureAttack3_16.wav",
+    "sounds:shriekerattack": "sounds/ShriekerAttack1_16.wav",
+    "sounds:bean": "sounds/Bean_Picku_16p.wav"
   },
   "fonts": {
     "shared:retro": {
