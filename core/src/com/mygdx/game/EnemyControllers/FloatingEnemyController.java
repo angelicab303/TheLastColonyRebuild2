@@ -18,8 +18,9 @@ public class FloatingEnemyController extends EnemyController {
 
     final Vector2 angle = new Vector2();
 
-    public FloatingEnemyController(boolean[][] board, int tileSize, int tileOffset, FloatingEnemy enemy, Player player, Array<ShriekerEnemy> shriekArr, ToxicQueue toxicQueue) {
-        super(board, tileSize, tileOffset, enemy, player, shriekArr);
+
+    public FloatingEnemyController(boolean[][] board, int tileSize, int tileOffset, FloatingEnemy enemy, Player player, ToxicQueue toxicQueue) {
+        super(board, tileSize, tileOffset, enemy, player);
         this.toxicQueue = toxicQueue;
         target = new Vector2(player.getX(), player.getY());
         super.initTiles(target);
@@ -73,9 +74,41 @@ public class FloatingEnemyController extends EnemyController {
         }
         switch(state) {
             case SPAWN:
-                state = FSMState.IDLE;
+                System.out.println("Floater spawn");
+                if (enemy.isStunned())
+                {
+                    state = FSMState.WAKE;
+                    enemy.setWaking(true);
+                }
+                else if (enemy.isRevealed())
+                {
+                    state = FSMState.WAKE;
+                    enemy.setWaking(true);
+                    if (enemy.canAttack())
+                    {
+                        state = FSMState.WAKE;
+                        enemy.setWaking(true);
+                    }
+                }
+                else if (alertAllEnemies)
+                {
+                    Vector2 enemyLoc = new Vector2(enemy.getX(), enemy.getY());
+                    Vector2 shriekerLoc = new Vector2(activeShrieker.getX(), activeShrieker.getY());
+                    if (enemyLoc.dst(shriekerLoc) <= ALERT_DISTANCE){
+                        state = FSMState.WAKE;
+                        enemy.setWaking(true);
+                        target = new Vector2 (player.getX(), player.getY());
+                    }
+                }
+                break;
+            case WAKE:
+                System.out.println("Floater wake");
+                if (enemy.getHasAwoken()){
+                    state = FSMState.IDLE;
+                }
                 break;
             case IDLE:
+                System.out.println("Floater idle");
                 if (enemy.isStunned())
                 {
                     state = FSMState.STUNNED;
@@ -86,6 +119,7 @@ public class FloatingEnemyController extends EnemyController {
                     if (enemy.canAttack())
                     {
                         state = FSMState.ATTACK;
+                        enemy.setAttacking(true);
                     }
                 }
                 else if (alertAllEnemies)
@@ -99,6 +133,7 @@ public class FloatingEnemyController extends EnemyController {
                 }
                 break;
             case CHASE:
+                System.out.println("Floater chase");
                 if (enemy.isStunned())
                 {
                     state = FSMState.STUNNED;
@@ -106,9 +141,11 @@ public class FloatingEnemyController extends EnemyController {
                 else if (enemy.canAttack())
                 {
                     state = FSMState.ATTACK;
+                    enemy.setAttacking(true);
                 }
                 break;
             case ATTACK:
+                System.out.println("Floater attack");
                 angle.set(target.cpy().sub(enemyPos));
                 Vector2 attackPos = angle.cpy().scl(2);
                 toxicQueue.attack(1, enemy.getBody().getWorldCenter(), attackPos);
@@ -118,16 +155,15 @@ public class FloatingEnemyController extends EnemyController {
                     shootingSurvivor = false;
                 }
                 state = FSMState.CHASE;
+                enemy.setAttacking(false);
                 break;
             case STUNNED:
+                System.out.println("Floater stunned");
                 if (!enemy.isStunned())
                 {
-                    if (enemy.canAttack()) {
-                        state = FSMState.ATTACK;
-                    }
-                    else {
-                        state = FSMState.CHASE;
-                    }
+                    state = FSMState.WAKE;
+                    enemy.setWakeAnimation
+                    enemy.setWaking(true);
                 }
                 break;
         }

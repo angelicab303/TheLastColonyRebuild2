@@ -1,6 +1,7 @@
 package com.mygdx.game.Obstacles;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.mygdx.game.GameCanvas;
@@ -30,6 +31,8 @@ public class Shadow extends SimpleObstacle{
     private boolean isBelow;
 
     ShadowShape shadowShape;
+
+    private static TextureRegion textureRegion;
 
     private Vector2 temp;
 
@@ -65,6 +68,11 @@ public class Shadow extends SimpleObstacle{
         vertices = new float[8];
     }
 
+    /** Sets the shadow drawing shape */
+    public static void setTextureRegion(TextureRegion newTextureRegion){
+        textureRegion = newTextureRegion;
+    }
+
     private void resize(float size){
         circleShape.setRadius(size/2.0f);
         resize(size, size);
@@ -91,16 +99,16 @@ public class Shadow extends SimpleObstacle{
      * Reset the polygon vertices in the shape to match the dimension.
      */
     private void resize(float width, float height) {
-        circleShape.setRadius(size/2.0f);
+        circleShape.setRadius(size/2.0f/((float)Math.sqrt(2.5)));
         // Make the box with the center in the center
         vertices[0] = -width/2.0f;
-        vertices[1] = -height/2.0f;
+        vertices[1] = 0;//-height/2.0f;
         vertices[2] = -width/2.0f;
         vertices[3] =  height/2.0f;
         vertices[4] =  width/2.0f;
         vertices[5] =  height/2.0f;
         vertices[6] =  width/2.0f;
-        vertices[7] = -height/2.0f;
+        vertices[7] = 0;//-height/2.0f;
         boxShape.set(vertices);
     }
 
@@ -120,6 +128,16 @@ public class Shadow extends SimpleObstacle{
      */
     public float getHeight() {
         return dimension.y;
+    }
+
+    public float getXCoord(){
+        return super.getX();
+    }
+
+    public float getYCoord(){
+        float offset = size - dimension.y;
+        return super.getY()+offset;
+
     }
 
     /**
@@ -184,7 +202,10 @@ public class Shadow extends SimpleObstacle{
      *
      * @param canvas Drawing context
      */
-    public void draw(GameCanvas canvas) {
+    public void draw(GameCanvas canvas, float width, float height) {
+        if (shadowShape.equals(ShadowShape.CIRCLE)){
+            canvas.draw(textureRegion, Color.WHITE, 0, 0, getX() - width/2, getY()-height/2, size, size);
+        }
 
     };
 
@@ -197,12 +218,11 @@ public class Shadow extends SimpleObstacle{
      */
     public void drawDebug(GameCanvas canvas) {
 
-        float offset = size - dimension.y;
         if(shadowShape.equals(ShadowShape.CIRCLE)){
-            canvas.drawPhysics(circleShape, Color.YELLOW,getX(),getY()+offset,drawScale.x,drawScale.y);
+            canvas.drawPhysics(circleShape, Color.YELLOW,getXCoord(),getYCoord(),drawScale.x,drawScale.y);
         }
         else if(shadowShape.equals(ShadowShape.SQUARE)){
-            canvas.drawPhysics(boxShape,Color.YELLOW,getX(),getY()+offset,getAngle(),drawScale.x,drawScale.y);
+            canvas.drawPhysics(boxShape,Color.YELLOW,getXCoord(),getYCoord(),getAngle(),drawScale.x,drawScale.y);
         }
 
     }

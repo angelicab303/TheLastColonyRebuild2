@@ -47,6 +47,10 @@ public class ScoutEnemyController extends com.mygdx.game.EnemyControllers.EnemyC
          */
         IDLE,
         /**
+         * The enemy is waking up
+         */
+        WAKE,
+        /**
          * The enemy is wandering but is not close enough to the player to prompt attack
          */
         PATROL,
@@ -72,8 +76,8 @@ public class ScoutEnemyController extends com.mygdx.game.EnemyControllers.EnemyC
         }
     }
 
-    public ScoutEnemyController(boolean[][] board, int tileSize, int tileOffset, ScoutEnemy enemy, Player player, Array<ShriekerEnemy> shriekArr) {
-        super(board, tileSize, tileOffset, enemy, player, shriekArr);
+    public ScoutEnemyController(boolean[][] board, int tileSize, int tileOffset, ScoutEnemy enemy, Player player) {
+        super(board, tileSize, tileOffset, enemy, player);
         this.enemy = enemy;
         state = FSMState.IDLE;
         // change later
@@ -138,15 +142,55 @@ public class ScoutEnemyController extends com.mygdx.game.EnemyControllers.EnemyC
 
     protected void changeStateIfApplicable() {
         dist = Vector2.dst(enemy.getX(), enemy.getY(), target.x, target.y);
+        alertAllEnemies = false;
+        ShriekerEnemy activeShrieker = null;
+        for (ShriekerEnemy shrieker : shriekerArr){
+            if (shrieker.getShrieking()){
+                alertAllEnemies = true;
+                activeShrieker = shrieker;
+            }
+        }
         switch (state) {
             case SPAWN:
-                state = FSMState.IDLE;
+                if (enemy.isStunned()) {
+                    state = FSMState.WAKE;
+                    enemy.setWaking(true);
+                } else if (ticks > 50) {
+                    state = FSMState.WAKE;
+                    enemy.setWaking(true);
+                }
+                else if (alertAllEnemies)
+                {
+                    Vector2 enemyLoc = new Vector2(enemy.getX(), enemy.getY());
+                    Vector2 shriekerLoc = new Vector2(activeShrieker.getX(), activeShrieker.getY());
+                    if (enemyLoc.dst(shriekerLoc) <= ALERT_DISTANCE){
+                        state = FSMState.WAKE;
+                        enemy.setWaking(true);
+                        enemy.setAttacking(true);
+                        target = new Vector2 (player.getX(), player.getY());
+                    }
+                }
+                break;
+            case WAKE:
+                if (enemy.getHasAwoken()){
+                    state = FSMState.IDLE;
+                }
                 break;
             case IDLE:
                 if (enemy.isStunned()) {
                     state = FSMState.STUNNED;
                 } else if (ticks > 50) {
                     state = FSMState.PATROL;
+                }
+                else if (alertAllEnemies)
+                {
+                    Vector2 enemyLoc = new Vector2(enemy.getX(), enemy.getY());
+                    Vector2 shriekerLoc = new Vector2(activeShrieker.getX(), activeShrieker.getY());
+                    if (enemyLoc.dst(shriekerLoc) <= ALERT_DISTANCE){
+                        state = FSMState.EXTENDVINE;
+                        enemy.setAttacking(true);
+                        target = new Vector2 (player.getX(), player.getY());
+                    }
                 }
                 break;
             case PATROL:
@@ -158,6 +202,7 @@ public class ScoutEnemyController extends com.mygdx.game.EnemyControllers.EnemyC
                     enemy.setShrinkVines(true);
                     clearContainsVine();
                     state = FSMState.EXTENDVINE;
+                    enemy.setAttacking(true);
                 }
                 break;
             case EXTENDVINE:
@@ -165,6 +210,7 @@ public class ScoutEnemyController extends com.mygdx.game.EnemyControllers.EnemyC
                     enemy.setShrinkVines(true);
                     clearContainsVine();
                     state = FSMState.PATROL;
+                    enemy.setAttacking(false);
                 } //else if (enemyTile.equals(targetTile) && enemy.canAttack() && player.canLoseLife()) {
                 else if (containsVine[(int) (player.getX() / tileSize)][(int) (player.getY() / tileSize)] && enemy.canAttack() && player.canLoseLife()) {
 //                    enemy.setShrinkVines(true);
@@ -174,6 +220,7 @@ public class ScoutEnemyController extends com.mygdx.game.EnemyControllers.EnemyC
             case ATTACK:
                 if (!enemy.isExtendingVines) {
                     state = FSMState.PATROL;
+                    enemy.setAttacking(false);
                 }
                 break;
             case STUNNED:
@@ -327,25 +374,15 @@ public class ScoutEnemyController extends com.mygdx.game.EnemyControllers.EnemyC
                 action = 4;
             }
         }
-        if(enemy.vines.isEmpty()) {
-            System.out.println("vine tile location: " + nextTile.getX() + ", " + nextTile.getY());
-            System.out.println("enemy being drawn at: " + (enemy.getBody().getWorldCenter().x - tileSize / 2) + ", " + (enemy.getBody().getWorldCenter().y - tileSize / 2));
-            System.out.println("enemy tile location: " + ((int)(enemy.getX()/tileSize)) + ", " + ((int)(enemy.getY()/tileSize)));
-            System.out.println("enemy location: " + (enemy.getX() + ", " + (enemy.getY())));
-            System.out.println("enemy tile range should be X: [" + (((int)(enemy.getX()/tileSize)) * tileSize) + ", " + ((((int)(enemy.getX()/tileSize)) + 1) * tileSize + "]"));
-            System.out.println("enemy tile range should be Y: [" + (((int)(enemy.getY()/tileSize)) * tileSize) + ", " + ((((int)(enemy.getY()/tileSize)) + 1) * tileSize + "]"));
-            System.out.println("vine tile range should be X: [" + (nextTile.getX() * tileSize) + ", " + ((nextTile.getX() + 1) * tileSize) + "]");
-            System.out.println("vine tile range should be Y: [" + (nextTile.getY() * tileSize) + ", " + ((nextTile.getY() + 1) * tileSize) + "]");
-            System.out.println("vine location: " + (nextTile.getX() * tileSize + (tileSize / 2)) + ", " + (nextTile.getY() * tileSize + (tileSize / 2)));
-        }
+//        System.out.println("size: " + enemy.vines.size);
+//        System.out.println("next move: " + action);
+//        System.out.println("can't add vine?: " + containsVine[(int) nextTile.getX()][(int) nextTile.getY()]);
         if (!containsVine[(int) nextTile.getX()][(int) nextTile.getY()]) {
             enemy.addVineTile(nextTile.getX() * tileSize + (tileSize / 2), nextTile.getY() * tileSize + (tileSize / 2), action);
             containsVine[(int) nextTile.getX()][(int) nextTile.getY()] = true;
         }
-        if(enemy.vines.size == 1) {
-//            System.out.println("vine location: " + enemy.vines.first().getX() + ", " + enemy.vines.first().getX());
-//            System.out.println("vine body: " + enemy.vines.first().getBody().getWorldCenter().x + ", " + enemy.vines.first().getBody().getWorldCenter().y);
-//            System.out.println("---");
+        else {
+            enemy.setShrinkVines(true);
         }
         return action;
     }

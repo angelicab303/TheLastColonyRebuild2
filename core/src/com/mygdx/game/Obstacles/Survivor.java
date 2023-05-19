@@ -1,5 +1,6 @@
 package com.mygdx.game.Obstacles;
 
+import box2dLight.Light;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -10,6 +11,7 @@ import com.badlogic.gdx.physics.box2d.Filter;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 import com.mygdx.game.GameCanvas;
+import com.mygdx.game.Lights;
 import obstacle.BoxObstacle;
 import util.FilmStrip;
 
@@ -51,6 +53,8 @@ public class Survivor extends Shadow implements GameObstacle {
     /** zerovector for calculations **/
     private Vector2 zerovector;
 
+    private float DEFAULT_DETECTION_RADIUS = 45f;
+
     /** Whether survivor is alive or dead */
     private boolean isAlive;
     /** Whether survivor has been found and rescued by player */
@@ -83,15 +87,32 @@ public class Survivor extends Shadow implements GameObstacle {
     private int damageCooldown;
     Filter filter;
     private float scale;
-
+    private Texture left;
+    private Texture right;
+    private Texture up;
+    private Texture down;
+    private Texture upLeft;
+    private Texture upRight;
+    private Texture downLeft;
+    private Texture downRight;
     private int behind;
-
+    private Vector2 temp1;
+    private Vector2 temp2;
     private boolean isTargetOfEnemy;
     private float height;
     private float width;
+
+    private int ticks;
     private boolean safeInCaravan;
 
     protected boolean revealed;
+
+    private Light torchLight;
+
+    private int nextAction;
+
+    private Vector2[] smogDetectionVertices;
+    private boolean[] directionVacant;
 
     public boolean isRevealed() {
         return revealed;
@@ -101,6 +122,8 @@ public class Survivor extends Shadow implements GameObstacle {
         revealed = value;
     }
 
+    public void setNextAction(int value) {nextAction = value;}
+
     public boolean isSafeInCaravan() {
         return safeInCaravan;
     }
@@ -108,6 +131,64 @@ public class Survivor extends Shadow implements GameObstacle {
     public void setSafeInCaravan(boolean val) {
         safeInCaravan = val;
     }
+
+    public Vector2[] getSmogDetectionVertices() {
+        calculateDetectionRay();
+        return smogDetectionVertices;
+    }
+
+    public boolean[] getDirectionVacant() {
+        return directionVacant;
+    }
+
+    /**
+     * FROM COLLISION CONTROLLER:
+     *      If there IS NO collision between smog and a vertex:
+     *      parameter index = index of the vertex, parameter value = true
+     *
+     *      If there IS collision between smog and a vertex:
+     *      parameter index = index of the vertex, parameter value = false
+     *
+     *  Index 1 of smogDetection does NOT collide with smog => ACTION 1 => directionVacant[0] true
+     *  Index 2 of smogDetection does NOT collide with smog => ACTION 5 => directionVacant[4] true
+     *  Index 3 of smogDetection does NOT collide with smog => ACTION 3 => directionVacant[2] true
+     *  Index 4 of smogDetection does NOT collide with smog => ACTION 7 => directionVacant[6] true
+     *  Index 5 of smogDetection does NOT collide with smog => ACTION 2 => directionVacant[1] true
+     *  Index 6 of smogDetection does NOT collide with smog => ACTION 8 => directionVacant[7] true
+     *  Index 7 of smogDetection does NOT collide with smog => ACTION 4 => directionVacant[3] true
+     *  Index 8 of smogDetection does NOT collide with smog => ACTION 6 => directionVacant[5] true
+     * */
+    public void setDirectionVacant(int index, boolean value) {
+        int i = 0;
+        switch(index) {
+            case 1:
+                i = 0;
+                break;
+            case 2:
+                i = 4;
+                break;
+            case 3:
+                i = 2;
+                break;
+            case 4:
+                i = 6;
+                break;
+            case 5:
+                i = 1;
+                break;
+            case 6:
+                i = 7;
+                break;
+            case 7:
+                i = 3;
+                break;
+            case 8:
+                i = 5;
+                break;
+        }
+        directionVacant[i] = value;
+    }
+
     /**
      * Create survivor at the given position.
      *
@@ -117,7 +198,7 @@ public class Survivor extends Shadow implements GameObstacle {
      * @param heart The texture for the heart interface
      *
      */
-    public Survivor(int id, float x, float y, FilmStrip[] survivor, Texture heart, BitmapFont font, float scale) {
+    public Survivor(int id, float x, float y, FilmStrip[] survivor, Texture heart, BitmapFont font, float scale, Texture[] directions) {
         super(x, y, survivor[0].getRegionWidth()*scale, survivor[0].getRegionHeight()*scale, ShadowShape.CIRCLE);
         this.width = survivor[0].getRegionWidth();
         this.height = survivor[0].getRegionHeight();
@@ -131,7 +212,26 @@ public class Survivor extends Shadow implements GameObstacle {
         displayFontInteract = font;
         safeInCaravan = false;
         this.scale = scale;
-        revealed = true;
+        revealed = false;
+        smogDetectionVertices = new Vector2[9];
+        directionVacant = new boolean[8];
+        temp1 = new Vector2();
+        temp2 = new Vector2();
+        for(int i = 0; i <  9; i++){
+            smogDetectionVertices[i] = new Vector2();
+        }
+        for(int i = 0; i < 8; i++) {
+            directionVacant[i] = false;
+        }
+
+        left = directions[1];
+        right = directions[0];
+        up = directions[2];
+        down = directions[3];
+        upLeft = directions[0];
+        upRight = directions[0];
+        downLeft = directions[0];
+        downRight = directions[0];
 
         //stexture = svalue;
         //setTexture(stexture);
@@ -167,6 +267,24 @@ public class Survivor extends Shadow implements GameObstacle {
      */
     public float getHeight() {
         return texture.getRegionHeight()*scale;
+    }
+
+    public void calculateDetectionRay(){
+        // Start position for raycasts
+        temp2.set(position);
+//        temp2.scl(-1f);
+        smogDetectionVertices[0].set(temp2);
+        // End positions for raycasts
+
+        float angle_change = 45f;
+        float angle = 0f;
+        temp1.set(DEFAULT_DETECTION_RADIUS, 0);
+//        temp1.rotateDeg(absorbRange.x);
+        temp1.rotateDeg(angle);
+        for(int i = 0; i < 8; i ++){
+            smogDetectionVertices[i+1].set(temp1.cpy().add(getPosition()));
+            temp1.rotateDeg(angle_change);
+        }
     }
 
     /**
@@ -368,6 +486,9 @@ public class Survivor extends Shadow implements GameObstacle {
      * Sets the survivor to be rescued and isFollowing to false.
      */
     public void rescue() {
+        if(torchLight != null){
+            torchLight.remove();
+        }
         this.isRescued = true;
         this.isFollowing = false;
     }
@@ -392,7 +513,11 @@ public class Survivor extends Shadow implements GameObstacle {
      * Sets isFollowing to true.
      */
     public void follow() {
-        isFollowing = true;
+        if(!isFollowing){
+            torchLight = Lights.createTorchLight(body);
+            isFollowing = true;
+        }
+
     }
 
     /**
@@ -440,23 +565,21 @@ public class Survivor extends Shadow implements GameObstacle {
      *
      */
     public void update() {
+        ticks++;
         //Checks if we are ded
         if (getLives() == 0) {
             this.die();
             //survivorArr.removeValue(survivorArr.get(i), false);
         }
-
+        calculateDetectionRay();
         // If we are dead do nothing.
         if (!isAlive) {
             return;
         }
-        //System.out.println("Updating");
 
         if (isInteractable) {
-            //System.out.println("Updating");
             //updateInteractable();
         }
-//        System.out.println(isRevealed());
         damageCooldown--;
         // Determine how we are moving.
 
@@ -543,8 +666,13 @@ public class Survivor extends Shadow implements GameObstacle {
      * @param canvas Drawing context
      */
     public void draw(GameCanvas canvas) {
+        float upOffset = 15f - 5f;
+        float downOffset = -15f - 5f;
+        float rightOffset = currentAnimator != animator[IDLE] ? 20f : 20f;
+        float leftOffset = currentAnimator != animator[IDLE] ? -20f : -20f;
         currentAnimator.setFrame((int)aframe);
         if (!isRescued && isAlive) {
+            super.draw(canvas, width*scale, height*scale);
             if (damageCooldown > 0) {
                 if (damageCooldown % 10 == 0) {
                     canvas.draw(currentAnimator, Color.CLEAR, origin.x, origin.y, body.getWorldCenter().x*drawScale.x - height*scale/2, body.getWorldCenter().y*drawScale.y- height*scale/2, width*scale, height*scale);
@@ -574,6 +702,36 @@ public class Survivor extends Shadow implements GameObstacle {
                 canvas.draw(textureHeart, Color.PURPLE, 0.0f, 0.0f, (getX() * drawScale.x - 20) + spacing, getY() * drawScale.y + currentAnimator.getRegionHeight()*scale/2 - 2, 0, 0.1f, 0.1f);
                 spacing += 8.0f;
             }
+            Color color = (ticks % 20 == 0? Color.CLEAR : Color.WHITE);
+            switch (nextAction) {
+                case 1:
+                    canvas.draw(right, color, 0.0f, 0.0f, (getX() * drawScale.x) - currentAnimator.getRegionWidth()*scale/2 + rightOffset + 10f, getY() * drawScale.y - 5f, getAngle(), 0.065f, 0.075f);
+                    break;
+                case 2:
+                    canvas.draw(left, color, 0.0f, 0.0f, getX() * drawScale.x - currentAnimator.getRegionWidth()*scale/2 + leftOffset, getY() * drawScale.y - 5f, getAngle(), 0.065f, 0.075f);
+                    break;
+                case 3:
+                    canvas.draw(up, color, 0.0f, 0.0f, getX() * drawScale.x - currentAnimator.getRegionWidth()*scale/2, getY() * drawScale.y + upOffset, getAngle(), 0.075f, 0.075f);
+                    break;
+                case 4:
+                    canvas.draw(down, color, 0.0f, 0.0f, getX() * drawScale.x - currentAnimator.getRegionWidth()*scale/2 + 4f, getY() * drawScale.y + downOffset - 15f, getAngle(), 0.075f, 0.065f);
+                    break;
+                case 5:
+                    canvas.draw(left, color, 0.0f, 0.0f, getX() * drawScale.x - currentAnimator.getRegionWidth()*scale/2 + rightOffset + 15f, getY() * drawScale.y + upOffset + 20f, 10f, 0.065f, 0.075f);
+                    break;
+                case 6:
+                    canvas.draw(left, color, 0.0f, 0.0f, getX() * drawScale.x - currentAnimator.getRegionWidth()*scale/2 + rightOffset + 18f, getY() * drawScale.y + downOffset + 2f, 15f, 0.065f, 0.075f);
+                    break;
+                case 7:
+                    canvas.draw(left, color, 0.0f, 0.0f, getX() * drawScale.x - currentAnimator.getRegionWidth()*scale/2 + leftOffset - 2f, getY() * drawScale.y + upOffset + 23f, 18f, 0.065f, 0.075f);
+                    break;
+                case 8:
+                    canvas.draw(left, color, 0.0f, 0.0f, getX() * drawScale.x - currentAnimator.getRegionWidth()*scale/2 + leftOffset + 4f, getY() * drawScale.y + downOffset - 10f, 7f, 0.065f, 0.075f);
+                    break;
+                default:
+                    break;
+            }
+
         }
     }
 
@@ -587,8 +745,6 @@ public class Survivor extends Shadow implements GameObstacle {
         if (!isAlive || isRescued) {
             return;
         }
-
-        //System.out.println(body.getFixtureList().size);
 
         if (isInteractable) {
         }
@@ -646,6 +802,13 @@ public class Survivor extends Shadow implements GameObstacle {
     @Override
     public void drawDebug(GameCanvas canvas) {
         super.drawDebug(canvas);
+//        canvas.drawLine(Color.BLUE, position, smogDetectionVertices[0]);
+        Vector2 ray_start = smogDetectionVertices[0];
+        for(Vector2 r : smogDetectionVertices){
+            if (!r.equals(ray_start)){
+                canvas.drawLine(Color.PURPLE, ray_start, r);
+            }
+        }
         //canvas.drawPhysics(shape, Color.RED, getX(), getY(), getAngle(), drawScale.x, drawScale.y);
         canvas.drawPhysics(sensorShape, Color.BLUE, getX(), getY(), getAngle(), drawScale.x, drawScale.y);
     }

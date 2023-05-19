@@ -20,6 +20,8 @@ public class ScoutEnemy extends Enemy{
         private float y;
         private int behind = 0;
 
+        private int NUM_ANIM_FRAMES = 2;
+
         public enum Direction {
             /** The enemy is not moving */
             IDLE,
@@ -53,7 +55,6 @@ public class ScoutEnemy extends Enemy{
         }
         public VineTile(float x, float y, float width, float height, FilmStrip animator, float scale, Direction direction) {
             super(x, y, width, height);
-//            this.currentTexture = texture;
             isStunned = false;
             currentAnimator = animator;
             this.direction = direction;
@@ -91,10 +92,9 @@ public class ScoutEnemy extends Enemy{
             aframe = ((int)currFrame % 2 == 0 ? 0 : 1);
             currentAnimator.setFrame((int)aframe);
             canvas.draw(currentAnimator, Color.WHITE,body.getWorldCenter().x*drawScale.x, body.getWorldCenter().y*drawScale.y,
-                    body.getWorldCenter().x,
+                    body.getWorldCenter().x + (getWidth() * drawScale.x),
                     body.getWorldCenter().y,
                     0.0f, scale, scale);
-
         }
 
         @Override
@@ -240,6 +240,7 @@ public class ScoutEnemy extends Enemy{
         VineTile.Direction d;
         d = VineTile.Direction.RIGHT;
         currentVineAnimator = vineAnimatorHorizontal;
+        if ((vines.size > 0 && !vines.get(vines.size - 1).isStunned) || vines.isEmpty()) {
         switch(direction) {
             case(0):
                 d = VineTile.Direction.RIGHT;
@@ -363,7 +364,7 @@ public class ScoutEnemy extends Enemy{
                 currentVineAnimator = vineAnimatorHeadRightTop;
                 break;
         }
-        tempVineTile = new VineTile(x, y, currentVineTexture.getWidth()*scale, currentVineTexture.getHeight()*scale, currentVineAnimator, scale, d);
+        tempVineTile = new VineTile(x, y, currentVineTexture.getWidth()*scale, currentVineTexture.getHeight()*scale/2, currentVineAnimator, scale, d);
         tempVineTile.activatePhysics(world);
         tempVineTile.createFixtures(world);
         if (vines.size < MAX_VINES && !vinesShrinking) {
@@ -371,15 +372,16 @@ public class ScoutEnemy extends Enemy{
         }
         else {
             canAttack = false;
-            if(vines.size >= MAX_VINES) {
+            if (vines.size >= MAX_VINES) {
                 vinesShrinking = true;
             }
-            if(vines.size == 0) {
+            if (vines.size == 0) {
                 vinesShrinking = false;
                 canAttack = true;
             }
 //            shrinkVines();
 //            vines.clear();
+        }
         }
     }
 //
@@ -397,7 +399,7 @@ public class ScoutEnemy extends Enemy{
      * @param animator
      * @param scale
      */
-    public ScoutEnemy(float x, float y, FilmStrip[] animator, Texture[] vineTextures, float scale, float tileSize, World world) {
+    public ScoutEnemy(float x, float y, FilmStrip[][] animator, Texture[] vineTextures, float scale, float tileSize, World world) {
         super(x, y, animator, scale, tileSize, false);
         vines = new Array<>();
         this.world = world;
@@ -488,6 +490,10 @@ public class ScoutEnemy extends Enemy{
             super.update(0);
 //            updateVines();
         }
+        if ((vines.size > 0 && vines.peek().isStunned) || stunned) {
+            vinesShrinking = true;
+            stunned = true;
+        }
         if(vinesShrinking && vineTick>10) {
             vineTick = 0;
             shrinkVines();
@@ -513,6 +519,14 @@ public class ScoutEnemy extends Enemy{
             }
         }
         super.draw(canvas);
+    }
+
+    @Override
+    public void drawDebug(GameCanvas canvas) {
+        for(int i = 0; i < vines.size; i++) {
+            vines.get(i).drawDebug(canvas);
+        }
+        super.drawDebug(canvas);
     }
 
     public Enemy.EnemyType getEnemyType() {

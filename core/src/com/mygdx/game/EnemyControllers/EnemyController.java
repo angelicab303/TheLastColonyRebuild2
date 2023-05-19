@@ -19,6 +19,8 @@ public class EnemyController {
     protected enum FSMState {
         /** The enemy just spawned and is stationary */
         SPAWN,
+        /** The enemy is aware of player and waking */
+        WAKE,
         /** The enemy is idle and stationary, either not aware of the player or on cooldown */
         IDLE,
         /** The enemy has spotted the player and is chasing them */
@@ -38,7 +40,7 @@ public class EnemyController {
     protected final float ALERT_DISTANCE = 600.0f;
 
     /** The array of shrieker enemies */
-    protected Array<ShriekerEnemy> shriekerArr;
+    protected static Array<ShriekerEnemy> shriekerArr;
 
 
     protected Vector2 target;
@@ -99,10 +101,9 @@ public class EnemyController {
      * @param player the player that will be the enemy's target
      *
      * */
-    public EnemyController(boolean[][] board, int tileSize, int tileOffset, Enemy enemy, Player player, Array<ShriekerEnemy> shriekArr)
+    public EnemyController(boolean[][] board, int tileSize, int tileOffset, Enemy enemy, Player player)
     {
         this.enemy = enemy;
-        this.shriekerArr = shriekArr;
         this.board = board;
         this.tileSize = tileSize;
         this.tileOffset = tileOffset;
@@ -112,7 +113,7 @@ public class EnemyController {
         firstMove = true;
         moveTime = 0;
 
-        state = FSMState.IDLE;
+        state = FSMState.SPAWN;
         ticks = 0;
     }
 
@@ -170,6 +171,16 @@ public class EnemyController {
         float y = tilePath.get(1).getY() * tileSize + tileOffset;
         goalLoc = new Vector2(x, y);
     }
+
+    public static void addShrieker(ShriekerEnemy shriekerEnemy){
+        shriekerArr.add(shriekerEnemy);
+    }
+
+    public static void clearShriekers(){
+        shriekerArr = new Array<ShriekerEnemy>();
+    }
+
+
 //    /**
 //     * Initialize an EnemyController with shrieker enemies
 //     *
@@ -333,7 +344,7 @@ public class EnemyController {
     }
 
     /** Gets the enemy's next move using BFS */
-     protected int getMove() {
+    protected int getMove() {
         startTile = tiles[(int) (enemy.getX() / tileSize)][(int) (enemy.getY() / tileSize)];
         goalTile = tiles[(int) (target.x / tileSize)][(int) (target.y / tileSize)];
 
@@ -364,50 +375,50 @@ public class EnemyController {
         //System.out.println(nextTile.isBlocked());
 
         int action = 0;
-         if (nextTile.getX() == startTile.getX() + 1 && nextTile.getY() == startTile.getY() + 1) {
-             // up, right diagonal
-             action = 5;
-         } else if (nextTile.getX() == startTile.getX() + 1 && nextTile.getY() == startTile.getY() - 1) {
-             // down, right diagonal
-             action = 6;
-         } else if (nextTile.getX() == startTile.getX() - 1 && nextTile.getY() == startTile.getY() + 1) {
-             // up, left diagonal
-             action = 7;
-         } else if (nextTile.getX() == startTile.getX() - 1 && nextTile.getY() == startTile.getY() - 1) {
-             // down, left diagonal
-             action = 8;
-         } else if (nextTile.getX() == startTile.getX() + 1) {
-             // right
-             action = 1;
-         } else if (nextTile.getX() == startTile.getX() - 1) {
-             // left
-             action = 2;
-         } else if (nextTile.getY() == startTile.getY() + 1) {
-             // up
-             action = 3;
-         } else if (nextTile.getY() == startTile.getY() - 1) {
-             // down
-             action = 4;
-         }
-         else if (nextTile.getX() == startTile.getX() && nextTile.getY() == startTile.getY()) {
-             if ((int) goalLoc.x > (int) enemy.getX() && (int) goalLoc.y > (int) enemy.getY()) {
-                 action = 5;
-             } else if ((int) goalLoc.x > (int) enemy.getX() && (int) goalLoc.y < (int) enemy.getY()) {
-                 action = 6;
-             } else if ((int) goalLoc.x < (int) enemy.getX() && (int) goalLoc.y > (int) enemy.getY()) {
-                 action = 7;
-             } else if ((int) goalLoc.x < (int) enemy.getX() && (int) goalLoc.y < (int) enemy.getY()) {
-                 action = 8;
-             } else if ((int) goalLoc.x > (int) enemy.getX()) {
-                 action = 1;
-             } else if ((int) goalLoc.x < (int) enemy.getX()) {
-                 action = 2;
-             } else if ((int) goalLoc.y > (int) enemy.getY()) {
-                 action = 3;
-             } else if ((int) goalLoc.y < (int) enemy.getY()) {
-                 action = 4;
-             }
-         }
+        if (nextTile.getX() == startTile.getX() + 1 && nextTile.getY() == startTile.getY() + 1) {
+            // up, right diagonal
+            action = 5;
+        } else if (nextTile.getX() == startTile.getX() + 1 && nextTile.getY() == startTile.getY() - 1) {
+            // down, right diagonal
+            action = 6;
+        } else if (nextTile.getX() == startTile.getX() - 1 && nextTile.getY() == startTile.getY() + 1) {
+            // up, left diagonal
+            action = 7;
+        } else if (nextTile.getX() == startTile.getX() - 1 && nextTile.getY() == startTile.getY() - 1) {
+            // down, left diagonal
+            action = 8;
+        } else if (nextTile.getX() == startTile.getX() + 1) {
+            // right
+            action = 1;
+        } else if (nextTile.getX() == startTile.getX() - 1) {
+            // left
+            action = 2;
+        } else if (nextTile.getY() == startTile.getY() + 1) {
+            // up
+            action = 3;
+        } else if (nextTile.getY() == startTile.getY() - 1) {
+            // down
+            action = 4;
+        }
+        else if (nextTile.getX() == startTile.getX() && nextTile.getY() == startTile.getY()) {
+            if ((int) goalLoc.x > (int) enemy.getX() && (int) goalLoc.y > (int) enemy.getY()) {
+                action = 5;
+            } else if ((int) goalLoc.x > (int) enemy.getX() && (int) goalLoc.y < (int) enemy.getY()) {
+                action = 6;
+            } else if ((int) goalLoc.x < (int) enemy.getX() && (int) goalLoc.y > (int) enemy.getY()) {
+                action = 7;
+            } else if ((int) goalLoc.x < (int) enemy.getX() && (int) goalLoc.y < (int) enemy.getY()) {
+                action = 8;
+            } else if ((int) goalLoc.x > (int) enemy.getX()) {
+                action = 1;
+            } else if ((int) goalLoc.x < (int) enemy.getX()) {
+                action = 2;
+            } else if ((int) goalLoc.y > (int) enemy.getY()) {
+                action = 3;
+            } else if ((int) goalLoc.y < (int) enemy.getY()) {
+                action = 4;
+            }
+        }
 //        if (nextTile.getX() == startTile.getX() + 1) {
 //            action = 1;
 //        } else if (nextTile.getX() == startTile.getX() - 1) {

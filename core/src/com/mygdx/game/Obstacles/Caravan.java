@@ -57,7 +57,8 @@ public class Caravan extends obstacle.BoxObstacle implements GameObstacle {
      * @param y The initial y-coordinate of the caravan
      */
     public Caravan(float x, float y, int maxCapacity, TextureRegion cvalue, float scale, BitmapFont font) {
-        super(x, y, cvalue.getRegionWidth()*scale, cvalue.getRegionHeight()*scale);
+        super(x, y-cvalue.getRegionHeight()*scale/2, cvalue.getRegionWidth()*scale, cvalue.getRegionHeight()*scale/2);
+        setBodyType(BodyDef.BodyType.StaticBody);
         setDensity(1);
         setFriction(0);
         setRestitution(0.1f);
@@ -175,12 +176,12 @@ public class Caravan extends obstacle.BoxObstacle implements GameObstacle {
         if (!super.activatePhysics(world)) {
             return false;
         }
-//        FixtureDef sensorDef = new FixtureDef();
-//        sensorDef.density = 0;
-//        sensorDef.isSensor = true;
-//        sensorShape = new CircleShape();
-//        sensorShape.setRadius(65f);
-//        sensorDef.shape = sensorShape;
+        FixtureDef sensorDef = new FixtureDef();
+        sensorDef.density = 0;
+        sensorDef.isSensor = true;
+        sensorShape = new CircleShape();
+        sensorShape.setRadius(80f);
+        sensorDef.shape = sensorShape;
 
         setFilterData(filter);
         //getBody().setUserData(this);
@@ -259,7 +260,7 @@ public class Caravan extends obstacle.BoxObstacle implements GameObstacle {
 
     @Override
     public short getMaskBits() {
-        return 0x0;
+        return MASK_CARAVAN;
     }
 
     @Override

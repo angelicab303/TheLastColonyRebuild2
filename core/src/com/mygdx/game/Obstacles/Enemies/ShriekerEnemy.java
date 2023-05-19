@@ -38,6 +38,9 @@ public class ShriekerEnemy extends Enemy {
     private float POST_SHRIEK_COOLDOWN = 1000;
     /** The number of animation frames in our filmstrip */
     private static final int   NUM_ANIM_FRAMES = 9;
+
+    /** Current animation frame for this shell */
+    protected float aframe;
     /** The textures for the enemy. */
     protected Texture textureIdle;
     protected Texture textureAlert;
@@ -59,7 +62,7 @@ public class ShriekerEnemy extends Enemy {
      * @param animator the filstrips for this enemy
      * @param scale the scale used to draw for this enemy
      */
-    public ShriekerEnemy(float x, float y, FilmStrip[] animator, float scale, float tileSize){
+    public ShriekerEnemy(float x, float y, FilmStrip[][] animator, float scale, float tileSize){
         super(x, y, animator, scale, tileSize, true);
         isShrieking = false;
         canShriek = false;
@@ -69,9 +72,9 @@ public class ShriekerEnemy extends Enemy {
 
         setBodyType(BodyDef.BodyType.StaticBody);
 
-        animatorAlert = animator[2];
-        animatorShriek = animator[1];
-        animatorIdle = animator[0];
+        animatorAlert = animator[0][2];
+        animatorShriek = animator[0][1];
+        animatorIdle = animator[0][0];
         currentAnimator = animatorIdle;
         aframe = 0.0f;
 
@@ -275,7 +278,7 @@ public class ShriekerEnemy extends Enemy {
      * @param canvas Drawing context
      */
     public void draw(GameCanvas canvas){
-        currentAnimator.setFrame((int)getAframe());
+        currentAnimator.setFrame((int)aframe);
         if (stunCooldown > 0 && stunCooldown % 10 == 0)
         {
             canvas.draw(currentAnimator, Color.CLEAR, origin.x, origin.y, body.getWorldCenter().x*drawScale.x - currentAnimator.getRegionWidth()*scale/2, body.getWorldCenter().y*drawScale.y- currentAnimator.getRegionHeight()*scale/2, 0.0f, scale, scale);

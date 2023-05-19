@@ -25,6 +25,7 @@
 
 package com.mygdx.game.Obstacles;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -34,6 +35,7 @@ import com.badlogic.gdx.physics.box2d.Filter;
 import com.badlogic.gdx.physics.box2d.World;
 import com.mygdx.game.GameCanvas;
 import obstacle.BoxObstacle;
+import org.w3c.dom.Text;
 import util.FilmStrip;
 
 
@@ -47,7 +49,7 @@ import util.FilmStrip;
 public class PurifiedQueue {
     // Private constants to avoid use of "magic numbers"
     /** Fixed velocity for a photon */
-    private static final float PHOTON_VELOCITY = 5.0f;
+    private static final float PHOTON_VELOCITY = 10.0f;
     /** Number of animation frames a photon lives before deleted */
     private static final int MAX_AGE = 480;
     /** Maximum number of photons allowed on screen at a time. */
@@ -55,6 +57,7 @@ public class PurifiedQueue {
 
     /** Graphic asset representing a single photon. */
     private static Texture texture;
+    private static Texture collisionTexture;
 
     // QUEUE DATA STRUCTURES
     /** Array implementation of a circular queue. */
@@ -71,6 +74,10 @@ public class PurifiedQueue {
 
     /** Position for moving box2d objects offscreen */
     Vector2 offscreen;
+
+    private Player player;
+
+    protected int ticks;
 
     /**
      * An inner class that represents a single Purified air pellet
@@ -110,14 +117,19 @@ public class PurifiedQueue {
         private float timeToFade = 450;
         /** Filmstrip for smog */
         protected FilmStrip animator;
+        protected FilmStrip collisionAnimator;
         /** How fast we change frames (one frame per 10 calls to update) */
         private static final float ANIMATION_SPEED = 0.02f;
         /** The number of animation frames in our filmstrip */
-        private static final int   NUM_ANIM_FRAMES = 5;
+        private static final int   NUM_ANIM_FRAMES = 1;
+
+        private static final int   NUM_ANIM_COLLISION_FRAMES = 13;
         /** Current animation frame for this shell */
         private float aframe;
+        private float aframeCollision;
         /** Scale of the object */
         private float scale;
+        private int ticks;
 
         /**
          * Initialize a standard purified air unit
@@ -129,17 +141,25 @@ public class PurifiedQueue {
             // setTexture(PurifiedQueue.texture);
             // setLinearDamping(1); //arbitrary damping coeff.
             this.age = -1;
+            ticks = 0;
 
             this.fading = false;
             this.faded = false;
 
             setActive(false);
             animator = new FilmStrip(PurifiedQueue.texture,1,NUM_ANIM_FRAMES,NUM_ANIM_FRAMES);
-            float maxFrame = 4;
-            float minFrame = 0;
-            float frameNum = (float)(Math.random()*(maxFrame-minFrame+1)+minFrame);
-            aframe = frameNum;
+            collisionAnimator = new FilmStrip(PurifiedQueue.collisionTexture, 1, NUM_ANIM_COLLISION_FRAMES, NUM_ANIM_COLLISION_FRAMES);
+//            float maxFrame = 4;
+//            float minFrame = 0;
+//            float frameNum = (float)(Math.random()*(maxFrame-minFrame+1)+minFrame);
+            aframe = 0;
+            aframeCollision = 0;
             this.scale = scale;
+        }
+
+        @Override
+        public void drawDebug(GameCanvas canvas) {
+            super.drawDebug(canvas);
         }
 
         /**
@@ -183,8 +203,10 @@ public class PurifiedQueue {
         public void setFaded(boolean faded) { this.faded = faded; }
 
 
-        public void allocate(float x, float y){
+        public void allocate(float x, float y, Vector2 velocity){
             this.setPosition(x,y);
+//            this.setVX(velocity.x);
+//            this.setVY(velocity.y);
             body.setActive(true);
             this.age = 0;
         }
@@ -207,13 +229,26 @@ public class PurifiedQueue {
         /** Updates the fade time of fading purified air */
         public void update()
         {
-            age++;
-            if (age >= MAX_AGE)
+            if (age != MAX_AGE) {
+                age++;
+            }
+            if (age == MAX_AGE)
             {
+                aframeCollision += ANIMATION_SPEED;
+                if (ticks % 50 == 0) {
+                    aframeCollision += 1;
+                }
+//                faded = true;
+//                reset();
+            }
+            else {
+                aframeCollision = 0;
+            }
+            if (aframeCollision > 12) {
+                aframeCollision = 0;
                 faded = true;
                 reset();
             }
-
 
             setX(body.getWorldCenter().x);
             setY(body.getWorldCenter().y);
@@ -270,11 +305,14 @@ public class PurifiedQueue {
         }
     }
 
+    public void setPlayer(Player player) {
+        this.player = player;
+    }
 
     /**
      *  Constructs a new (empty) PhotonQueue
      */
-    public PurifiedQueue(Texture texture, World world, float scale) {
+    public PurifiedQueue(Texture texture, World world, float scale, Player player, Texture collision) {
         //Constants
         offscreen = new Vector2(-50, -50);
 
@@ -286,6 +324,7 @@ public class PurifiedQueue {
         // Construct the queue.
         // this.texture = texture;
         this.texture = texture;
+        this.collisionTexture = collision;
         queue = new PurifiedAir[MAX_PHOTONS];
 
         head = 0;
@@ -354,7 +393,7 @@ public class PurifiedQueue {
         // Add a new photon at the end.
         // Already declared, so just initialize.
         tail = ((tail + 1) % MAX_PHOTONS);
-        queue[tail].allocate(position.x,position.y);
+        queue[tail].allocate(position.x,position.y, player.getVelocity());
         queue[tail].applyImpulse(impulse);
         size++;
     }
@@ -422,9 +461,32 @@ public class PurifiedQueue {
 
             // Use this information to draw.
             air.animator.setFrame((int)air.aframe);
-            canvas.draw(air.animator,tint,air.getOrigin().x,air.getOrigin().y,air.getPosition().x,air.getPosition().y,0,air.scale,air.scale);
+            air.collisionAnimator.setFrame((int)air.aframeCollision);
+            if(air.age >= MAX_AGE) {
+                canvas.draw(air.collisionAnimator,Color.WHITE,air.getOrigin().x,air.getOrigin().y,air.getPosition().x,air.getPosition().y,0,air.scale,air.scale);
+            }
+            else {
+                canvas.draw(air.animator,Color.WHITE,air.getOrigin().x,air.getOrigin().y,air.getPosition().x,air.getPosition().y,0,air.scale,air.scale);
+            }
 
 
+        }
+    }
+
+    public void drawDebug(GameCanvas canvas) {
+        for (int ii = 0; ii < size; ii++) {
+            // Find the position of this photon.
+            int idx = ((head + ii) % MAX_PHOTONS);
+
+            PurifiedAir air = queue[idx];
+
+            // How big to make the photon.  Decreases with age.
+            //float scale = (1.25f - (float)queue[idx].age * 0.5f / (float)MAX_AGE)*queue[idx].scale;
+            //float ratio = (float)queue[idx].age/(float)MAX_AGE;
+            //tint.set((float)100*ratio,(float)250*ratio,(float)250*ratio,(float)1*(1-ratio));
+
+            // Use this information to draw.
+            (air).drawDebug(canvas);
         }
     }
 }

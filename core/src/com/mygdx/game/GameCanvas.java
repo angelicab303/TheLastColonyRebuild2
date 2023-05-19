@@ -419,17 +419,22 @@ public class GameCanvas {
 
 
         camera.zoom = 0.4f;
-        if (camera.viewportHeight/2*camera.zoom > height-camera.viewportHeight/2*camera.zoom)
-        {
-            camera.position.set(MathUtils.clamp(x, camera.viewportWidth/2*camera.zoom, width-camera.viewportWidth/2*camera.zoom),
-                    MathUtils.clamp(y, height-camera.viewportHeight/2*camera.zoom, camera.viewportHeight/2*camera.zoom), 0);
-            camera.update();
+
+        float minHeight =camera.viewportHeight/2*camera.zoom;
+        float maxHeight = height-camera.viewportHeight/2*camera.zoom;
+        float minWidth = camera.viewportWidth / 2 * camera.zoom;
+        float maxWidth = width - camera.viewportWidth / 2 * camera.zoom;
+
+        if(maxHeight < minHeight){
+            maxHeight = minHeight;
         }
-        else {
-            camera.position.set(MathUtils.clamp(x, camera.viewportWidth / 2 * camera.zoom, width - camera.viewportWidth / 2 * camera.zoom),
-                    MathUtils.clamp(y, camera.viewportHeight / 2 * camera.zoom, height - camera.viewportHeight / 2 * camera.zoom), 0);
-            camera.update();
+
+        if(maxWidth < minWidth){
+            maxWidth = minWidth;
         }
+
+        camera.position.set(MathUtils.clamp(x, minWidth, maxWidth), MathUtils.clamp(y, minHeight, maxHeight), 0);
+        camera.update();
 
     }
 
@@ -1171,13 +1176,22 @@ public class GameCanvas {
     }
 
     public void drawLine(Color color, Vector2 p1, Vector2 p2){
-        //debugRender.begin(ShapeRenderer.ShapeType.Line);
+//        debugRender.begin(ShapeRenderer.ShapeType.Line);
         debugRender.setColor(color);
         if(p1 != null && p2 != null){
             debugRender.line(p1,p2);
         }
+//        debugRender.end();
 
+    }
 
+    public void drawLine2(Color color, Vector2 p1, Vector2 p2){
+        debugRender.begin(ShapeRenderer.ShapeType.Line);
+        debugRender.setColor(color);
+        if(p1 != null && p2 != null){
+            debugRender.line(p1,p2);
+        }
+        debugRender.end();
     }
     /**
      * Draws the outline of the given shape in the specified color

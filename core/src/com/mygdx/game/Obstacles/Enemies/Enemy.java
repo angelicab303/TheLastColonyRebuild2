@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.mygdx.game.GameCanvas;
 import com.mygdx.game.Obstacles.GameObstacle;
+import com.mygdx.game.Obstacles.Player;
 import com.mygdx.game.Obstacles.Shadow;
 import obstacle.BoxObstacle;
 import util.FilmStrip;
@@ -40,6 +41,8 @@ public class Enemy extends Shadow implements GameObstacle {
         /** The enemy is moving to the left */
         LEFT
     }
+
+    static FilmStrip stunAnimation;
     // Constants for the enemy
 
     /** How far forward the enemy can move */
@@ -54,6 +57,11 @@ public class Enemy extends Shadow implements GameObstacle {
 
     /** Filmstrip for the enemy */
     protected FilmStrip[] animator;
+    protected FilmStrip[] movementStrips;
+    protected FilmStrip[] idleStrips;
+    protected FilmStrip[] attackStrips;
+    protected FilmStrip[] stunStrips;
+    protected FilmStrip[] wakeStrips;
     protected FilmStrip currentAnimator;
 
 
@@ -88,12 +96,18 @@ public class Enemy extends Shadow implements GameObstacle {
     private PolygonShape sensorShape;
     /** Scale of the object */
     protected float scale;
-    /** How fast we change frames (one frame per 10 calls to update) */
-    protected static final float ANIMATION_SPEED = 0.20f;
-    /** The number of animation frames in our filmstrip */
-    protected static final int   NUM_ANIM_FRAMES = 12;
-    /** Current animation frame for this shell */
-    protected float aframe;
+//    /** How fast we change frames (one frame per 10 calls to update) */
+//    protected static final float ANIMATION_SPEED = 0.20f;
+//    /** The number of animation frames in our filmstrip */
+//    protected static final int   NUM_ANIM_FRAMES = 12;
+//    /** Current animation frame for this shell */
+//    protected float aframe;
+    protected boolean isAttacking;
+    protected boolean isWaking;
+    protected boolean hasAwoken;
+    protected FilmStrip[] currentStrip;
+    protected float wakeTime;
+    protected final float MAX_WAKE_TIME = 200.0f;
 
     float height;
     float width;
@@ -103,6 +117,10 @@ public class Enemy extends Shadow implements GameObstacle {
 
     /**Filter for filtering */
     private static volatile Filter filter;
+
+    public static void setStunFilmStrip(FilmStrip filmstrip){
+        stunAnimation = filmstrip;
+    }
 
     public void incToStunTime(){
         toStunTime++;
@@ -123,6 +141,20 @@ public class Enemy extends Shadow implements GameObstacle {
      * @param stunned this enemy's new stun state
      */
     public void setStunned(boolean stunned) { this.stunned = stunned; }
+    /**
+     * Sets the attack state of this enemy
+     *
+     * @param attacking this enemy's new stun state
+     */
+    public void setAttacking(boolean attacking) { this.isAttacking = attacking; }
+    /**
+     * Sets the wake state of this enemy
+     *
+     * @param waking this enemy's new wake state
+     */
+    public void setWaking(boolean waking) { this.isWaking = waking; }
+    public void setHasAwoken(boolean awoken) { this.hasAwoken = awoken; }
+    public boolean getHasAwoken() { return hasAwoken; }
 
     /**
      * Returns whether this enemy can currently attack
@@ -159,9 +191,9 @@ public class Enemy extends Shadow implements GameObstacle {
      *
      * @return aframe
      */
-    public float getAframe(){
-        return aframe;
-    }
+//    public float getAframe(){
+//        return aframe;
+//    }
     /**
      * Returns the scale of the animation.
      *
@@ -171,6 +203,8 @@ public class Enemy extends Shadow implements GameObstacle {
         return scale;
     }
 
+
+
     /**
      * Initialize a standard enemy
      *
@@ -179,11 +213,11 @@ public class Enemy extends Shadow implements GameObstacle {
      * @param animator the collection of filmstrips (up, down, right, left, idle)
      * @param scale the scale to be drawn to
      */
-    public Enemy (float x, float y, FilmStrip[] animator, float scale, float tileSize, Boolean isShrieker)
+    public Enemy (float x, float y, FilmStrip[][] animator, float scale, float tileSize, Boolean isShrieker)
     {
-        super(x, y, animator[0].getRegionWidth()*scale, animator[0].getRegionHeight()*scale, ShadowShape.CIRCLE);
-        this.height = animator[0].getRegionHeight();
-        this.width = animator[0].getRegionWidth();
+        super(x, y, animator[0][0].getRegionWidth()*scale, animator[0][0].getRegionHeight()*scale, ShadowShape.CIRCLE);
+        this.height = animator[0][0].getRegionHeight();
+        this.width = animator[0][0].getRegionWidth();
         //setTexture(value);
         setDensity(1);
         setFriction(0.1f);
@@ -195,7 +229,17 @@ public class Enemy extends Shadow implements GameObstacle {
         zerovector = new Vector2(0,0);
         this.scale = scale;
         stunned = false;
-        revealed = true;
+        revealed = false;
+        isAttacking = false;
+        movementStrips = animator[0];
+        idleStrips = animator[1];
+        attackStrips = animator[2];
+        stunStrips = animator[3];
+        wakeStrips = animator[4];
+        currentStrip = wakeStrips;
+        currentAnimator = wakeStrips[0];
+        wakeTime = 0;
+        direction = Enemy.Direction.RIGHT;
 
         if (filter == null){
             filter = new Filter();
@@ -206,10 +250,10 @@ public class Enemy extends Shadow implements GameObstacle {
         this.behind = 0;
 
         if (!isShrieker){
-            this.animator = animator;
+            this.animator = animator[0];
             canAttack = true;
-            currentAnimator = animator[IDLE];
-            aframe = 0.0f;
+            currentAnimator = animator[0][0];
+            // aframe = 0.0f;
         }
 
 
@@ -218,25 +262,55 @@ public class Enemy extends Shadow implements GameObstacle {
      *  Updates the direction that the enemy sprite faces.
      */
     public void updateDirection(float h, float v){
-        if (v > 0){
-            direction = Enemy.Direction.UP;
-            currentAnimator = animator[UP];
+
+        if (h != 0){
+            System.out.println("Test 1");
+            System.out.println("hasAwoken: " + hasAwoken);
+            System.out.println("stunned: " + isStunned());
+            if (isStunned() && hasAwoken){
+                currentStrip = stunStrips;
+                System.out.println("Stun stips playing");
+            }
+            else if (isAttacking && hasAwoken){
+                currentStrip = attackStrips;
+            }
+            else if (hasAwoken){
+                currentStrip = movementStrips;
+            }
         }
-        else if (v < 0){
-            direction = Enemy.Direction.DOWN;
-            currentAnimator = animator[DOWN];
+        else{
+            System.out.println("Test 2");
+            System.out.println("Test 1");
+            System.out.println("hasAwoken: " + hasAwoken);
+            System.out.println("stunned: " + isStunned());
+            if (isStunned() && hasAwoken){
+                System.out.println("Stun strips playing");
+                currentStrip = stunStrips;
+            }
+            else if (isWaking){
+                currentStrip = wakeStrips;
+            }
+            else if (hasAwoken){
+                currentStrip = idleStrips;
+            }
         }
-        else if (h > 0){
+
+        if (h > 0){
             direction = Enemy.Direction.RIGHT;
-            currentAnimator = animator[RIGHT];
+            currentAnimator = currentStrip[0];
         }
         else if (h < 0){
             direction = Enemy.Direction.LEFT;
-            currentAnimator = animator[LEFT];
+            currentAnimator = currentStrip[1];
         }
+
         else{
-            direction = Enemy.Direction.IDLE;
-            currentAnimator = animator[IDLE];
+            if (direction == Enemy.Direction.RIGHT){
+                currentAnimator = currentStrip[0];
+            }
+            else if (direction == Enemy.Direction.LEFT){
+                currentAnimator = currentStrip[1];
+            }
         }
     }
 
@@ -293,6 +367,15 @@ public class Enemy extends Shadow implements GameObstacle {
      */
     public void update(int action)
     {
+        if (isWaking){
+            //System.out.println("Floater is waking");
+            wakeTime++;
+            // System.out.println("Wake time: " + wakeTime);
+            if (hasAwoken){
+                isWaking = false;
+                wakeTime = 0;
+            }
+        }
         if(toStunTime >= MAX_TO_STUN_TIME){
             toStunTime = 0;
             this.setStunned(true);
@@ -316,6 +399,7 @@ public class Enemy extends Shadow implements GameObstacle {
             {
                 canAttack = true;
                 stunned = false;
+                hasAwoken = false;
                 stunTime = 0;
                 body.setActive(true);
             }
@@ -342,16 +426,17 @@ public class Enemy extends Shadow implements GameObstacle {
             setY(body.getWorldCenter().y);
 
             // Set enemy texture based on direction from movement
-            updateDirection(velocity.x, velocity.y);
+
         }
+        updateDirection(velocity.x, velocity.y);
 
 
         // Increase animation frame
-        aframe += ANIMATION_SPEED;
-
-        if (aframe >= NUM_ANIM_FRAMES) {
-            aframe -= NUM_ANIM_FRAMES;
-        }
+//        aframe += ANIMATION_SPEED;
+//
+//        if (aframe >= NUM_ANIM_FRAMES) {
+//            aframe -= NUM_ANIM_FRAMES;
+//        }
 
         if (behind < 0){
             behind = 0;
@@ -421,19 +506,25 @@ public class Enemy extends Shadow implements GameObstacle {
      * @param canvas Drawing context
      */
     public void draw(GameCanvas canvas) {
-        currentAnimator.setFrame((int)aframe);
-//        System.out.println((body.getWorldCenter().x*drawScale.x - currentAnimator.getRegionWidth()*scale/2) + ", " + (body.getWorldCenter().y*drawScale.y- currentAnimator.getRegionHeight()*scale/2));
-        if (stunCooldown > 0 && stunCooldown % 10 == 0)
-        {
-            canvas.draw(currentAnimator, Color.CLEAR, origin.x, origin.y, body.getWorldCenter().x*drawScale.x - width*scale/2, body.getWorldCenter().y*drawScale.y- height*scale/2, 0.0f, scale, scale);
-        }
-        else if (isStunned())
-        {
-            canvas.draw(currentAnimator, Color.PINK, origin.x, origin.y, body.getWorldCenter().x*drawScale.x - width*scale/2, body.getWorldCenter().y*drawScale.y- height*scale/2, 0.0f, scale, scale);
-        }
-        else {
-            canvas.draw(currentAnimator, Color.WHITE, origin.x, origin.y, body.getWorldCenter().x * drawScale.x - width * scale / 2, body.getWorldCenter().y * drawScale.y - height * scale / 2, 0.0f, scale, scale);
-        }
+        super.draw(canvas, width*scale, height*scale);
+//        currentAnimator.setFrame((int)aframe);
+////        System.out.println((body.getWorldCenter().x*drawScale.x - currentAnimator.getRegionWidth()*scale/2) + ", " + (body.getWorldCenter().y*drawScale.y- currentAnimator.getRegionHeight()*scale/2));
+//        if (stunCooldown > 0 && stunCooldown % 10 == 0)
+//        {
+//            canvas.draw(currentAnimator, Color.CLEAR, origin.x, origin.y, body.getWorldCenter().x*drawScale.x - width*scale/2, body.getWorldCenter().y*drawScale.y- height*scale/2, 0.0f, scale, scale);
+//        }
+//        else if (isStunned())
+//        {
+//            canvas.draw(currentAnimator, Color.PINK, origin.x, origin.y, body.getWorldCenter().x*drawScale.x - width*scale/2, body.getWorldCenter().y*drawScale.y- height*scale/2, 0.0f, scale, scale);
+//            if(stunAnimation != null){
+////                System.out.println(stunTime % 4);
+//                stunAnimation.setFrame(((int)stunTime/5) % 4); //4 frames of animation, 5 frame rate reduction
+//                canvas.draw(stunAnimation, Color.GRAY, origin.x, origin.y, body.getWorldCenter().x * drawScale.x - width*scale/2, body.getWorldCenter().y * drawScale.y, 0.0f, scale, scale);
+//            }
+//        }
+//        else {
+//            canvas.draw(currentAnimator, Color.WHITE, origin.x, origin.y, body.getWorldCenter().x * drawScale.x - width * scale / 2, body.getWorldCenter().y * drawScale.y - height * scale / 2, 0.0f, scale, scale);
+//        }
     }
 
     public void drawDebug(GameCanvas canvas) {

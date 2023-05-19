@@ -60,6 +60,10 @@ public class SurvivorController {
 
     private int moveTime;
 
+    private int prevMove;
+
+    private int secondPrevMove;
+
     /**
      * Creates a SurvivorController for the survivor with the given id.
      *
@@ -74,6 +78,8 @@ public class SurvivorController {
         this.board = board;
         this.tileSize = tileSize;
         this.tileOffset = tileOffset;
+        secondPrevMove = 0;
+        prevMove = 0;
 
         state = FSMState.IDLE;
         ticks = 0;
@@ -148,14 +154,14 @@ public class SurvivorController {
         public int getAction () {
             ticks++;
             moveTime++;
-
+//            System.out.println(actionToString(getMoveFromDetect()));
             if (ticks % 10 == 0) {
                 changeStateIfApplicable();
             }
 
             int action = 0;
             if (state == FSMState.FOLLOW || state == FSMState.FIND) {
-                action = getMove();
+                action = getMoveFromDetect();
             }
             if (state == FSMState.SAFE) {
                 survivor.rescue();
@@ -170,7 +176,7 @@ public class SurvivorController {
             switch (state) {
                 case IDLE:
                     // code for state change in spawn state
-                    if (survivor.isFollowing() && survivor.isRevealed()) {
+                    if (survivor.isFollowing() /*&& survivor.isRevealed()*/) {
                         state = FSMState.FOLLOW;
                     }
                     break;
@@ -179,9 +185,9 @@ public class SurvivorController {
                     if (survivor.getBody().getFixtureList().peek().testPoint(caravanPos.x, caravanPos.y)) {
                         state = FSMState.SAFE;
                     }
-                    if (!survivor.isRevealed()) {
+                    /*if (!survivor.isRevealed()) {
                         state = FSMState.IDLE;
-                    }
+                    }*/
                     break;
                 case FIND:
                     // code for state change in find state
@@ -274,20 +280,28 @@ public class SurvivorController {
             }
             else if (nextTile.getX() == startTile.getX() && nextTile.getY() == startTile.getY()) {
                 if ((int) goalLoc.x > (int) survivor.getX() && (int) goalLoc.y > (int) survivor.getY()) {
+                    // Right, Up
                     action = 5;
                 } else if ((int) goalLoc.x > (int) survivor.getX() && (int) goalLoc.y < (int) survivor.getY()) {
+                    // Right, Down
                     action = 6;
                 } else if ((int) goalLoc.x < (int) survivor.getX() && (int) goalLoc.y > (int) survivor.getY()) {
+                    // Left, Up
                     action = 7;
                 } else if ((int) goalLoc.x < (int) survivor.getX() && (int) goalLoc.y < (int) survivor.getY()) {
+                    // Left, Down
                     action = 8;
                 } else if ((int) goalLoc.x > (int) survivor.getX()) {
+                    // Right
                     action = 1;
                 } else if ((int) goalLoc.x < (int) survivor.getX()) {
+                    // Left
                     action = 2;
                 } else if ((int) goalLoc.y > (int) survivor.getY()) {
+                    // Up
                     action = 3;
                 } else if ((int) goalLoc.y < (int) survivor.getY()) {
+                    // Down
                     action = 4;
                 }
             }
@@ -311,5 +325,88 @@ public class SurvivorController {
             return true;
         }
         return false;
+    }
+
+
+    private int nextBest(int pathfindMove) {
+        switch (pathfindMove) {
+            //RIGHT
+            case 1:
+                if (survivor.getDirectionVacant()[5]) {
+                    return 6;
+                }
+                if (survivor.getDirectionVacant()[4]) {
+                    return 5;
+                }
+            // LEFT
+            case 2:
+                if (survivor.getDirectionVacant()[6]) {
+                    return 7;
+                }
+                if (survivor.getDirectionVacant()[7]) {
+                    return 8;
+                }
+            // UP
+            case 3:
+                if (survivor.getDirectionVacant()[6]) {
+                    return 7;
+                }
+                if (survivor.getDirectionVacant()[4]) {
+                    return 5;
+                }
+            // DOWN
+            case 4:
+                if (survivor.getDirectionVacant()[5]) {
+                    return 6;
+                }
+                if (survivor.getDirectionVacant()[7]) {
+                    return 8;
+                }
+            // RIGHT UP
+            case 5:
+                if (survivor.getDirectionVacant()[2]) {
+                    return 3;
+                }
+                if (survivor.getDirectionVacant()[0]) {
+                    return 1;
+                }
+            // RIGHT DOWN
+            case 6:
+                if (survivor.getDirectionVacant()[0]) {
+                    return 1;
+                }
+                if (survivor.getDirectionVacant()[3]) {
+                    return 4;
+                }
+            // LEFT UP
+            case 7:
+                if (survivor.getDirectionVacant()[2]) {
+                    return 3;
+                }
+                if (survivor.getDirectionVacant()[1]) {
+                    return 2;
+                }
+            // LEFT DOWN
+            case 8:
+                if (survivor.getDirectionVacant()[3]) {
+                    return 4;
+                }
+                if (survivor.getDirectionVacant()[1]) {
+                    return 2;
+                }
+            default:
+                // no direction
+                return 0;
+        }
+    }
+
+    private int getMoveFromDetect() {
+        int pathfindMove = getMove();
+        survivor.setNextAction(pathfindMove);
+        // first option, using A*
+        if (pathfindMove > 0 && survivor.getDirectionVacant()[pathfindMove - 1]) {
+            return pathfindMove;
+        }
+        return 0;
     }
 }

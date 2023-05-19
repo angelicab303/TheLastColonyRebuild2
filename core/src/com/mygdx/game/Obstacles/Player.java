@@ -12,6 +12,7 @@ import com.badlogic.gdx.utils.Array;
 import com.mygdx.game.GameCanvas;
 import com.mygdx.game.InputController;
 import com.mygdx.game.Lights;
+import com.mygdx.game.Weapon;
 import obstacle.BoxObstacle;
 import obstacle.WheelObstacle;
 import util.FilmStrip;
@@ -38,13 +39,13 @@ public class Player extends Shadow implements GameObstacle{
 
 
     /** How long the player must wait until it can lose a life again */
-    private static final int COOLDOWN = 200;
+    private static final int COOLDOWN = 400;
 
     /** The player's current direction */
     private Player.Direction direction;
 
     /** How far forward the player can move */
-    private static final float MOVE_SPEED = 500.0f;
+    private static final float MOVE_SPEED = 100.0f;
     /** The texture for the player. */
     protected FilmStrip[] movementStrips;
     protected FilmStrip[] idleStrips;
@@ -116,11 +117,32 @@ public class Player extends Shadow implements GameObstacle{
     private float fireTime = 0;
     /** Indicates whether to start the firing timer */
     private boolean startFireTimer = false;
+    /** Whether the player is currently in smog */
+    private boolean revealed;
 
     private float height;
     private float width;
 
+    public Weapon weapon;
+
     private int behind;
+
+    private int torch;
+    private int key;
+
+    private final int DEFAULT_NOISE = 10;
+
+    private final int MAX_WALK_NOISE = 60;
+
+    private final int MAX_SMOG_NOISE = 30;
+
+    private final int MAX_ABSORB_NOISE = 90;
+
+    private final int MAX_SHOOT_NOISE = 120;
+
+    private float noise;
+
+    private Light light;
 
 
     private Array<Survivor> survivorsFollowing;
@@ -170,8 +192,12 @@ public class Player extends Shadow implements GameObstacle{
         blinkTime = 0;
         pressFire = false;
         doneFiring = true;
+        revealed = true;
 
         behind = 0;
+        key = 0;
+        torch = 0;
+        noise = DEFAULT_NOISE;
 
         if (filter == null){
             filter = new Filter();
@@ -186,6 +212,35 @@ public class Player extends Shadow implements GameObstacle{
         currentAnimator = currentStrip[DOWN];
         aframe = 0.0f;
         this.scale = scale;
+
+        this.weapon = new Weapon(getPosition().x, getPosition().y);
+    }
+
+
+    public void collectTorch(){
+        torch++;
+    }
+
+    /**Returns whether a torch was successfully used*/
+    public boolean useTorch(){
+        if(torch > 0){
+            torch--;
+            return true;
+        }
+        return false;
+    }
+
+    public void collectKey(){
+        key++;
+    }
+
+    /**Returns whether a key was successfully used*/
+    public boolean useKey(){
+        if(key > 0){
+            key--;
+            return true;
+        }
+        return false;
     }
 
 
@@ -366,6 +421,10 @@ public class Player extends Shadow implements GameObstacle{
         return isAlive;
     }
 
+    public void setRevealed(boolean revealed) { this.revealed = revealed; }
+
+    public float getNoise() { return noise; }
+
     /**
      * Creates the physics Body(s) for this object, adding them to the world.
      *
@@ -382,13 +441,12 @@ public class Player extends Shadow implements GameObstacle{
         }
 
         setFilterData(filter);
-        //attachLightToPlayer(Lights.createPointLight(Color.WHITE, sightDis, 0,0));
+        light = Lights.createPointLight(Color.BLACK, noise, 0,0);
+        attachLightToPlayer(light);
         return true;
     }
 
-    public void attachLightToPlayer(Light light){
-        light.attachToBody(body);
-    }
+    public void attachLightToPlayer(Light light){ light.attachToBody(body); }
 
     /**
      *  Updates the direction that the player sprite faces.
@@ -472,6 +530,7 @@ public class Player extends Shadow implements GameObstacle{
         float vVelocity = controller.getVertical();
 
         if (controller.didPressFire() || controller.didPressAbsorb()){
+            //System.out.println("Absorbed: " + controller.didPressAbsorb());
             pressFire = true;
             doneFiring = false;
         }
@@ -489,11 +548,55 @@ public class Player extends Shadow implements GameObstacle{
             fireTime++;
         }
 
+        // update player noise
+
+        if (hVelocity == 0 && vVelocity == 0)
+        {
+            noise -= 0.5f;
+            if (noise < DEFAULT_NOISE)
+            {
+                noise = DEFAULT_NOISE;
+            }
+        }
+        else
+        {
+            noise++;
+            if (!revealed && noise > MAX_SMOG_NOISE)
+            {
+                noise = MAX_SMOG_NOISE;
+            }
+            else if (noise > MAX_WALK_NOISE)
+            {
+                noise = MAX_WALK_NOISE;
+            }
+        }
+
+        if (controller.didPressAbsorb())
+        {
+            noise = MAX_ABSORB_NOISE;
+        }
+        else if (controller.didPressFire())
+        {
+            noise = MAX_SHOOT_NOISE;
+        }
+
+//        System.out.println(noise);
+        light.setDistance(noise);
+
 
 //        boolean isMoving = hVelocity + vVelocity != 0;
 
-        velocity.x = hVelocity * MOVE_SPEED;
-        velocity.y = vVelocity * MOVE_SPEED;
+        // move more slowly if in smog
+        if (!revealed)
+        {
+            velocity.x = hVelocity * MOVE_SPEED / 3;
+            velocity.y = vVelocity * MOVE_SPEED / 3;
+        }
+        // otherwise move normally
+        else {
+            velocity.x = hVelocity * MOVE_SPEED;
+            velocity.y = vVelocity * MOVE_SPEED;
+        }
 
         if (!velocity.equals(zerovector)) {
             lastVelocity  = velocity.cpy();
@@ -582,6 +685,7 @@ public class Player extends Shadow implements GameObstacle{
      * @param canvas Drawing context
      */
     public void draw(GameCanvas canvas) {
+        super.draw(canvas,width*scale, height*scale);
 //        canvas.draw(texture, Color.WHITE, origin.x, origin.y, body.getWorldCenter().x*drawScale.x, body.getWorldCenter().y*drawScale.y, getAngle(), 1, 1);
 //        canvas.draw(texture, getX(), getY());
 //        if (direction == Direction.IDLE){
