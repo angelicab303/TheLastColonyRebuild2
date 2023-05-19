@@ -358,6 +358,7 @@ public class JSONLevelReader {
                 if (!layers.get(i).getString("type").equals("tilelayer")) {
                     continue;
                 }
+
                 JsonValue layerData = layers.get(i).get("data");
                 for (int j = 0; j < layerData.size; j++) {
                     int dataValue = layerData.getInt(j) - 1;

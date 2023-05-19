@@ -135,6 +135,9 @@ public class Smog extends BoxObstacle implements GameObstacle{
         }
 
          */
+        if(absorbed){
+            setActive(false);
+        }
         if(!canReappear && (updateColor != 0)){
             fadeTime = MAX_FADE_TIME;
             faded = true;
