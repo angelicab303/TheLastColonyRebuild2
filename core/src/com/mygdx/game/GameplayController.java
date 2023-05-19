@@ -952,7 +952,7 @@ public class GameplayController implements Screen {
 
 		for (int i = 0; i < column; i++) {
 			for (int j = 0; j < column; j++) {
-				if (Vector2.dst((i-2) * smogTileSize, (j-2) * smogTileSize, caravan.getX(), caravan.getY()) > 90) {
+				if (smogLocations[i][j] && Vector2.dst((i-2) * smogTileSize, (j-2) * smogTileSize, caravan.getX(), caravan.getY()) > 90) {
 					// Primary Grid
 					// Later get data from json file
 					float maxFrame = 4;
@@ -989,7 +989,7 @@ public class GameplayController implements Screen {
 			}
 
 			for (int j = 0; j < smogLocations[0].length; j++) {
-				if (Vector2.dst((i-2)* smogTileSize - smogTileOffset, (j-2) * smogTileSize - smogTileOffset, caravan.getX(), caravan.getY()) > 90) {
+				if (smogLocations[i][j] && Vector2.dst((i-2)* smogTileSize - smogTileOffset, (j-2) * smogTileSize - smogTileOffset, caravan.getX(), caravan.getY()) > 90) {
 
 					// Secondary Grid
 					float maxFrame = 4;
