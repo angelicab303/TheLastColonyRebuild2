@@ -102,6 +102,8 @@ public class JSONLevelReader {
     private FloorTile floorTemp;
     private Obstacles wallTemp;
     private Obstacles obstacleTemp;
+
+    private Vector2 levelBounds;
     private Obstacles placeableTemp;
     private FilmStrip[][] playerDirectionTextures;
     private FilmStrip[][] floaterDirectionTextures;
@@ -210,14 +212,7 @@ public class JSONLevelReader {
                 levelStr = directory.getEntry("Level7", JsonValue.class);
             }
 
-            Array<Vector2> levelBounds = new Array<Vector2>();
-            levelBounds.add(new Vector2(15, 10));
-            levelBounds.add(new Vector2(20, 15));
-            levelBounds.add(new Vector2(30, 13));
-            levelBounds.add(new Vector2(20, 20));
-            levelBounds.add(new Vector2(25, 25));
-            levelBounds.add(new Vector2(30, 30));
-
+            Vector2 levelBounds = new Vector2(levelStr.get("layers").get(0).getInt("width"),levelStr.get("layers").get(0).getInt("height"));
 
             //gets the file of the tileset
             //JsonValue tileSetJSON = directory.getEntry(levelStr.get("tilesets").get(0).getString("source"), JsonValue.class);
@@ -256,13 +251,19 @@ public class JSONLevelReader {
 
             int caravanID = 0;
             int playerID = 0;
+            int altCaravanID = 0;
             for(int i = 0; i < tileIDs.size; i++){
                 tiles[i] = tileIDs.get(i);
                 String type = tiles[i].get("properties").get(0).getString("name");
                 if(type.equals("Player")){
                     playerID = i;
                 }else if(type.equals("Caravan")){
-                    caravanID = i;
+                    if(caravanID == 0){
+                        caravanID = i;
+                    }else {
+                        altCaravanID = i;
+                    }
+
                 }
             }
 
@@ -304,7 +305,7 @@ public class JSONLevelReader {
                 for (int j = 0; j < layerData.size; j++) {
                     int dataValue = layerData.getInt(j) - 1;
                     // Do something with the data value...
-                    if (dataValue == caravanID) {
+                    if (dataValue == caravanID || dataValue == altCaravanID) {
                         caravanX = j % width + 1;
                         caravanY = height - (j / width);
                     } else if (dataValue == playerID) {
@@ -314,6 +315,9 @@ public class JSONLevelReader {
                         //
                     }
                 }
+            }
+            if(level == 6){
+                System.out.println(":<");
             }
             createObject(caravanX, caravanY, caravanID);
             createObject(playerX, playerY, playerID);
@@ -381,9 +385,9 @@ public class JSONLevelReader {
 //            }
 
             // Create extra smog border
-            for (int i = -4; i < levelBounds.get(level).x + 8; i++) {
-                for (int j = -4; j < levelBounds.get(level).y + 8; j++) {
-                    if (i < 0 || i >= levelBounds.get(level).x || j <= 0 || j >= levelBounds.get(level).y) {
+            for (int i = -4; i < levelBounds.x + 8; i++) {
+                for (int j = -4; j < levelBounds.y + 8; j++) {
+                    if (i < 0 || i >= levelBounds.x || j <= 0 || j >= levelBounds.y) {
                         createObstacle(i, j, smogBorderTexture, scale, false);
                     }
                 }
@@ -391,7 +395,16 @@ public class JSONLevelReader {
 
 
             for (int i = 0; i < survivorArr.size; i++) {
-                survivorControllers.add(new SurvivorController(survivorArr.get(i), this.caravan.getPosition(), this.player.getPosition(), this.tileGrid, this.smogGrid, tileSize, tileOffset));
+                if (level == 6){
+                    System.out.println("Ths json loader sucks");
+                }
+                try {
+                    survivorControllers.add(new SurvivorController(survivorArr.get(i), this.caravan.getPosition(), this.player.getPosition(), this.tileGrid, this.smogGrid, tileSize, tileOffset));
+                }catch (Exception e){
+                    e.printStackTrace();
+                    System.out.println("Ths json loader sucks");
+                }
+
             }
 
             this.caravan.setMaxCapacity(survivorArr.size);
@@ -458,7 +471,9 @@ public class JSONLevelReader {
     }
 
     public void createObject(int x, int y, int id) {
-        y = y -1;
+        if(y > 0){
+            y = y -1;
+        }
         String type = tiles[id].get("properties").get(0).getString("name");
         if(type.equals("Caravan")){
             createCaravan(x, y, scale);
