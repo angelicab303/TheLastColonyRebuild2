@@ -1161,7 +1161,9 @@ public class GameplayController implements Screen {
 		}
 
 		// Update player and weapon position
-		player.update();
+		for(Obstacle ob: objects){
+			updateObstacle(ob);
+		}
 		if (player.getVX() != 0 || player.getVY() != 0)
 		{
 			if (!startedMoving) {
@@ -1182,20 +1184,6 @@ public class GameplayController implements Screen {
 			walk.stop(walkId);
 			walk.setLooping(walkId, false);
 			startedMoving = false;
-		}
-		if (player.getX() < 20) {
-			player.setPosition(20, player.getBody().getPosition().y);
-		}
-		if (player.getX() >= tileGrid.length * tileSize - 20) {
-			player.setPosition(tileGrid.length * tileSize - 20, player.getBody().getPosition().y);
-		}
-		if (player.getY() < 20) {
-			player.setPosition(player.getBody().getPosition().x, 20);
-		}
-		if (player.getY() >= tileGrid[0].length * tileSize - 20) {
-			player.setPosition(player.getBody().getPosition().x, tileGrid[0].length * tileSize - 20);
-//		for(Obstacle ob: objects){
-//			updateObstacle(ob);
 		}
 
 		// Update UI elements
