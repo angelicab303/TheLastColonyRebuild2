@@ -112,6 +112,7 @@ public class Enemy extends Shadow implements GameObstacle {
     /** Whether the enemy has woken up for first time */
     protected boolean wokeOnce;
 
+
     float height;
     float width;
 

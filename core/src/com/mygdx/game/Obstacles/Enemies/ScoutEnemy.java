@@ -394,6 +394,7 @@ public class ScoutEnemy extends Enemy{
     // Variables for scout
     /** The number of animation frames in our filmstrip */
     private static final int   NUM_ANIM_FRAMES = 7;
+    private static final int   ATTACK_NUM_ANIM_FRAMES = 14;
     /** How fast we change frames (one frame per 10 calls to update) */
     protected static final float ANIMATION_SPEED = 0.20f;
     protected static float WAKE_ANIMATION_SPEED = 0.20f;
@@ -474,24 +475,13 @@ public class ScoutEnemy extends Enemy{
     @Override
     public void update(int action)
     {
-
-        if (isWaking){
-            if (wakeTime <= 1){
-                aframe = 0;
+        if (isAttacking){
+            System.out.println("Scout is attacking");
+            System.out.println("Aframes: " + aframe);
+            if (aframe >= ATTACK_NUM_ANIM_FRAMES) {
+                aframe = 7;
             }
-            if (wakeTime >= 100 && !wokeOnce){
-                if (wakeTime > 0){
-                    aframe += WAKE_ANIMATION_SPEED;
-                }
-            }
-            else if (wokeOnce){
-                WAKE_ANIMATION_SPEED = 0.5f;
-                aframe += WAKE_ANIMATION_SPEED;
-            }
-            if (aframe >= NUM_ANIM_FRAMES){
-                hasAwoken = true;
-                aframe = 0;
-            }
+            aframe += ANIMATION_SPEED;
         }
         else if (isStunned()){
             if (stunTime <= 1){
