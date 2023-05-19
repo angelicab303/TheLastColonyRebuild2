@@ -1202,7 +1202,6 @@ public class GameplayController implements Screen {
 		// Check if the weapon is firing
 
 		if (player.weapon.fire()) {
-			vacuumBlow.play();
 			purifiedAir.attack(player.weapon.getBullets(), player.weapon.getPosition(), player.weapon.getImpulses());
 		}
 		purifiedAir.update();
@@ -1555,6 +1554,7 @@ public class GameplayController implements Screen {
 				// Check if the weapon is firing
 
 				if (player.weapon.fire()) {
+					vacuumBlow.play();
 					purifiedAir.attack(player.weapon.getBullets(), player.weapon.getPosition(), player.weapon.getImpulses());
 				}
 				break;
