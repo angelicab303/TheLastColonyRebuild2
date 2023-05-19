@@ -196,22 +196,13 @@ public class JSONLevelReader {
             // JsonValue.class)));
 
             JsonValue levelStr = new JsonValue(false);
-            if (level == 0) {
-                levelStr = directory.getEntry("tutorialLevel1", JsonValue.class);
-            } else if (level == 1) {
-                levelStr = directory.getEntry("tutorialLevel2", JsonValue.class);
-            } else if (level == 2) {
-                levelStr = directory.getEntry("tutorialLevel3", JsonValue.class);
-            } else if (level == 3) {
-                levelStr = directory.getEntry("tutorialLevel4", JsonValue.class);
-            } else if (level == 4) {
-                levelStr = directory.getEntry("tutorialLevel5", JsonValue.class);
-            } else if (level == 5) {
-                levelStr = directory.getEntry("mediumLevel", JsonValue.class);
-            } else if (level == 6){
+            if(level < 6){
+                //levelStr = directory.getEntry("Level" + (level+1), JsonValue.class);
+            }else{
                 levelStr = directory.getEntry("Level13", JsonValue.class);
             }
 
+            levelStr = directory.getEntry("Level13", JsonValue.class);
             Vector2 levelBounds = new Vector2(levelStr.get("layers").get(0).getInt("width"),levelStr.get("layers").get(0).getInt("height"));
 
             //gets the file of the tileset

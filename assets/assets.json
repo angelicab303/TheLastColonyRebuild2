@@ -648,8 +648,24 @@
     "tiles:9a_mushroom": "tiles/9a_mushroom.png",
     "tiles:9b_key": "tiles/9b_key.png",
     "tiles:8_doorOpen" :"tiles/DoorOpen.png",
-    "tiles:8_doorClosed": "tiles/DoorClosed.png",
-    "tiles:DoorClosed": "tiles/DoorClosed.png",
+    "tiles:8_doorClosed": {
+      "file" : "tiles/DoorFilmStrip.png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 2
+        }
+      }
+    },
+    "tiles:DoorClosed": {
+      "file" : "tiles/DoorFilmStrip.png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 2
+        }
+      }
+    },
 
     "tiles:6a_mediumTree": "tiles/6a_mediumTree.png",
     "tiles:6b_tallTree": "tiles/6b_tallTree.png",
@@ -699,6 +715,7 @@
     "5:16 TileSet.tsx": "tiles/516_TileSet..tsj",
     "5:5 TileSet.tsx": "tiles/LastColonyTiles510.tsj",
     "LastColonyTileset.tsx": "tiles/LastColonyTileset.json",
+    "5:18 TileSet.tsj": "tiles/518_TileSet.tsj",
     "5:18 TileSet..tsj": "tiles/518_TileSet.tsj"
   },
   "levels": {
@@ -713,14 +730,15 @@
   "jsons": {
     "5:5 TileSet.tsx": "tiles/LastColonyTiles510.tsj",
     "5:16 TileSet.tsx": "tiles/516_TileSet..tsj",
+    "5:18 TileSet.tsj": "tiles/518_TileSet.tsj",
     "5:18 TileSet..tsj": "tiles/518_TileSet.tsj",
     "LastColonyTileset.tsx": "tiles/LastColonyTileset.json",
-    "tutorialLevel1": "levels/LastColonyTutorial1.json",
-    "tutorialLevel2": "levels/LastColonyTutorial2.json",
-    "tutorialLevel3": "levels/LastColonyTutorial3.json",
-    "tutorialLevel4": "levels/LastColonyTutorial4.json",
-    "tutorialLevel5": "levels/LastColonyTutorial5.json",
-    "mediumLevel": "levels/LastColonyMedLevel.json",
+    "Level1": "levels/NEWLevel_0.tmj",
+    "Level2": "levels/NEWLevel_1.tmj",
+    "Level3": "levels/NEWLevel_2.tmj",
+    "Level4": "levels/NEWLevel_3.tmj",
+    "Level5": "levels/NEWLevel_4.tmj",
+    "Level6": "levels/LastColonyMedLevel.json",
     "Level7": "levels/Level_7.tmj",
     "Level13": "levels/Level_13.tmj"
   },

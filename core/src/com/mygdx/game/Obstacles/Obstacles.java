@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.mygdx.game.GameCanvas;
 import obstacle.BoxObstacle;
+import util.FilmStrip;
 
 public class Obstacles extends Shadow implements GameObstacle {
     // Variables for this class
@@ -161,6 +162,7 @@ public class Obstacles extends Shadow implements GameObstacle {
         }
 
 
+        setFilterData(filter);
 
         float width = texture.getRegionWidth() * scale;
         float height = texture.getRegionHeight() * scale;
@@ -185,7 +187,7 @@ public class Obstacles extends Shadow implements GameObstacle {
 //        sensorFixture.setUserData(getSensorName());
 
 
-        setFilterData(filter);
+
 
 
         //body.setAwake(true);
@@ -206,6 +208,11 @@ public class Obstacles extends Shadow implements GameObstacle {
         // canvas.draw(texture, getX(), getY());
         float width = texture.getRegionWidth() * scale;
         float height = texture.getRegionHeight() * scale;
+        if(isDoor && !unlocked){
+            ((FilmStrip)texture).setFrame(0);
+        }else if(unlocked){
+            ((FilmStrip)texture).setFrame(1);
+        }
         canvas.draw(texture, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, 0.0f, scale,
                 scale);
     }
