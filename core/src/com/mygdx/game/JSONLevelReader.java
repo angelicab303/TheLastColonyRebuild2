@@ -393,9 +393,6 @@ public class JSONLevelReader {
             }
 
             this.caravan.setMaxCapacity(survivorArr.size);
-            if (this.caravan.getX() < 400f) {
-                System.out.println("Finished loading JSON Level");
-            }
             System.out.println("Finished loading JSON Level");
 
             // Close the map reader
@@ -493,10 +490,12 @@ public class JSONLevelReader {
 
     public TextureRegion getTextureRegionKey(int id) {
         tiles[id].getString("image");
-        String textureName = tiles[id].getString("image");
+        String fileName = tiles[id].getString("image");
+        String textureName = "tiles:" + fileName.substring(0, fileName.length() - 4);
         TextureRegion region = assetTextures.get(textureName);
         if (region == null){
-            Texture texture = directory.getEntry("tiles:" + textureName.substring(0, textureName.length() - 4), Texture.class);
+            System.out.println("Missing asset" + id);
+            Texture texture = directory.getEntry(textureName, Texture.class);
             if(texture == null){
                 System.out.println("ERROR");
             }
@@ -604,7 +603,7 @@ public class JSONLevelReader {
                 enemyControllers.add(new FloatingEnemyController(tileGrid, tileSize, tileOffset, (FloatingEnemy) enemyTemp, player, toxicAir));
                 break;
             case "ShriekerEnemy":
-                enemyTemp = new ShriekerEnemy(x * tileSize + tileOffset, y * tileSize + tileOffset, shriekerTextures, scale, imageTileSize);
+                enemyTemp = new ShriekerEnemy(x * tileSize, y * tileSize, shriekerTextures, scale, imageTileSize);
                 shriekerArr.add((ShriekerEnemy) enemyTemp);
                 enemyArr.add(enemyTemp);
                 addObject(enemyTemp);
@@ -657,11 +656,24 @@ public class JSONLevelReader {
 
 
     public void createObstacle(float x, float y, int id, float scale, boolean isDoor) {
-//        System.out.println("Creating obstacle (tree / fence)");
+        if(isDoor){
+            System.out.println("Creating door");
+        }
+
         obstacleTemp = new Obstacles(x * tileSize  , y * tileSize, getTextureRegionKey(id), scale, isDoor);
         obstacleArr.add(obstacleTemp);
         if(x >= 0 && y >= 0 && x < width && y < height){
             tileGrid[(int)x ][(int)y] = true;
+            if (id == 47 || id == 50)
+            {
+                tileGrid[(int)(x-1) ][(int)y] = true;
+                tileGrid[(int)(x-1)][(int)(y+1)] = true;
+            }
+            if (id == 48)
+            {
+                tileGrid[(int)(x+1)][(int)y] = true;
+                tileGrid[(int)(x+1)][(int)(y+1)] = true;
+            }
         }
         addObject(obstacleTemp);
     }

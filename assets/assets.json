@@ -432,6 +432,8 @@
     "images:caravanOpen": "images/caravan-open-1000.png",
     "images:sInteract": "images/sInteractable_sheet2.png",
     "images:testSmog": "images/test_green_smog-sheet2.png",
+    "images:enemyProjectile": "images/enemy-projectile.png",
+    "images:enemyProjectileCollision": "images/projectile-enemy-Sheet-red.png",
     "images:weaponProjectile": "images/weaponProjectile-Sheet.png",
     "images:weaponProjectileCollision": "images/projectileCollision-Sheet.png",
     "images:airBar": "images/AirMeterFilling-Sheet-export2.png",
@@ -536,6 +538,7 @@
     "tiles:6a_tree6": "tiles/6a_tree6.png",
     "tiles:9a_torch": "tiles/9a_torch.png",
     "tiles:9a_mushroom": "tiles/9a_mushroom.png",
+    "tiles:9b_key": "tiles/9b_key.png",
     "tiles:8_doorOpen" :"tiles/DoorOpen.png",
     "tiles:8_doorClosed": "tiles/DoorClosed.png",
 
@@ -599,6 +602,7 @@
   },
   "jsons": {
     "5:5 TileSet.tsx": "tiles/LastColonyTiles510.tsj",
+    "5:16 TileSet.tsx": "tiles/516_TileSet..tsj",
     "LastColonyTileset.tsx": "tiles/LastColonyTileset.json",
     "tutorialLevel1": "levels/LastColonyTutorial1.json",
     "tutorialLevel2": "levels/LastColonyTutorial2.json",

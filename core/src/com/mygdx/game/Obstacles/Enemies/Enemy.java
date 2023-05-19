@@ -237,13 +237,6 @@ public class Enemy extends Shadow implements GameObstacle {
         stunned = false;
         revealed = false;
         isAttacking = false;
-        movementStrips = animator[0];
-        idleStrips = animator[1];
-        attackStrips = animator[2];
-        stunStrips = animator[3];
-        wakeStrips = animator[4];
-        currentStrip = wakeStrips;
-        currentAnimator = wakeStrips[0];
         wakeTime = 0;
         direction = Enemy.Direction.RIGHT;
         wokeOnce = false;
@@ -257,9 +250,16 @@ public class Enemy extends Shadow implements GameObstacle {
         this.behind = 0;
 
         if (!isShrieker){
+            movementStrips = animator[0];
+            idleStrips = animator[1];
+            attackStrips = animator[2];
+            stunStrips = animator[3];
+            wakeStrips = animator[4];
+            currentStrip = wakeStrips;
+            currentAnimator = wakeStrips[0];
             this.animator = animator[0];
             canAttack = true;
-            currentAnimator = animator[0][0];
+            //currentAnimator = animator[0][0];
             // aframe = 0.0f;
         }
 
