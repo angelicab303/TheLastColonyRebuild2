@@ -228,7 +228,6 @@ public class CollisionController{
                     }
                     break;
                 case GameObstacle.CATEGORY_PURIFIED | GameObstacle.CATEGORY_VINE:
-                    System.out.println("VINE COLLISION");
                     if(objA.getType() == GameObstacle.ObstacleType.VINE){
                         ((ScoutEnemy.VineTile) objA).setStunned(true);
 //                        ((ScoutEnemy.VineTile) objA).incToStunTime();
@@ -241,6 +240,7 @@ public class CollisionController{
                     }
                     break;
                 case GameObstacle.CATEGORY_PURIFIED | GameObstacle.CATEGORY_ENV:
+                case GameObstacle.CATEGORY_PURIFIED | GameObstacle.CATEGORY_CARAVAN:
                     if(objA.getType() == GameObstacle.ObstacleType.PURIFIED_AIR){
                         ((PurifiedQueue.PurifiedAir) objA).collide();
                     }
@@ -285,6 +285,16 @@ public class CollisionController{
                         survivor.loseLife();
                         survivor.coolDown(false);
                         enemy.setAttack(false);
+                    }
+                    break;
+                case GameObstacle.CATEGORY_PURIFIED | GameObstacle.CATEGORY_TOXIC:
+                    if(objA.getType() == GameObstacle.ObstacleType.PURIFIED_AIR){
+                        ((PurifiedQueue.PurifiedAir) objA).collide();
+                        ((ToxicQueue.ToxicAir) objB).collide();
+                    }
+                    else {
+                        ((PurifiedQueue.PurifiedAir) objB).collide();
+                        ((ToxicQueue.ToxicAir) objA).collide();
                     }
                     break;
                 case GameObstacle.CATEGORY_PLAYER | GameObstacle.CATEGORY_TOXIC:

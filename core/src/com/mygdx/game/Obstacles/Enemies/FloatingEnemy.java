@@ -8,7 +8,7 @@ import util.FilmStrip;
 public class FloatingEnemy extends Enemy {
 
     /** How far forward the enemy can move */
-    private static final float MOVE_SPEED = 70.0f;
+    private static final float MOVE_SPEED = 50.0f;
     /** Time enemy must wait before attacking again */
     private final float ATTACK_COOLDOWN = 100;
 

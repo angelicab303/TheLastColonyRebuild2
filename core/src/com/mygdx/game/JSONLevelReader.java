@@ -13,10 +13,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.*;
 import com.mygdx.game.EnemyControllers.*;
 import com.mygdx.game.Obstacles.*;
-import com.mygdx.game.Obstacles.Enemies.Enemy;
-import com.mygdx.game.Obstacles.Enemies.FloatingEnemy;
-import com.mygdx.game.Obstacles.Enemies.ScoutEnemy;
-import com.mygdx.game.Obstacles.Enemies.ShriekerEnemy;
+import com.mygdx.game.Obstacles.Enemies.*;
 import com.mygdx.game.Obstacles.Items.Key;
 import com.mygdx.game.Obstacles.Items.Torch;
 import obstacle.Obstacle;
@@ -394,9 +391,6 @@ public class JSONLevelReader {
             }
 
             this.caravan.setMaxCapacity(survivorArr.size);
-            if (this.caravan.getX() < 400f) {
-                System.out.println("Finished loading JSON Level");
-            }
             System.out.println("Finished loading JSON Level");
 
             // Close the map reader
@@ -601,29 +595,29 @@ public class JSONLevelReader {
         switch (id){
             case "FloatingEnemy":
                 Enemy enemyTemp;
-                enemyTemp = new FloatingEnemy(x * tileSize + tileOffset, y * tileSize + tileOffset, enemyDirectionTextures[1], scale, imageTileSize);
+                enemyTemp = new FloatingEnemy(x * tileSize, y * tileSize, enemyDirectionTextures[1], scale, imageTileSize);
                 enemyArr.add(enemyTemp);
                 addObject(enemyTemp);
                 enemyControllers.add(new FloatingEnemyController(tileGrid, tileSize, tileOffset, (FloatingEnemy) enemyTemp, player, toxicAir));
                 break;
             case "ShriekerEnemy":
-                enemyTemp = new ShriekerEnemy(x * tileSize + tileOffset, y * tileSize + tileOffset, shriekerTextures, scale, imageTileSize);
+                enemyTemp = new ShriekerEnemy(x * tileSize, y * tileSize, shriekerTextures, scale, imageTileSize);
                 shriekerArr.add((ShriekerEnemy) enemyTemp);
                 enemyArr.add(enemyTemp);
                 addObject(enemyTemp);
                 enemyControllers.add(new ShriekerEnemyController(tileGrid, tileSize, tileOffset, (ShriekerEnemy) enemyTemp, player));
                 break;
             case "ScoutEnemy":
-                enemyTemp = new ScoutEnemy(x * tileSize + tileOffset, y * tileSize + tileOffset, enemyDirectionTextures[1], vineTextures, scale, imageTileSize, world);
+                enemyTemp = new ScoutEnemy(x * tileSize, y * tileSize, enemyDirectionTextures[1], vineTextures, scale, imageTileSize, world);
                 enemyArr.add(enemyTemp);
                 addObject(enemyTemp);
                 enemyControllers.add(new ScoutEnemyController(tileGrid, tileSize, tileOffset,(ScoutEnemy) enemyTemp, player));
                 break;
             case "ChaserEnemy":
-                enemyTemp = new Enemy(x * tileSize + tileOffset, y * tileSize + tileOffset, enemyDirectionTextures[1], scale, imageTileSize, false);
+                enemyTemp = new ChaserEnemy(x * tileSize, y * tileSize, enemyDirectionTextures[1], scale, imageTileSize);
                 enemyArr.add(enemyTemp);
                 addObject(enemyTemp);
-                enemyControllers.add(new ChaserEnemyController(tileGrid, tileSize, tileOffset, enemyTemp, player));
+                enemyControllers.add(new ChaserEnemyController(tileGrid, tileSize, tileOffset, (ChaserEnemy) enemyTemp, player));
                 break;
         }
     }
@@ -668,6 +662,16 @@ public class JSONLevelReader {
         obstacleArr.add(obstacleTemp);
         if(x >= 0 && y >= 0 && x < width && y < height){
             tileGrid[(int)x ][(int)y] = true;
+            if (id == 47 || id == 50)
+            {
+                tileGrid[(int)(x-1) ][(int)y] = true;
+                tileGrid[(int)(x-1)][(int)(y+1)] = true;
+            }
+            if (id == 48)
+            {
+                tileGrid[(int)(x+1)][(int)y] = true;
+                tileGrid[(int)(x+1)][(int)(y+1)] = true;
+            }
         }
         addObject(obstacleTemp);
     }
