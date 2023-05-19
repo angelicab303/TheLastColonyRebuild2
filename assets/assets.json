@@ -570,6 +570,7 @@
     "sounds:walk": "sounds/Walk16.wav",
     "sounds:ambience": "sounds/IndoorAmbience.wav",
     "sounds:chase": "sounds/HeartBeatChase.wav",
+    "sounds:damage": "sounds/Damage_Sound.wav",
     "sounds:lowhealth": "sounds/HeartbeatAfterTakingDamage_.wav",
     "sounds:shriek": "sounds/ShrikerShort_16.wav",
     "sounds:distantchaser": "sounds/DistantMonster.wav",

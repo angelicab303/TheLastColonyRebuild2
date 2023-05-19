@@ -9,7 +9,7 @@ import com.mygdx.game.Obstacles.Survivor;
 
 public class ShriekerEnemyController extends EnemyController{
     /** Enum to encode the finite state machine */
-    private enum FSMState {
+    public enum FSMState {
         /** The enemy just spawned and is stationary */
         SPAWN,
         /** The enemy is idle and stationary, either not aware of the player or on cooldown */

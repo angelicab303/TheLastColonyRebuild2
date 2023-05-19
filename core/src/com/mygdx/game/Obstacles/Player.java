@@ -526,6 +526,7 @@ public class Player extends Shadow implements GameObstacle{
     public void update() {
         // If we are dead do nothing.
         if (!isAlive) {
+            light.setDistance(0);
             return;
         }
 
