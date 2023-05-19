@@ -47,10 +47,6 @@ public class ScoutEnemyController extends com.mygdx.game.EnemyControllers.EnemyC
          */
         IDLE,
         /**
-         * The enemy is waking up
-         */
-        WAKE,
-        /**
          * The enemy is wandering but is not close enough to the player to prompt attack
          */
         PATROL,
@@ -152,29 +148,7 @@ public class ScoutEnemyController extends com.mygdx.game.EnemyControllers.EnemyC
         }
         switch (state) {
             case SPAWN:
-                if (enemy.isStunned()) {
-                    state = FSMState.WAKE;
-                    enemy.setWaking(true);
-                } else if (ticks > 50) {
-                    state = FSMState.WAKE;
-                    enemy.setWaking(true);
-                }
-                else if (alertAllEnemies)
-                {
-                    Vector2 enemyLoc = new Vector2(enemy.getX(), enemy.getY());
-                    Vector2 shriekerLoc = new Vector2(activeShrieker.getX(), activeShrieker.getY());
-                    if (enemyLoc.dst(shriekerLoc) <= ALERT_DISTANCE){
-                        state = FSMState.WAKE;
-                        enemy.setWaking(true);
-                        enemy.setAttacking(true);
-                        target = new Vector2 (player.getX(), player.getY());
-                    }
-                }
-                break;
-            case WAKE:
-                if (enemy.getHasAwoken()){
-                    state = FSMState.IDLE;
-                }
+                state = FSMState.IDLE;
                 break;
             case IDLE:
                 if (enemy.isStunned()) {
@@ -188,7 +162,6 @@ public class ScoutEnemyController extends com.mygdx.game.EnemyControllers.EnemyC
                     Vector2 shriekerLoc = new Vector2(activeShrieker.getX(), activeShrieker.getY());
                     if (enemyLoc.dst(shriekerLoc) <= ALERT_DISTANCE){
                         state = FSMState.EXTENDVINE;
-                        enemy.setAttacking(true);
                         target = new Vector2 (player.getX(), player.getY());
                     }
                 }

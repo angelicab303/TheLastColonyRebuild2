@@ -375,6 +375,114 @@
         }
       }
     },
+    "images:scoutWakeLeft": {
+      "file" : "images/enemies/scoutWakeLeft.png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 7
+        }
+      }
+    },
+    "images:scoutWakeRight": {
+      "file" : "images/enemies/scoutWakeRight.png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 7
+        }
+      }
+    },
+    "images:scoutMovementRight": {
+      "file" : "images/enemies/scoutMoveRight.png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 7
+        }
+      }
+    },
+    "images:scoutMovementLeft": {
+      "file" : "images/enemies/scoutMoveLeft.png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 7
+        }
+      }
+    },
+    "images:scoutAttackLeft": {
+      "file" : "images/enemies/scoutAttackLeftExtended.png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 7
+        }
+      }
+    },
+    "images:scoutAttackRight": {
+      "file" : "images/enemies/scoutAttackRightExtended.png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 7
+        }
+      }
+    },
+    "images:scoutDigRight": {
+      "file" : "images/enemies/scoutDigRight.png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 7
+        }
+      }
+    },
+    "images:scoutDigLeft": {
+      "file" : "images/enemies/scoutDigLeft.png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 7
+        }
+      }
+    },
+    "images:scoutIdleLeft": {
+      "file" : "images/enemies/scoutIdlet.png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 7
+        }
+      }
+    },
+    "images:scoutIdleRight": {
+      "file" : "images/enemies/scoutIdlet.png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 7
+        }
+      }
+    },
+    "images:scoutStunRight": {
+      "file" : "images/enemies/scoutStunRight.png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 7
+        }
+      }
+    },
+    "images:scoutStunLeft": {
+      "file" : "images/enemies/scoutStunLeft.png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 7
+        }
+      }
+    },
     "images:shriekerIdle": {
       "file" : "images/enemies/sunflowerIdle-Sheet.png",
       "sprites" : {
