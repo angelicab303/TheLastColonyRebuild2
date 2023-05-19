@@ -137,6 +137,7 @@ public class PurifiedQueue {
         {
             super(offscreen.x, offscreen.y, PurifiedQueue.texture.getWidth()*scale/NUM_ANIM_FRAMES, PurifiedQueue.texture.getHeight()*scale);
             setBodyType(BodyDef.BodyType.DynamicBody);
+            setDimension(PurifiedQueue.texture.getWidth()*scale/5, PurifiedQueue.texture.getHeight()*scale);
             // setTexture(PurifiedQueue.texture);
             // setLinearDamping(1); //arbitrary damping coeff.
             this.age = -1;

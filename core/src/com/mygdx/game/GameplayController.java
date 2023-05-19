@@ -98,6 +98,8 @@ public class GameplayController implements Screen {
 	// *************************** Smog, Purified Air, and Air Bar Textures
 	// ***************************
 	private Texture projectileCollisionTexture;
+
+	private Texture enemyProjectileCollisionTexture;
 	/** Texture asset for the smog texture */
 	private Texture smogTexture;
 	private TextureRegion smogTexture2;
@@ -311,9 +313,9 @@ public class GameplayController implements Screen {
 	public static final int WORLD_POSIT = 2;
 
 	/** Width of the game world in Box2d units */
-	protected static final float DEFAULT_WIDTH = 32.0f;
+	protected static final float DEFAULT_WIDTH = 3.0f*32.0f;
 	/** Height of the game world in Box2d units */
-	protected static final float DEFAULT_HEIGHT = 18.0f;
+	protected static final float DEFAULT_HEIGHT = 3.0f*18.0f;
 	/** The default value of gravity (going down) */
 	// WHO THE FRICK FORGOT TO TURN OFF GRAVITY YOU HAD ONE JOB
 	protected static final float DEFAULT_GRAVITY = 0;
@@ -507,7 +509,7 @@ public class GameplayController implements Screen {
 		// Smog, Purified Air, and Air Bar Textures
 		mushroomTexture = new TextureRegion(directory.getEntry("images:mushroom", Texture.class));
 		smogTexture = directory.getEntry("images:testSmog", Texture.class);
-		toxicAirTexture = directory.getEntry("images:testSmog", Texture.class);
+		toxicAirTexture = directory.getEntry("images:enemyProjectile", Texture.class);
 		pureAirTexture = directory.getEntry("images:weaponProjectile", Texture.class);
 		smogTexture2 = new TextureRegion(directory.getEntry("images:smog2", Texture.class));
 		airBarTexture = directory.getEntry("images:airBar", Texture.class);
@@ -561,10 +563,11 @@ public class GameplayController implements Screen {
 		vineTextures[20] = directory.getEntry("images:vineCornerClosedRightDown", Texture.class);
 		vineTextures[21] = directory.getEntry("images:vineCornerClosedRightUp", Texture.class);
 
+		enemyProjectileCollisionTexture = directory.getEntry("images:enemyProjectileCollision", Texture.class);
 		projectileCollisionTexture = directory.getEntry("images:weaponProjectileCollision", Texture.class);
 
 		//Toxic air for enemies
-		toxicAirTexture = directory.getEntry("images:testSmog", Texture.class);
+//		toxicAirTexture = directory.getEntry("images:testSmog", Texture.class);
 
 		//purified air for player
 //		pureAirTexture = directory.getEntry("images:testSmog", Texture.class);
@@ -580,6 +583,9 @@ public class GameplayController implements Screen {
 		//This code is terrible but beggers can't be choosers - V
 
 		String key;
+
+		key = "tiles:0_caravan";
+		assetTextures.put(key , new TextureRegion(directory.getEntry(key, Texture.class)));
 		//grass -> # grass tiles = 20 for a, 9 for b
 		for(int i = 1; i < 21; i++){
 			key = "tiles:4a_grass" + i;
@@ -624,11 +630,18 @@ public class GameplayController implements Screen {
 		key = "tiles:9a_mushroom";
 		assetTextures.put(key , new TextureRegion(directory.getEntry(key, Texture.class)));
 
+		key = "tiles:9b_key";
+		assetTextures.put(key , new TextureRegion(directory.getEntry(key, Texture.class)));
+
+
 		key = "tiles:8_doorOpen";
 		assetTextures.put(key, new TextureRegion(directory.getEntry(key, Texture.class)));
 
 		key = "tiles:8_doorClosed";
-		assetTextures.put(key, new TextureRegion(directory.getEntry(key, Texture.class)));
+		assetTextures.put(key, directory.getEntry(key + ".fire", FilmStrip.class));
+
+		key = "tiles:DoorClosed";
+		assetTextures.put(key, directory.getEntry(key + ".fire", FilmStrip.class));
 
 		stunAnimation = directory.getEntry("images:stun.fire", FilmStrip.class );
 		shadow = new TextureRegion(directory.getEntry("images:shadow", Texture.class));
@@ -848,7 +861,7 @@ public class GameplayController implements Screen {
 
 		// TO DO: update visuals for purified smog
 		purifiedAir = new PurifiedQueue(pureAirTexture, world, SCALE, player, projectileCollisionTexture);
-		toxicAir = new ToxicQueue(toxicAirTexture, world, SCALE);
+		toxicAir = new ToxicQueue(toxicAirTexture, world, SCALE, enemyProjectileCollisionTexture);
 
 		// Setting the size of the tiles
 		Shadow.setSize(32f);
@@ -1181,6 +1194,8 @@ public class GameplayController implements Screen {
 		}
 		if (player.getY() >= tileGrid[0].length * tileSize - 20) {
 			player.setPosition(player.getBody().getPosition().x, tileGrid[0].length * tileSize - 20);
+//		for(Obstacle ob: objects){
+//			updateObstacle(ob);
 		}
 
 		// Update UI elements
@@ -1443,6 +1458,7 @@ public class GameplayController implements Screen {
 		}
 
 		}
+
 		caravan.update();
 		// Update caravan state
 		if (caravan.getBody().getFixtureList().get(1).testPoint(player.getPosition())) {
@@ -1526,6 +1542,36 @@ public class GameplayController implements Screen {
 				lowHealthId = lowHealth.play();
 				lowHealth.setLooping(lowHealthId, true);
 			}
+		}
+
+	}
+
+	private void updateObstacle(Obstacle ob){
+		GameObstacle gob = (GameObstacle) ob;
+		switch(gob.getType()){
+			case PLAYER:
+				player.update();
+				if (player.getX() < 20) {
+					player.setPosition(20, player.getBody().getPosition().y);
+				}
+				if (player.getX() >= tileGrid.length * tileSize - 20) {
+					player.setPosition(tileGrid.length * tileSize - 20, player.getBody().getPosition().y);
+				}
+				if (player.getY() < 20) {
+					player.setPosition(player.getBody().getPosition().x, 20);
+				}
+				if (player.getY() >= tileGrid[0].length * tileSize - 20) {
+					player.setPosition(player.getBody().getPosition().x, tileGrid[0].length * tileSize - 20);
+				}
+				player.weapon.update(player.getPosition(), canvas.unproject(input.getMousePos()), input.getShootDir());
+				// Check if the weapon is firing
+
+				if (player.weapon.fire()) {
+					purifiedAir.attack(player.weapon.getBullets(), player.weapon.getPosition(), player.weapon.getImpulses());
+				}
+				break;
+			case OBSTACLE:
+				((Obstacles)gob).update();
 		}
 
 	}
@@ -1861,7 +1907,7 @@ public class GameplayController implements Screen {
 				obj.drawDebug(canvas);
 			}
 			for (Obstacle obj : smogs) {
-				obj.drawDebug(canvas);
+				//obj.drawDebug(canvas);
 			}
 			toxicAir.drawDebug(canvas);
 

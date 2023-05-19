@@ -20,7 +20,7 @@ import util.FilmStrip;
 public class ToxicQueue {
     // Private constants to avoid use of "magic numbers"
     /** Fixed velocity for a photon */
-    private static final float PHOTON_VELOCITY = 5.0f;
+    private static final float PHOTON_VELOCITY = 500.0f;
     /** Number of animation frames a photon lives before deleted */
     private static final int MAX_AGE = 200;
     /** Maximum number of photons allowed on screen at a time. */
@@ -28,6 +28,7 @@ public class ToxicQueue {
 
     /** Graphic asset representing a single photon. */
     private static Texture texture;
+    private static Texture collisionTexture;
 
     // QUEUE DATA STRUCTURES
     /** Array implementation of a circular queue. */
@@ -83,14 +84,18 @@ public class ToxicQueue {
         private float timeToFade = 450;
         /** Filmstrip for smog */
         protected FilmStrip animator;
+        protected FilmStrip collisionAnimator;
         /** How fast we change frames (one frame per 10 calls to update) */
         private static final float ANIMATION_SPEED = 0.02f;
         /** The number of animation frames in our filmstrip */
-        private static final int   NUM_ANIM_FRAMES = 5;
+        private static final int   NUM_ANIM_FRAMES = 1;
+        private static final int   NUM_ANIM_COLLISION_FRAMES = 13;
         /** Current animation frame for this shell */
         private float aframe;
+        private float aframeCollision;
         /** Scale of the object */
         private float scale;
+        private int ticks;
 
         /**
          * Initialize a standard toxic air unit
@@ -101,8 +106,9 @@ public class ToxicQueue {
             setBodyType(BodyDef.BodyType.DynamicBody);
             setDimension(ToxicQueue.texture.getWidth()*scale/5, ToxicQueue.texture.getHeight()*scale);
             // setTexture(PollutedQueue.texture);
-            setLinearDamping(1); //arbitrary damping coeff.
+            setLinearDamping(0); //arbitrary damping coeff.
             this.age = -1;
+            ticks = 0;
 
             this.fading = false;
             this.faded = false;
@@ -110,10 +116,12 @@ public class ToxicQueue {
             setFilterData(filter);
             setActive(false);
             animator = new FilmStrip(ToxicQueue.texture,1,NUM_ANIM_FRAMES,NUM_ANIM_FRAMES);
-            float maxFrame = 4;
-            float minFrame = 0;
-            float frameNum = (float)(Math.random()*(maxFrame-minFrame+1)+minFrame);
-            aframe = frameNum;
+            collisionAnimator = new FilmStrip(ToxicQueue.collisionTexture, 1, NUM_ANIM_COLLISION_FRAMES, NUM_ANIM_COLLISION_FRAMES);
+//            float maxFrame = 4;
+//            float minFrame = 0;
+//            float frameNum = (float)(Math.random()*(maxFrame-minFrame+1)+minFrame);
+            aframe = 0;
+            aframeCollision = 0;
             this.scale = scale;
         }
 
@@ -182,13 +190,26 @@ public class ToxicQueue {
         /** Updates the fade time of fading toxic air */
         public void update()
         {
-            age++;
-            if (age >= MAX_AGE)
+            if (age != MAX_AGE) {
+                age++;
+            }
+            if (age == MAX_AGE)
             {
+                aframeCollision += ANIMATION_SPEED;
+                if (ticks % 50 == 0) {
+                    aframeCollision += 1;
+                }
+//                faded = true;
+//                reset();
+            }
+            else {
+                aframeCollision = 0;
+            }
+            if (aframeCollision > 12) {
+                aframeCollision = 0;
                 faded = true;
                 reset();
             }
-
 
             setX(body.getWorldCenter().x);
             setY(body.getWorldCenter().y);
@@ -199,7 +220,6 @@ public class ToxicQueue {
             if (aframe >= NUM_ANIM_FRAMES) {
                 aframe -= NUM_ANIM_FRAMES;
             }
-
         }
 
         public Vector2 getOrigin(){
@@ -214,6 +234,8 @@ public class ToxicQueue {
             geometry.setUserData("toxic air");
             body.setUserData(this);
             body.setActive(false);
+
+            setFilterData(filter);
             return true;
         }
 
@@ -253,7 +275,7 @@ public class ToxicQueue {
     /**
      *  Constructs a new (empty) PhotonQueue
      */
-    public ToxicQueue(Texture texture, World world, float scale) {
+    public ToxicQueue(Texture texture, World world, float scale, Texture collision) {
         //Constants
         offscreen = new Vector2(-50, -50);
 
@@ -265,6 +287,7 @@ public class ToxicQueue {
         // Construct the queue.
         // this.texture = texture;
         this.texture = texture;
+        this.collisionTexture = collision;
         queue = new ToxicAir[MAX_PHOTONS];
 
         head = 0;
@@ -404,9 +427,13 @@ public class ToxicQueue {
 
             // Use this information to draw.
             air.animator.setFrame((int)air.aframe);
-            canvas.draw(air.animator,tint,air.getOrigin().x+air.getWidth()*5,air.getOrigin().y+air.getHeight()*5,air.getPosition().x,air.getPosition().y,0,air.scale,air.scale);
-
-
+            air.collisionAnimator.setFrame((int)air.aframeCollision);
+            if(air.age >= MAX_AGE) {
+                canvas.draw(air.collisionAnimator,Color.WHITE,air.getOrigin().x,air.getOrigin().y,air.getPosition().x,air.getPosition().y,0,air.scale,air.scale);
+            }
+            else {
+                canvas.draw(air.animator,Color.WHITE,air.getOrigin().x,air.getOrigin().y,air.getPosition().x,air.getPosition().y,0,air.scale,air.scale);
+            }
         }
     }
 
@@ -430,11 +457,14 @@ public class ToxicQueue {
             //tint.set((float)100*ratio,(float)250*ratio,(float)250*ratio,(float)1*(1-ratio));
 
             // Use this information to draw.
-            //air.animator.setFrame((int)air.aframe);
-            //canvas.draw(air.animator,tint,air.getOrigin().x,air.getOrigin().y,air.getPosition().x,air.getPosition().y,0,air.scale,air.scale);
-            air.drawDebug(canvas);
-
-
+            air.animator.setFrame((int)air.aframe);
+            air.collisionAnimator.setFrame((int)air.aframeCollision);
+            if(air.age >= MAX_AGE) {
+                canvas.draw(air.collisionAnimator,Color.WHITE,air.getOrigin().x,air.getOrigin().y,air.getPosition().x,air.getPosition().y,0,air.scale,air.scale);
+            }
+            else {
+                canvas.draw(air.animator,Color.WHITE,air.getOrigin().x,air.getOrigin().y,air.getPosition().x,air.getPosition().y,0,air.scale,air.scale);
+            }
         }
     }
 }
