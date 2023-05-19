@@ -26,6 +26,7 @@ import assets.*;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.ControllerListener;
 import com.badlogic.gdx.controllers.ControllerMapping;
@@ -233,6 +234,8 @@ public class MainMenuMode implements Screen, InputProcessor, ControllerListener 
     private int buttonState;
     private boolean populated = false;
 
+    private Sound select;
+
 
     /**
      * Returns the asset directory produced by this loading screen
@@ -310,6 +313,7 @@ public class MainMenuMode implements Screen, InputProcessor, ControllerListener 
         mediumCloud = directory.getEntry("mainMenu:mediumCloud", Texture.class);
         smallCloud = directory.getEntry("mainMenu:smallCloud", Texture.class);
         nullFont = directory.getEntry("shared:retro" ,BitmapFont.class);
+        select = directory.getEntry("sounds:select", Sound.class);
     }
     /** Populates the menu with clouds */
     public void populateMenu(){
@@ -394,6 +398,7 @@ public class MainMenuMode implements Screen, InputProcessor, ControllerListener 
             public void clicked(InputEvent event, float x, float y) {
                 if (buttons.get(0).isChecked()) {
                     buttonState = 1;
+                    select.play();
                     System.out.println("Play buttons pressed");
                 }
             };
