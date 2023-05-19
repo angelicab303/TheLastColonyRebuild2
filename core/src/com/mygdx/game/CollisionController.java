@@ -324,11 +324,11 @@ public class CollisionController{
                     switch (item.getItemType()){
                         case KEY:
                             player.collectKey();
-                            item.markRemoved(true);
+                            item.collect();
                             break;
                         case TORCH:
                             player.collectTorch();
-                            item.markRemoved(true);
+                            item.collect();
                             break;
                         case COFFEE:
                             break;

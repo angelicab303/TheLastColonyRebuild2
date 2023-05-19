@@ -77,7 +77,7 @@ public class SurvivorController {
         this.caravanPos = caravanPos;
         this.board = board;
         this.tileSize = tileSize;
-        this.tileOffset = 0;
+        this.tileOffset = tileOffset;
         secondPrevMove = 0;
         prevMove = 0;
 
@@ -144,7 +144,7 @@ public class SurvivorController {
 
         nextTile = tilePath.get(1);
 
-        float x = tilePath.get(1).getX() * tileSize + this.tileOffset;
+        float x = tilePath.get(1).getX() * tileSize;
         float y = tilePath.get(1).getY() * tileSize + this.tileOffset;
         goalLoc = new Vector2(x, y);
     }
@@ -244,7 +244,7 @@ public class SurvivorController {
             } else {
                 return 0;
             }
-            if (goalReached() || moveTime > 30) {
+            if (goalReached() || moveTime > 60) {
                 moveTime = 0;
                 nextTile = next;
                 goalLoc = setGoal(nextTile);
@@ -311,7 +311,7 @@ public class SurvivorController {
 
     Vector2 setGoal(Tile t)
     {
-        float x = t.getX() * tileSize + tileOffset;
+        float x = t.getX() * tileSize;
         float y = t.getY() * tileSize + tileOffset;
         return new Vector2(x, y);
     }

@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.mygdx.game.GameCanvas;
 import obstacle.BoxObstacle;
+import util.FilmStrip;
 
 public class Obstacles extends Shadow implements GameObstacle {
     // Variables for this class
@@ -15,6 +16,8 @@ public class Obstacles extends Shadow implements GameObstacle {
     private Vector2 position;
     /** Cliff velocity */
     private Vector2 velocity;
+
+    private boolean unlocked = false;
 
     /** Filter for filtering */
     private static volatile Filter filter;
@@ -26,14 +29,18 @@ public class Obstacles extends Shadow implements GameObstacle {
 
     PolygonShape sensorShape;
 
+    private boolean isFence;
+
+    private boolean isTree;
+
     /**
      * Create a cliff at the given position.
      *
      * @param x The initial x-coordinate of the tree
      * @param y The initial y-coordinate of the tree
      */
-    public Obstacles(float x, float y, TextureRegion value, float scale, boolean isDoor) {
-        super(x, y, value.getRegionWidth() * scale, value.getRegionHeight() * scale, ShadowShape.SQUARE);
+    public Obstacles(float x, float y, TextureRegion value, float scale, boolean isDoor, boolean isFence, boolean isTree) {
+        super(x, y, value.getRegionWidth() * scale, value.getRegionHeight() * scale, isTree ? ShadowShape.CIRCLE : ShadowShape.SQUARE, isTree);
         setTexture(value);
         setBodyType(BodyDef.BodyType.StaticBody);
         // setDimension(value.getRegionWidth()*scale, value.getRegionHeight()*scale);
@@ -44,7 +51,9 @@ public class Obstacles extends Shadow implements GameObstacle {
         velocity = new Vector2(0.0f, 0.0f);
         this.scale = scale;
         this.isBelow = false;
-        this.isDoor = true;
+        this.isDoor = isDoor;
+        this.isFence = isFence;
+        this.isTree = isTree;
 
         if (filter == null) {
             filter = new Filter();
@@ -63,8 +72,10 @@ public class Obstacles extends Shadow implements GameObstacle {
     }
 
     public void unlock(){
-        setActive(false);
+        System.out.println(isDoor);
+        unlocked = true;
     }
+
 
     /**
      * Returns the x-coordinate of the tree position
@@ -129,8 +140,13 @@ public class Obstacles extends Shadow implements GameObstacle {
      *
      */
     public void update() {
-        body.setLinearVelocity(velocity);
-        body.applyLinearImpulse(velocity, position, true);
+        if(unlocked && isActive()){
+            System.out.println("isunlocking");
+            setActive(false);
+            //markRemoved(true);
+        }
+
+
         // Filter filter = body.getFixtureList().get(0).getFilterData();
         // System.out.println("Cliff filter- cat bits:" + filter.categoryBits + ", mask
         // bits: " + filter.maskBits);
@@ -153,12 +169,13 @@ public class Obstacles extends Shadow implements GameObstacle {
         }
 
 
+        setFilterData(filter);
 
         float width = texture.getRegionWidth() * scale;
         float height = texture.getRegionHeight() * scale;
 
 
-        Vector2 sensorCenter = new Vector2(0, 5);
+        Vector2 sensorCenter = new Vector2(0, 0);
         FixtureDef sensorDef = new FixtureDef();
 
         //TO DO: Make Json dependant
@@ -169,7 +186,7 @@ public class Obstacles extends Shadow implements GameObstacle {
         //TO DO: Make Json dependant
         //JsonValue sensorjv = data.get("sensor");
         //sensorShape.setAsBox(sensorjv.getFloat("shrink",0)*getWidth()/2.0f, sensorjv.getFloat("height",0), sensorCenter, 0.0f);
-        sensorShape.setAsBox(width/2, height/2-5, sensorCenter, 0f);
+        sensorShape.setAsBox(width/2, height/2+5, sensorCenter, 0f);
         sensorDef.shape = sensorShape;
 
         // Ground sensor to represent our feet
@@ -177,7 +194,7 @@ public class Obstacles extends Shadow implements GameObstacle {
 //        sensorFixture.setUserData(getSensorName());
 
 
-        setFilterData(filter);
+
 
 
         //body.setAwake(true);
@@ -198,6 +215,11 @@ public class Obstacles extends Shadow implements GameObstacle {
         // canvas.draw(texture, getX(), getY());
         float width = texture.getRegionWidth() * scale;
         float height = texture.getRegionHeight() * scale;
+        if(isDoor && !unlocked){
+            ((FilmStrip)texture).setFrame(0);
+        }else if(unlocked){
+            ((FilmStrip)texture).setFrame(1);
+        }
         canvas.draw(texture, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, 0.0f, scale,
                 scale);
     }

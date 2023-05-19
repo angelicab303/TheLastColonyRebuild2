@@ -698,7 +698,7 @@
     },
     {
       "id":57,
-      "image":"9_torch.png",
+      "image":"9a_torch.png",
       "imageheight":32,
       "imagewidth":32,
       "properties":[
@@ -722,7 +722,7 @@
     },
     {
       "id":59,
-      "image":"5c_bordersmog.png",
+      "image":"5c_borderSmog.png",
       "imageheight":35,
       "imagewidth":35,
       "properties":[

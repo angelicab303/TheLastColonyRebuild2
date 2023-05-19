@@ -36,16 +36,20 @@ public class Shadow extends SimpleObstacle{
 
     private Vector2 temp;
 
+    private boolean isTree;
+    private boolean isFence;
+
     public enum ShadowShape{
         SQUARE,
         CIRCLE
     }
 
-    public Shadow(float x, float y, float width, float height, ShadowShape shape) {
+    public Shadow(float x, float y, float width, float height, ShadowShape shape, boolean isTree) {
         super(x,y);
-        position = new Vector2(x,y);
+        this.isTree = isTree;
+        position = new Vector2(x,isTree? -100f : y);
         dimension = new Vector2(width, height);
-        origin = new Vector2(0,(size-height)/2);
+        origin = new Vector2(0,isTree ? -100f : (size-height)/2);//(size-height)/2);
         geometry = null;
         this.shadowShape = shape;
         this.fixture = new FixtureDef();
@@ -135,7 +139,7 @@ public class Shadow extends SimpleObstacle{
     }
 
     public float getYCoord(){
-        float offset = size - dimension.y;
+        float offset = isTree ? -0.5f * dimension.y : size - dimension.y;
         return super.getY()+offset;
 
     }
@@ -160,7 +164,10 @@ public class Shadow extends SimpleObstacle{
         releaseFixtures();
 
         //dimension.y is width
-        float offset = size - dimension.y;
+        float offset = isTree ? -0.5f * dimension.y: size - dimension.y;
+        if (isTree) {
+            circleShape.setRadius(4f);
+        }
         temp.set(0,offset);
 
 
@@ -219,7 +226,7 @@ public class Shadow extends SimpleObstacle{
     public void drawDebug(GameCanvas canvas) {
 
         if(shadowShape.equals(ShadowShape.CIRCLE)){
-            canvas.drawPhysics(circleShape, Color.YELLOW,getXCoord(),getYCoord(),drawScale.x,drawScale.y);
+            canvas.drawPhysics(circleShape, Color.YELLOW, getXCoord(),getYCoord(),drawScale.x,drawScale.y);
         }
         else if(shadowShape.equals(ShadowShape.SQUARE)){
             canvas.drawPhysics(boxShape,Color.YELLOW,getXCoord(),getYCoord(),getAngle(),drawScale.x,drawScale.y);

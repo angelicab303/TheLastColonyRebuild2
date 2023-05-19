@@ -11,8 +11,10 @@
 package com.mygdx.game;
 
 import assets.AssetDirectory;
+import com.badlogic.gdx.Audio;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
@@ -227,7 +229,7 @@ public class GameplayController implements Screen {
 	private boolean unpausing = false;
 	private boolean paused = false;
 	private int curLevel = 0;
-	private int maxLevels = 7;
+	private int maxLevels = 12;
 	private int level;
 
 
@@ -311,9 +313,9 @@ public class GameplayController implements Screen {
 	public static final int WORLD_POSIT = 2;
 
 	/** Width of the game world in Box2d units */
-	protected static final float DEFAULT_WIDTH = 32.0f;
+	protected static final float DEFAULT_WIDTH = 3.0f*32.0f;
 	/** Height of the game world in Box2d units */
-	protected static final float DEFAULT_HEIGHT = 18.0f;
+	protected static final float DEFAULT_HEIGHT = 3.0f*18.0f;
 	/** The default value of gravity (going down) */
 	// WHO THE FRICK FORGOT TO TURN OFF GRAVITY YOU HAD ONE JOB
 	protected static final float DEFAULT_GRAVITY = 0;
@@ -365,6 +367,76 @@ public class GameplayController implements Screen {
 
 	private Preferences prefs = Gdx.app.getPreferences("save data");
 
+	private Sound vacuumSuck;
+	private Sound vacuumBlow;
+	private Sound walk;
+	private long walkId;
+
+	private boolean startedMoving;
+
+	private Sound ambience;
+
+	private long ambienceId;
+
+	private Sound lowHealth;
+
+	private long lowHealthId;
+
+	private boolean startedDying;
+
+	private Sound shriek;
+
+	private long shriekId;
+
+	private boolean startedShrieking;
+
+	private Sound distantChaser;
+
+	private long distantChaserId;
+
+	private boolean startedDistantChaser;
+
+	private int distantChaserTime;
+
+	private final int MAX_DISTANT_CHASER_TIME = 600;
+
+	private Sound distantFloater;
+
+	private long distantFloaterId;
+
+	private boolean startedDistantFloater;
+
+	private int distantFloaterTime;
+
+	private final int MAX_DISTANT_FLOATER_TIME = 900;
+
+	private Sound damage;
+
+	private boolean startedTakingDamage;
+
+	private Sound floaterAttack;
+
+	private boolean startedFloaterAttack;
+
+	private Sound scoutGrowl;
+
+	private boolean startedScoutGrowl;
+
+	private Sound scoutAttack;
+
+	private boolean startedScoutAttack;
+
+	private Sound chaserGrowl;
+
+	private boolean startedChaserGrowl;
+
+	private Sound chaserAttack;
+
+	private boolean startedChaserAttack;
+
+	private Sound death;
+
+	private boolean isDead;
 
 	/**
 	 * Creates a new game world
@@ -511,6 +583,9 @@ public class GameplayController implements Screen {
 		//This code is terrible but beggers can't be choosers - V
 
 		String key;
+
+		key = "tiles:0_caravan";
+		assetTextures.put(key , new TextureRegion(directory.getEntry(key, Texture.class)));
 		//grass -> # grass tiles = 20 for a, 9 for b
 		for(int i = 1; i < 21; i++){
 			key = "tiles:4a_grass" + i;
@@ -555,11 +630,26 @@ public class GameplayController implements Screen {
 		key = "tiles:9a_mushroom";
 		assetTextures.put(key , new TextureRegion(directory.getEntry(key, Texture.class)));
 
-		key = "tiles:DoorOpen";
+		key = "tiles:9b_key";
+		assetTextures.put(key , new TextureRegion(directory.getEntry(key, Texture.class)));
+
+
+		key = "tiles:8_doorOpen";
 		assetTextures.put(key, new TextureRegion(directory.getEntry(key, Texture.class)));
 
+		key = "tiles:8_doorClosed";
+		assetTextures.put(key, directory.getEntry(key + ".fire", FilmStrip.class));
+
 		key = "tiles:DoorClosed";
-		assetTextures.put(key, new TextureRegion(directory.getEntry(key, Texture.class)));
+		assetTextures.put(key, directory.getEntry(key + ".fire", FilmStrip.class));
+
+
+		//tutorial assets -> # tutorial assets =5
+		for(int i = 1; i < 6; i++){
+			key = "tiles:Tutorial_" + i;
+			assetTextures.put(key , new TextureRegion(directory.getEntry(key, Texture.class)));
+		}
+
 
 		stunAnimation = directory.getEntry("images:stun.fire", FilmStrip.class );
 		shadow = new TextureRegion(directory.getEntry("images:shadow", Texture.class));
@@ -616,6 +706,22 @@ public class GameplayController implements Screen {
 		displayFontInteract = directory.getEntry("shared:light", BitmapFont.class);
 
 		constants = directory.getEntry("platform:constants", JsonValue.class);
+
+		vacuumSuck = directory.getEntry("sounds:suck", Sound.class);
+		vacuumBlow = directory.getEntry("sounds:blow", Sound.class);
+		walk = directory.getEntry("sounds:walk", Sound.class);
+		ambience = directory.getEntry("sounds:ambience", Sound.class);
+		lowHealth = directory.getEntry("sounds:lowhealth", Sound.class);
+		shriek = directory.getEntry("sounds:shriek", Sound.class);
+		distantChaser = directory.getEntry("sounds:distantchaser", Sound.class);
+		distantFloater = directory.getEntry("sounds:distantfloater", Sound.class);
+		damage = directory.getEntry("sounds:damage", Sound.class);
+		floaterAttack = directory.getEntry("sounds:floaterattack", Sound.class);
+		scoutGrowl = directory.getEntry("sounds:scoutgrowl", Sound.class);
+		scoutAttack = directory.getEntry("sounds:scoutattack", Sound.class);
+		chaserGrowl = directory.getEntry("sounds:chasergrowl", Sound.class);
+		chaserAttack = directory.getEntry("sounds:chaserattack", Sound.class);
+		death = directory.getEntry("sounds:shriekerattack", Sound.class);
 	}
 
 	/**
@@ -709,6 +815,10 @@ public class GameplayController implements Screen {
 		canvas.createLights(world);
 		setComplete(false);
 		setFailure(false);
+		ambience.stop(ambienceId);
+		ambience.setLooping(ambienceId, false);
+		lowHealth.stop(lowHealthId);
+		lowHealth.setLooping(lowHealthId, false);
 		// System.out.println(1);
 		populateLevel(curLevel);
 		numRescued = 0;
@@ -842,13 +952,13 @@ public class GameplayController implements Screen {
 
 		for (int i = 0; i < column; i++) {
 			for (int j = 0; j < column; j++) {
-				if (Vector2.dst(i * smogTileSize + smogTileOffset, j * smogTileSize + smogTileOffset, player.getX(), player.getY()) > 90) {
+				if (smogLocations[i][j] && Vector2.dst((i-2) * smogTileSize, (j-2) * smogTileSize, caravan.getX(), caravan.getY()) > 90) {
 					// Primary Grid
 					// Later get data from json file
 					float maxFrame = 4;
 					float minFrame = 0;
 					float frameNum = (float) (Math.random() * (maxFrame - minFrame + 1) + minFrame);
-					smogT = new Smog(i * smogTileSize, j * smogTileSize, smogTexture, frameNum,
+					smogT = new Smog((i-2) * smogTileSize, (j-2) * smogTileSize, smogTexture, frameNum,
 							SCALE);
 					smogT.setAwake(true);
 					smogT.setBodyType(BodyDef.BodyType.StaticBody);
@@ -879,13 +989,13 @@ public class GameplayController implements Screen {
 			}
 
 			for (int j = 0; j < smogLocations[0].length; j++) {
-				if (Vector2.dst(i * smogTileSize + smogTileOffset, j * smogTileSize + smogTileOffset, player.getX(), player.getY()) > 90) {
+				if (smogLocations[i][j] && Vector2.dst((i-2)* smogTileSize - smogTileOffset, (j-2) * smogTileSize - smogTileOffset, caravan.getX(), caravan.getY()) > 90) {
 
 					// Secondary Grid
 					float maxFrame = 4;
 					float minFrame = 0;
 					float frameNum = (float) (Math.random() * (maxFrame - minFrame + 1) + minFrame);
-					smogTO = new Smog(i * smogTileSize-smogTileOffset, j * smogTileSize-smogTileOffset, smogTexture, frameNum,
+					smogTO = new Smog((i-2) * smogTileSize-smogTileOffset, (j-2) * smogTileSize-smogTileOffset, smogTexture, frameNum,
 							SCALE);
 					smogTO.setAwake(true);
 					smogTO.setBodyType(BodyDef.BodyType.StaticBody);
@@ -932,6 +1042,8 @@ public class GameplayController implements Screen {
 		}
 		sample = new TutorialPrompt(sampleTutorial, player.getX(), player.getY()-30);
 
+		ambienceId = ambience.play();
+		ambience.setLooping(ambienceId, true);
 	}
 
 	/**
@@ -989,6 +1101,15 @@ public class GameplayController implements Screen {
 	public void update(float dt) {
 		// Read input
 		input.readInput();
+
+		if (!player.isAlive()) {
+			if (!isDead) {
+				isDead = true;
+				death.play();
+			}
+			lowHealth.stop(lowHealthId);
+			lowHealth.setLooping(lowHealthId, false);
+		}
 
 		if (input.didPause()) {
 			if (!paused && !unpausing) {
@@ -1048,24 +1169,44 @@ public class GameplayController implements Screen {
 		}
 
 		// Update player and weapon position
-		player.update();
-		if (player.getX() < 20) {
-			player.setPosition(20, player.getBody().getPosition().y);
+		for(Obstacle ob: objects){
+			updateObstacle(ob);
 		}
-		if (player.getX() >= tileGrid.length * tileSize - 20) {
-			player.setPosition(tileGrid.length * tileSize - 20, player.getBody().getPosition().y);
+		if (player.getVX() != 0 || player.getVY() != 0)
+		{
+			if (!startedMoving) {
+				startedMoving = true;
+				walkId = walk.play(player.getNoise()/100);
+				walk.setLooping(walkId, true);
+			}
+			walk.setVolume(walkId, player.getNoise()/100);
+			if (!player.isRevealed())
+			{
+				walk.setPitch(walkId, 0.75f);
+			}
+			else {
+				walk.setPitch(walkId, 1);
+			}
 		}
-		if (player.getY() < 20) {
-			player.setPosition(player.getBody().getPosition().x, 20);
-		}
-		if (player.getY() >= tileGrid[0].length * tileSize - 20) {
-			player.setPosition(player.getBody().getPosition().x, tileGrid[0].length * tileSize - 20);
+		else {
+			walk.stop(walkId);
+			walk.setLooping(walkId, false);
+			startedMoving = false;
 		}
 
 		// Update UI elements
 		airBar.update(player.weapon.getNumAmmo());
 
 		player.weapon.update(player.getPosition(), canvas.unproject(input.getMousePos()), input.getShootDir());
+
+		if (player.weapon.isAbsorbing())
+		{
+			vacuumSuck.stop();
+			vacuumSuck.play(player.getNoise()/100);
+		}
+		else {
+			vacuumSuck.stop();
+		}
 		// Check if the weapon is firing
 
 		if (player.weapon.fire()) {
@@ -1116,6 +1257,155 @@ public class GameplayController implements Screen {
 			if (enemyArr.get(i).getY() >= tileGrid[0].length * tileSize - 20) {
 				enemyArr.get(i).setPosition(enemyArr.get(i).getBody().getPosition().x, tileGrid[0].length * tileSize - 20);
 			}
+			if (enemyArr.get(i) instanceof ChaserEnemy)
+			{
+				ChaserEnemy chaser = (ChaserEnemy) enemyArr.get(i);
+				if (enemyControllers.get(i).getState() == EnemyController.FSMState.IDLE)
+				{
+					if (!startedDistantChaser && Math.random() < 0.2f)
+					{
+						startedDistantChaser = true;
+						distantChaserId = distantChaser.play();
+					}
+					if (Vector2.dst(chaser.getX(), chaser.getY(), player.getX(), player.getY()) <= player.getHearing()) {
+						distantChaser.setVolume(distantChaserId, (player.getHearing() - Vector2.dst(chaser.getX(), chaser.getY(), player.getX(), player.getY()))/player.getHearing());
+					}
+					else {
+						distantChaser.setVolume(distantChaserId, 0);
+					}
+					if (startedDistantChaser) {
+						distantChaserTime++;
+						if (distantChaserTime > MAX_DISTANT_CHASER_TIME) {
+							distantChaserTime = 0;
+							startedDistantChaser = false;
+						}
+					}
+				}
+				else {
+					distantChaser.stop();
+					startedDistantChaser = false;
+				}
+				if (enemyControllers.get(i).getState() == EnemyController.FSMState.CHASE)
+				{
+					if (!startedChaserGrowl)
+					{
+						startedChaserGrowl = true;
+						if (Vector2.dst(chaser.getX(), chaser.getY(), player.getX(), player.getY()) <= player.getHearing())
+						{
+							chaserGrowl.play((player.getHearing() - Vector2.dst(chaser.getX(), chaser.getY(), player.getX(), player.getY()))/player.getHearing(), 1, 0);
+						}
+					}
+				}
+				else {
+					startedChaserGrowl = false;
+				}
+				if (enemyControllers.get(i).getState() == EnemyController.FSMState.ATTACK)
+				{
+					if (!startedChaserAttack)
+					{
+						startedChaserAttack = true;
+						if (Vector2.dst(chaser.getX(), chaser.getY(), player.getX(), player.getY()) <= player.getHearing())
+						{
+							chaserAttack.play((player.getHearing() - Vector2.dst(chaser.getX(), chaser.getY(), player.getX(), player.getY()))/player.getHearing(), 1, 0);
+						}
+					}
+				}
+				else {
+					startedChaserAttack = false;
+				}
+			}
+			if (enemyArr.get(i) instanceof FloatingEnemy)
+			{
+				FloatingEnemy floater = (FloatingEnemy) enemyArr.get(i);
+				if (enemyControllers.get(i).getState() == EnemyController.FSMState.IDLE)
+				{
+					if (!startedDistantFloater && Math.random() < 0.2f)
+					{
+						startedDistantFloater = true;
+						distantFloaterId = distantFloater.play();
+					}
+					if (Vector2.dst(floater.getX(), floater.getY(), player.getX(), player.getY()) <= player.getHearing()) {
+						distantFloater.setVolume(distantFloaterId, (player.getHearing() - Vector2.dst(floater.getX(), floater.getY(), player.getX(), player.getY()))/player.getHearing());
+					}
+					else {
+						distantFloater.setVolume(distantFloaterId, 0);
+					}
+					if (startedDistantFloater) {
+						distantFloaterTime++;
+						if (distantFloaterTime > MAX_DISTANT_FLOATER_TIME) {
+							distantFloaterTime = 0;
+							startedDistantFloater = false;
+						}
+					}
+				}
+				else {
+					distantFloater.stop();
+					startedDistantFloater = false;
+					if (enemyControllers.get(i).getState() == EnemyController.FSMState.ATTACK)
+					{
+						if (!startedFloaterAttack) {
+							startedFloaterAttack = true;
+							if (Vector2.dst(floater.getX(), floater.getY(), player.getX(), player.getY()) <= player.getHearing()) {
+								floaterAttack.play((player.getHearing() - Vector2.dst(floater.getX(), floater.getY(), player.getX(), player.getY()))/player.getHearing(), 1, 0);
+							}
+						}
+					}
+					else {
+						startedFloaterAttack = false;
+					}
+				}
+			}
+			if (enemyArr.get(i) instanceof ScoutEnemy)
+			{
+				ScoutEnemy scout = (ScoutEnemy) enemyArr.get(i);
+				if (scout.isExtendingVines())
+				{
+					if (!startedScoutGrowl)
+					{
+						startedScoutGrowl = true;
+						if (Vector2.dst(scout.getX(), scout.getY(), player.getX(), player.getY()) <= player.getHearing()) {
+							scoutGrowl.play((player.getHearing() - Vector2.dst(scout.getX(), scout.getY(), player.getX(), player.getY()))/player.getHearing(), 1, 0);
+						}
+					}
+				}
+				else {
+					startedScoutGrowl = false;
+					ScoutEnemyController controller = (ScoutEnemyController) enemyControllers.get(i);
+					if (controller.getScoutState() == ScoutEnemyController.FSMState.ATTACK)
+					{
+						if (!startedScoutAttack)
+						{
+							startedScoutAttack = true;
+							if (Vector2.dst(scout.getX(), scout.getY(), player.getX(), player.getY()) <= player.getHearing()) {
+								scoutAttack.play((player.getHearing() - Vector2.dst(scout.getX(), scout.getY(), player.getX(), player.getY()))/player.getHearing(), 1, 0);
+							}
+						}
+					}
+					else {
+						startedScoutAttack = false;
+					}
+				}
+			}
+			if (enemyArr.get(i) instanceof ShriekerEnemy)
+			{
+				ShriekerEnemy shrieker = (ShriekerEnemy) enemyArr.get(i);
+				if (shrieker.getShrieking()) {
+					if (!startedShrieking) {
+						startedShrieking = true;
+						shriekId = shriek.play();
+					}
+					if (Vector2.dst(shrieker.getX(), shrieker.getY(), player.getX(), player.getY()) <= player.getHearing()) {
+						shriek.setVolume(shriekId, (player.getHearing() - Vector2.dst(shrieker.getX(), shrieker.getY(), player.getX(), player.getY()))/player.getHearing());
+					}
+					else {
+						shriek.setVolume(shriekId, 0);
+					}
+				}
+				else {
+					shriek.stop();
+					startedShrieking = false;
+				}
+			}
 		}
 
 		// This section will be handled by collisionController in the future with the
@@ -1126,43 +1416,44 @@ public class GameplayController implements Screen {
 		for (int i = 0; i < survivorArr.size; i++) {
 			//System.out.println(caravan.getCurrentCapacity() + " " + caravan.getMaxCapacity());
 			if (!survivorArr.get(i).isRescued()) {
-			// This will be handled by collisionController in the future
-			survivorArr.get(i).update(survivorControllers.get(i).getAction());
-			if (survivorArr.get(i).getX() < 20) {
-				survivorArr.get(i).setPosition(20, survivorArr.get(i).getBody().getPosition().y);
-			}
-			if (survivorArr.get(i).getX() >= tileGrid.length * tileSize - 20) {
-				survivorArr.get(i).setPosition(tileGrid.length * tileSize - 20, survivorArr.get(i).getBody().getPosition().y);
-			}
-			if (survivorArr.get(i).getY() < 20) {
-				survivorArr.get(i).setPosition(survivorArr.get(i).getBody().getPosition().x, 20);
-			}
-			if (survivorArr.get(i).getY() >= tileGrid[0].length * tileSize - 20) {
-				survivorArr.get(i).setPosition(survivorArr.get(i).getBody().getPosition().x, tileGrid[0].length * tileSize - 20);
-			}
-			survivorArr.get(i).update();
-			if (survivorArr.get(i).isInteractable() && input.didCollectSurvivor()) {
-				survivorArr.get(i).setInteractable(false);
-				if (!survivorArr.get(i).isFollowing()) {
-					player.addToFollowing(survivorArr.get(i));
+				// This will be handled by collisionController in the future
+				survivorArr.get(i).update(survivorControllers.get(i).getAction());
+				if (survivorArr.get(i).getX() < 20) {
+					survivorArr.get(i).setPosition(20, survivorArr.get(i).getBody().getPosition().y);
 				}
-				survivorArr.get(i).follow();
-			}
-			if (!survivorArr.get(i).isAlive()) {
-				player.removeFromFollowing(survivorArr.get(i));
-				setFailure(true);
-			}
-			if (survivorArr.get(i).isRescued()) {
-				player.removeFromFollowing(survivorArr.get(i));
-				survivorArr.get(i).deactivatePhysics(world);
+				if (survivorArr.get(i).getX() >= tileGrid.length * tileSize - 20) {
+					survivorArr.get(i).setPosition(tileGrid.length * tileSize - 20, survivorArr.get(i).getBody().getPosition().y);
+				}
+				if (survivorArr.get(i).getY() < 20) {
+					survivorArr.get(i).setPosition(survivorArr.get(i).getBody().getPosition().x, 20);
+				}
+				if (survivorArr.get(i).getY() >= tileGrid[0].length * tileSize - 20) {
+					survivorArr.get(i).setPosition(survivorArr.get(i).getBody().getPosition().x, tileGrid[0].length * tileSize - 20);
+				}
+				survivorArr.get(i).update();
+				if (survivorArr.get(i).isInteractable() && input.didCollectSurvivor()) {
+					survivorArr.get(i).setInteractable(false);
+					if (!survivorArr.get(i).isFollowing()) {
+						player.addToFollowing(survivorArr.get(i));
+					}
+					survivorArr.get(i).follow();
+				}
+				if (!survivorArr.get(i).isAlive()) {
+					player.removeFromFollowing(survivorArr.get(i));
+					setFailure(true);
+				}
+				if (survivorArr.get(i).isRescued()) {
+					player.removeFromFollowing(survivorArr.get(i));
+					survivorArr.get(i).deactivatePhysics(world);
 					//survivorArr.removeIndex(i);
-				numRescued++;
-				caravan.incrCap();
-				caravan.setInteractable(false);
+					numRescued++;
+					caravan.incrCap();
+					caravan.setInteractable(false);
+				}
 			}
-		}
 
 		}
+
 		caravan.update();
 		// Update caravan state
 		if (caravan.getBody().getFixtureList().get(1).testPoint(player.getPosition())) {
@@ -1172,17 +1463,17 @@ public class GameplayController implements Screen {
 			caravan.setInteractable(false);
 		}
 //		if (caravan.isInteractable() && input.didDropSurvivors()) {
-			if (caravan.getCurrentCapacity() == caravan.getMaxCapacity()) {
-				setComplete(true);
-				if (prefs.getInteger("unlocked", 1) <= curLevel) {
-					prefs.putInteger("unlocked", curLevel + 1);
-				}
-				if (!prefs.getBoolean("level" + curLevel + "complete", false)) {
-					prefs.putInteger("survivors", prefs.getInteger("survivors", 0) + survivorArr.size);
-				}
-				prefs.putBoolean("level" + curLevel + "complete", true);
-				prefs.flush();
+		if (caravan.getCurrentCapacity() == caravan.getMaxCapacity()) {
+			setComplete(true);
+			if (prefs.getInteger("unlocked", 1) <= curLevel) {
+				prefs.putInteger("unlocked", curLevel + 1);
 			}
+			if (!prefs.getBoolean("level" + curLevel + "complete", false)) {
+				prefs.putInteger("survivors", prefs.getInteger("survivors", 0) + survivorArr.size);
+			}
+			prefs.putBoolean("level" + curLevel + "complete", true);
+			prefs.flush();
+		}
 //			for (int i = 0; i < survivorArr.size; i++) {
 //				if (survivorArr.get(i).isFollowing()) {
 //					survivorArr.get(i).rescue();
@@ -1227,6 +1518,56 @@ public class GameplayController implements Screen {
 			if (player.getHealth() <= i) {
 				heartArr.get(i).setTexture(bEggTexture);
 			}
+		}
+
+		if (!player.canLoseLife()) {
+			if (!startedTakingDamage) {
+				startedTakingDamage = true;
+				damage.play();
+			}
+		}
+		else {
+			startedTakingDamage = false;
+		}
+
+		if (player.getHealth() == 1)
+		{
+			if (!startedDying) {
+				startedDying = true;
+				lowHealthId = lowHealth.play();
+				lowHealth.setLooping(lowHealthId, true);
+			}
+		}
+
+	}
+
+	private void updateObstacle(Obstacle ob){
+		GameObstacle gob = (GameObstacle) ob;
+		switch(gob.getType()){
+			case PLAYER:
+				player.update();
+				if (player.getX() < 20) {
+					player.setPosition(20, player.getBody().getPosition().y);
+				}
+				if (player.getX() >= tileGrid.length * tileSize - 20) {
+					player.setPosition(tileGrid.length * tileSize - 20, player.getBody().getPosition().y);
+				}
+				if (player.getY() < 20) {
+					player.setPosition(player.getBody().getPosition().x, 20);
+				}
+				if (player.getY() >= tileGrid[0].length * tileSize - 20) {
+					player.setPosition(player.getBody().getPosition().x, tileGrid[0].length * tileSize - 20);
+				}
+				player.weapon.update(player.getPosition(), canvas.unproject(input.getMousePos()), input.getShootDir());
+				// Check if the weapon is firing
+
+				if (player.weapon.fire()) {
+					vacuumBlow.play();
+					purifiedAir.attack(player.weapon.getBullets(), player.weapon.getPosition(), player.weapon.getImpulses());
+				}
+				break;
+			case OBSTACLE:
+				((Obstacles)gob).update();
 		}
 
 	}
@@ -1562,7 +1903,7 @@ public class GameplayController implements Screen {
 				obj.drawDebug(canvas);
 			}
 			for (Obstacle obj : smogs) {
-				obj.drawDebug(canvas);
+				//obj.drawDebug(canvas);
 			}
 			toxicAir.drawDebug(canvas);
 

@@ -130,6 +130,12 @@ public class Player extends Shadow implements GameObstacle{
     private int torch;
     private int key;
 
+    private final int HEARING_RANGE = 600;
+
+    private final int SMOG_HEARING_RANGE = 300;
+
+    private int hearing;
+
     private final int DEFAULT_NOISE = 10;
 
     private final int MAX_WALK_NOISE = 60;
@@ -165,7 +171,7 @@ public class Player extends Shadow implements GameObstacle{
      * @param y The initial y-coordinate of the player in box2d units
      */
     public Player(float x, float y, FilmStrip[][] player, InputController input, float scale, float tileSize) {
-        super(x, y, player[0][0].getRegionWidth()*scale, player[0][0].getRegionHeight()*scale, ShadowShape.CIRCLE);
+        super(x, y, player[0][0].getRegionWidth()*scale, player[0][0].getRegionHeight()*scale, ShadowShape.CIRCLE, false);
         this.height = player[0][0].getRegionHeight();
         this.width = player[0][0].getRegionWidth();
         // setTexture(value);
@@ -198,6 +204,7 @@ public class Player extends Shadow implements GameObstacle{
         key = 0;
         torch = 0;
         noise = DEFAULT_NOISE;
+        hearing = 400;
 
         if (filter == null){
             filter = new Filter();
@@ -421,9 +428,13 @@ public class Player extends Shadow implements GameObstacle{
         return isAlive;
     }
 
+    public boolean isRevealed() { return revealed; }
+
     public void setRevealed(boolean revealed) { this.revealed = revealed; }
 
     public float getNoise() { return noise; }
+
+    public int getHearing() { return hearing; }
 
     /**
      * Creates the physics Body(s) for this object, adding them to the world.
@@ -515,6 +526,7 @@ public class Player extends Shadow implements GameObstacle{
     public void update() {
         // If we are dead do nothing.
         if (!isAlive) {
+            light.setDistance(0);
             return;
         }
 
@@ -548,7 +560,14 @@ public class Player extends Shadow implements GameObstacle{
             fireTime++;
         }
 
-        // update player noise
+        // update player hearing and noise
+
+        if (revealed) {
+            hearing = SMOG_HEARING_RANGE;
+        }
+        else {
+            hearing = HEARING_RANGE;
+        }
 
         if (hVelocity == 0 && vVelocity == 0)
         {
