@@ -41,6 +41,7 @@ public class ScoutEnemy extends Enemy{
         /** The textures for the enemy. */
 
         public Texture currentTexture;
+        protected FilmStrip[] digStrips;
         private Direction direction;
         private boolean finishedGrowing;
         private float scale;
@@ -390,6 +391,12 @@ public class ScoutEnemy extends Enemy{
 //            vines.get(i).update();
 //        }
 //    }
+    // Variables for scout
+    /** The number of animation frames in our filmstrip */
+    private static final int   NUM_ANIM_FRAMES = 7;
+    /** How fast we change frames (one frame per 10 calls to update) */
+    protected static final float ANIMATION_SPEED = 0.20f;
+    protected static float WAKE_ANIMATION_SPEED = 0.20f;
 
     /**
      * Initialize a standard enemy
@@ -467,6 +474,48 @@ public class ScoutEnemy extends Enemy{
     @Override
     public void update(int action)
     {
+
+        if (isWaking){
+            if (wakeTime <= 1){
+                aframe = 0;
+            }
+            if (wakeTime >= 100 && !wokeOnce){
+                if (wakeTime > 0){
+                    aframe += WAKE_ANIMATION_SPEED;
+                }
+            }
+            else if (wokeOnce){
+                WAKE_ANIMATION_SPEED = 0.5f;
+                aframe += WAKE_ANIMATION_SPEED;
+            }
+            if (aframe >= NUM_ANIM_FRAMES){
+                hasAwoken = true;
+                aframe = 0;
+            }
+        }
+        else if (isStunned()){
+            if (stunTime <= 1){
+                aframe = 0;
+            }
+//            if (stunTime >= MAX_STUN_TIME-2){
+//                aframe = 0;
+//            }
+            if (aframe >= NUM_ANIM_FRAMES){
+                aframe = NUM_ANIM_FRAMES-1;
+            }
+            else{
+                aframe += ANIMATION_SPEED;
+            }
+        }
+        else{
+            aframe += ANIMATION_SPEED;
+            if (aframe >= NUM_ANIM_FRAMES) {
+                aframe -= NUM_ANIM_FRAMES;
+            }
+        }
+
+
+        ////////////////////////////////////////////////////////////////////
         if(toStunTime >= MAX_TO_STUN_TIME){
             toStunTime = 0;
             this.setStunned(true);
@@ -511,6 +560,30 @@ public class ScoutEnemy extends Enemy{
 
     @Override
     public void draw(GameCanvas canvas) {
+        if (!hasAwoken && !wokeOnce && wakeTime <= 20){
+            //System.out.println("Frame Skull");
+            currentAnimator.setFrame(0);
+        }
+        else{
+            currentAnimator.setFrame((int)aframe);
+        }
+        currentAnimator.setFrame((int)aframe);
+////        System.out.println((body.getWorldCenter().x*drawScale.x - currentAnimator.getRegionWidth()*scale/2) + ", " + (body.getWorldCenter().y*drawScale.y- currentAnimator.getRegionHeight()*scale/2));
+        if (stunCooldown > 0 && stunCooldown % 10 == 0)
+        {
+            canvas.draw(currentAnimator, Color.CLEAR, origin.x, origin.y, body.getWorldCenter().x*drawScale.x - width*scale/2, body.getWorldCenter().y*drawScale.y- height*scale/2, 0.0f, scale, scale);
+        }
+        else if (isStunned())
+        {
+            canvas.draw(currentAnimator, Color.PINK, origin.x, origin.y, body.getWorldCenter().x*drawScale.x - width*scale/2, body.getWorldCenter().y*drawScale.y- height*scale/2, 0.0f, scale, scale);
+            if(stunAnimation != null){
+//                System.out.println(stunTime % 4);
+                stunAnimation.setFrame(((int)stunTime/5) % 4); //4 frames of animation, 5 frame rate reduction
+                canvas.draw(stunAnimation, Color.GRAY, origin.x, origin.y, body.getWorldCenter().x * drawScale.x - width*scale/2, body.getWorldCenter().y * drawScale.y, 0.0f, scale, scale);
+            }
+        }
+        else {
+            canvas.draw(currentAnimator, Color.WHITE, origin.x, origin.y, body.getWorldCenter().x * drawScale.x - width * scale / 2, body.getWorldCenter().y * drawScale.y - height * scale / 2, 0.0f, scale, scale);
         if(isExtendingVines) {
             if (vines.size > 0) {
                 for (int i = 0; i < vines.size; i++) {
@@ -519,7 +592,7 @@ public class ScoutEnemy extends Enemy{
             }
         }
         super.draw(canvas);
-    }
+    }}
 
     @Override
     public void drawDebug(GameCanvas canvas) {

@@ -271,12 +271,8 @@ public class Enemy extends Shadow implements GameObstacle {
     public void updateDirection(float h, float v){
 
         if (h != 0){
-            System.out.println("Test 1");
-            System.out.println("hasAwoken: " + hasAwoken);
-            System.out.println("stunned: " + isStunned());
             if (isStunned() && hasAwoken){
                 currentStrip = stunStrips;
-                System.out.println("Stun stips playing");
             }
             else if (isAttacking && hasAwoken){
                 currentStrip = attackStrips;
@@ -286,12 +282,7 @@ public class Enemy extends Shadow implements GameObstacle {
             }
         }
         else{
-            System.out.println("Test 2");
-            System.out.println("Test 1");
-            System.out.println("hasAwoken: " + hasAwoken);
-            System.out.println("stunned: " + isStunned());
             if (isStunned() && hasAwoken){
-                System.out.println("Stun strips playing");
                 currentStrip = stunStrips;
             }
             else if (isWaking){

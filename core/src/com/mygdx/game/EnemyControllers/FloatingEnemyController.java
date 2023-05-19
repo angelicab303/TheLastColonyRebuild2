@@ -103,7 +103,6 @@ public class FloatingEnemyController extends EnemyController {
         }
         switch(state) {
             case SPAWN:
-                System.out.println("Floater spawn");
                 if (enemy.isStunned())
                 {
                     state = FSMState.WAKE;
@@ -131,13 +130,11 @@ public class FloatingEnemyController extends EnemyController {
                 }
                 break;
             case WAKE:
-                System.out.println("Floater wake");
                 if (enemy.getHasAwoken()){
                     state = FSMState.IDLE;
                 }
                 break;
             case IDLE:
-                System.out.println("Floater idle");
                 if (enemy.isStunned())
                 {
                     state = FSMState.STUNNED;
@@ -162,7 +159,6 @@ public class FloatingEnemyController extends EnemyController {
                 }
                 break;
             case CHASE:
-                System.out.println("Floater chase");
                 if (enemy.isStunned())
                 {
                     state = FSMState.STUNNED;
@@ -174,7 +170,6 @@ public class FloatingEnemyController extends EnemyController {
                 }
                 break;
             case ATTACK:
-                System.out.println("Floater attack");
                 angle.set(target.cpy().sub(enemyPos));
                 Vector2 attackPos = angle.cpy().scl(2);
                 impulse.x = angle.x;
@@ -189,7 +184,6 @@ public class FloatingEnemyController extends EnemyController {
                 enemy.setAttacking(false);
                 break;
             case STUNNED:
-                System.out.println("Floater stunned");
                 if (!enemy.isStunned())
                 {
                     state = FSMState.WAKE;

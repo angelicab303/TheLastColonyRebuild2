@@ -59,6 +59,7 @@ public class GameplayController implements Screen {
 	/** Texture assets for player avatar */
 	private FilmStrip[][] playerDirectionTextures;
 	private FilmStrip[][] floaterDirectionTextures;
+	private FilmStrip[][] scoutDirectionTextures;
 	private FilmStrip[][] shriekerTextures;
 	private Texture sampleTutorial;
 	private TutorialPrompt sample;
@@ -459,6 +460,7 @@ public class GameplayController implements Screen {
 
 		playerDirectionTextures = importPlayerFilmstrip();
 		floaterDirectionTextures = importFloaterFilmstrip();
+		scoutDirectionTextures = importScoutFilmstrip();
 		shriekerTextures = importShriekerFilmstrips();
 		survivorDirectionTextures = importCharacterFilmstrip("survivorP");
 		enemyDirectionTextures = importEnemyFilmstrips();
@@ -733,6 +735,18 @@ public class GameplayController implements Screen {
 		}
 		return floaterFilmStrip;
 	}
+	private FilmStrip[][] importScoutFilmstrip(){
+
+		FilmStrip[][] floaterFilmStrip = new FilmStrip[5][2];
+		//String[] directions = {"Up", "Down", "Right", "Left"};
+		String[] actions = {"Movement", "Idle", "Attack", "Stun", "Wake"};
+		for (int i = 0; i < 5; i++){
+			FilmStrip right = directory.getEntry("images:scout" + actions[i] + "Right.fire", FilmStrip.class );
+			FilmStrip left = directory.getEntry("images:scout" + actions[i] + "Left.fire", FilmStrip.class );
+			floaterFilmStrip[i] = new FilmStrip[] {right, left};
+		}
+		return floaterFilmStrip;
+	}
 
 	/**
 	 * Resets the status of the game so that we can play again.
@@ -828,7 +842,7 @@ public class GameplayController implements Screen {
 		// Here we will instantiate the objects in the level using the JSONLevelReader.
 		JSONLevelReader reader = new JSONLevelReader(directory, bounds, world, level, canvas.camera, input,
 				objects, smogBorderTexture, floorArr, SCALE, tileGrid, smogTiles, smogGrid, tileSize, tileOffset, smogTileSize, smogTileOffset,
-				playerDirectionTextures, survivorDirectionTextures, shriekerTextures, floaterDirectionTextures, enemyDirectionTextures, vineTextures, survivorDirections, toxicAir, survivorITexture, assetTextures,
+				playerDirectionTextures, survivorDirectionTextures, shriekerTextures, floaterDirectionTextures, scoutDirectionTextures, enemyDirectionTextures, vineTextures, survivorDirections, toxicAir, survivorITexture, assetTextures,
 				displayFontInteract, fHeartTexture, player, null);
 
 //		if (caravan.getX() < 400f) {

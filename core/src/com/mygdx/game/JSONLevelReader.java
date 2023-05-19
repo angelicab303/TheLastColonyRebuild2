@@ -105,6 +105,7 @@ public class JSONLevelReader {
     private Obstacles placeableTemp;
     private FilmStrip[][] playerDirectionTextures;
     private FilmStrip[][] floaterDirectionTextures;
+    private FilmStrip[][] scoutDirectionTextures;
     private FilmStrip[] survivorDirectionTextures;
     private FilmStrip[][] enemyDirectionTextures;
     private FilmStrip[][] shriekerTextures;
@@ -146,7 +147,7 @@ public class JSONLevelReader {
                            OrthographicCamera camera, InputController input, PooledList<Obstacle> objects, TextureRegion smogBorderTexture, Array<FloorTile> floorArr,
                            float scale, boolean[][] tileGrid, boolean[][] smogTiles, boolean[][] smogGrid, int tileSize,
                            int tileOffset, int smogTileSize, int smogTileOffset, FilmStrip[][] playerDirectionTextures,
-                           FilmStrip[] survivorDirectionTextures, FilmStrip[][] shriekerTextures, FilmStrip[][] floaterDirectionTextures, FilmStrip[][] enemyDirectionTextures, Texture[] vineTextures, Texture[] directionTextures, ToxicQueue toxicAir,
+                           FilmStrip[] survivorDirectionTextures, FilmStrip[][] shriekerTextures, FilmStrip[][] floaterDirectionTextures, FilmStrip[][] scoutDirectionTextures, FilmStrip[][] enemyDirectionTextures, Texture[] vineTextures, Texture[] directionTextures, ToxicQueue toxicAir,
                            Texture survivorITexture, Map<String, TextureRegion> assetTextures, BitmapFont displayFontInteractive, Texture heart, Player player, Weapon weapon) {
         this.directory = directory;
         this.bounds = bounds;
@@ -169,6 +170,7 @@ public class JSONLevelReader {
         this.playerDirectionTextures = playerDirectionTextures;
         this.shriekerTextures = shriekerTextures;
         this.floaterDirectionTextures = floaterDirectionTextures;
+        this.scoutDirectionTextures = scoutDirectionTextures;
         this.survivorDirectionTextures = survivorDirectionTextures;
         this.enemyDirectionTextures = enemyDirectionTextures;
         this.toxicAir = toxicAir;
@@ -610,7 +612,7 @@ public class JSONLevelReader {
                 enemyControllers.add(new ShriekerEnemyController(tileGrid, tileSize, tileOffset, (ShriekerEnemy) enemyTemp, player));
                 break;
             case "ScoutEnemy":
-                enemyTemp = new ScoutEnemy(x * tileSize + tileOffset, y * tileSize + tileOffset, floaterDirectionTextures, vineTextures, scale, imageTileSize, world);
+                enemyTemp = new ScoutEnemy(x * tileSize + tileOffset, y * tileSize + tileOffset, scoutDirectionTextures, vineTextures, scale, imageTileSize, world);
                 enemyArr.add(enemyTemp);
                 addObject(enemyTemp);
                 enemyControllers.add(new ScoutEnemyController(tileGrid, tileSize, tileOffset,(ScoutEnemy) enemyTemp, player));
