@@ -324,11 +324,11 @@ public class CollisionController{
                     switch (item.getItemType()){
                         case KEY:
                             player.collectKey();
-                            item.markRemoved(true);
+                            item.collect();
                             break;
                         case TORCH:
                             player.collectTorch();
-                            item.markRemoved(true);
+                            item.collect();
                             break;
                         case COFFEE:
                             break;
@@ -396,7 +396,7 @@ public class CollisionController{
                             obstacle = (Obstacles) objB;
                         }
                     }
-                    if(player != null && obstacle !=null && obstacle.getIsDoor() && player.useKey()){
+                    if(player != null && obstacle !=null && obstacle.getIsDoor()){// && player.useKey()){
                         //use key already decrements the key count
                         obstacle.unlock();
                     }

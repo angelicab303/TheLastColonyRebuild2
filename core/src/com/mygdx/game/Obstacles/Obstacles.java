@@ -16,6 +16,8 @@ public class Obstacles extends Shadow implements GameObstacle {
     /** Cliff velocity */
     private Vector2 velocity;
 
+    private boolean unlocked = false;
+
     /** Filter for filtering */
     private static volatile Filter filter;
     private float scale;
@@ -44,7 +46,7 @@ public class Obstacles extends Shadow implements GameObstacle {
         velocity = new Vector2(0.0f, 0.0f);
         this.scale = scale;
         this.isBelow = false;
-        this.isDoor = true;
+        this.isDoor = isDoor;
 
         if (filter == null) {
             filter = new Filter();
@@ -63,7 +65,8 @@ public class Obstacles extends Shadow implements GameObstacle {
     }
 
     public void unlock(){
-        setActive(false);
+        System.out.println(isDoor);
+        unlocked = true;
     }
 
     /**
@@ -129,8 +132,13 @@ public class Obstacles extends Shadow implements GameObstacle {
      *
      */
     public void update() {
-        body.setLinearVelocity(velocity);
-        body.applyLinearImpulse(velocity, position, true);
+        if(unlocked && isActive()){
+            System.out.println("isunlocking");
+            setActive(false);
+            //markRemoved(true);
+        }
+
+
         // Filter filter = body.getFixtureList().get(0).getFilterData();
         // System.out.println("Cliff filter- cat bits:" + filter.categoryBits + ", mask
         // bits: " + filter.maskBits);
@@ -158,7 +166,7 @@ public class Obstacles extends Shadow implements GameObstacle {
         float height = texture.getRegionHeight() * scale;
 
 
-        Vector2 sensorCenter = new Vector2(0, 5);
+        Vector2 sensorCenter = new Vector2(0, 0);
         FixtureDef sensorDef = new FixtureDef();
 
         //TO DO: Make Json dependant
@@ -169,7 +177,7 @@ public class Obstacles extends Shadow implements GameObstacle {
         //TO DO: Make Json dependant
         //JsonValue sensorjv = data.get("sensor");
         //sensorShape.setAsBox(sensorjv.getFloat("shrink",0)*getWidth()/2.0f, sensorjv.getFloat("height",0), sensorCenter, 0.0f);
-        sensorShape.setAsBox(width/2, height/2-5, sensorCenter, 0f);
+        sensorShape.setAsBox(width/2, height/2+5, sensorCenter, 0f);
         sensorDef.shape = sensorShape;
 
         // Ground sensor to represent our feet

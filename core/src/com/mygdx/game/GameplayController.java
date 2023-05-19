@@ -314,9 +314,9 @@ public class GameplayController implements Screen {
 	public static final int WORLD_POSIT = 2;
 
 	/** Width of the game world in Box2d units */
-	protected static final float DEFAULT_WIDTH = 32.0f;
+	protected static final float DEFAULT_WIDTH = 3.0f*32.0f;
 	/** Height of the game world in Box2d units */
-	protected static final float DEFAULT_HEIGHT = 18.0f;
+	protected static final float DEFAULT_HEIGHT = 3.0f*18.0f;
 	/** The default value of gravity (going down) */
 	// WHO THE FRICK FORGOT TO TURN OFF GRAVITY YOU HAD ONE JOB
 	protected static final float DEFAULT_GRAVITY = 0;
@@ -1118,29 +1118,16 @@ public class GameplayController implements Screen {
 		}
 
 		// Update player and weapon position
-		player.update();
-		if (player.getX() < 20) {
-			player.setPosition(20, player.getBody().getPosition().y);
+		for(Obstacle ob: objects){
+			updateObstacle(ob);
 		}
-		if (player.getX() >= tileGrid.length * tileSize - 20) {
-			player.setPosition(tileGrid.length * tileSize - 20, player.getBody().getPosition().y);
-		}
-		if (player.getY() < 20) {
-			player.setPosition(player.getBody().getPosition().x, 20);
-		}
-		if (player.getY() >= tileGrid[0].length * tileSize - 20) {
-			player.setPosition(player.getBody().getPosition().x, tileGrid[0].length * tileSize - 20);
-		}
+
+
 
 		// Update UI elements
 		airBar.update(player.weapon.getNumAmmo());
 
-		player.weapon.update(player.getPosition(), canvas.unproject(input.getMousePos()), input.getShootDir());
-		// Check if the weapon is firing
 
-		if (player.weapon.fire()) {
-			purifiedAir.attack(player.weapon.getBullets(), player.weapon.getPosition(), player.weapon.getImpulses());
-		}
 		purifiedAir.update();
 		toxicAir.update();
 
@@ -1233,6 +1220,7 @@ public class GameplayController implements Screen {
 		}
 
 		}
+
 		caravan.update();
 		// Update caravan state
 		if (caravan.getBody().getFixtureList().get(1).testPoint(player.getPosition())) {
@@ -1297,6 +1285,36 @@ public class GameplayController implements Screen {
 			if (player.getHealth() <= i) {
 				heartArr.get(i).setTexture(bEggTexture);
 			}
+		}
+
+	}
+
+	private void updateObstacle(Obstacle ob){
+		GameObstacle gob = (GameObstacle) ob;
+		switch(gob.getType()){
+			case PLAYER:
+				player.update();
+				if (player.getX() < 20) {
+					player.setPosition(20, player.getBody().getPosition().y);
+				}
+				if (player.getX() >= tileGrid.length * tileSize - 20) {
+					player.setPosition(tileGrid.length * tileSize - 20, player.getBody().getPosition().y);
+				}
+				if (player.getY() < 20) {
+					player.setPosition(player.getBody().getPosition().x, 20);
+				}
+				if (player.getY() >= tileGrid[0].length * tileSize - 20) {
+					player.setPosition(player.getBody().getPosition().x, tileGrid[0].length * tileSize - 20);
+				}
+				player.weapon.update(player.getPosition(), canvas.unproject(input.getMousePos()), input.getShootDir());
+				// Check if the weapon is firing
+
+				if (player.weapon.fire()) {
+					purifiedAir.attack(player.weapon.getBullets(), player.weapon.getPosition(), player.weapon.getImpulses());
+				}
+				break;
+			case OBSTACLE:
+				((Obstacles)gob).update();
 		}
 
 	}
@@ -1633,7 +1651,7 @@ public class GameplayController implements Screen {
 			}
 
 			for (Obstacle obj : smogs) {
-				obj.drawDebug(canvas);
+				//obj.drawDebug(canvas);
 			}
 			toxicAir.drawDebug(canvas);
 
