@@ -240,6 +240,7 @@ public class CollisionController{
                     }
                     break;
                 case GameObstacle.CATEGORY_PURIFIED | GameObstacle.CATEGORY_ENV:
+                case GameObstacle.CATEGORY_PURIFIED | GameObstacle.CATEGORY_CARAVAN:
                     if(objA.getType() == GameObstacle.ObstacleType.PURIFIED_AIR){
                         ((PurifiedQueue.PurifiedAir) objA).collide();
                     }
@@ -286,6 +287,16 @@ public class CollisionController{
                         enemy.setAttack(false);
                     }
                     break;
+                case GameObstacle.CATEGORY_PURIFIED | GameObstacle.CATEGORY_TOXIC:
+                    if(objA.getType() == GameObstacle.ObstacleType.PURIFIED_AIR){
+                        ((PurifiedQueue.PurifiedAir) objA).collide();
+                        ((ToxicQueue.ToxicAir) objB).collide();
+                    }
+                    else {
+                        ((PurifiedQueue.PurifiedAir) objB).collide();
+                        ((ToxicQueue.ToxicAir) objA).collide();
+                    }
+                    break;
                 case GameObstacle.CATEGORY_PLAYER | GameObstacle.CATEGORY_TOXIC:
                     if (objA.getType() == GameObstacle.ObstacleType.PLAYER){
                         player = (Player) objA;
@@ -313,11 +324,11 @@ public class CollisionController{
                     switch (item.getItemType()){
                         case KEY:
                             player.collectKey();
-                            item.markRemoved(true);
+                            item.collect();
                             break;
                         case TORCH:
                             player.collectTorch();
-                            item.markRemoved(true);
+                            item.collect();
                             break;
                         case COFFEE:
                             break;

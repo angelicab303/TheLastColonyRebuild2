@@ -25,7 +25,7 @@ public class ShriekerEnemy extends Enemy {
     /** Whether or not the shrieker can alert other enemies */
     private boolean canShriek;
     /** Time shrieker must wait before being able to alert again */
-    protected final float SHRIEK_TIME = 300;
+    protected final float SHRIEK_TIME = 420;
     /** Time that has passed since shrieker last alerted */
     private float shriekTime = 0;
     /** Whether the shrieker is shrieking */

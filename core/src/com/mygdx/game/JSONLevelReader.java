@@ -102,6 +102,8 @@ public class JSONLevelReader {
     private FloorTile floorTemp;
     private Obstacles wallTemp;
     private Obstacles obstacleTemp;
+
+    private Vector2 levelBounds;
     private Obstacles placeableTemp;
     private FilmStrip[][] playerDirectionTextures;
     private FilmStrip[] survivorDirectionTextures;
@@ -190,30 +192,14 @@ public class JSONLevelReader {
             // JsonValue.class)));
 
             JsonValue levelStr = new JsonValue(false);
-            if (level == 0) {
-                levelStr = directory.getEntry("tutorialLevel1", JsonValue.class);
-            } else if (level == 1) {
-                levelStr = directory.getEntry("tutorialLevel2", JsonValue.class);
-            } else if (level == 2) {
-                levelStr = directory.getEntry("tutorialLevel3", JsonValue.class);
-            } else if (level == 3) {
-                levelStr = directory.getEntry("tutorialLevel4", JsonValue.class);
-            } else if (level == 4) {
-                levelStr = directory.getEntry("tutorialLevel5", JsonValue.class);
-            } else if (level == 5) {
-                levelStr = directory.getEntry("mediumLevel", JsonValue.class);
-            } else if (level == 6){
-                levelStr = directory.getEntry("Level7", JsonValue.class);
+            if(level <= 10){
+                levelStr = directory.getEntry("Level" + (level+1), JsonValue.class);
+            }else{
+                levelStr = directory.getEntry("Level13", JsonValue.class);
             }
 
-            Array<Vector2> levelBounds = new Array<Vector2>();
-            levelBounds.add(new Vector2(15, 10));
-            levelBounds.add(new Vector2(20, 15));
-            levelBounds.add(new Vector2(30, 13));
-            levelBounds.add(new Vector2(20, 20));
-            levelBounds.add(new Vector2(25, 25));
-            levelBounds.add(new Vector2(30, 30));
-
+            //levelStr = directory.getEntry("Level13", JsonValue.class);
+            Vector2 levelBounds = new Vector2(levelStr.get("layers").get(0).getInt("width"),levelStr.get("layers").get(0).getInt("height"));
 
             //gets the file of the tileset
             //JsonValue tileSetJSON = directory.getEntry(levelStr.get("tilesets").get(0).getString("source"), JsonValue.class);
@@ -248,17 +234,29 @@ public class JSONLevelReader {
              **/
 
 
-            tiles = new JsonValue[tileIDs.size];
+             //importing by id instead cause I give up on editing
+
+
+            int maxTiles = tileIDs.get(tileIDs.size-1).getInt("id");
+
+            tiles = new JsonValue[maxTiles+1];
 
             int caravanID = 0;
             int playerID = 0;
+            int altCaravanID = 0;
             for(int i = 0; i < tileIDs.size; i++){
-                tiles[i] = tileIDs.get(i);
-                String type = tiles[i].get("properties").get(0).getString("name");
+                int id = tileIDs.get(i).getInt("id");
+                tiles[id] = tileIDs.get(i);
+                String type = tiles[id].get("properties").get(0).getString("name");
                 if(type.equals("Player")){
-                    playerID = i;
+                    playerID = id;
                 }else if(type.equals("Caravan")){
-                    caravanID = i;
+                    if(caravanID == 0){
+                        caravanID = id;
+                    }else {
+                        altCaravanID = id;
+                    }
+
                 }
             }
 
@@ -300,7 +298,7 @@ public class JSONLevelReader {
                 for (int j = 0; j < layerData.size; j++) {
                     int dataValue = layerData.getInt(j) - 1;
                     // Do something with the data value...
-                    if (dataValue == caravanID) {
+                    if (dataValue == caravanID || dataValue == altCaravanID) {
                         caravanX = j % width + 1;
                         caravanY = height - (j / width);
                     } else if (dataValue == playerID) {
@@ -357,6 +355,7 @@ public class JSONLevelReader {
                 if (!layers.get(i).getString("type").equals("tilelayer")) {
                     continue;
                 }
+
                 JsonValue layerData = layers.get(i).get("data");
                 for (int j = 0; j < layerData.size; j++) {
                     int dataValue = layerData.getInt(j) - 1;
@@ -377,9 +376,9 @@ public class JSONLevelReader {
 //            }
 
             // Create extra smog border
-            for (int i = -4; i < levelBounds.get(level).x + 8; i++) {
-                for (int j = -4; j < levelBounds.get(level).y + 8; j++) {
-                    if (i < 0 || i >= levelBounds.get(level).x || j <= 0 || j >= levelBounds.get(level).y) {
+            for (int i = -4; i < levelBounds.x + 8; i++) {
+                for (int j = -4; j < levelBounds.y + 8; j++) {
+                    if (i < 0 || i >= levelBounds.x || j <= 0 || j >= levelBounds.y) {
                         createObstacle(i, j, smogBorderTexture, scale, false);
                     }
                 }
@@ -391,9 +390,6 @@ public class JSONLevelReader {
             }
 
             this.caravan.setMaxCapacity(survivorArr.size);
-            if (this.caravan.getX() < 400f) {
-                System.out.println("Finished loading JSON Level");
-            }
             System.out.println("Finished loading JSON Level");
 
             // Close the map reader
@@ -457,7 +453,12 @@ public class JSONLevelReader {
     }
 
     public void createObject(int x, int y, int id) {
-        y = y -1;
+        if(y > 0){
+            y = y -1;
+        }
+        if(id > 200){
+            return;
+        }
         String type = tiles[id].get("properties").get(0).getString("name");
         if(type.equals("Caravan")){
             createCaravan(x, y, scale);
@@ -467,9 +468,9 @@ public class JSONLevelReader {
             createSurvivor(x, y, id, scale);
         } else if (type.equals("FloatingEnemy") || type.equals("ScoutEnemy") || type.equals("ShriekerEnemy") || type.equals("ChaserEnemy")) {//Remember to ask kenny to do enemy types (I'm sorry) - V
             createEnemy(x, y, type, scale);
-        } else if (type.equals("Floor")) {
+        } else if (type.equals("Floor") || type.equals("Tutorial")) {
             createFloor(x, y, id, scale);
-        }else if(type.equals("Obstacle") || type.equals("Door")) {//IDK how doors are going to be implemented, so Imma hold off on this for now -V
+        }else if(type.equals("Obstacle") || type.equals("Door") || type.equals("Fence")) {//IDK how doors are going to be implemented, so Imma hold off on this for now -V
             createObstacle(x, y, id, scale, type.equals("Door"));
         }else if(type.equals("Smog")){
             createSmog(x, y, id, scale);
@@ -491,10 +492,12 @@ public class JSONLevelReader {
 
     public TextureRegion getTextureRegionKey(int id) {
         tiles[id].getString("image");
-        String textureName = tiles[id].getString("image");
+        String fileName = tiles[id].getString("image");
+        String textureName = "tiles:" + fileName.substring(0, fileName.length() - 4);
         TextureRegion region = assetTextures.get(textureName);
         if (region == null){
-            Texture texture = directory.getEntry("tiles:" + textureName.substring(0, textureName.length() - 4), Texture.class);
+            System.out.println("Missing asset" + id);
+            Texture texture = directory.getEntry(textureName, Texture.class);
             if(texture == null){
                 System.out.println("ERROR");
             }
@@ -655,21 +658,24 @@ public class JSONLevelReader {
 
 
     public void createObstacle(float x, float y, int id, float scale, boolean isDoor) {
-//        System.out.println("Creating obstacle (tree / fence)");
+        if(isDoor){
+            System.out.println("Creating door");
+        }
+
         obstacleTemp = new Obstacles(x * tileSize  , y * tileSize, getTextureRegionKey(id), scale, isDoor);
         obstacleArr.add(obstacleTemp);
         if(x >= 0 && y >= 0 && x < width && y < height){
             tileGrid[(int)x ][(int)y] = true;
-            if (id == 47 || id == 50)
-            {
-                tileGrid[(int)(x-1) ][(int)y] = true;
-                tileGrid[(int)(x-1)][(int)(y+1)] = true;
-            }
-            if (id == 48)
-            {
-                tileGrid[(int)(x+1)][(int)y] = true;
-                tileGrid[(int)(x+1)][(int)(y+1)] = true;
-            }
+//            if (id == 47 || id == 50)
+//            {
+//                tileGrid[(int)(x-1) ][(int)y] = true;
+//                tileGrid[(int)(x-1)][(int)(y+1)] = true;
+//            }
+//            if (id == 48)
+//            {
+//                tileGrid[(int)(x+1)][(int)y] = true;
+//                tileGrid[(int)(x+1)][(int)(y+1)] = true;
+//            }
         }
         addObject(obstacleTemp);
     }
@@ -686,6 +692,7 @@ public class JSONLevelReader {
 
     public void createSmog(int x, int y, int id, float scale) {
         smogTiles[(int)x+1][(int)y+1] = true;
+
 //        System.out.println("Smog id: " + id);
     }
 
