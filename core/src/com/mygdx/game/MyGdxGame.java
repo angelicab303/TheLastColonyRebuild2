@@ -60,9 +60,6 @@ public class MyGdxGame extends Game implements ScreenListener {
 
 		samples = new AudioSource[1];
 
-		AudioEngine engine = (AudioEngine)Gdx.audio;
-		music = engine.newMusicBuffer( false, 44100 );
-
 		 //Initialize the first game world
 		//controllers[0] = new RocketController();
 
@@ -147,11 +144,14 @@ public class MyGdxGame extends Game implements ScreenListener {
 			mainMenu.gatherAssets(directory);
 			mainMenu.setScreenListener(this);
 
-			samples[0] = directory.getEntry( "The_Last_Colony_-_Title_Screen.mp3", AudioSource.class );
-			music.addSource( samples[0] );
-			music.play();
+//			samples[0] = directory.getEntry( "The_Last_Colony_-_Title_Screen.mp3", AudioSource.class );
+//
+//			AudioEngine engine = (AudioEngine)Gdx.audio;
+//			music = engine.newMusicBuffer( false, 44100 );
+//			music.addSource( samples[0] );
+//			music.play();
 
-			mainMenu.reset();
+			mainMenu.reset(directory);
 			mainMenu.setCanvas(canvas);
 			setScreen(mainMenu);
 
@@ -166,7 +166,7 @@ public class MyGdxGame extends Game implements ScreenListener {
 			// Need exit codes for level select
 			if (exitCode == levelSelect.EXIT_MAIN){
 				System.out.println("main menu repopulate from exit");
-				mainMenu.reset();
+				mainMenu.reset(directory);
 				setScreen(mainMenu);
 			}
 			else{
