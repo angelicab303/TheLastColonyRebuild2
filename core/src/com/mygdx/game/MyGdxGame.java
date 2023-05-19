@@ -37,9 +37,9 @@ public class MyGdxGame extends Game implements ScreenListener {
 	/** Input Controller **/
 	private InputController input = new InputController();
 
-	private AudioSource samples[];
+//	private AudioSource samples[];
 //	private AudioEngine engine;
-	private MusicQueue music;
+//	private MusicQueue music;
 
 	public MyGdxGame () { }
 	
@@ -58,7 +58,7 @@ public class MyGdxGame extends Game implements ScreenListener {
 		 //controllers = new WorldController[1];
 		 controller = new GameplayController(canvas);
 
-		samples = new AudioSource[1];
+//		samples = new AudioSource[1];
 
 		 //Initialize the first game world
 		//controllers[0] = new RocketController();
@@ -151,7 +151,7 @@ public class MyGdxGame extends Game implements ScreenListener {
 //			music.addSource( samples[0] );
 //			music.play();
 
-			mainMenu.reset(directory);
+			mainMenu.reset();
 			mainMenu.setCanvas(canvas);
 			setScreen(mainMenu);
 
@@ -166,14 +166,14 @@ public class MyGdxGame extends Game implements ScreenListener {
 			// Need exit codes for level select
 			if (exitCode == levelSelect.EXIT_MAIN){
 				System.out.println("main menu repopulate from exit");
-				mainMenu.reset(directory);
+				mainMenu.reset();
 				setScreen(mainMenu);
 			}
 			else{
 				controller.reset(exitCode);
 				setScreen(controller);
-				music.stop();
-				music.reset();
+//				music.stop();
+//				music.reset();
 			}
 		}
 //		else if (exitCode == WorldController.EXIT_NEXT) {
