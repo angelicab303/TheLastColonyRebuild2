@@ -359,6 +359,7 @@ public class CollisionController{
                             && ((Item) objB).getItemType() == Item.ItemType.TORCH){
                         ((Smog)objA).setCanReappear(false);
                     }
+                    break;
                 case GameObstacle.CATEGORY_SURVIVOR | GameObstacle.CATEGORY_TOXIC:
                     if (objA.getType() == GameObstacle.ObstacleType.SURVIVOR){
                         survivor = (Survivor) objA;
