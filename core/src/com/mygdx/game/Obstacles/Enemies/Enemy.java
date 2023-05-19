@@ -96,6 +96,7 @@ public class Enemy extends Shadow implements GameObstacle {
     private PolygonShape sensorShape;
     /** Scale of the object */
     protected float scale;
+    protected float aframe;
 //    /** How fast we change frames (one frame per 10 calls to update) */
 //    protected static final float ANIMATION_SPEED = 0.20f;
 //    /** The number of animation frames in our filmstrip */
@@ -108,6 +109,8 @@ public class Enemy extends Shadow implements GameObstacle {
     protected FilmStrip[] currentStrip;
     protected float wakeTime;
     protected final float MAX_WAKE_TIME = 200.0f;
+    /** Whether the enemy has woken up for first time */
+    protected boolean wokeOnce;
 
     float height;
     float width;
@@ -134,6 +137,9 @@ public class Enemy extends Shadow implements GameObstacle {
      *
      */
     public boolean isStunned() { return stunned; }
+    public void setWokeOnce(boolean woke){
+        this.wokeOnce = woke;
+    }
 
     /**
      * Sets the stun state of this enemy
@@ -240,6 +246,7 @@ public class Enemy extends Shadow implements GameObstacle {
         currentAnimator = wakeStrips[0];
         wakeTime = 0;
         direction = Enemy.Direction.RIGHT;
+        wokeOnce = false;
 
         if (filter == null){
             filter = new Filter();
@@ -401,6 +408,7 @@ public class Enemy extends Shadow implements GameObstacle {
                 stunned = false;
                 hasAwoken = false;
                 stunTime = 0;
+                aframe = 0;
                 body.setActive(true);
             }
         }

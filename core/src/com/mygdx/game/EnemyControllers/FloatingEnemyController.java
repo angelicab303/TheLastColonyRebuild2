@@ -162,8 +162,8 @@ public class FloatingEnemyController extends EnemyController {
                 if (!enemy.isStunned())
                 {
                     state = FSMState.WAKE;
-                    enemy.setWakeAnimation
                     enemy.setWaking(true);
+                    enemy.setWokeOnce(true);
                 }
                 break;
         }

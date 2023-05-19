@@ -16,7 +16,8 @@ public class FloatingEnemy extends Enemy {
     /** How fast we change frames (one frame per 10 calls to update) */
     protected static final float ANIMATION_SPEED = 0.20f;
     protected static float WAKE_ANIMATION_SPEED = 0.20f;
-    private float aframe;
+//    private float aframe;
+
 
     public FloatingEnemy (float x, float y, FilmStrip[][] animator, float scale, float tileSize)
     {
@@ -52,7 +53,13 @@ public class FloatingEnemy extends Enemy {
             if (wakeTime <= 1){
                 aframe = 0;
             }
-            if (wakeTime >= 100){
+            if (wakeTime >= 100 && !wokeOnce){
+                if (wakeTime > 0){
+                    aframe += WAKE_ANIMATION_SPEED;
+                }
+            }
+            else if (wokeOnce){
+                WAKE_ANIMATION_SPEED = 0.5f;
                 aframe += WAKE_ANIMATION_SPEED;
             }
             if (aframe >= NUM_ANIM_FRAMES){
@@ -64,9 +71,9 @@ public class FloatingEnemy extends Enemy {
             if (stunTime <= 1){
                 aframe = 0;
             }
-            if (stunTime >= MAX_STUN_TIME){
-                aframe = 0;
-            }
+//            if (stunTime >= MAX_STUN_TIME-2){
+//                aframe = 0;
+//            }
             if (aframe >= NUM_ANIM_FRAMES){
                 aframe = NUM_ANIM_FRAMES-1;
             }
@@ -92,7 +99,7 @@ public class FloatingEnemy extends Enemy {
      */
     public void draw(GameCanvas canvas) {
         super.draw(canvas, width*scale, height*scale);
-        if (!hasAwoken && wakeTime <= 20){
+        if (!hasAwoken && !wokeOnce && wakeTime <= 20){
             //System.out.println("Frame Skull");
             currentAnimator.setFrame(0);
         }
