@@ -55,7 +55,7 @@
                  "imagewidth":32,
                  "properties":[
                         {
-                         "name":"Enemy",
+                         "name":"FloatingEnemy",
                          "type":"string",
                          "value":""
                         }]
@@ -67,7 +67,7 @@
                  "imagewidth":32,
                  "properties":[
                         {
-                         "name":"Enemy",
+                         "name":"ScoutEnemy",
                          "type":"string",
                          "value":""
                         }]
@@ -79,7 +79,7 @@
                  "imagewidth":32,
                  "properties":[
                         {
-                         "name":"Enemy",
+                         "name":"ChaserEnemy",
                          "type":"string",
                          "value":""
                         }]
@@ -869,7 +869,7 @@
                  "imagewidth":54,
                  "properties":[
                         {
-                         "name":"Enemy",
+                         "name":"ShriekerEnemy",
                          "type":"string",
                          "value":""
                         }]
