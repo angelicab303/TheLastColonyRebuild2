@@ -411,6 +411,7 @@ public class ScoutEnemy extends Enemy{
         super(x, y, animator, scale, tileSize, false);
         vines = new Array<>();
         this.world = world;
+        isWakable = false;
         vineTick = 0;
         isChasingSurvivor = false;
         vineTextureVertical = vineTextures[0];
@@ -479,7 +480,7 @@ public class ScoutEnemy extends Enemy{
             System.out.println("Scout is attacking");
             System.out.println("Aframes: " + aframe);
             if (aframe >= ATTACK_NUM_ANIM_FRAMES) {
-                aframe = 7;
+                aframe = 6;
             }
             aframe += ANIMATION_SPEED;
         }
@@ -490,11 +491,9 @@ public class ScoutEnemy extends Enemy{
 //            if (stunTime >= MAX_STUN_TIME-2){
 //                aframe = 0;
 //            }
-            if (aframe >= NUM_ANIM_FRAMES){
-                aframe = NUM_ANIM_FRAMES-1;
-            }
-            else{
-                aframe += ANIMATION_SPEED;
+            aframe += ANIMATION_SPEED;
+            if (aframe >= NUM_ANIM_FRAMES) {
+                aframe -= NUM_ANIM_FRAMES;
             }
         }
         else{
@@ -550,7 +549,7 @@ public class ScoutEnemy extends Enemy{
 
     @Override
     public void draw(GameCanvas canvas) {
-
+        System.out.println("Scout frames: " + (int)aframe);
         currentAnimator.setFrame((int)aframe);
 ////        System.out.println((body.getWorldCenter().x*drawScale.x - currentAnimator.getRegionWidth()*scale/2) + ", " + (body.getWorldCenter().y*drawScale.y- currentAnimator.getRegionHeight()*scale/2));
         if (stunCooldown > 0 && stunCooldown % 10 == 0)

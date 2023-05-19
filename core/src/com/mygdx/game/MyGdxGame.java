@@ -4,10 +4,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
-import com.mygdx.game.ScreenModes.LevelSelectMode;
-import com.mygdx.game.ScreenModes.LoadingMode;
-import com.mygdx.game.ScreenModes.MainMenuMode;
-import com.mygdx.game.ScreenModes.PauseMenuMode;
+import com.mygdx.game.ScreenModes.*;
 import util.*;
 import assets.*;
 
@@ -26,11 +23,17 @@ public class MyGdxGame extends Game implements ScreenListener {
 	private MainMenuMode mainMenu;
 	/** Player mode for the level select menu */
 	private LevelSelectMode levelSelect;
+	/** Player mode for the settings select menu */
+	private SettingsMenuMode settingsMenu;
 	/** Player mode for the pause menu */
 	private PauseMenuMode pauseMenu;
 	private int current;
 	/** List of all WorldControllers */
 	private GameplayController controller;
+	private Screen mainMenuScreen;
+	private Screen levelSelectScreen;
+	private Screen settingsScreen;
+	private Screen controllerScreen;
 	/** Input Controller **/
 	private InputController input = new InputController();
 
@@ -46,12 +49,18 @@ public class MyGdxGame extends Game implements ScreenListener {
 		loading = new LoadingMode("assets.json",canvas,1);
 		mainMenu = new MainMenuMode(canvas);
 		levelSelect = new LevelSelectMode(canvas);
+		settingsMenu = new SettingsMenuMode(canvas);
 		pauseMenu = new PauseMenuMode(0, 0);
+		mainMenuScreen = mainMenu;
+		levelSelectScreen = levelSelect;
+		settingsScreen = settingsMenu;
+
 		//Gdx.graphics.setContinuousRendering(false);
 
 		 //Initialize the three game worlds
 		 //controllers = new WorldController[1];
 		controller = new GameplayController(canvas, pauseMenu);
+		controllerScreen = controller;
 
 		 //Initialize the first game world
 		//controllers[0] = new RocketController();
@@ -133,6 +142,10 @@ public class MyGdxGame extends Game implements ScreenListener {
 			levelSelect.gatherAssets(directory);
 			levelSelect.setScreenListener(this);
 			levelSelect.setCanvas(canvas);
+			// gather assets for settings select menu
+			settingsMenu.gatherAssets(directory);
+			settingsMenu.setScreenListener(this);
+			settingsMenu.setCanvas(canvas);
 			// gather assets for main menu
 			mainMenu.gatherAssets(directory);
 			mainMenu.setScreenListener(this);
@@ -146,32 +159,54 @@ public class MyGdxGame extends Game implements ScreenListener {
 
 			loading.dispose();
 			loading = null;
-		} else if (screen == mainMenu){
+		} else if (screen == mainMenuScreen){
 			// Need exit codes for main menu
-			levelSelect.reset();
-			setScreen(levelSelect);
+			if (exitCode == mainMenu.EXIT_LEVEL_SELECT){
+				System.out.println("Go to level select from main menu");
+				levelSelect.reset();
+				setScreen(levelSelectScreen);
+			}
+			else if (exitCode == mainMenu.EXIT_SETTINGS){
+				//mainMenu.reset();
+				settingsMenu.reset();
+				setScreen(settingsScreen);
+			}
 		}
-		else if (screen == levelSelect){
+		else if (screen == levelSelectScreen){
 			// Need exit codes for level select
 			if (exitCode == levelSelect.EXIT_MAIN){
 				System.out.println("main menu repopulate from exit");
 				mainMenu.reset();
-				setScreen(mainMenu);
+				setScreen(mainMenuScreen);
 			}
 			else{
 				System.out.println("Set game screen from levelSelect");
 				controller.reset(exitCode);
-				setScreen(controller);
+				setScreen(controllerScreen);
 				pauseMenu.populateMenu();
 			}
 		}
-		else if (screen == controller){
+		else if (screen == controllerScreen){
 			if (exitCode == pauseMenu.EXIT_MAINMENU){
 				System.out.println("Set main menu from game screen");
-
 				pauseMenu.reset();
 				mainMenu.reset();
-				setScreen(mainMenu);
+				setScreen(mainMenuScreen);
+			}
+			else if (exitCode == pauseMenu.EXIT_SETTINGS){
+				settingsMenu.setFromGame(true);
+				settingsMenu.reset();
+				setScreen(settingsScreen);
+			}
+		}
+		else if (screen == settingsScreen){
+			if (exitCode == settingsMenu.EXIT_MAIN_MENU){
+				mainMenu.reset();
+				setScreen(mainMenuScreen);
+			}
+			else if (exitCode == settingsMenu.EXIT_GAME){
+				pauseMenu.populateMenu();
+				setScreen(controllerScreen);
 			}
 		}
 //		else if (exitCode == WorldController.EXIT_NEXT) {

@@ -1061,15 +1061,17 @@ public class GameplayController implements Screen {
 		// Read input
 		input.readInput();
 
-		if (paused && pauseMenu.getButtonState() == PauseMenuMode.EXIT_MAINMENU){
-			paused = false;
+		if (paused && (pauseMenu.getButtonState() == PauseMenuMode.EXIT_MAINMENU || pauseMenu.getButtonState() == PauseMenuMode.EXIT_SETTINGS)){
+			// paused = false;
+			int buttonState = pauseMenu.getButtonState();
 			pauseMenu.resetButtonState();
 			pauseMenu.reset();
 			canvas.camera.zoom = 1.0f;
 			canvas.camera.position.x = canvas.getWidth()/2;
 			canvas.camera.position.y = canvas.getHeight()/2;
 			canvas.camera.update();
-			listener.exitScreen(this, PauseMenuMode.EXIT_MAINMENU);
+			
+			listener.exitScreen(this, buttonState);
 		}
 
 		if (input.didPause() || (pauseMenu.getButtonState() == PauseMenuMode.EXIT_GAME && paused)) {
