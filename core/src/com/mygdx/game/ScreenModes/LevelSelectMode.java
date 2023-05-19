@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.ControllerListener;
@@ -279,6 +280,8 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
 
     private Sound backSound;
 
+    private Music titleMusic;
+
 
     /**
      * Returns the asset directory produced by this loading screen
@@ -356,10 +359,17 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
         empty = directory.getEntry("images:empty", Texture.class);
         enter = directory.getEntry("levelSelect:enter", Texture.class);
         backSound = directory.getEntry("sounds:back", Sound.class);
+        titleMusic = directory.getEntry("titlemusic", Music.class);
+
         loaded = true;
     }
     /** Populates the menu with clouds */
     public void populateMenu(){
+        if (!titleMusic.isPlaying())
+        {
+            titleMusic.play();
+            titleMusic.setLooping(true);
+        }
         // Initialize the buttons/titles to be drawn on screen
         float startX = RIGHT_SPACING + 6;
         float startY = canvas.getHeight()*.05f;
@@ -540,6 +550,8 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
                 currLevel--;
             }
             if (input.didPressEnter()) {
+                titleMusic.stop();
+                titleMusic.setLooping(false);
                 isReady = true;
             }
         }
