@@ -223,6 +223,7 @@ public class JSONLevelReader {
             // Send the fileReader to a new JsonReader object
             // JsonReader tilesJSONReader = new JsonReader();
             // JsonValue tilesJSON = tilesJSONReader.parse(tilesReader);
+            System.out.println(levelStr.get("tilesets").get(0).getString("source"));
             JsonValue tilesJSON = directory.getEntry(levelStr.get("tilesets").get(0).getString("source"), JsonValue.class);
 
             tileIDs = tilesJSON.get("tiles");

@@ -481,8 +481,8 @@
     "tiles:6a_tree6": "tiles/6a_tree6.png",
     "tiles:9a_torch": "tiles/9a_torch.png",
     "tiles:9a_mushroom": "tiles/9a_mushroom.png",
-    "tiles:8_doorOpen" :"tiles/DoorOpen.png",
-    "tiles:8_doorClosed": "tiles/DoorClosed.png",
+    "tiles:DoorOpen" :"tiles/DoorOpen.png",
+    "tiles:DoorClosed": "tiles/DoorClosed.png",
 
     "tiles:6a_mediumTree": "tiles/6a_mediumTree.png",
     "tiles:6b_tallTree": "tiles/6b_tallTree.png",
@@ -531,7 +531,8 @@
   "tilesets": {
     "5:16 TileSet.tsx": "tiles/516_TileSet..tsj",
     "5:5 TileSet.tsx": "tiles/LastColonyTiles510.tsj",
-    "LastColonyTileset.tsx": "tiles/LastColonyTileset.json"
+    "LastColonyTileset.tsx": "tiles/LastColonyTileset.json",
+    "5:18 TileSet.tsx": "tiles/518_TileSet.tsj"
   },
   "levels": {
     "tutorialLevel1": "levels/LastColonyTutorial1.json",
@@ -545,6 +546,7 @@
   "jsons": {
     "5:5 TileSet.tsx": "tiles/LastColonyTiles510.tsj",
     "LastColonyTileset.tsx": "tiles/LastColonyTileset.json",
+    "5:18 TileSet.tsx": "tiles/518_TileSet.tsj",
     "tutorialLevel1": "levels/LastColonyTutorial1.json",
     "tutorialLevel2": "levels/LastColonyTutorial2.json",
     "tutorialLevel3": "levels/LastColonyTutorial3.json",
