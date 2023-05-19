@@ -666,16 +666,16 @@ public class JSONLevelReader {
         obstacleArr.add(obstacleTemp);
         if(x >= 0 && y >= 0 && x < width && y < height){
             tileGrid[(int)x ][(int)y] = true;
-            if (id == 47 || id == 50)
-            {
-                tileGrid[(int)(x-1) ][(int)y] = true;
-                tileGrid[(int)(x-1)][(int)(y+1)] = true;
-            }
-            if (id == 48)
-            {
-                tileGrid[(int)(x+1)][(int)y] = true;
-                tileGrid[(int)(x+1)][(int)(y+1)] = true;
-            }
+//            if (id == 47 || id == 50)
+//            {
+//                tileGrid[(int)(x-1) ][(int)y] = true;
+//                tileGrid[(int)(x-1)][(int)(y+1)] = true;
+//            }
+//            if (id == 48)
+//            {
+//                tileGrid[(int)(x+1)][(int)y] = true;
+//                tileGrid[(int)(x+1)][(int)(y+1)] = true;
+//            }
         }
         addObject(obstacleTemp);
     }
