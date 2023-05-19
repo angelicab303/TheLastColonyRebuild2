@@ -227,7 +227,7 @@ public class GameplayController implements Screen {
 	private boolean unpausing = false;
 	private boolean paused = false;
 	private int curLevel = 0;
-	private int maxLevels = 7;
+	private int maxLevels = 12;
 	private int level;
 
 
@@ -571,6 +571,14 @@ public class GameplayController implements Screen {
 		key = "tiles:DoorClosed";
 		assetTextures.put(key, directory.getEntry(key + ".fire", FilmStrip.class));
 
+
+		//tutorial assets -> # tutorial assets =5
+		for(int i = 1; i < 6; i++){
+			key = "tiles:Tutorial_" + i;
+			assetTextures.put(key , new TextureRegion(directory.getEntry(key, Texture.class)));
+		}
+
+
 		stunAnimation = directory.getEntry("images:stun.fire", FilmStrip.class );
 		shadow = new TextureRegion(directory.getEntry("images:shadow", Texture.class));
 
@@ -852,13 +860,13 @@ public class GameplayController implements Screen {
 
 		for (int i = 0; i < column; i++) {
 			for (int j = 0; j < column; j++) {
-				if (Vector2.dst(i * smogTileSize + smogTileOffset, j * smogTileSize + smogTileOffset, player.getX(), player.getY()) > 90) {
+				if (Vector2.dst((i-2) * smogTileSize, (j-2) * smogTileSize, caravan.getX(), caravan.getY()) > 90) {
 					// Primary Grid
 					// Later get data from json file
 					float maxFrame = 4;
 					float minFrame = 0;
 					float frameNum = (float) (Math.random() * (maxFrame - minFrame + 1) + minFrame);
-					smogT = new Smog(i * smogTileSize, j * smogTileSize, smogTexture, frameNum,
+					smogT = new Smog((i-2) * smogTileSize, (j-2) * smogTileSize, smogTexture, frameNum,
 							SCALE);
 					smogT.setAwake(true);
 					smogT.setBodyType(BodyDef.BodyType.StaticBody);
@@ -889,13 +897,13 @@ public class GameplayController implements Screen {
 			}
 
 			for (int j = 0; j < smogLocations[0].length; j++) {
-				if (Vector2.dst(i * smogTileSize + smogTileOffset, j * smogTileSize + smogTileOffset, player.getX(), player.getY()) > 90) {
+				if (Vector2.dst((i-2)* smogTileSize - smogTileOffset, (j-2) * smogTileSize - smogTileOffset, caravan.getX(), caravan.getY()) > 90) {
 
 					// Secondary Grid
 					float maxFrame = 4;
 					float minFrame = 0;
 					float frameNum = (float) (Math.random() * (maxFrame - minFrame + 1) + minFrame);
-					smogTO = new Smog(i * smogTileSize-smogTileOffset, j * smogTileSize-smogTileOffset, smogTexture, frameNum,
+					smogTO = new Smog((i-2) * smogTileSize-smogTileOffset, (j-2) * smogTileSize-smogTileOffset, smogTexture, frameNum,
 							SCALE);
 					smogTO.setAwake(true);
 					smogTO.setBodyType(BodyDef.BodyType.StaticBody);

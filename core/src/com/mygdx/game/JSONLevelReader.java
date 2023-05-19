@@ -192,13 +192,13 @@ public class JSONLevelReader {
             // JsonValue.class)));
 
             JsonValue levelStr = new JsonValue(false);
-            if(level < 6){
-                //levelStr = directory.getEntry("Level" + (level+1), JsonValue.class);
+            if(level <= 10){
+                levelStr = directory.getEntry("Level" + (level+1), JsonValue.class);
             }else{
                 levelStr = directory.getEntry("Level13", JsonValue.class);
             }
 
-            levelStr = directory.getEntry("Level13", JsonValue.class);
+            //levelStr = directory.getEntry("Level13", JsonValue.class);
             Vector2 levelBounds = new Vector2(levelStr.get("layers").get(0).getInt("width"),levelStr.get("layers").get(0).getInt("height"));
 
             //gets the file of the tileset
@@ -234,21 +234,27 @@ public class JSONLevelReader {
              **/
 
 
-            tiles = new JsonValue[tileIDs.size];
+             //importing by id instead cause I give up on editing
+
+
+            int maxTiles = tileIDs.get(tileIDs.size-1).getInt("id");
+
+            tiles = new JsonValue[maxTiles+1];
 
             int caravanID = 0;
             int playerID = 0;
             int altCaravanID = 0;
             for(int i = 0; i < tileIDs.size; i++){
-                tiles[i] = tileIDs.get(i);
-                String type = tiles[i].get("properties").get(0).getString("name");
+                int id = tileIDs.get(i).getInt("id");
+                tiles[id] = tileIDs.get(i);
+                String type = tiles[id].get("properties").get(0).getString("name");
                 if(type.equals("Player")){
-                    playerID = i;
+                    playerID = id;
                 }else if(type.equals("Caravan")){
                     if(caravanID == 0){
-                        caravanID = i;
+                        caravanID = id;
                     }else {
-                        altCaravanID = i;
+                        altCaravanID = id;
                     }
 
                 }
@@ -462,9 +468,9 @@ public class JSONLevelReader {
             createSurvivor(x, y, id, scale);
         } else if (type.equals("FloatingEnemy") || type.equals("ScoutEnemy") || type.equals("ShriekerEnemy") || type.equals("ChaserEnemy")) {//Remember to ask kenny to do enemy types (I'm sorry) - V
             createEnemy(x, y, type, scale);
-        } else if (type.equals("Floor")) {
+        } else if (type.equals("Floor") || type.equals("Tutorial")) {
             createFloor(x, y, id, scale);
-        }else if(type.equals("Obstacle") || type.equals("Door")) {//IDK how doors are going to be implemented, so Imma hold off on this for now -V
+        }else if(type.equals("Obstacle") || type.equals("Door") || type.equals("Fence")) {//IDK how doors are going to be implemented, so Imma hold off on this for now -V
             createObstacle(x, y, id, scale, type.equals("Door"));
         }else if(type.equals("Smog")){
             createSmog(x, y, id, scale);
@@ -685,11 +691,7 @@ public class JSONLevelReader {
     }
 
     public void createSmog(int x, int y, int id, float scale) {
-        try{
-            smogTiles[(int)x+1][(int)y+1] = true;
-        }catch (Exception e){
-            System.out.println("Smog id: " + id);
-        }
+        smogTiles[(int)x+1][(int)y+1] = true;
 
 //        System.out.println("Smog id: " + id);
     }
