@@ -126,7 +126,7 @@ public class LevelSelectMode2 implements Screen, InputProcessor, ControllerListe
             this.texture = texture;
             startX = x;
             this.y = y;
-            this.x = -150;
+            this.x = x;
             goalX = 0;
             isMoving = false;
             currLevel = unlocked;
