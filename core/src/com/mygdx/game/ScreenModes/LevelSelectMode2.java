@@ -129,9 +129,9 @@ public class LevelSelectMode2 implements Screen, InputProcessor, ControllerListe
             this.x = x;
             goalX = 0;
             isMoving = false;
-            currLevel = unlocked;
+            currLevel = 6;
             movingRight = true;
-            loadingIn = true;
+            loadingIn = false;
 
             animator = new FilmStrip(texture, 1, NUM_ANIM_FRAMES);
             aframe = 0;
@@ -141,11 +141,11 @@ public class LevelSelectMode2 implements Screen, InputProcessor, ControllerListe
         }
 
         private void update(int currLevel){
-            if (loadingIn){
-                loadingIn = false;
-                isMoving = true;
-                goalX = startX;
-            }
+//            if (loadingIn){
+//                loadingIn = false;
+//                isMoving = true;
+//                goalX = startX;
+//            }
             if (this.currLevel != currLevel){
                 isMoving = true;
                 if (currLevel > this.currLevel){
@@ -155,7 +155,7 @@ public class LevelSelectMode2 implements Screen, InputProcessor, ControllerListe
                     movingRight = false;
                 }
                 this.currLevel = currLevel;
-                goalX = startX + currLevel*220;
+                goalX = startX + (currLevel-6)*220;
             }
             if (isMoving){
                 if (movingRight){
@@ -789,14 +789,18 @@ public class LevelSelectMode2 implements Screen, InputProcessor, ControllerListe
                     titleMusic.setLooping(false);
                     isReady = true;
                 }
-                menuCaravan.update(currLevel);
+//                menuCaravan.update(currLevel);
             }
+            menuCaravan.update(currLevel);
 
 
-            menuWall.update(unlocked);
-            if (buttonState != EXIT_MAIN && buttonState != EXIT_PHASE1){
-                buttonState = menuCaravan.getCurrLevel();
+//            menuWall.update(unlocked);
+//            if (buttonState != EXIT_MAIN && buttonState != EXIT_PHASE1){
+//                buttonState = menuCaravan.getCurrLevel();
             }
+        menuWall.update(unlocked);
+        if (buttonState != EXIT_MAIN && buttonState != EXIT_PHASE1){
+            buttonState = menuCaravan.getCurrLevel();
         }
     }
 
