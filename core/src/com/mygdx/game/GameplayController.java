@@ -451,6 +451,10 @@ public class GameplayController implements Screen {
 
 	private Sound itemSound;
 
+	private Sound survivorRescue;
+
+	private Sound victory;
+
 	/**
 	 * Creates a new game world
 	 *
@@ -742,6 +746,8 @@ public class GameplayController implements Screen {
 		death = directory.getEntry("sounds:shriekerattack", Sound.class);
 		titleMusic = directory.getEntry("titlemusic", Music.class);
 		itemSound = directory.getEntry("sounds:item", Sound.class);
+		survivorRescue = directory.getEntry("sounds:survivorrescue", Sound.class);
+		victory = directory.getEntry("sounds:victory", Sound.class);
 	}
 
 	/**
@@ -1540,6 +1546,12 @@ public class GameplayController implements Screen {
 					//survivorArr.removeIndex(i);
 					numRescued++;
 					caravan.incrCap();
+					if (caravan.getCurrentCapacity() == caravan.getMaxCapacity()) {
+						victory.play();
+					}
+					else {
+						survivorRescue.play();
+					}
 					caravan.setInteractable(false);
 				}
 
