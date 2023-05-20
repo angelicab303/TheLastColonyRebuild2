@@ -430,6 +430,7 @@ public class MainMenuMode implements Screen, InputProcessor, ControllerListener 
                 if (buttons.get(1).isChecked()) {
                     buttons.get(1).setChecked(false);
                     buttonState = 2;
+                    select.play();
                     System.out.println("Settings buttons pressed");
                 }
             };

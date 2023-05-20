@@ -4,6 +4,8 @@ import assets.AssetDirectory;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.ControllerListener;
 import com.badlogic.gdx.controllers.ControllerMapping;
@@ -205,6 +207,10 @@ public class SettingsMenuMode implements Screen, InputProcessor, ControllerListe
     public final int EXIT_MAIN_MENU = 1;
     public final int EXIT_GAME = 2;
 
+    private Sound backSound;
+
+    private Music titleMusic;
+
 
     /**
      * Returns the asset directory produced by this loading screen
@@ -287,9 +293,16 @@ public class SettingsMenuMode implements Screen, InputProcessor, ControllerListe
         cloud2 = directory.getEntry("settings:cloud2", Texture.class);
         cloud3 = directory.getEntry("settings:cloud3", Texture.class);
         nullFont = directory.getEntry("shared:retro" ,BitmapFont.class);
+        backSound = directory.getEntry("sounds:back", Sound.class);
+        titleMusic = directory.getEntry("titlemusic", Music.class);
     }
     /** Populates the menu with clouds */
     public void populateMenu(){
+        if (!titleMusic.isPlaying())
+        {
+            titleMusic.play();
+            titleMusic.setLooping(true);
+        }
         System.out.println("Settings Menu populated");
         // Initialize the clouds to be drawn on screen
         // Order: [large, med, med, small, small]
@@ -385,10 +398,14 @@ public class SettingsMenuMode implements Screen, InputProcessor, ControllerListe
                 if (buttons.get(0).isChecked()) {
                     buttons.get(0).setChecked(false);
                     if (fromGame){
+                        backSound.play();
+                        titleMusic.stop();
+                        titleMusic.setLooping(false);
                         buttonState = 2;
                         setFromGame(false);
                     }
                     else{
+                        backSound.play();
                         buttonState = 1;
                     }
                     System.out.println("Back buttons pressed");
