@@ -6,9 +6,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.*;
 import com.mygdx.game.EnemyControllers.*;
@@ -216,6 +214,7 @@ public class JSONLevelReader {
             // Send the fileReader to a new JsonReader object
             // JsonReader tilesJSONReader = new JsonReader();
             // JsonValue tilesJSON = tilesJSONReader.parse(tilesReader);
+            System.out.println(levelStr.get("tilesets").get(0).getString("source"));
             JsonValue tilesJSON = directory.getEntry(levelStr.get("tilesets").get(0).getString("source"), JsonValue.class);
 
             tileIDs = tilesJSON.get("tiles");
@@ -388,7 +387,7 @@ public class JSONLevelReader {
             for (int i = -4; i < levelBounds.x + 8; i++) {
                 for (int j = -4; j < levelBounds.y + 8; j++) {
                     if (i < 0 || i >= levelBounds.x || j <= 0 || j >= levelBounds.y) {
-                        createObstacle(i, j, smogBorderTexture, scale, false);
+                        createObstacle(i, j, smogBorderTexture, scale, false, false, 0);
                     }
                 }
             }
@@ -469,6 +468,10 @@ public class JSONLevelReader {
             return;
         }
         String type = tiles[id].get("properties").get(0).getString("name");
+        String fenceType = tiles[id].get("properties").get(0).getString("value");
+        System.out.println(type);
+        System.out.println(fenceType);
+        System.out.println("--------");
         if(type.equals("Caravan")){
             createCaravan(x, y, scale);
         }else if(type.equals("Player")){
@@ -479,8 +482,8 @@ public class JSONLevelReader {
             createEnemy(x, y, type, scale);
         } else if (type.equals("Floor") || type.equals("Tutorial")) {
             createFloor(x, y, id, scale);
-        }else if(type.equals("Obstacle") || type.equals("Door") || type.equals("Fence")) {//IDK how doors are going to be implemented, so Imma hold off on this for now -V
-            createObstacle(x, y, id, scale, type.equals("Door"));
+        }else if(type.equals("Obstacle") || type.equals("Door") || type.equals("Fence") || type.equals("Tree")) {//IDK how doors are going to be implemented, so Imma hold off on this for now -V
+            createObstacle(x, y, id, scale, type.equals("Door"), type.equals("Tree"), type.equals("Fence"), fenceType);
         }else if(type.equals("Smog")){
             createSmog(x, y, id, scale);
         }else if(type.equals("Mushroom")){
@@ -671,12 +674,12 @@ public class JSONLevelReader {
     }
 
 
-    public void createObstacle(float x, float y, int id, float scale, boolean isDoor) {
+    public void createObstacle(float x, float y, int id, float scale, boolean isDoor, boolean isTree, boolean isFence, String fenceId) {
         if(isDoor){
             System.out.println("Creating door");
         }
 
-        obstacleTemp = new Obstacles(x * tileSize  , y * tileSize, getTextureRegionKey(id), scale, isDoor);
+        obstacleTemp = new Obstacles(x * tileSize  , y * tileSize, getTextureRegionKey(id), scale, isDoor, isTree, isFence, fenceId);
         obstacleArr.add(obstacleTemp);
         if(x >= 0 && y >= 0 && x < width && y < height){
             tileGrid[(int)x ][(int)y] = true;
@@ -694,9 +697,9 @@ public class JSONLevelReader {
         addObject(obstacleTemp);
     }
 
-    public void createObstacle(float x, float y, TextureRegion textureRegion, float scale, boolean isDoor) {
+    public void createObstacle(float x, float y, TextureRegion textureRegion, float scale, boolean isDoor, boolean isFence, int fenceId) {
 //        System.out.println("Creating obstacle (tree / fence)");
-        obstacleTemp = new Obstacles(x * tileSize  , y * tileSize, textureRegion, scale, isDoor);
+        obstacleTemp = new Obstacles(x * tileSize  , y * tileSize, textureRegion, scale, false, false, false, "");
         obstacleArr.add(obstacleTemp);
         if(x >= 0 && y >= 0 && x < width && y < height){
             tileGrid[(int)x ][(int)y] = true;

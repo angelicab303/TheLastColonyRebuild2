@@ -1535,14 +1535,14 @@ public class GameplayController implements Screen {
 				if (survivorArr.get(i).isRescued()) {
 					player.removeFromFollowing(survivorArr.get(i));
 					survivorArr.get(i).deactivatePhysics(world);
-						//survivorArr.removeIndex(i);
+					//survivorArr.removeIndex(i);
 					numRescued++;
 					caravan.incrCap();
 					caravan.setInteractable(false);
 				}
+
 			}
 		}
-
 		// Check through the items just like the survivors to see if we need to show "E to collect"
 		for (int i = 0; i < itemArr.size; i++) {
 			if (itemArr.get(i).isInteractable() && input.didPickUpItem()) {
@@ -1590,17 +1590,17 @@ public class GameplayController implements Screen {
 			caravan.setInteractable(false);
 		}
 //		if (caravan.isInteractable() && input.didDropSurvivors()) {
-			if (caravan.getCurrentCapacity() == caravan.getMaxCapacity()) {
-				setComplete(true);
-				if (prefs.getInteger("unlocked", 1) <= curLevel) {
-					prefs.putInteger("unlocked", curLevel + 1);
-				}
-				if (!prefs.getBoolean("level" + curLevel + "complete", false)) {
-					prefs.putInteger("survivors", prefs.getInteger("survivors", 0) + survivorArr.size);
-				}
-				prefs.putBoolean("level" + curLevel + "complete", true);
-				prefs.flush();
+		if (caravan.getCurrentCapacity() == caravan.getMaxCapacity()) {
+			setComplete(true);
+			if (prefs.getInteger("unlocked", 1) <= curLevel) {
+				prefs.putInteger("unlocked", curLevel + 1);
 			}
+			if (!prefs.getBoolean("level" + curLevel + "complete", false)) {
+				prefs.putInteger("survivors", prefs.getInteger("survivors", 0) + survivorArr.size);
+			}
+			prefs.putBoolean("level" + curLevel + "complete", true);
+			prefs.flush();
+		}
 //			for (int i = 0; i < survivorArr.size; i++) {
 //				if (survivorArr.get(i).isFollowing()) {
 //					survivorArr.get(i).rescue();

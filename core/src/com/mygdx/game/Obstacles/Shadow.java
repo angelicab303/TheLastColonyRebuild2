@@ -36,15 +36,24 @@ public class Shadow extends SimpleObstacle{
 
     private Vector2 temp;
 
+    private boolean isTree;
+    private boolean isFence;
+
+    private String fenceType;
+
     public enum ShadowShape{
         SQUARE,
         CIRCLE
     }
 
-    public Shadow(float x, float y, float width, float height, ShadowShape shape) {
+    public Shadow(float x, float y, float width, float height, ShadowShape shape, boolean isTree, boolean isFence, String fenceId) {
         super(x,y);
-        position = new Vector2(x,y);
+        this.isTree = isTree;
+        this.isFence = isFence;
+        this.fenceType = fenceId;
+        position = new Vector2(x, y);
         dimension = new Vector2(width, height);
+
         origin = new Vector2(0,(size-height)/2);
         geometry = null;
         this.shadowShape = shape;
@@ -136,6 +145,16 @@ public class Shadow extends SimpleObstacle{
 
     public float getYCoord(){
         float offset = size - dimension.y;
+        if (isTree) {
+            offset = -0.5f * dimension.y;
+        }
+        else if (isFence) {
+            switch (fenceType) {
+                case "horFull":
+                    offset = size - dimension.y;
+                    break;
+            }
+        }
         return super.getY()+offset;
 
     }
@@ -161,6 +180,78 @@ public class Shadow extends SimpleObstacle{
 
         //dimension.y is width
         float offset = size - dimension.y;
+        if (isTree) {
+            offset = -0.5f * dimension.y;
+        }
+        else if (isFence) {
+            switch (fenceType) {
+                case "horFull":
+                    vertices[0] = -0.5f * dimension.x;
+                    vertices[1] = -0.5f * dimension.y;
+                    vertices[2] = 0.5f * dimension.x;
+                    vertices[3] = -0.5f * dimension.y;
+                    vertices[4] = -0.5f * dimension.x;
+                    vertices[5] = -0.49f * dimension.y;
+                    vertices[6] = 0.5f * dimension.x;
+                    vertices[7] = -0.49f * dimension.y;
+                    break;
+                case "horHalfRight":
+                    vertices[0] = -0.1f * dimension.x;
+                    vertices[1] = -0.5f * dimension.y;
+                    vertices[2] = 0.5f * dimension.x;
+                    vertices[3] = -0.5f * dimension.y;
+                    vertices[4] = -0.1f * dimension.x;
+                    vertices[5] = -0.49f * dimension.y;
+                    vertices[6] = 0.5f * dimension.x;
+                    vertices[7] = -0.49f * dimension.y;
+                    break;
+                case "cornerRightBottom":
+                    vertices[0] = -0.1f * dimension.x;
+                    vertices[1] = -0.75f * dimension.y;
+                    vertices[2] = 0.5f * dimension.x;
+                    vertices[3] = -0.5f * dimension.y;
+                    vertices[4] = -0.1f * dimension.x;
+                    vertices[5] = -0.49f * dimension.y;
+                    vertices[6] = 0.5f * dimension.x;
+                    vertices[7] = -0.49f * dimension.y;
+                    break;
+                case "vertHalf":
+                    vertices[0] = -0.1f * dimension.x;
+                    vertices[1] = -0.5f * dimension.y;
+                    vertices[2] = 0.01f * dimension.x;
+                    vertices[3] = -0.5f * dimension.y;
+                    vertices[4] = -0.1f * dimension.x;
+                    vertices[5] = 0.5f * dimension.y;
+                    vertices[6] = 0.01f * dimension.x;
+                    vertices[7] = 0.5f * dimension.y;
+                    break;
+                case "single":
+                    vertices[0] = -0.1f * dimension.x;
+                    vertices[1] = -0.5f * dimension.y;
+                    vertices[2] = 0.01f * dimension.x;
+                    vertices[3] = -0.5f * dimension.y;
+                    vertices[4] = -0.1f * dimension.x;
+                    vertices[5] = -0.49f * dimension.y;
+                    vertices[6] = 0.01f * dimension.x;
+                    vertices[7] = -0.49f * dimension.y;
+                    break;
+                case "horHalfLeft":
+                    vertices[0] = -0.5f * dimension.x;
+                    vertices[1] = -0.5f * dimension.y;
+                    vertices[2] = 0.1f * dimension.x;
+                    vertices[3] = -0.5f * dimension.y;
+                    vertices[4] = -0.5f * dimension.x;
+                    vertices[5] = -0.49f * dimension.y;
+                    vertices[6] = 0.1f * dimension.x;
+                    vertices[7] = -0.49f * dimension.y;
+                    break;
+                default:
+                    break;
+            }
+        }
+        if (isTree) {
+            circleShape.setRadius(4f);
+        }
         temp.set(0,offset);
 
 
@@ -169,10 +260,10 @@ public class Shadow extends SimpleObstacle{
             fixture.shape = circleShape;
         }
         else {
-            transform(offset);
+            //transform(offset);
+            boxShape.set(vertices);
             shape = boxShape;
             fixture.shape = shape;
-
         }
 
 
@@ -219,7 +310,7 @@ public class Shadow extends SimpleObstacle{
     public void drawDebug(GameCanvas canvas) {
 
         if(shadowShape.equals(ShadowShape.CIRCLE)){
-            canvas.drawPhysics(circleShape, Color.YELLOW,getXCoord(),getYCoord(),drawScale.x,drawScale.y);
+            canvas.drawPhysics(circleShape, Color.YELLOW, getXCoord(),getYCoord(),drawScale.x,drawScale.y);
         }
         else if(shadowShape.equals(ShadowShape.SQUARE)){
             canvas.drawPhysics(boxShape,Color.YELLOW,getXCoord(),getYCoord(),getAngle(),drawScale.x,drawScale.y);
