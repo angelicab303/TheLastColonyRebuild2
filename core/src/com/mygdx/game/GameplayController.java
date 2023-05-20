@@ -1186,11 +1186,6 @@ public class GameplayController implements Screen {
 			listener.exitScreen(this, PauseMenuMode.EXIT_MAINMENU);
 		}
 
-		if (input.didPause() || (pauseMenu.getButtonState() == PauseMenuMode.EXIT_GAME && paused)) {
-			pauseMenu.resetButtonState();
-			pauseMenu.reset();
-		}
-
 		if (!player.isAlive()) {
 			if (!isDead) {
 				isDead = true;
@@ -1200,7 +1195,9 @@ public class GameplayController implements Screen {
 			lowHealth.setLooping(lowHealthId, false);
 		}
 
-		if (input.didPause()) {
+		if (input.didPause() || (pauseMenu.getButtonState() == PauseMenuMode.EXIT_GAME && paused)) {
+			pauseMenu.resetButtonState();
+			pauseMenu.reset();
 
 			if (!paused && !unpausing) {
 				paused = true;
