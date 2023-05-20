@@ -655,12 +655,15 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
         if (!populated){
             populated = true;
             menuCaravan = new MenuCaravan(caravan, tables.get(1).getX()+buttons.get(0).getX()-25, tables.get(1).getHeight()+buttons.get(0).getY()+40);
-            int wallLevel = 1;
-            if (unlocked == 4) {
+            int wallLevel = 0;
+            if (unlocked >= 6){
+                wallLevel = 3;
+            }
+            else if (unlocked == 5) {
                 wallLevel = 2;
             }
-            if (unlocked == 5){
-                wallLevel = 3;
+            else if (unlocked == 4){
+                wallLevel = 1;
             }
             menuWall = new SmogWall(smogWall, tables.get(1).getX()+buttons.get(0).getX()+330 + (220*wallLevel), tables.get(1).getHeight()+buttons.get(0).getY()+450);
 

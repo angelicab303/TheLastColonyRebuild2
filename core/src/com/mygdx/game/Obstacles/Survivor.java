@@ -717,7 +717,7 @@ public class Survivor extends Shadow implements GameObstacle {
         if (isFollowing){
             float spacing = 0.0f;
             for (int i = 0; i < lives; i++){
-                canvas.draw(textureHeart, Color.PURPLE, 0.0f, 0.0f, (getX() * drawScale.x - 20) + spacing, getY() * drawScale.y - currentAnimator.getRegionHeight()*scale/2 + 5, 0, 0.08f, 0.08f);
+                canvas.draw(textureHeart, Color.PURPLE, 0.0f, 0.0f, (getX() * drawScale.x - 20) + spacing, getY() * drawScale.y + currentAnimator.getRegionHeight()*scale/2 - 2, 0, 0.1f, 0.1f);
                 spacing += 8.0f;
             }
             Color color = (ticks % 20 == 0? Color.CLEAR : Color.WHITE);
