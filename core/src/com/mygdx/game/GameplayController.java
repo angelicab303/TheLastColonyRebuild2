@@ -790,7 +790,7 @@ public class GameplayController implements Screen {
 
 		FilmStrip shriekIdle = directory.getEntry("images:shriekerIdle.fire", FilmStrip.class );
 		FilmStrip shriekShriek = directory.getEntry("images:shriekerShriek.fire", FilmStrip.class );
-		System.out.println("Two assets loaded");
+//		System.out.println("Two assets loaded");
 		FilmStrip shriekTransform = directory.getEntry("images:shriekerTransform.fire", FilmStrip.class );
 		enemyStrips[0] = new FilmStrip[] {shriekIdle, shriekShriek, shriekTransform};
 
@@ -817,7 +817,7 @@ public class GameplayController implements Screen {
 
 		FilmStrip shriekIdle = directory.getEntry("images:shriekerIdle.fire", FilmStrip.class );
 		FilmStrip shriekShriek = directory.getEntry("images:shriekerShriek.fire", FilmStrip.class );
-		System.out.println("Two assets loaded");
+//		System.out.println("Two assets loaded");
 		FilmStrip shriekTransform = directory.getEntry("images:shriekerTransform.fire", FilmStrip.class );
 		FilmStrip[][] shriekerStrips = new FilmStrip[][] {{shriekIdle, shriekShriek, shriekTransform}};
 
