@@ -429,7 +429,7 @@ public class LevelSelectMode2 implements Screen, InputProcessor, ControllerListe
         Gdx.input.setInputProcessor( this );
         stage = new Stage();
         buttonState = 0;
-        currLevel = unlocked;
+        currLevel = 6;
         phase = 0;
         caravanSpawn = false;
     }
@@ -767,7 +767,7 @@ public class LevelSelectMode2 implements Screen, InputProcessor, ControllerListe
     private void update(float delta) {
         input.readInput();
 
-        currLevel = unlocked;
+        //currLevel = unlocked;
         if (currLevel >= 6){
             System.out.println("Level is 6 or greater");
             caravanSpawn = true;
