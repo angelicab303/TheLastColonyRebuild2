@@ -428,7 +428,7 @@ public class VictoryMode implements Screen, InputProcessor, ControllerListener {
 
         // Draw buttons/title
         for (VictoryMode.Text t: text) {
-            System.out.println("text array size: " + text.size);
+            //System.out.println("text array size: " + text.size);
             t.draw(canvas);
         }
 

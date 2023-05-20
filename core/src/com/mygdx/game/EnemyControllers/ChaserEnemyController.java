@@ -117,7 +117,6 @@ public class ChaserEnemyController extends com.mygdx.game.EnemyControllers.Enemy
                 activeShrieker = shrieker;
             }
         }
-        System.out.println(state);
         switch (state) {
             case SPAWN:
                 if (enemy.isStunned())

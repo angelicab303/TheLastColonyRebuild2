@@ -477,6 +477,18 @@ public class MainMenuMode implements Screen, InputProcessor, ControllerListener 
                 }
             };
         } );
+        // Exit button
+        buttons.get(3).addListener( new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                if (buttons.get(3).isChecked()) {
+                    buttons.get(3).setChecked(false);
+                    buttonState = EXIT_QUIT;
+                    System.out.println("Exit buttons pressed");
+                    Gdx.app.exit();
+                }
+            };
+        } );
 
         populated = true;
 

@@ -69,22 +69,22 @@ public class ShriekerEnemyController extends EnemyController{
 
         switch(state) {
             case SPAWN:
-                System.out.println("Shrieker spawn");
+                //System.out.println("Shrieker spawn");
                 state = ShriekerEnemyController.FSMState.IDLE;
                 break;
             case IDLE:
-                System.out.println("Shrieker idle");
+                //System.out.println("Shrieker idle");
                 boolean playerNear = false;
                 Vector2 playerLoc = new Vector2(target.x, target.y);
                 Vector2 shriekerLoc = new Vector2(this.enemy.getX(), this.enemy.getY());
-                System.out.println("Shrieker location and player: " + shriekerLoc.dst(playerLoc));
-                System.out.println("Shrieker revealed: " + enemy.isRevealed());
-                System.out.println("Shrieker can wake " + enemy.canWake());
+                //System.out.println("Shrieker location and player: " + shriekerLoc.dst(playerLoc));
+                //System.out.println("Shrieker revealed: " + enemy.isRevealed());
+                //System.out.println("Shrieker can wake " + enemy.canWake());
 
                 if (shriekerLoc.dst(playerLoc) <= WAKE_DISTANCE){
                     playerNear = true;
                 }
-                System.out.println("player near: " + playerNear);
+                //System.out.println("player near: " + playerNear);
                 if (enemy.isStunned())
                 {
                     state = ShriekerEnemyController.FSMState.STUNNED;
@@ -96,7 +96,7 @@ public class ShriekerEnemyController extends EnemyController{
                 }
                 break;
             case WAKE:
-                System.out.println("Shrieker wake");
+                //System.out.println("Shrieker wake");
                 boolean playerFar = false;
                 playerLoc = new Vector2(target.x, target.y);
                 shriekerLoc = new Vector2(enemy.getX(), enemy.getY());
@@ -121,7 +121,7 @@ public class ShriekerEnemyController extends EnemyController{
                 }
                 break;
             case SHRIEK:
-                System.out.println("Shrieker shriek");
+                //System.out.println("Shrieker shriek");
                 if (enemy.isStunned())
                 {
                     state = ShriekerEnemyController.FSMState.STUNNED;
@@ -134,7 +134,7 @@ public class ShriekerEnemyController extends EnemyController{
                 }
                 break;
             case STUNNED:
-                System.out.println("Shrieker stun");
+                //System.out.println("Shrieker stun");
                 if (!enemy.isStunned())
                 {
                     state = ShriekerEnemyController.FSMState.IDLE;

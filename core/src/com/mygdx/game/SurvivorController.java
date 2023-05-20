@@ -95,10 +95,10 @@ public class SurvivorController {
             for (int j = 0; j < tiles[0].length; j++) {
                 tiles[i][j] = new Tile(i, j, ((board[i][j])));
 
-                if (board[i][j])
-                {
-                    System.out.println(i + " " + j);
-                }
+//                if (board[i][j])
+//                {
+//                    System.out.println(i + " " + j);
+//                }
 //                tiles[i][j] = new Tile(i, j, (board[i][j] ||
 //                        smogBoard[i * 2][(j * 2)] ||
 //                        smogBoard[i * 2][(j * 2) + 1] ||
@@ -259,7 +259,7 @@ public class SurvivorController {
                 goalLoc = setGoal(nextTile);
             }
             
-            System.out.println(nextTile.isBlocked());
+            //System.out.println(nextTile.isBlocked());
 
             int action = 0;
             if (nextTile.getX() == startTile.getX() + 1 && nextTile.getY() == startTile.getY() + 1) {
