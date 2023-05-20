@@ -142,6 +142,7 @@ public class ChaserEnemyController extends com.mygdx.game.EnemyControllers.Enemy
                     if (enemyLoc.dst(shriekerLoc) <= ALERT_DISTANCE){
                         state = FSMState.WAKE;
                         enemy.setWaking(true);
+                        enemy.setHasAwoken(true);
                         target = new Vector2 (player.getX(), player.getY());
                     }
                 }

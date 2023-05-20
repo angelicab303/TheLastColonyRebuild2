@@ -1261,17 +1261,17 @@ public class GameplayController implements Screen {
 			listener.exitScreen(this, buttonState);
 		}
 
-		if (!player.isAlive()) {
-			if (!isDead) {
-				isDead = true;
-				death.play(prefs.getFloat("soundvolume", 100)/100);
-			}
-			lowHealth.stop(lowHealthId);
-			lowHealth.setLooping(lowHealthId, false);
-		}
-		else {
-			isDead = false;
-		}
+//		if (!player.isAlive()) {
+//			if (!isDead) {
+//				isDead = true;
+//				death.play(prefs.getFloat("soundvolume", 100)/100);
+//			}
+//			lowHealth.stop(lowHealthId);
+//			lowHealth.setLooping(lowHealthId, false);
+//		}
+//		else {
+//			isDead = false;
+//		}
 
 		if (input.didPause() || (pauseMenu.getButtonState() == PauseMenuMode.EXIT_GAME && paused)) {
 			pauseMenu.resetButtonState();
@@ -1910,6 +1910,11 @@ public class GameplayController implements Screen {
 	public void setFailure(boolean value) {
 		if (value) {
 			countdown = EXIT_COUNT;
+		}
+		if (!failed && value) {
+			death.play(prefs.getFloat("soundvolume", 100)/100);
+			lowHealth.stop(lowHealthId);
+			lowHealth.setLooping(lowHealthId, false);
 		}
 		failed = value;
 	}
