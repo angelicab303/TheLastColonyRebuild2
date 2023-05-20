@@ -293,7 +293,7 @@ public class SettingsMenuMode implements Screen, InputProcessor, ControllerListe
         System.out.println("Settings Menu populated");
         // Initialize the clouds to be drawn on screen
         // Order: [large, med, med, small, small]
-        float startX = RIGHT_SPACING + 10;
+        float startX = RIGHT_SPACING + 30;
         float startY = canvas.getHeight()*.05f;
         if (!populated){
 //            clouds.add(new MainMenuMode.Cloud(largeCloud, canvas.getWidth()*0.95f, canvas.getHeight()*0.32f, 0.05f, 50.0f, 0.9f));
@@ -320,11 +320,17 @@ public class SettingsMenuMode implements Screen, InputProcessor, ControllerListe
 
         // playSkin.addRegions(new TextureAtlas(play));
 
+        float table1X = RIGHT_SPACING + 200;
+        float table1Y = canvas.getHeight()*.12f;
         //table.setFillParent(true);
-        table.setPosition(startX, startY);
-        table.setWidth(600.0f);
-        table.setHeight(400.0f);
-        table.setDebug(false);
+        Table table1 = new Table();
+        tables.add(table1);
+        table1.setPosition(table1X, table1Y);
+        table1.setWidth(600.0f);
+        table1.setHeight(400.0f);
+        table1.setDebug(false);
+
+
 
         Gdx.input.setInputProcessor(stage);
         buttons = new Array<TextButton>();
@@ -338,6 +344,12 @@ public class SettingsMenuMode implements Screen, InputProcessor, ControllerListe
         textButtonStyle.checked = new TextureRegionDrawable(back);
         buttons.add(new TextButton("", textButtonStyle));
         backTable.add(buttons.get(0)).left().size(back.getWidth()*textScale, back.getHeight()*textScale);
+
+        // table 1
+        addButton(table1, music, music, 1);
+        addButton(table1, soundEffects, soundEffects, 2);
+        addButton(table1, keyBindings, keyBindings, 3);
+
 //        table.row();
 //        // Settings button
 //        textButtonStyle = new TextButton.TextButtonStyle();
@@ -358,8 +370,8 @@ public class SettingsMenuMode implements Screen, InputProcessor, ControllerListe
 //        table.add(buttons.get(2)).spaceBottom(40.0f).left().size(exit.getWidth()*textScale, exit.getHeight()*textScale);
 
 
-        table.left().top();
-        stage.addActor(table);
+        table1.left().top();
+        stage.addActor(table1);
         backTable.left().top();
         stage.addActor(backTable);
 
@@ -388,6 +400,23 @@ public class SettingsMenuMode implements Screen, InputProcessor, ControllerListe
 
 
 
+    }
+    /**
+     * Adds a button to a table.
+     * @param table table used to hold all pause buttons
+     * @param up the up texture for the button
+     * @param down the down texture for the button
+     * @param num the number of the button in table order
+     */
+    private void addButton(Table table, Texture up, Texture down, int num){
+        TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
+        textButtonStyle.font = nullFont;
+        textButtonStyle.up   = new TextureRegionDrawable(up);
+        textButtonStyle.checked = new TextureRegionDrawable(up);
+        textButtonStyle.down = new TextureRegionDrawable(down);
+        buttons.add(new TextButton("", textButtonStyle));
+        table.add(buttons.get(num)).spaceBottom(50f).left().size(up.getWidth()*textScale, up.getHeight()*textScale);
+        table.row();
     }
 
     /**
