@@ -884,7 +884,8 @@
     "Level8": "levels/NEWLevel_7.tmj",
     "Level9": "levels/NEWLevel_8.tmj",
     "Level10": "levels/NEWLevel_9.tmj",
-    "Level13": "levels/Level_13.tmj"
+    "Level11": "levels/NEWLevel_10.tmj",
+    "Level12": "levels/NEWLevel_11.tmj"
   },
   "sounds": {
     "rocket:bump": "rocket/bump.mp3",

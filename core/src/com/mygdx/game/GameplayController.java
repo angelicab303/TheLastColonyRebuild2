@@ -337,9 +337,9 @@ public class GameplayController implements Screen {
 	public static final int WORLD_POSIT = 2;
 
 	/** Width of the game world in Box2d units */
-	protected static final float DEFAULT_WIDTH = 3.0f*32.0f;
+	protected static final float DEFAULT_WIDTH = 4.0f*32.0f;
 	/** Height of the game world in Box2d units */
-	protected static final float DEFAULT_HEIGHT = 3.0f*18.0f;
+	protected static final float DEFAULT_HEIGHT = 4.0f*18.0f;
 	/** The default value of gravity (going down) */
 	// WHO THE FRICK FORGOT TO TURN OFF GRAVITY YOU HAD ONE JOB
 	protected static final float DEFAULT_GRAVITY = 0;
@@ -506,6 +506,7 @@ public class GameplayController implements Screen {
 	 */
 	public GameplayController(GameCanvas canvas, PauseMenuMode pauseMenu, LevelSelectMode levelSelect) {
 		this(new Rectangle(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT), new Vector2(0, DEFAULT_GRAVITY), pauseMenu, levelSelect);
+		//canvas.setSize((int)DEFAULT_WIDTH,(int)DEFAULT_HEIGHT);
 		setComplete(false);
 		setFailure(false);
 		// world.setContactListener(this);
@@ -979,8 +980,8 @@ public class GameplayController implements Screen {
 		int border = 2; // # of tiles the border is
 		// Arrays used to find tiles to place smog at
 		tileGrid = new boolean[canvas.getWidth() / tileSize][canvas.getHeight() / tileSize];
-		boolean[][] smogTiles = new boolean[canvas.getWidth() / tileSize+border][canvas.getHeight() / tileSize+border];
-		boolean[][] smogLocations = new boolean[canvas.getWidth() / smogTileSize+2*border][canvas.getHeight() / smogTileSize+2*border];
+		boolean[][] smogTiles = new boolean[(int)DEFAULT_WIDTH+border][(int)DEFAULT_HEIGHT+border];
+		boolean[][] smogLocations = new boolean[(int)DEFAULT_WIDTH+2*border][(int)DEFAULT_WIDTH+2*border];
 		smogGrid = new boolean[canvas.getWidth() * smogTileSize][canvas.getHeight() * smogTileSize];
 
 
