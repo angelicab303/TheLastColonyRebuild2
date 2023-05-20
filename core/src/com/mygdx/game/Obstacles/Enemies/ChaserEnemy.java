@@ -7,9 +7,10 @@ public class ChaserEnemy extends Enemy {
     /** Time enemy must wait before attacking again */
     private final float ATTACK_COOLDOWN = 100;
 
-    public ChaserEnemy (float x, float y, FilmStrip[] animator, float scale, float tileSize)
+    public ChaserEnemy (float x, float y, FilmStrip[][] animator, float scale, float tileSize)
     {
         super(x, y, animator, scale, tileSize, false);
+        isWakable = true;
     }
 
     @Override

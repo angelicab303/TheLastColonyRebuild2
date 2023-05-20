@@ -36,6 +36,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -43,6 +44,9 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.game.GameCanvas;
 import util.ScreenListener;
+
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.alpha;
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeIn;
 
 
 /**
@@ -234,6 +238,8 @@ public class MainMenuMode implements Screen, InputProcessor, ControllerListener 
     /** the state of which button was pressed (0=none, 1=play, 2=levels, 3=settings, 4=exit) */
     private int buttonState;
     private boolean populated = false;
+    public final int EXIT_LEVEL_SELECT = 1;
+    public final int EXIT_SETTINGS = 2;
 
     private Sound select;
 
@@ -399,15 +405,32 @@ public class MainMenuMode implements Screen, InputProcessor, ControllerListener 
         table.left().top();
         stage.addActor(table);
 
+
+
+
+
+
         // Hook up the buttons
         // Play button
         buttons.get(0).addListener( new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 if (buttons.get(0).isChecked()) {
+                    buttons.get(0).setChecked(false);
                     buttonState = 1;
                     select.play();
                     System.out.println("Play buttons pressed");
+                }
+            };
+        } );
+        // Settings button
+        buttons.get(1).addListener( new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                if (buttons.get(1).isChecked()) {
+                    buttons.get(1).setChecked(false);
+                    buttonState = 2;
+                    System.out.println("Settings buttons pressed");
                 }
             };
         } );
@@ -455,6 +478,7 @@ public class MainMenuMode implements Screen, InputProcessor, ControllerListener 
      */
     private void update(float delta) {
         // Update cloud positions
+        stage.act();
         if (appearTime <= APPEAR_TIME)
         {
             appearTime+= 0.3;
@@ -536,8 +560,8 @@ public class MainMenuMode implements Screen, InputProcessor, ControllerListener 
             // We are are ready, notify our listener
             if (buttonState > 0 && listener != null) {
                 System.out.println(buttonState);
-                System.out.println("Go to level select screen");
-                listener.exitScreen(this, 0);
+                System.out.println("Exit main menu");
+                listener.exitScreen(this, buttonState);
             }
         }
     }

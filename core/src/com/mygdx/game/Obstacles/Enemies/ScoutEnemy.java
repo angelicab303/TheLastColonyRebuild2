@@ -20,7 +20,7 @@ public class ScoutEnemy extends Enemy{
         private float y;
         private int behind = 0;
 
-        private int NUM_ANIM_FRAMES = 2;
+        private int VINETILE_NUM_ANIM_FRAMES = 2;
 
         public enum Direction {
             /** The enemy is not moving */
@@ -41,10 +41,11 @@ public class ScoutEnemy extends Enemy{
         /** The textures for the enemy. */
 
         public Texture currentTexture;
+        protected FilmStrip[] digStrips;
         private Direction direction;
         private boolean finishedGrowing;
         private float scale;
-        private float aframe;
+        private float vaframe;
         protected FilmStrip currentAnimator;
 
         private static volatile Filter filter;
@@ -66,7 +67,7 @@ public class ScoutEnemy extends Enemy{
             filter.categoryBits = GameObstacle.CATEGORY_VINE;
             filter.maskBits = GameObstacle.MASK_VINE;
 
-            aframe = 0.0f;
+            vaframe = 0.0f;
         }
 
         public boolean activatePhysics(World world) {
@@ -89,8 +90,8 @@ public class ScoutEnemy extends Enemy{
 //        }
 
         public void draw(GameCanvas canvas, float currFrame, float tileSize) {
-            aframe = ((int)currFrame % 2 == 0 ? 0 : 1);
-            currentAnimator.setFrame((int)aframe);
+            vaframe = ((int)currFrame % 2 == 0 ? 0 : 1);
+            currentAnimator.setFrame((int)vaframe);
             canvas.draw(currentAnimator, Color.WHITE,body.getWorldCenter().x*drawScale.x, body.getWorldCenter().y*drawScale.y,
                     body.getWorldCenter().x + (getWidth() * drawScale.x),
                     body.getWorldCenter().y,
@@ -390,6 +391,13 @@ public class ScoutEnemy extends Enemy{
 //            vines.get(i).update();
 //        }
 //    }
+    // Variables for scout
+    /** The number of animation frames in our filmstrip */
+    private static final int   NUM_ANIM_FRAMES = 7;
+    private static final int   ATTACK_NUM_ANIM_FRAMES = 14;
+    /** How fast we change frames (one frame per 10 calls to update) */
+    protected static final float ANIMATION_SPEED = 0.20f;
+    protected static float WAKE_ANIMATION_SPEED = 0.20f;
 
     /**
      * Initialize a standard enemy
@@ -399,10 +407,11 @@ public class ScoutEnemy extends Enemy{
      * @param animator
      * @param scale
      */
-    public ScoutEnemy(float x, float y, FilmStrip[] animator, Texture[] vineTextures, float scale, float tileSize, World world) {
+    public ScoutEnemy(float x, float y, FilmStrip[][] animator, Texture[] vineTextures, float scale, float tileSize, World world) {
         super(x, y, animator, scale, tileSize, false);
         vines = new Array<>();
         this.world = world;
+        isWakable = false;
         vineTick = 0;
         isChasingSurvivor = false;
         vineTextureVertical = vineTextures[0];
@@ -467,6 +476,35 @@ public class ScoutEnemy extends Enemy{
     @Override
     public void update(int action)
     {
+        if (isAttacking){
+            System.out.println("Scout is attacking");
+            System.out.println("Aframes: " + aframe);
+            if (aframe >= ATTACK_NUM_ANIM_FRAMES) {
+                aframe = 6;
+            }
+            aframe += ANIMATION_SPEED;
+        }
+        else if (isStunned()){
+            if (stunTime <= 1){
+                aframe = 0;
+            }
+//            if (stunTime >= MAX_STUN_TIME-2){
+//                aframe = 0;
+//            }
+            aframe += ANIMATION_SPEED;
+            if (aframe >= NUM_ANIM_FRAMES) {
+                aframe -= NUM_ANIM_FRAMES;
+            }
+        }
+        else{
+            aframe += ANIMATION_SPEED;
+            if (aframe >= NUM_ANIM_FRAMES) {
+                aframe -= NUM_ANIM_FRAMES;
+            }
+        }
+
+
+        ////////////////////////////////////////////////////////////////////
         if(toStunTime >= MAX_TO_STUN_TIME){
             toStunTime = 0;
             this.setStunned(true);
@@ -511,6 +549,25 @@ public class ScoutEnemy extends Enemy{
 
     @Override
     public void draw(GameCanvas canvas) {
+        System.out.println("Scout frames: " + (int)aframe);
+        currentAnimator.setFrame((int)aframe);
+////        System.out.println((body.getWorldCenter().x*drawScale.x - currentAnimator.getRegionWidth()*scale/2) + ", " + (body.getWorldCenter().y*drawScale.y- currentAnimator.getRegionHeight()*scale/2));
+        if (stunCooldown > 0 && stunCooldown % 10 == 0)
+        {
+            canvas.draw(currentAnimator, Color.CLEAR, origin.x, origin.y, body.getWorldCenter().x*drawScale.x - width*scale/2, body.getWorldCenter().y*drawScale.y- height*scale/2, 0.0f, scale, scale);
+        }
+        else if (isStunned())
+        {
+            canvas.draw(currentAnimator, Color.PINK, origin.x, origin.y, body.getWorldCenter().x*drawScale.x - width*scale/2, body.getWorldCenter().y*drawScale.y- height*scale/2, 0.0f, scale, scale);
+            if(stunAnimation != null){
+//                System.out.println(stunTime % 4);
+                stunAnimation.setFrame(((int)stunTime/5) % 4); //4 frames of animation, 5 frame rate reduction
+                canvas.draw(stunAnimation, Color.GRAY, origin.x, origin.y, body.getWorldCenter().x * drawScale.x - width*scale/2, body.getWorldCenter().y * drawScale.y, 0.0f, scale, scale);
+            }
+        }
+        else {
+            canvas.draw(currentAnimator, Color.WHITE, origin.x, origin.y, body.getWorldCenter().x * drawScale.x - width * scale / 2, body.getWorldCenter().y * drawScale.y - height * scale / 2, 0.0f, scale, scale);
+        }
         if(isExtendingVines) {
             if (vines.size > 0) {
                 for (int i = 0; i < vines.size; i++) {

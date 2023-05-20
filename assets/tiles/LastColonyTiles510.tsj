@@ -619,7 +619,7 @@
          "imagewidth":32,
          "properties":[
                 {
-                 "name":"Obstacle",
+                 "name":"Tree",
                  "type":"string",
                  "value":""
                 }]
@@ -631,7 +631,7 @@
          "imagewidth":32,
          "properties":[
                 {
-                 "name":"Obstacle",
+                 "name":"Tree",
                  "type":"string",
                  "value":""
                 }]
@@ -643,7 +643,7 @@
          "imagewidth":32,
          "properties":[
                 {
-                 "name":"Obstacle",
+                 "name":"Tree",
                  "type":"string",
                  "value":""
                 }]
@@ -655,7 +655,7 @@
          "imagewidth":32,
          "properties":[
                 {
-                 "name":"Obstacle",
+                 "name":"Tree",
                  "type":"string",
                  "value":""
                 }]
@@ -667,7 +667,7 @@
          "imagewidth":32,
          "properties":[
                 {
-                 "name":"Obstacle",
+                 "name":"Tree",
                  "type":"string",
                  "value":""
                 }]
@@ -679,7 +679,7 @@
          "imagewidth":32,
          "properties":[
                 {
-                 "name":"Obstacle",
+                 "name":"Tree",
                  "type":"string",
                  "value":""
                 }]

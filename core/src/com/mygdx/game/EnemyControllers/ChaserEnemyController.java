@@ -27,6 +27,10 @@ public class ChaserEnemyController extends com.mygdx.game.EnemyControllers.Enemy
 
     boolean followingSurvivor;
 
+    boolean startedChasing;
+
+    boolean startedAttacking;
+
     public ChaserEnemyController(boolean[][] board, int tileSize, int tileOffset, ChaserEnemy enemy, Player player) {
         super(board, tileSize, tileOffset, enemy, player);
         target = new Vector2(player.getX(), player.getY());
@@ -51,6 +55,10 @@ public class ChaserEnemyController extends com.mygdx.game.EnemyControllers.Enemy
         }
     }
 
+    public boolean startedChasing() { return startedChasing; }
+
+    public boolean startedAttacking() { return startedAttacking; }
+
     /**
      * Returns an int value representing the enemy's next movement action:
      * 0 = no move, 1 = right, 2 = left, 3 = up, 4 = down,
@@ -62,6 +70,8 @@ public class ChaserEnemyController extends com.mygdx.game.EnemyControllers.Enemy
         }
         ticks++;
         moveTime++;
+        startedChasing = false;
+        startedAttacking = false;
 
         if (ticks % 10 == 0)
         {
@@ -101,6 +111,37 @@ public class ChaserEnemyController extends com.mygdx.game.EnemyControllers.Enemy
             }
         }
         switch (state) {
+            case SPAWN:
+                if (enemy.isStunned())
+                {
+                    state = FSMState.STUNNED;
+                    enemy.setHasAwoken(true);
+                }
+                else if (enemy.isRevealed() && enemy.canAttack())
+                {
+                    state = FSMState.WAKE;
+                    enemy.setWaking(true);
+//                    if (enemy.canAttack())
+//                    {
+//                        state = FSMState.ATTACK;
+//                    }
+                }
+                else if (alertAllEnemies)
+                {
+                    Vector2 enemyLoc = new Vector2(enemy.getX(), enemy.getY());
+                    Vector2 shriekerLoc = new Vector2(activeShrieker.getX(), activeShrieker.getY());
+                    if (enemyLoc.dst(shriekerLoc) <= ALERT_DISTANCE){
+                        state = FSMState.WAKE;
+                        enemy.setWaking(true);
+                        target = new Vector2 (player.getX(), player.getY());
+                    }
+                }
+                break;
+            case WAKE:
+                if (enemy.getHasAwoken()){
+                    state = FSMState.IDLE;
+                }
+                break;
             case IDLE:
                 if (enemy.isStunned())
                 {
@@ -108,6 +149,7 @@ public class ChaserEnemyController extends com.mygdx.game.EnemyControllers.Enemy
                 }
                 else if (enemy.isRevealed() && enemy.canAttack())
                 {
+                    startedChasing = true;
                     state = FSMState.CHASE;
 //                    if (enemy.canAttack())
 //                    {
@@ -135,7 +177,9 @@ public class ChaserEnemyController extends com.mygdx.game.EnemyControllers.Enemy
                 }
                 else if (dist < tileSize)
                 {
+                    startedAttacking = true;
                     state = FSMState.ATTACK;
+                    enemy.setAttacking(true);
                 }
                 break;
             case ATTACK:
@@ -157,6 +201,7 @@ public class ChaserEnemyController extends com.mygdx.game.EnemyControllers.Enemy
                     enemy.setAttack(false);
                 }
                 state = FSMState.IDLE;
+                enemy.setAttacking(false);
                 break;
             default:
                 super.changeStateIfApplicable();

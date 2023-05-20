@@ -27,11 +27,13 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.Sort;
+import com.mygdx.game.EnemyControllers.ChaserEnemyController;
 import com.mygdx.game.EnemyControllers.EnemyController;
 import com.mygdx.game.EnemyControllers.ScoutEnemyController;
 import com.mygdx.game.Obstacles.*;
 import com.mygdx.game.Obstacles.Enemies.*;
 import com.badlogic.gdx.Screen;
+import com.mygdx.game.ScreenModes.PauseMenuMode;
 import com.mygdx.game.Obstacles.Items.Item;
 import com.mygdx.game.Obstacles.Items.Torch;
 import com.mygdx.game.UI.AirBar;
@@ -61,6 +63,9 @@ public class GameplayController implements Screen {
 	// ***************************
 	/** Texture assets for player avatar */
 	private FilmStrip[][] playerDirectionTextures;
+	private FilmStrip[][] floaterDirectionTextures;
+	private FilmStrip[][] scoutDirectionTextures;
+	private FilmStrip[][] shriekerTextures;
 	private Texture sampleTutorial;
 	private TutorialPrompt sample;
 	/** Texture assets for survivor avatar */
@@ -346,6 +351,8 @@ public class GameplayController implements Screen {
 	public InputController input;
 	/** Listener that will update the player mode when we are done */
 	private ScreenListener listener;
+	/** Pause menu */
+	private PauseMenuMode pauseMenu;
 
 	/** The Box2D world */
 	protected World world;
@@ -436,11 +443,7 @@ public class GameplayController implements Screen {
 
 	private Sound chaserGrowl;
 
-	private boolean startedChaserGrowl;
-
 	private Sound chaserAttack;
-
-	private boolean startedChaserAttack;
 
 	private Sound death;
 	private Sound cantOpen;
@@ -458,10 +461,11 @@ public class GameplayController implements Screen {
 	 * @param bounds  The game bounds in Box2d coordinates
 	 * @param gravity The gravitational force on this Box2d world
 	 */
-	protected GameplayController(Rectangle bounds, Vector2 gravity) {
+	protected GameplayController(Rectangle bounds, Vector2 gravity, PauseMenuMode pauseMenu) {
 		world = new World(gravity, false);
 		this.bounds = new Rectangle(bounds);
 		this.scale = new Vector2(1, 1);
+		this.pauseMenu = pauseMenu;
 		this.assetTextures = new HashMap<>();
 		complete = false;
 		failed = false;
@@ -475,8 +479,8 @@ public class GameplayController implements Screen {
 	 *
 	 * The game has default gravity and other settings
 	 */
-	public GameplayController(GameCanvas canvas) {
-		this(new Rectangle(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT), new Vector2(0, DEFAULT_GRAVITY));
+	public GameplayController(GameCanvas canvas, PauseMenuMode pauseMenu) {
+		this(new Rectangle(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT), new Vector2(0, DEFAULT_GRAVITY), pauseMenu);
 		setComplete(false);
 		setFailure(false);
 		// world.setContactListener(this);
@@ -535,6 +539,9 @@ public class GameplayController implements Screen {
 		// Unnecessary atm?
 
 		playerDirectionTextures = importPlayerFilmstrip();
+		floaterDirectionTextures = importFloaterFilmstrip();
+		scoutDirectionTextures = importScoutFilmstrip();
+		shriekerTextures = importShriekerFilmstrips();
 		survivorDirectionTextures = importCharacterFilmstrip("survivorP");
 		enemyDirectionTextures = importEnemyFilmstrips();
 
@@ -798,6 +805,56 @@ public class GameplayController implements Screen {
 		}
 		return enemyStrips;
 	}
+	/**
+	 * Returns an array of all shrieker filmstrips to be passed into the json loader.
+	 * [0]: Shrieker idle
+	 * [1]: Shrieker alert
+	 * [2]: Shrieker scream
+	 * @return array of shrieker filmstrips
+	 */
+	private FilmStrip[][] importShriekerFilmstrips(){
+
+		FilmStrip shriekIdle = directory.getEntry("images:shriekerIdle.fire", FilmStrip.class );
+		FilmStrip shriekShriek = directory.getEntry("images:shriekerShriek.fire", FilmStrip.class );
+		System.out.println("Two assets loaded");
+		FilmStrip shriekTransform = directory.getEntry("images:shriekerTransform.fire", FilmStrip.class );
+		FilmStrip[][] shriekerStrips = new FilmStrip[][] {{shriekIdle, shriekShriek, shriekTransform}};
+
+		return shriekerStrips;
+	}
+	/**
+	 * Returns an array of all shrieker filmstrips to be passed into the json loader.
+	 * [0][i]: Floater movement
+	 * [1][i]: Floater idle
+	 * [2][i]: Floater attack
+	 * [3][i]: Floater stun
+	 * [4][i]: Floater wake
+	 * @return double array of floater filmstrips
+	 */
+	private FilmStrip[][] importFloaterFilmstrip(){
+
+		FilmStrip[][] floaterFilmStrip = new FilmStrip[5][2];
+		//String[] directions = {"Up", "Down", "Right", "Left"};
+		String[] actions = {"Movement", "Idle", "Attack", "Stun", "Wake"};
+		for (int i = 0; i < 5; i++){
+			FilmStrip right = directory.getEntry("images:floater" + actions[i] + "Right.fire", FilmStrip.class );
+			FilmStrip left = directory.getEntry("images:floater" + actions[i] + "Left.fire", FilmStrip.class );
+			floaterFilmStrip[i] = new FilmStrip[] {right, left};
+		}
+		return floaterFilmStrip;
+	}
+	private FilmStrip[][] importScoutFilmstrip(){
+
+		FilmStrip[][] floaterFilmStrip = new FilmStrip[5][2];
+		//String[] directions = {"Up", "Down", "Right", "Left"};
+		String[] actions = {"Movement", "Idle", "Attack", "Stun", "Wake"};
+		for (int i = 0; i < 5; i++){
+			FilmStrip right = directory.getEntry("images:scout" + actions[i] + "Right.fire", FilmStrip.class );
+			FilmStrip left = directory.getEntry("images:scout" + actions[i] + "Left.fire", FilmStrip.class );
+			floaterFilmStrip[i] = new FilmStrip[] {right, left};
+		}
+		return floaterFilmStrip;
+	}
 
 	/**
 	 * Resets the status of the game so that we can play again.
@@ -806,6 +863,7 @@ public class GameplayController implements Screen {
 	 */
 	public void reset() {
 		Vector2 gravity = new Vector2(world.getGravity());
+		paused = false;
 
 		for (Obstacle obj : objects) {
 			obj.deactivatePhysics(world);
@@ -818,6 +876,7 @@ public class GameplayController implements Screen {
 		survivorControllers.clear();
 		smogs.clear();
 		objects.clear();
+		addQueue.clear();
 		addQueue.clear();
 		canvas.disposeLights();
 		world.dispose();
@@ -895,7 +954,7 @@ public class GameplayController implements Screen {
 		// Here we will instantiate the objects in the level using the JSONLevelReader.
 		JSONLevelReader reader = new JSONLevelReader(directory, bounds, world, level, canvas.camera, input,
 				objects, smogBorderTexture, floorArr, SCALE, tileGrid, smogTiles, smogGrid, tileSize, tileOffset, smogTileSize, smogTileOffset,
-				playerDirectionTextures, survivorDirectionTextures, enemyDirectionTextures, vineTextures, survivorDirections, toxicAir, survivorITexture, assetTextures,
+				playerDirectionTextures, survivorDirectionTextures, shriekerTextures, floaterDirectionTextures, scoutDirectionTextures, enemyDirectionTextures, vineTextures, survivorDirections, toxicAir, survivorITexture, assetTextures,
 				displayFontInteract, fHeartTexture, player, null);
 
 //		if (caravan.getX() < 400f) {
@@ -1087,7 +1146,9 @@ public class GameplayController implements Screen {
 		}
 
 		// Handle resets
-		if (input.didReset()) {
+		if (pauseMenu.getButtonState() == PauseMenuMode.EXIT_RESTART && paused) {
+			pauseMenu.resetButtonState();
+			pauseMenu.reset();
 			reset();
 		}
 
@@ -1116,6 +1177,21 @@ public class GameplayController implements Screen {
 		// Read input
 		input.readInput();
 
+
+		if (paused && (pauseMenu.getButtonState() == PauseMenuMode.EXIT_MAINMENU || pauseMenu.getButtonState() == PauseMenuMode.EXIT_SETTINGS)){
+			// paused = false;
+			int buttonState = pauseMenu.getButtonState();
+			// paused = false;
+			pauseMenu.resetButtonState();
+			pauseMenu.reset();
+			canvas.camera.zoom = 1.0f;
+			canvas.camera.position.x = canvas.getWidth()/2;
+			canvas.camera.position.y = canvas.getHeight()/2;
+			canvas.camera.update();
+			
+			listener.exitScreen(this, buttonState);
+		}
+
 		if (!player.isAlive()) {
 			if (!isDead) {
 				isDead = true;
@@ -1124,8 +1200,14 @@ public class GameplayController implements Screen {
 			lowHealth.stop(lowHealthId);
 			lowHealth.setLooping(lowHealthId, false);
 		}
+		else {
+			isDead = false;
+		}
 
-		if (input.didPause()) {
+		if (input.didPause() || (pauseMenu.getButtonState() == PauseMenuMode.EXIT_GAME && paused)) {
+			pauseMenu.resetButtonState();
+			pauseMenu.reset();
+
 			if (!paused && !unpausing) {
 				paused = true;
 				pausing = true;
@@ -1276,7 +1358,7 @@ public class GameplayController implements Screen {
 				ChaserEnemy chaser = (ChaserEnemy) enemyArr.get(i);
 				if (enemyControllers.get(i).getState() == EnemyController.FSMState.IDLE)
 				{
-					if (!startedDistantChaser && Math.random() < 0.2f)
+					if (!startedDistantChaser && Math.random() < 0.5f)
 					{
 						startedDistantChaser = true;
 						distantChaserId = distantChaser.play();
@@ -1298,34 +1380,23 @@ public class GameplayController implements Screen {
 				else {
 					distantChaser.stop();
 					startedDistantChaser = false;
-				}
-				if (enemyControllers.get(i).getState() == EnemyController.FSMState.CHASE)
-				{
-					if (!startedChaserGrowl)
+					ChaserEnemyController controller = (ChaserEnemyController) enemyControllers.get(i);
+					if (controller.startedChasing())
 					{
-						startedChaserGrowl = true;
-						if (Vector2.dst(chaser.getX(), chaser.getY(), player.getX(), player.getY()) <= player.getHearing())
+						if (player.isAlive() && Vector2.dst(chaser.getX(), chaser.getY(), player.getX(), player.getY()) <= player.getHearing())
 						{
+							chaserGrowl.stop();
 							chaserGrowl.play((player.getHearing() - Vector2.dst(chaser.getX(), chaser.getY(), player.getX(), player.getY()))/player.getHearing(), 1, 0);
 						}
 					}
-				}
-				else {
-					startedChaserGrowl = false;
-				}
-				if (enemyControllers.get(i).getState() == EnemyController.FSMState.ATTACK)
-				{
-					if (!startedChaserAttack)
+					else if (controller.startedAttacking())
 					{
-						startedChaserAttack = true;
-						if (Vector2.dst(chaser.getX(), chaser.getY(), player.getX(), player.getY()) <= player.getHearing())
+						if (player.isAlive() && Vector2.dst(chaser.getX(), chaser.getY(), player.getX(), player.getY()) <= player.getHearing())
 						{
+							chaserAttack.stop();
 							chaserAttack.play((player.getHearing() - Vector2.dst(chaser.getX(), chaser.getY(), player.getX(), player.getY()))/player.getHearing(), 1, 0);
 						}
 					}
-				}
-				else {
-					startedChaserAttack = false;
 				}
 			}
 			if (enemyArr.get(i) instanceof FloatingEnemy)
@@ -1333,7 +1404,7 @@ public class GameplayController implements Screen {
 				FloatingEnemy floater = (FloatingEnemy) enemyArr.get(i);
 				if (enemyControllers.get(i).getState() == EnemyController.FSMState.IDLE)
 				{
-					if (!startedDistantFloater && Math.random() < 0.2f)
+					if (!startedDistantFloater && Math.random() < 0.5f)
 					{
 						startedDistantFloater = true;
 						distantFloaterId = distantFloater.play();
@@ -1359,7 +1430,8 @@ public class GameplayController implements Screen {
 					{
 						if (!startedFloaterAttack) {
 							startedFloaterAttack = true;
-							if (Vector2.dst(floater.getX(), floater.getY(), player.getX(), player.getY()) <= player.getHearing()) {
+							if (player.isAlive() && Vector2.dst(floater.getX(), floater.getY(), player.getX(), player.getY()) <= player.getHearing()) {
+								floaterAttack.stop();
 								floaterAttack.play((player.getHearing() - Vector2.dst(floater.getX(), floater.getY(), player.getX(), player.getY()))/player.getHearing(), 1, 0);
 							}
 						}
@@ -1377,7 +1449,7 @@ public class GameplayController implements Screen {
 					if (!startedScoutGrowl)
 					{
 						startedScoutGrowl = true;
-						if (Vector2.dst(scout.getX(), scout.getY(), player.getX(), player.getY()) <= player.getHearing()) {
+						if (player.isAlive() && Vector2.dst(scout.getX(), scout.getY(), player.getX(), player.getY()) <= player.getHearing()) {
 							scoutGrowl.play((player.getHearing() - Vector2.dst(scout.getX(), scout.getY(), player.getX(), player.getY()))/player.getHearing(), 1, 0);
 						}
 					}
@@ -1390,7 +1462,7 @@ public class GameplayController implements Screen {
 						if (!startedScoutAttack)
 						{
 							startedScoutAttack = true;
-							if (Vector2.dst(scout.getX(), scout.getY(), player.getX(), player.getY()) <= player.getHearing()) {
+							if (player.isAlive() && Vector2.dst(scout.getX(), scout.getY(), player.getX(), player.getY()) <= player.getHearing()) {
 								scoutAttack.play((player.getHearing() - Vector2.dst(scout.getX(), scout.getY(), player.getX(), player.getY()))/player.getHearing(), 1, 0);
 							}
 						}
@@ -1408,7 +1480,7 @@ public class GameplayController implements Screen {
 						startedShrieking = true;
 						shriekId = shriek.play();
 					}
-					if (Vector2.dst(shrieker.getX(), shrieker.getY(), player.getX(), player.getY()) <= player.getHearing()) {
+					if (player.isAlive() && Vector2.dst(shrieker.getX(), shrieker.getY(), player.getX(), player.getY()) <= player.getHearing()) {
 						shriek.setVolume(shriekId, (player.getHearing() - Vector2.dst(shrieker.getX(), shrieker.getY(), player.getX(), player.getY()))/player.getHearing());
 					}
 					else {
@@ -1459,14 +1531,14 @@ public class GameplayController implements Screen {
 				if (survivorArr.get(i).isRescued()) {
 					player.removeFromFollowing(survivorArr.get(i));
 					survivorArr.get(i).deactivatePhysics(world);
-						//survivorArr.removeIndex(i);
+					//survivorArr.removeIndex(i);
 					numRescued++;
 					caravan.incrCap();
 					caravan.setInteractable(false);
 				}
+
 			}
 		}
-
 		// Check through the items just like the survivors to see if we need to show "E to collect"
 		for (int i = 0; i < itemArr.size; i++) {
 			if (itemArr.get(i).isInteractable() && input.didPickUpItem()) {
@@ -1531,17 +1603,17 @@ public class GameplayController implements Screen {
 			caravan.setInteractable(false);
 		}
 //		if (caravan.isInteractable() && input.didDropSurvivors()) {
-			if (caravan.getCurrentCapacity() == caravan.getMaxCapacity()) {
-				setComplete(true);
-				if (prefs.getInteger("unlocked", 1) <= curLevel) {
-					prefs.putInteger("unlocked", curLevel + 1);
-				}
-				if (!prefs.getBoolean("level" + curLevel + "complete", false)) {
-					prefs.putInteger("survivors", prefs.getInteger("survivors", 0) + survivorArr.size);
-				}
-				prefs.putBoolean("level" + curLevel + "complete", true);
-				prefs.flush();
+		if (caravan.getCurrentCapacity() == caravan.getMaxCapacity()) {
+			setComplete(true);
+			if (prefs.getInteger("unlocked", 1) <= curLevel) {
+				prefs.putInteger("unlocked", curLevel + 1);
 			}
+			if (!prefs.getBoolean("level" + curLevel + "complete", false)) {
+				prefs.putInteger("survivors", prefs.getInteger("survivors", 0) + survivorArr.size);
+			}
+			prefs.putBoolean("level" + curLevel + "complete", true);
+			prefs.flush();
+		}
 //			for (int i = 0; i < survivorArr.size; i++) {
 //				if (survivorArr.get(i).isFollowing()) {
 //					survivorArr.get(i).rescue();
@@ -1605,6 +1677,9 @@ public class GameplayController implements Screen {
 				lowHealthId = lowHealth.play();
 				lowHealth.setLooping(lowHealthId, true);
 			}
+		}
+		else {
+			startedDying = false;
 		}
 
 	}
@@ -1925,22 +2000,20 @@ public class GameplayController implements Screen {
 		} else {
 			canvas.begin();
 		}
-//		System.out.println("Started canvas");
-		//canvas.draw(backgroundTexture, Color.BROWN, 0, 0, canvas.getWidth(), canvas.getHeight());
 
 		for (FloorTile flr : floorArr) {
 			flr.draw(canvas);
 		}
 
+
 		for (Obstacle obj : objects) {
 			obj.draw(canvas);
 		}
 
-		for (Obstacle obj : smogs){
+		for (Obstacle obj : smogs) {
 			obj.draw(canvas);
 		}
 		sample.draw(canvas);
-
 
 
 		// END remove
@@ -1957,13 +2030,15 @@ public class GameplayController implements Screen {
 		purifiedAir.draw(canvas);
 		toxicAir.draw(canvas);
 
-		// Draw air bar
-		airBar.draw(canvas);
-
 		// Draw hearts
-		for (int i = 0; i < heartArr.size; i++) {
-			heartArr.get(i).draw(canvas);
+		if (!paused) {
+			// Draw air bar
+			airBar.draw(canvas);
+			for (int i = 0; i < heartArr.size; i++) {
+				heartArr.get(i).draw(canvas);
+			}
 		}
+
 
 		String message = "ÆIR: ";
 		// canvas.drawText(message, displayFontBar, BAR_X - (width/2) + 5, BAR_Y + 38);
@@ -1985,6 +2060,7 @@ public class GameplayController implements Screen {
 			for (Obstacle obj : objects) {
 				obj.drawDebug(canvas);
 			}
+
 			for (Obstacle obj : smogs) {
 				//obj.drawDebug(canvas);
 			}
@@ -1994,8 +2070,13 @@ public class GameplayController implements Screen {
 			canvas.endDebug();
 		}
 		if (paused) {
-			displayFont.setColor(Color.GRAY);
-			canvas.drawText("PAUSED", displayFont, player.getX() - 150f, player.getY() + 25f);
+//			displayFont.setColor(Color.GRAY);
+//			canvas.drawText("PAUSED", displayFont, canvas.camera.position.x - 150f, canvas.camera.position.y + 25f);
+			pauseMenu.setMenuPosition(canvas.camera.position.x, canvas.camera.position.y);
+			pauseMenu.update();
+			pauseMenu.draw(canvas);
+
+
 		}
 		canvas.end();
 
@@ -2003,20 +2084,115 @@ public class GameplayController implements Screen {
 		if (complete && !failed) {
 			displayFont.setColor(Color.YELLOW);
 			canvas.begin(); // DO NOT SCALE
-			canvas.drawText("VICTORY!", displayFont, player.getX() - 195, player.getY());
+			canvas.drawText("VICTORY!", displayFont, canvas.camera.position.x - 195, canvas.camera.position.y);
 
-			canvas.drawText("Press 'R' to restart", displayFontSub, player.getX() - 120, player.getY() - 100);
+			canvas.drawText("Press 'N' for next level", displayFontSub, canvas.camera.position.x - 170, canvas.camera.position.y - 100);
 			canvas.end();
 		} else if (failed) {
 			displayFont.setColor(Color.RED);
 			canvas.begin(); // DO NOT SCALE
-			canvas.drawText("FAILURE!", displayFont, player.getX() - 195, player.getY());
-			canvas.drawText("Press 'R' to restart", displayFontSub, player.getX() - 120, player.getY() - 100);
+			canvas.drawText("FAILURE!", displayFont, canvas.camera.position.x - 195, canvas.camera.position.y);
+			canvas.drawText("Press 'R' to restart", displayFontSub, canvas.camera.position.x - 120, canvas.camera.position.y - 100);
 
 			canvas.end();
 		}
-//		System.out.println("Finished first draw");
 	}
+//		} else {
+//			//canvas.begin();
+//		}
+////		System.out.println("Started canvas");
+//		//canvas.draw(backgroundTexture, Color.BROWN, 0, 0, canvas.getWidth(), canvas.getHeight());
+//
+//
+//		for (FloorTile flr : floorArr) {
+//			flr.draw(canvas);
+//		}
+//
+//		for (Obstacle obj : objects) {
+//			obj.draw(canvas);
+//		}
+//
+//		for (Obstacle obj : smogs){
+//			obj.draw(canvas);
+//		}
+//		sample.draw(canvas);
+//
+//
+//
+//		// END remove
+//		// drawBar();
+//		canvas.end();
+//
+//
+//		canvas.renderLights();
+//
+//		// Top pass
+//
+//		canvas.begin();
+//
+//		purifiedAir.draw(canvas);
+//		toxicAir.draw(canvas);
+//
+//		// Draw air bar
+//		airBar.draw(canvas);
+//
+//		// Draw hearts
+//		for (int i = 0; i < heartArr.size; i++) {
+//			heartArr.get(i).draw(canvas);
+//		}
+//
+//		String message = "ÆIR: ";
+//		// canvas.drawText(message, displayFontBar, BAR_X - (width/2) + 5, BAR_Y + 38);
+//		// Remove later, testing progress movement for now
+//		if (isIncrementing) {
+//			progress += 0.01;
+//			if (progress > 1.0) {
+//				isIncrementing = false;
+//			}
+//		} else {
+//			progress -= 0.01;
+//			if (progress < 0) {
+//				isIncrementing = true;
+//			}
+//		}
+//
+//		if (debug) {
+//			canvas.beginDebug();
+//			for (Obstacle obj : objects) {
+//				obj.drawDebug(canvas);
+//			}
+//			for (Obstacle obj : smogs) {
+//				obj.drawDebug(canvas);
+//			}
+//			toxicAir.drawDebug(canvas);
+//
+//			player.weapon.draw(canvas);
+//			canvas.endDebug();
+//		}
+//		if (paused) {
+//			displayFont.setColor(Color.GRAY);
+//			canvas.drawText("PAUSED", displayFont, player.getX() - 150f, player.getY() + 25f);
+//		}
+//		canvas.end();
+//
+//		// Final message
+//		if (complete && !failed) {
+//			displayFont.setColor(Color.YELLOW);
+//			canvas.begin(); // DO NOT SCALE
+//			canvas.drawText("VICTORY!", displayFont, player.getX() - 195, player.getY());
+//
+//			canvas.drawText("Press 'R' to restart", displayFontSub, player.getX() - 120, player.getY() - 100);
+//			canvas.end();
+//		} else if (failed) {
+//			displayFont.setColor(Color.RED);
+//			canvas.begin(); // DO NOT SCALE
+//			canvas.drawText("FAILURE!", displayFont, player.getX() - 195, player.getY());
+//			canvas.drawText("Press 'R' to restart", displayFontSub, player.getX() - 120, player.getY() - 100);
+//
+//			canvas.end();
+//		}
+////		System.out.println("Finished first draw");
+//	}
 
 	/**
 	 * Method to ensure that a sound asset is only played once.
