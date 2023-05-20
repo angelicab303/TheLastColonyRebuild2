@@ -518,6 +518,8 @@ public class JSONLevelReader {
             createFloor(x, y, id, scale);
         } else if (type.equals("Tutorial")) {
             createTutorial(x, y, id, scale);
+        } else if(type.equals("BorderSmog")){
+            createObstacle(x, y, smogBorderTexture, scale, false, false, 0);
         } else if (type.equals("Obstacle") || type.equals("Door") || type.equals("Fence") || type.equals("Tree")) {
             // IDK how doors are going to be implemented, so Imma hold off on this for now -V
             createObstacle(x, y, id, scale, type.equals("Door"), type.equals("Tree"), type.equals("Fence"), fenceType);
@@ -542,7 +544,7 @@ public class JSONLevelReader {
         String textureName = "tiles:" + fileName.substring(0, fileName.length() - 4);
         TextureRegion region = assetTextures.get(textureName);
         if (region == null) {
-//            System.out.println("Missing asset" + id);
+            System.out.println("Missing asset" + id);
             Texture texture = directory.getEntry(textureName, Texture.class);
             if (texture == null) {
 //                System.out.println("ERROR");
