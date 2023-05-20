@@ -217,14 +217,26 @@ public class CollisionController{
                     Player player = null;
                     Survivor survivor;
                     if(objA.getType() == GameObstacle.ObstacleType.ENEMY){
-                         ((Enemy) objA).setStunned(true);
-                        ((Enemy) objA).incToStunTime();
+                        System.out.println(((Enemy) objA).getNumHits());
+                        ((Enemy) objA).setNumHits(((Enemy) objA).getNumHits() + 1);
+                        if (((Enemy) objA).getNumHits() == 2) {
+                            ((Enemy) objA).setStunned(true);
+                            ((Enemy) objA).incToStunTime();
+                            ((Enemy) objA).setNumHits(0);
+                        }
                         ((PurifiedQueue.PurifiedAir) objB).collide();
                     }
                     else {
-                        ((Enemy) objB).setStunned(true);
-                        ((Enemy) objB).incToStunTime();
-                        ((PurifiedQueue.PurifiedAir) objA).collide();
+                        if(objB.getType() == GameObstacle.ObstacleType.ENEMY){
+                            System.out.println(((Enemy) objB).getNumHits());
+                            ((Enemy) objB).setNumHits(((Enemy) objB).getNumHits() + 1);
+                            if (((Enemy) objB).getNumHits() == 2) {
+                                ((Enemy) objB).setStunned(true);
+                                ((Enemy) objB).incToStunTime();
+                                ((Enemy) objB).setNumHits(0);
+                            }
+                            ((PurifiedQueue.PurifiedAir) objA).collide();
+                        }
                     }
                     break;
                 case GameObstacle.CATEGORY_PURIFIED | GameObstacle.CATEGORY_VINE:

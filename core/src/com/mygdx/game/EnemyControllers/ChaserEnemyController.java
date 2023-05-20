@@ -31,6 +31,7 @@ public class ChaserEnemyController extends com.mygdx.game.EnemyControllers.Enemy
 
     boolean startedAttacking;
 
+
     public ChaserEnemyController(boolean[][] board, int tileSize, int tileOffset, ChaserEnemy enemy, Player player) {
         super(board, tileSize, tileOffset, enemy, player);
         target = new Vector2(player.getX(), player.getY());
@@ -44,7 +45,7 @@ public class ChaserEnemyController extends com.mygdx.game.EnemyControllers.Enemy
         target.y = player.getY();
         if (!player.getSurvivorsFollowing().isEmpty()) {
             for (int i = 0; i < player.getSurvivorsFollowing().size; i++) {
-                if (!player.getSurvivorsFollowing().get(i).isTargetOfEnemy() && player.getSurvivorsFollowing().get(i).canLoseLife()) {
+                if (!player.getSurvivorsFollowing().get(i).isTargetOfEnemy()) {
                     target.x = player.getSurvivorsFollowing().get(i).getX();
                     target.y = player.getSurvivorsFollowing().get(i).getY();
                     survivorTarget = player.getSurvivorsFollowing().get(i);
@@ -52,6 +53,10 @@ public class ChaserEnemyController extends com.mygdx.game.EnemyControllers.Enemy
                     player.getSurvivorsFollowing().get(i).setTargetOfEnemy(true);
                 }
             }
+        }
+        else {
+            target.x = player.getX();
+            target.y = player.getY();
         }
     }
 
@@ -100,9 +105,11 @@ public class ChaserEnemyController extends com.mygdx.game.EnemyControllers.Enemy
     }
 
     protected void changeStateIfApplicable() {
-        float dist = followingSurvivor ? Vector2.dst(survivorTarget.getX(), survivorTarget.getY(), enemy.getX(), enemy.getY()) :
-        Vector2.dst(player.getX(), player.getY(), enemy.getX(), enemy.getY());
-        alertAllEnemies = false;
+//        float dist = followingSurvivor ? Vector2.dst(survivorTarget.getX(), survivorTarget.getY(), enemy.getX(), enemy.getY()) :
+//        Vector2.dst(player.getX(), player.getY(), enemy.getX(), enemy.getY());
+        selectTarget();
+        float dist = Vector2.dst(target.x, target.y, enemy.getX(), enemy.getY());
+                alertAllEnemies = false;
         ShriekerEnemy activeShrieker = null;
         for (ShriekerEnemy shrieker : shriekerArr){
             if (shrieker.getShrieking()){
@@ -110,6 +117,7 @@ public class ChaserEnemyController extends com.mygdx.game.EnemyControllers.Enemy
                 activeShrieker = shrieker;
             }
         }
+        System.out.println(state);
         switch (state) {
             case SPAWN:
                 if (enemy.isStunned())
@@ -121,6 +129,7 @@ public class ChaserEnemyController extends com.mygdx.game.EnemyControllers.Enemy
                 {
                     state = FSMState.WAKE;
                     enemy.setWaking(true);
+                    enemy.setHasAwoken(true);
 //                    if (enemy.canAttack())
 //                    {
 //                        state = FSMState.ATTACK;
@@ -189,13 +198,15 @@ public class ChaserEnemyController extends com.mygdx.game.EnemyControllers.Enemy
                         player.coolDown(false);
                     }
                     else {
-                        if (survivorTarget.canLoseLife()) {
+                        if (followingSurvivor && survivorTarget.canLoseLife()) {
                             survivorTarget.loseLife();
 //                            survivorTarget.setTargetOfEnemy(false);
 //                            followingSurvivor = false;
+                            survivorTarget.setTargetOfEnemy(false);
+                            followingSurvivor = false;
                         }
-                        survivorTarget.setTargetOfEnemy(false);
-                        followingSurvivor = false;
+//                        survivorTarget.setTargetOfEnemy(false);
+//                        followingSurvivor = false;
 //                    survivorTarget.coolDown(false);
                     }
                     enemy.setAttack(false);

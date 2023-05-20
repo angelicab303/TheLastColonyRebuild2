@@ -21,7 +21,7 @@ public class ShriekerEnemy extends Enemy {
     /** Time shrieker takes to fully wake */
     private float wakeTime = 0;
     /** Time shrieker must wait to shriek when waking */
-    private float WAKE_TIME = 300;
+    private float WAKE_TIME = 120;
     /** Whether or not the shrieker can alert other enemies */
     private boolean canShriek;
     /** Time shrieker must wait before being able to alert again */
