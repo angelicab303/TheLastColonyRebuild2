@@ -38,6 +38,16 @@
     "pauseMenu:restartDown": "images/pauseMenu/RestartDown.png",
     "images:empty": "images/empty.png",
     "levelSelect:smogWall": "images/levelSelect/LevelSelectSmogAsset.png",
+    "settings:background": "images/mainMenu/EmptyMainMenu.png",
+    "settings:absorb": "images/settings/Absorb.png",
+    "settings:cloud1": "images/settings/Cloud1.png",
+    "settings:cloud2": "images/settings/Cloud2.png",
+    "settings:cloud3": "images/settings/Cloud3_4_5.png",
+    "settings:fireWeapon": "images/settings/FireWeapon.png",
+    "settings:keyBindings": "images/settings/KeyBindings.png",
+    "settings:music": "images/settings/Music.png",
+    "settings:settings": "images/settings/Settings.png",
+    "settings:soundEffects": "images/settings/SoundEffects.png",
 
     "shared:earth": {
       "file": "shared/earthtile.png",
@@ -416,7 +426,7 @@
       "sprites" : {
         "fire": {
           "rows": 1,
-          "cols": 7
+          "cols": 14
         }
       }
     },
@@ -425,7 +435,7 @@
       "sprites" : {
         "fire": {
           "rows": 1,
-          "cols": 7
+          "cols": 14
         }
       }
     },
@@ -781,7 +791,8 @@
     "sounds:floaterattack": "sounds/CreatureAttack2_16.wav",
     "sounds:scoutattack": "sounds/CreatureAttack3_16.wav",
     "sounds:shriekerattack": "sounds/ShriekerAttack1_16.wav",
-    "sounds:bean": "sounds/Bean_Picku_16p.wav"
+    "sounds:bean": "sounds/Bean_Picku_16p.wav",
+    "sounds:cant open door": "sounds/cant open door.wav"
   },
   "music":{
     "titlemusic": "sounds/The_Last_Colony_-_Title_Screen.ogg"

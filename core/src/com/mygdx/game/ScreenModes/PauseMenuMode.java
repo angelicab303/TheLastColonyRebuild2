@@ -219,6 +219,7 @@ public class PauseMenuMode {
             public void clicked(InputEvent event, float x, float y) {
                 if (buttons.get(3).isChecked()) {
                     buttons.get(3).setChecked(false);
+                    System.out.println("Go to settings from pause menu");
                     buttonState = EXIT_SETTINGS;
                 }
             };

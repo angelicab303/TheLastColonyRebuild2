@@ -178,6 +178,7 @@ public class ScoutEnemyController extends com.mygdx.game.EnemyControllers.EnemyC
                     enemy.setShrinkVines(true);
                     clearContainsVine();
                     state = FSMState.PATROL;
+                    enemy.setAframe((0));
                     enemy.setAttacking(false);
                 } //else if (enemyTile.equals(targetTile) && enemy.canAttack() && player.canLoseLife()) {
                 else if (containsVine[(int) (player.getX() / tileSize)][(int) (player.getY() / tileSize)] && enemy.canAttack() && player.canLoseLife()) {
@@ -188,6 +189,7 @@ public class ScoutEnemyController extends com.mygdx.game.EnemyControllers.EnemyC
             case ATTACK:
                 if (!enemy.isExtendingVines) {
                     state = FSMState.PATROL;
+                    enemy.setAframe((0));
                     enemy.setAttacking(false);
                 }
                 break;

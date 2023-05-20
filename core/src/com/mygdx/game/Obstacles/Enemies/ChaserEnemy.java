@@ -10,6 +10,7 @@ public class ChaserEnemy extends Enemy {
     public ChaserEnemy (float x, float y, FilmStrip[][] animator, float scale, float tileSize)
     {
         super(x, y, animator, scale, tileSize, false);
+        isWakable = true;
     }
 
     @Override

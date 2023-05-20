@@ -1,6 +1,7 @@
 package com.mygdx.game.Obstacles;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
@@ -28,6 +29,9 @@ public class Obstacles extends Shadow implements GameObstacle {
     private boolean isBelow;
 
     private boolean isDoor;
+    private boolean isInteractable;
+    private boolean triedToOpen = false;
+    private BitmapFont displayFontInteract;
 
     PolygonShape sensorShape;
 
@@ -41,8 +45,10 @@ public class Obstacles extends Shadow implements GameObstacle {
      * @param x The initial x-coordinate of the tree
      * @param y The initial y-coordinate of the tree
      */
-    public Obstacles(float x, float y, TextureRegion value, float scale, boolean isDoor, boolean isTree, boolean isFence, String fenceId) {
-        super(x, y, value.getRegionWidth() * scale, value.getRegionHeight() * scale, isTree ? ShadowShape.CIRCLE : ShadowShape.SQUARE, isTree, isFence, fenceId);
+    public Obstacles(float x, float y, TextureRegion value, BitmapFont font, float scale, boolean isDoor,
+            boolean isTree, boolean isFence, String fenceId) {
+        super(x, y, value.getRegionWidth() * scale, value.getRegionHeight() * scale,
+                isTree ? ShadowShape.CIRCLE : ShadowShape.SQUARE, isTree, isFence, fenceId);
         setTexture(value);
         setBodyType(BodyDef.BodyType.StaticBody);
         // setDimension(value.getRegionWidth()*scale, value.getRegionHeight()*scale);
@@ -54,6 +60,7 @@ public class Obstacles extends Shadow implements GameObstacle {
         this.scale = scale;
         this.isBelow = false;
         this.isDoor = isDoor;
+        displayFontInteract = font;
         this.isFence = isFence;
         this.isTree = isTree;
 
@@ -64,23 +71,26 @@ public class Obstacles extends Shadow implements GameObstacle {
         }
     }
 
-
-    public boolean getIsDoor(){
+    public boolean getIsDoor() {
         return isDoor;
     }
 
-    public void setIsDoor(boolean isDoor){
+    public void setIsDoor(boolean isDoor) {
         this.isDoor = isDoor;
     }
 
-    public boolean isUnlocked() { return unlocked; }
+    public boolean isUnlocked() {
+        return unlocked;
+    }
 
-    public void unlock(){
+    public void unlock() {
         System.out.println(isDoor);
         unlocked = true;
     }
 
-    public boolean isNowUnlocked() { return nowUnlocked; }
+    public boolean isNowUnlocked() {
+        return nowUnlocked;
+    }
 
     public void setNowUnlocked() {
         nowUnlocked = true;
@@ -133,8 +143,14 @@ public class Obstacles extends Shadow implements GameObstacle {
     public Vector2 getPosition() {
         return super.getPosition();
     }
-    public Vector2 getOrigin() { return origin; }
-    public void setOrigin(Vector2 origin) { this.origin = origin; }
+
+    public Vector2 getOrigin() {
+        return origin;
+    }
+
+    public void setOrigin(Vector2 origin) {
+        this.origin = origin;
+    }
 
     /**
      * Updates this ship position (and weapons fire) according to the control code.
@@ -149,17 +165,15 @@ public class Obstacles extends Shadow implements GameObstacle {
      *
      */
     public void update() {
-        if(unlocked && isActive()){
+        if (unlocked && isActive()) {
             System.out.println("isunlocking");
             setActive(false);
-            //markRemoved(true);
+            // markRemoved(true);
         }
-
 
         // Filter filter = body.getFixtureList().get(0).getFilterData();
         // System.out.println("Cliff filter- cat bits:" + filter.categoryBits + ", mask
         // bits: " + filter.maskBits);
-
     }
 
     /**
@@ -177,38 +191,31 @@ public class Obstacles extends Shadow implements GameObstacle {
             return false;
         }
 
-
         setFilterData(filter);
 
         float width = texture.getRegionWidth() * scale;
         float height = texture.getRegionHeight() * scale;
 
-
         Vector2 sensorCenter = new Vector2(0, 0);
         FixtureDef sensorDef = new FixtureDef();
 
-        //TO DO: Make Json dependant
-        //sensorDef.density = data.getFloat("density",0);
+        // TO DO: Make Json dependant
+        // sensorDef.density = data.getFloat("density",0);
         sensorDef.density = 1;
         sensorDef.isSensor = true;
         sensorShape = new PolygonShape();
-        //TO DO: Make Json dependant
-        //JsonValue sensorjv = data.get("sensor");
-        //sensorShape.setAsBox(sensorjv.getFloat("shrink",0)*getWidth()/2.0f, sensorjv.getFloat("height",0), sensorCenter, 0.0f);
-        sensorShape.setAsBox(width/2, height/2+5, sensorCenter, 0f);
+        // TO DO: Make Json dependant
+        // JsonValue sensorjv = data.get("sensor");
+        // sensorShape.setAsBox(sensorjv.getFloat("shrink",0)*getWidth()/2.0f,
+        // sensorjv.getFloat("height",0), sensorCenter, 0.0f);
+        sensorShape.setAsBox(width / 2, height / 2 + 5, sensorCenter, 0f);
         sensorDef.shape = sensorShape;
 
         // Ground sensor to represent our feet
-        Fixture sensorFixture = body.createFixture( sensorDef );
-//        sensorFixture.setUserData(getSensorName());
+        Fixture sensorFixture = body.createFixture(sensorDef);
+        // sensorFixture.setUserData(getSensorName());
 
-
-
-
-
-        //body.setAwake(true);
-
-
+        // body.setAwake(true);
 
         body.setUserData(this);
 
@@ -224,27 +231,35 @@ public class Obstacles extends Shadow implements GameObstacle {
         // canvas.draw(texture, getX(), getY());
         float width = texture.getRegionWidth() * scale;
         float height = texture.getRegionHeight() * scale;
-        if(isDoor && !unlocked){
-            ((FilmStrip)texture).setFrame(0);
-        }else if(unlocked){
-            ((FilmStrip)texture).setFrame(1);
+        if (isDoor && !unlocked) {
+            ((FilmStrip) texture).setFrame(0);
+        } else if (unlocked) {
+            ((FilmStrip) texture).setFrame(1);
         }
         canvas.draw(texture, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, 0.0f, scale,
                 scale);
+
+        if (isDoor) {
+            if (isInteractable) {
+                String message = "(E) Unlock";
+                canvas.drawText(message, displayFontInteract, position.x - 16.0f, position.y + 20.0f);
+            }
+        }
     }
 
     public void drawDebug(GameCanvas canvas) {
         super.drawDebug(canvas);
-        //canvas.beginDebug();
-        canvas.drawPhysics(sensorShape, Color.RED, getX()*drawScale.x, getY()*drawScale.y, getAngle(), drawScale.x, drawScale.y);
-        //canvas.endDebug();
+        // canvas.beginDebug();
+        canvas.drawPhysics(sensorShape, Color.RED, getX() * drawScale.x, getY() * drawScale.y, getAngle(), drawScale.x,
+                drawScale.y);
+        // canvas.endDebug();
     }
 
-    public void setBehind(boolean bool){
+    public void setBehind(boolean bool) {
         this.isBelow = true;
     }
 
-    public boolean getBehind(){
+    public boolean getBehind() {
         return isBelow;
     }
 
@@ -266,5 +281,21 @@ public class Obstacles extends Shadow implements GameObstacle {
     @Override
     public void incBehind(int inc) {
 
+    }
+
+    /**
+     * Sets whether the item can be interacted with.
+     */
+    public void setInteractable(Boolean interact) {
+        this.isInteractable = interact;
+    }
+
+    /**
+     * Returns whether or not the item is interactable.
+     *
+     * @return whether or not the item is interactable
+     */
+    public boolean isInteractable() {
+        return isInteractable;
     }
 }

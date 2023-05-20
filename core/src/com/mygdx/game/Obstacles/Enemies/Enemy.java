@@ -104,6 +104,7 @@ public class Enemy extends Shadow implements GameObstacle {
 //    /** Current animation frame for this shell */
 //    protected float aframe;
     protected boolean isAttacking;
+    protected boolean isWakable;
     protected boolean isWaking;
     protected boolean hasAwoken;
     protected FilmStrip[] currentStrip;
@@ -124,6 +125,9 @@ public class Enemy extends Shadow implements GameObstacle {
 
     public static void setStunFilmStrip(FilmStrip filmstrip){
         stunAnimation = filmstrip;
+    }
+    public void setAframe(float aframe){
+        this.aframe = aframe;
     }
 
     public void incToStunTime(){
@@ -272,24 +276,27 @@ public class Enemy extends Shadow implements GameObstacle {
     public void updateDirection(float h, float v){
 
         if (h != 0){
-            if (isStunned() && hasAwoken){
+            if ((isStunned() && hasAwoken) || (isStunned() && !isWakable)){
                 currentStrip = stunStrips;
             }
-            else if (isAttacking && hasAwoken){
+            else if ((isAttacking && hasAwoken) || (isAttacking && !isWakable)){
                 currentStrip = attackStrips;
             }
-            else if (hasAwoken){
+            else if (hasAwoken || !isWakable){
                 currentStrip = movementStrips;
             }
         }
         else{
-            if (isStunned() && hasAwoken){
+            if ((isStunned() && hasAwoken) || (isStunned() && !isWakable)){
                 currentStrip = stunStrips;
+            }
+            else if ((isAttacking && hasAwoken) || (isAttacking && !isWakable)){
+                currentStrip = attackStrips;
             }
             else if (isWaking){
                 currentStrip = wakeStrips;
             }
-            else if (hasAwoken){
+            else if (hasAwoken || !isWakable){
                 currentStrip = idleStrips;
             }
         }

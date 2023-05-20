@@ -27,6 +27,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.Sort;
+import com.mygdx.game.EnemyControllers.ChaserEnemyController;
 import com.mygdx.game.EnemyControllers.EnemyController;
 import com.mygdx.game.EnemyControllers.ScoutEnemyController;
 import com.mygdx.game.Obstacles.*;
@@ -222,6 +223,8 @@ public class GameplayController implements Screen {
 	private Array<Survivor> survivorArr;
 	/** Item list **/
 	private Array<Item> itemArr;
+	/** Door list **/
+	private Array<Obstacles> doorArr;
 	/** List of all tree positions **/
 	private Array<Vector2> treePos;
 	/** survivor controller list **/
@@ -444,13 +447,11 @@ public class GameplayController implements Screen {
 
 	private Sound chaserGrowl;
 
-	private boolean startedChaserGrowl;
-
 	private Sound chaserAttack;
 
-	private boolean startedChaserAttack;
-
 	private Sound death;
+	private Sound cantOpen;
+	private boolean startedCantOpen;
 
 	private boolean isDead;
 
@@ -745,6 +746,7 @@ public class GameplayController implements Screen {
 		chaserGrowl = directory.getEntry("sounds:chasergrowl", Sound.class);
 		chaserAttack = directory.getEntry("sounds:chaserattack", Sound.class);
 		death = directory.getEntry("sounds:shriekerattack", Sound.class);
+		cantOpen = directory.getEntry("sounds:cant open door", Sound.class);
 	}
 
 	/**
@@ -981,6 +983,7 @@ public class GameplayController implements Screen {
 		survivorArr = reader.getSurvivors();
 		enemyArr = reader.getEnemies();
 		itemArr = reader.getItems();
+		doorArr = reader.getDoorArr();
 		survivorControllers = reader.getSurvivorControllers();
 		enemyControllers = reader.getEnemyControllers();
 
@@ -1183,15 +1186,18 @@ public class GameplayController implements Screen {
 		input.readInput();
 
 
-		if (paused && pauseMenu.getButtonState() == PauseMenuMode.EXIT_MAINMENU){
-			paused = false;
+		if (paused && (pauseMenu.getButtonState() == PauseMenuMode.EXIT_MAINMENU || pauseMenu.getButtonState() == PauseMenuMode.EXIT_SETTINGS)){
+			// paused = false;
+			int buttonState = pauseMenu.getButtonState();
+			// paused = false;
 			pauseMenu.resetButtonState();
 			pauseMenu.reset();
 			canvas.camera.zoom = 1.0f;
 			canvas.camera.position.x = canvas.getWidth()/2;
 			canvas.camera.position.y = canvas.getHeight()/2;
 			canvas.camera.update();
-			listener.exitScreen(this, PauseMenuMode.EXIT_MAINMENU);
+			
+			listener.exitScreen(this, buttonState);
 		}
 
 		if (!player.isAlive()) {
@@ -1201,6 +1207,9 @@ public class GameplayController implements Screen {
 			}
 			lowHealth.stop(lowHealthId);
 			lowHealth.setLooping(lowHealthId, false);
+		}
+		else {
+			isDead = false;
 		}
 
 		if (input.didPause() || (pauseMenu.getButtonState() == PauseMenuMode.EXIT_GAME && paused)) {
@@ -1358,7 +1367,7 @@ public class GameplayController implements Screen {
 				ChaserEnemy chaser = (ChaserEnemy) enemyArr.get(i);
 				if (enemyControllers.get(i).getState() == EnemyController.FSMState.IDLE)
 				{
-					if (!startedDistantChaser && Math.random() < 0.2f)
+					if (!startedDistantChaser && Math.random() < 0.5f)
 					{
 						startedDistantChaser = true;
 						distantChaserId = distantChaser.play();
@@ -1380,34 +1389,23 @@ public class GameplayController implements Screen {
 				else {
 					distantChaser.stop();
 					startedDistantChaser = false;
-				}
-				if (enemyControllers.get(i).getState() == EnemyController.FSMState.CHASE)
-				{
-					if (!startedChaserGrowl)
+					ChaserEnemyController controller = (ChaserEnemyController) enemyControllers.get(i);
+					if (controller.startedChasing())
 					{
-						startedChaserGrowl = true;
-						if (Vector2.dst(chaser.getX(), chaser.getY(), player.getX(), player.getY()) <= player.getHearing())
+						if (player.isAlive() && Vector2.dst(chaser.getX(), chaser.getY(), player.getX(), player.getY()) <= player.getHearing())
 						{
+							chaserGrowl.stop();
 							chaserGrowl.play((player.getHearing() - Vector2.dst(chaser.getX(), chaser.getY(), player.getX(), player.getY()))/player.getHearing(), 1, 0);
 						}
 					}
-				}
-				else {
-					startedChaserGrowl = false;
-				}
-				if (enemyControllers.get(i).getState() == EnemyController.FSMState.ATTACK)
-				{
-					if (!startedChaserAttack)
+					else if (controller.startedAttacking())
 					{
-						startedChaserAttack = true;
-						if (Vector2.dst(chaser.getX(), chaser.getY(), player.getX(), player.getY()) <= player.getHearing())
+						if (player.isAlive() && Vector2.dst(chaser.getX(), chaser.getY(), player.getX(), player.getY()) <= player.getHearing())
 						{
+							chaserAttack.stop();
 							chaserAttack.play((player.getHearing() - Vector2.dst(chaser.getX(), chaser.getY(), player.getX(), player.getY()))/player.getHearing(), 1, 0);
 						}
 					}
-				}
-				else {
-					startedChaserAttack = false;
 				}
 			}
 			if (enemyArr.get(i) instanceof FloatingEnemy)
@@ -1415,7 +1413,7 @@ public class GameplayController implements Screen {
 				FloatingEnemy floater = (FloatingEnemy) enemyArr.get(i);
 				if (enemyControllers.get(i).getState() == EnemyController.FSMState.IDLE)
 				{
-					if (!startedDistantFloater && Math.random() < 0.2f)
+					if (!startedDistantFloater && Math.random() < 0.5f)
 					{
 						startedDistantFloater = true;
 						distantFloaterId = distantFloater.play();
@@ -1441,7 +1439,8 @@ public class GameplayController implements Screen {
 					{
 						if (!startedFloaterAttack) {
 							startedFloaterAttack = true;
-							if (Vector2.dst(floater.getX(), floater.getY(), player.getX(), player.getY()) <= player.getHearing()) {
+							if (player.isAlive() && Vector2.dst(floater.getX(), floater.getY(), player.getX(), player.getY()) <= player.getHearing()) {
+								floaterAttack.stop();
 								floaterAttack.play((player.getHearing() - Vector2.dst(floater.getX(), floater.getY(), player.getX(), player.getY()))/player.getHearing(), 1, 0);
 							}
 						}
@@ -1459,7 +1458,7 @@ public class GameplayController implements Screen {
 					if (!startedScoutGrowl)
 					{
 						startedScoutGrowl = true;
-						if (Vector2.dst(scout.getX(), scout.getY(), player.getX(), player.getY()) <= player.getHearing()) {
+						if (player.isAlive() && Vector2.dst(scout.getX(), scout.getY(), player.getX(), player.getY()) <= player.getHearing()) {
 							scoutGrowl.play((player.getHearing() - Vector2.dst(scout.getX(), scout.getY(), player.getX(), player.getY()))/player.getHearing(), 1, 0);
 						}
 					}
@@ -1472,7 +1471,7 @@ public class GameplayController implements Screen {
 						if (!startedScoutAttack)
 						{
 							startedScoutAttack = true;
-							if (Vector2.dst(scout.getX(), scout.getY(), player.getX(), player.getY()) <= player.getHearing()) {
+							if (player.isAlive() && Vector2.dst(scout.getX(), scout.getY(), player.getX(), player.getY()) <= player.getHearing()) {
 								scoutAttack.play((player.getHearing() - Vector2.dst(scout.getX(), scout.getY(), player.getX(), player.getY()))/player.getHearing(), 1, 0);
 							}
 						}
@@ -1490,7 +1489,7 @@ public class GameplayController implements Screen {
 						startedShrieking = true;
 						shriekId = shriek.play();
 					}
-					if (Vector2.dst(shrieker.getX(), shrieker.getY(), player.getX(), player.getY()) <= player.getHearing()) {
+					if (player.isAlive() && Vector2.dst(shrieker.getX(), shrieker.getY(), player.getX(), player.getY()) <= player.getHearing()) {
 						shriek.setVolume(shriekId, (player.getHearing() - Vector2.dst(shrieker.getX(), shrieker.getY(), player.getX(), player.getY()))/player.getHearing());
 					}
 					else {
@@ -1587,6 +1586,23 @@ public class GameplayController implements Screen {
 			}
 		}
 
+		// Check through the doors just like the items to see if we need to show "E to open"
+		for (int i = 0; i < doorArr.size; i++) {
+			if (doorArr.get(i).isInteractable() && input.didPickUpItem()) {
+//				doorArr.get(i).setInteractable(false);
+				if (player.hasKey()) {
+					player.useKey();
+					doorArr.get(i).unlock();
+				} else {
+					if (!startedCantOpen) {
+						cantOpen.play(player.getNoise() / 100);
+						startedCantOpen = true;
+					}
+				}
+			}
+//			startedCantOpen = false;
+		}
+
 		caravan.update();
 		// Update caravan state
 		if (caravan.getBody().getFixtureList().get(1).testPoint(player.getPosition())) {
@@ -1670,6 +1686,9 @@ public class GameplayController implements Screen {
 				lowHealthId = lowHealth.play();
 				lowHealth.setLooping(lowHealthId, true);
 			}
+		}
+		else {
+			startedDying = false;
 		}
 
 	}

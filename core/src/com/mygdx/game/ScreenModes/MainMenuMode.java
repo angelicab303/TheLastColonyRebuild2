@@ -238,6 +238,8 @@ public class MainMenuMode implements Screen, InputProcessor, ControllerListener 
     /** the state of which button was pressed (0=none, 1=play, 2=levels, 3=settings, 4=exit) */
     private int buttonState;
     private boolean populated = false;
+    public final int EXIT_LEVEL_SELECT = 1;
+    public final int EXIT_SETTINGS = 2;
 
     private Sound select;
 
@@ -421,6 +423,17 @@ public class MainMenuMode implements Screen, InputProcessor, ControllerListener 
                 }
             };
         } );
+        // Settings button
+        buttons.get(1).addListener( new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                if (buttons.get(1).isChecked()) {
+                    buttons.get(1).setChecked(false);
+                    buttonState = 2;
+                    System.out.println("Settings buttons pressed");
+                }
+            };
+        } );
 
         populated = true;
 
@@ -547,8 +560,8 @@ public class MainMenuMode implements Screen, InputProcessor, ControllerListener 
             // We are are ready, notify our listener
             if (buttonState > 0 && listener != null) {
                 System.out.println(buttonState);
-                System.out.println("Go to level select screen");
-                listener.exitScreen(this, 0);
+                System.out.println("Exit main menu");
+                listener.exitScreen(this, buttonState);
             }
         }
     }

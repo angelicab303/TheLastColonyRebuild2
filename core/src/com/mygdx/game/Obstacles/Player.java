@@ -250,6 +250,10 @@ public class Player extends Shadow implements GameObstacle{
         key++;
     }
 
+    public boolean hasKey() {
+        return key > 0;
+    }
+
     /**Returns whether a key was successfully used*/
     public boolean useKey(){
         if(key > 0){
