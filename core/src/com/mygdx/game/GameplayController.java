@@ -261,6 +261,8 @@ public class GameplayController implements Screen {
 	/** The font for progress bar title */
 	protected BitmapFont displayFontInteract;
 	protected BitmapFont displayFontTorch;
+
+	protected BitmapFont displayFontYellow;
 	/** The actual assets to be loaded */
 	protected AssetDirectory assets;
 	/** Stun animation for enemies */
@@ -728,6 +730,8 @@ public class GameplayController implements Screen {
 		displayFontSub = directory.getEntry("shared:retroSub", BitmapFont.class);
 		displayFontInteract = directory.getEntry("shared:light", BitmapFont.class);
 		displayFontTorch = directory.getEntry("shared:retroMed", BitmapFont.class);
+		displayFontYellow = directory.getEntry("shared:retroMedYellow", BitmapFont.class);
+		displayFontYellow.setColor(Color.YELLOW);
 
 		constants = directory.getEntry("platform:constants", JsonValue.class);
 
@@ -961,7 +965,7 @@ public class GameplayController implements Screen {
 		JSONLevelReader reader = new JSONLevelReader(directory, bounds, world, level, canvas.camera, input,
 				objects, smogBorderTexture, floorArr, SCALE, tileGrid, smogTiles, smogGrid, tileSize, tileOffset, smogTileSize, smogTileOffset,
 				playerDirectionTextures, survivorDirectionTextures, shriekerTextures, floaterDirectionTextures, scoutDirectionTextures, enemyDirectionTextures, vineTextures, survivorDirections, toxicAir, survivorITexture, assetTextures,
-				displayFontInteract, fHeartTexture, player, null);
+				displayFontInteract, displayFontYellow, fHeartTexture, player, null);
 
 //		if (caravan.getX() < 400f) {
 //			int i = 0;
@@ -1551,10 +1555,16 @@ public class GameplayController implements Screen {
 		// Check through the items just like the survivors to see if we need to show "E to collect"
 		for (int i = 0; i < itemArr.size; i++) {
 			if (itemArr.get(i).getItemType() == Item.ItemType.TORCH) {
+				itemArr.get(i).update();
 				if (player.acquiredTorch() && !player.placedTorch()) {
 					itemArr.get(i).setDisplayTorchInstruction(true);
 				} else {
 					itemArr.get(i).setDisplayTorchInstruction(false);
+				}
+				if (player.placedTorch() && !player.seenTorchInstruction()) {
+					itemArr.get(i).setDisplayTorchExplanation(true);
+				} else {
+					itemArr.get(i).setDisplayTorchExplanation(false);
 				}
 			}
 			if (itemArr.get(i).isInteractable() && input.didPickUpItem()) {
@@ -1579,7 +1589,7 @@ public class GameplayController implements Screen {
 		if (input.didPlaceItem() && player.hasTorch()) {
 			if (!tileGrid[(int)(player.getX() / tileSize)][(int)(player.getY() / tileSize)] && torchPlacedCounter == 30) {
 				torchPlacedCounter--;
-				Torch torch = new Torch((player.getX() / tileSize)*tileSize,(player.getY() / tileSize)*tileSize,torchTexture, displayFontInteract, SCALE, player);
+				Torch torch = new Torch((player.getX() / tileSize)*tileSize,(player.getY() / tileSize)*tileSize,torchTexture, displayFontInteract, displayFontYellow, SCALE, player);
 				addObject(torch);
 				itemArr.add(torch);
 				player.useTorch();

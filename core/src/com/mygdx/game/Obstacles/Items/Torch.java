@@ -8,8 +8,8 @@ import com.mygdx.game.Obstacles.Player;
 
 public class Torch extends Item{
     private Light torchLight;
-    public Torch(float x, float y, TextureRegion cvalue, BitmapFont font, float scale, Player player) {
-        super(x,y,cvalue, font, scale, player);
+    public Torch(float x, float y, TextureRegion cvalue, BitmapFont font, BitmapFont fontYellow, float scale, Player player){
+        super(x,y,cvalue, font, fontYellow, scale, player);
     }
 
     @Override

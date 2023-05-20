@@ -24,8 +24,11 @@ public class Item extends BoxObstacle implements GameObstacle {
     private boolean displayTorchInstruction;
     private boolean displayTorchExplanation;
     private BitmapFont displayFontInteract;
+    private BitmapFont displayFontInteractYellow;
 
     private Player player;
+
+    private int ticks;
 
     public enum ItemType{
         ITEM,
@@ -33,7 +36,7 @@ public class Item extends BoxObstacle implements GameObstacle {
         TORCH,
         COFFEE
     }
-    public Item(float x, float y, TextureRegion cvalue, BitmapFont font, float scale, Player player){
+    public Item(float x, float y, TextureRegion cvalue, BitmapFont font, BitmapFont yellowFont, float scale, Player player){
         super(x,y,cvalue.getRegionWidth()*scale, cvalue.getRegionHeight()*scale);
         this.player = player;
         position = new Vector2(x, y);
@@ -42,9 +45,12 @@ public class Item extends BoxObstacle implements GameObstacle {
         setRestitution(0.1f);
         setTexture(cvalue);
         this.scale = scale;
+        ticks = 0;
 
         isInteractable = false;
         displayFontInteract = font;
+        displayFontInteractYellow = yellowFont;
+//        yellowFont.setColor(Color.YELLOW);
 
         if (filter == null){
             filter = new Filter();
@@ -75,6 +81,17 @@ public class Item extends BoxObstacle implements GameObstacle {
         return true;
     }
 
+    public void update() {
+        if (displayTorchExplanation && ticks < 600) {
+            ticks++;
+        } else {
+            if (ticks >= 600) {
+                player.setSeenTorchInstructions(true);
+            }
+            displayTorchExplanation = false;
+        }
+    }
+
     @Override
     public void draw(GameCanvas canvas) {
         canvas.draw(texture, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, 0.0f, scale,
@@ -85,12 +102,16 @@ public class Item extends BoxObstacle implements GameObstacle {
             canvas.drawText(message, displayFontInteract, position.x - 16.0f, position.y + 20.0f);
         }
         if (displayTorchInstruction) {
+            displayFontInteractYellow.setColor(Color.YELLOW);
             String message = "(Q) Place Down Torch";
-            canvas.drawText(message, displayFontInteract, player.getX() - 32.0f, player.getY() + 40.0f);
+            canvas.drawText(message, displayFontInteractYellow, player.getX() - 32.0f, player.getY() + 40.0f);
+            displayFontInteractYellow.setColor(Color.WHITE);
         }
         if (displayTorchExplanation) {
-            String message = "Torches repel smog creeping back!";
-            canvas.drawText(message, displayFontInteract, position.x - 32.0f, position.y + 40.0f);
+            displayFontInteractYellow.setColor(Color.YELLOW);
+            String message = "Torches prevent smog\n\n from creeping back!";
+            canvas.drawText(message, displayFontInteractYellow, player.getX() - 32.0f, player.getY() + 40.0f);
+            displayFontInteractYellow.setColor(Color.WHITE);
         }
     }
 
