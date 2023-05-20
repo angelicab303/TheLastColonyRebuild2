@@ -164,6 +164,10 @@ public class Player extends Shadow implements GameObstacle{
     public Array<Survivor> getSurvivorsFollowing() {
         return survivorsFollowing;
     }
+
+    public int getNumTorches() {
+        return torch;
+    }
     /**
      * Create player at the given position.
      *

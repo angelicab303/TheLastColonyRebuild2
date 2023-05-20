@@ -299,6 +299,8 @@ public class GameplayController implements Screen {
 
 	/** Reference to the air bar asset */
 	protected AirBar airBar;
+
+	protected Torch torch;
 	/** Heart list **/
 	protected Array<Heart> heartArr;
 
@@ -1283,7 +1285,7 @@ public class GameplayController implements Screen {
 
 		// Update UI elements
 		airBar.update(player.weapon.getNumAmmo());
-
+		torch.update(player.getNumTorches());
 		player.weapon.update(player.getPosition(), canvas.unproject(input.getMousePos()), input.getShootDir());
 
 		if (player.weapon.isAbsorbing())
