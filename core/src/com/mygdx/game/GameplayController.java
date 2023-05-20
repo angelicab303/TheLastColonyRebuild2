@@ -987,6 +987,21 @@ public class GameplayController implements Screen {
 		survivorControllers = reader.getSurvivorControllers();
 		enemyControllers = reader.getEnemyControllers();
 
+		ShriekerEnemy shrieker = null;
+
+		for (Enemy e : enemyArr) {
+			if (e instanceof ShriekerEnemy) {
+				shrieker = (ShriekerEnemy) e;
+				break;
+			}
+		}
+
+		if (shrieker != null) {
+			for (int i = 0; i < enemyArr.size; i++) {
+				enemyControllers.get(i).addShrieker(shrieker);
+			}
+		}
+
 		if (isInvincible) {
 			player.setHealth(10000);
 		}
@@ -1215,6 +1230,7 @@ public class GameplayController implements Screen {
 			pauseMenu.reset();
 
 			if (!paused && !unpausing) {
+				shriek.pause(shriekId);
 				if (!titleMusic.isPlaying()) {
 					titleMusic.play();
 					titleMusic.setLooping(true);
@@ -1235,6 +1251,7 @@ public class GameplayController implements Screen {
 				}
 				return;
 			} else if (paused && !pausing) {
+				shriek.resume(shriekId);
 				titleMusic.stop();
 				titleMusic.setLooping(false);
 				paused = false;
