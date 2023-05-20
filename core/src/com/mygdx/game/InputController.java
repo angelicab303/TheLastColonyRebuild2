@@ -73,6 +73,8 @@ public class InputController {
 	private static boolean reset;
 	/** Did we press ESC to pause the game? */
 	private static boolean paused = false;
+	/** Did we press Z to clear save data? */
+	private static boolean clearedSaveData;
 	/** Did we press N to move on to the next level? (temporary for beta grading) */
 	private static boolean nextLevel;
 	/** Whether the debug toggle was pressed. */
@@ -209,6 +211,8 @@ public class InputController {
 	 */
 	public boolean didPause() { return paused; }
 
+	public boolean didClearSaveData() { return clearedSaveData; }
+
 	/** Returns whether the player should advance to the next level.
 	 *
 	 * @return whether the next level button was pressed.
@@ -263,7 +267,7 @@ public class InputController {
 			// Figure out, based on which player we are, which keys
 			// control our actions (depends on player).
 			int up, left, right, down, absorb, shoot, upshoot, leftshoot, rightshoot, downshoot,
-					pickUpSurvivor, pickUpItem, placeItem, shiftControls, restart, pause, next, enter, rightArrow, leftArrow;
+					pickUpSurvivor, pickUpItem, placeItem, shiftControls, restart, pause, clear, next, enter, rightArrow, leftArrow;
 			up    = Input.Keys.W;
 			down  = Input.Keys.S;
 			left  = Input.Keys.A;
@@ -280,6 +284,7 @@ public class InputController {
 			shiftControls = Input.Keys.SHIFT_LEFT;
 			restart = Input.Keys.R;
 			pause = Input.Keys.ESCAPE;
+			clear = Input.Keys.Z;
 			next = Input.Keys.N;
 			enter = Input.Keys.ENTER;
 			rightArrow = Input.Keys.RIGHT;
@@ -294,6 +299,7 @@ public class InputController {
 			placedItem = false;
 			reset = false;
 			paused = false;
+			clearedSaveData = false;
 			nextLevel = false;
 			pressedEnter = false;
 			pressedRightArrow = false;
@@ -396,6 +402,11 @@ public class InputController {
 			if (Gdx.input.isKeyPressed(pause))
 			{
 				paused = true;
+			}
+			// Clearing save data
+			if (Gdx.input.isKeyPressed(clear))
+			{
+				clearedSaveData = true;
 			}
 			// Advancing to the next level
 			if (Gdx.input.isKeyPressed(next)) {

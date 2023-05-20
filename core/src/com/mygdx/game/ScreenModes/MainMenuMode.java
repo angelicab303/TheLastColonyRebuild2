@@ -25,6 +25,7 @@ package com.mygdx.game.ScreenModes;
 import assets.*;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
@@ -43,6 +44,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.game.GameCanvas;
+import com.mygdx.game.InputController;
 import util.ScreenListener;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.alpha;
@@ -245,6 +247,8 @@ public class MainMenuMode implements Screen, InputProcessor, ControllerListener 
 
     private Music titleMusic;
 
+    private InputController input;
+
 
     /**
      * Returns the asset directory produced by this loading screen
@@ -294,6 +298,7 @@ public class MainMenuMode implements Screen, InputProcessor, ControllerListener 
         stage = new Stage();
         table = new Table();
         buttonState = 0;
+        input = new InputController();
 
 
     }
@@ -478,6 +483,13 @@ public class MainMenuMode implements Screen, InputProcessor, ControllerListener 
      * @param delta Number of seconds since last animation frame
      */
     private void update(float delta) {
+        input.readInput();
+        if (input.didClearSaveData())
+        {
+            Preferences prefs = Gdx.app.getPreferences("save data");
+            prefs.clear();
+            prefs.flush();
+        }
         // Update cloud positions
         stage.act();
         if (appearTime <= APPEAR_TIME)
