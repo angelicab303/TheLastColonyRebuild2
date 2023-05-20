@@ -13,6 +13,10 @@
     "mainMenu:cursor": "images/mainMenu/SimpleCursor.png",
     "mainMenu:smallCloud": "images/mainMenu/SmallCloud.png",
     "mainMenu:levels": "images/mainMenu/Levels.png",
+    "mainMenu:newGame": "images/mainMenu/NEW_GAME.png",
+    "mainMenu:newGameDown": "images/mainMenu/NEW_GAMEDownt.png",
+    "mainMenu:continue": "images/mainMenu/CONTINUE.png",
+    "mainMenu:continueDown": "images/mainMenu/CONTINUEDown.png",
     "levelSelect:background": "images/levelSelect/Levels0-5.png",
     "levelSelect:1": "images/levelSelect/1.png",
     "levelSelect:2": "images/levelSelect/2.png",
@@ -62,6 +66,10 @@
     "victory:retry": "images/victoryScreen/RETRY.png",
     "victory:retryDown": "images/victoryScreen/RETRYDown.png",
     "victory:victory": "images/victoryScreen/Victory.png",
+    "lose:eggBroken": "images/loseScreen/eggBroken.png",
+    "lose:levelSelect": "images/loseScreen/LEVEL_SELECT.png",
+    "lose:levelSelectDown": "images/loseScreen/LEVEL_SELECTDown.png",
+    "lose:youLose": "images/loseScreen/YOU_LOSE_2.png",
 
     "shared:earth": {
       "file": "shared/earthtile.png",
@@ -766,7 +774,7 @@
     "tiles:9a_torch": "tiles/9a_torch.png",
     "tiles:9a_mushroom": "tiles/9a_mushroom.png",
     "tiles:9b_key": "tiles/9b_key.png",
-    "tiles:9c_bean": "tiles/9c_bean.png",
+    "tiles:9c_bean": "images/goldEggSingle.png",
     "tiles:8_doorOpen" :"tiles/DoorOpen.png",
     "tiles:8_doorClosed": {
       "file" : "tiles/DoorFilmStrip.png",
@@ -906,7 +914,7 @@
     "sounds:bean": "sounds/Bean_Picku_16p.wav",
     "sounds:item": "sounds/Move.wav",
     "sounds:survivorrescue": "sounds/SurvivorAtCaravan16.wav",
-    "sounds:victory": "sounds/VictorySound16.wav"
+    "sounds:victory": "sounds/VictorySound16.wav",
     "sounds:cant open door": "sounds/cant open door.wav"
   },
   "music":{

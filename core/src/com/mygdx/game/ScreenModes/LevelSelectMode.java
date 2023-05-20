@@ -136,6 +136,9 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
             animator = new FilmStrip(texture, 1, NUM_ANIM_FRAMES);
             aframe = 0;
         }
+        private int getCurrLevel(){
+            return this.currLevel;
+        }
 
         private void update(int currLevel){
             if (loadingIn){
@@ -254,11 +257,15 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
     /** the state of which button was pressed */
     private int buttonState;
     /** Exit state for returning back to main menu */
-    public static final int EXIT_MAIN = 0;
+    public static final int EXIT_MAIN = -1;
     /** Exit state for level 0 */
-    public static final int EXIT_0 = 1;
+    public static final int EXIT_0 = 0;
     /** Exit state for level 1 */
-    public static final int EXIT_1 = 2;
+    public static final int EXIT_1 = 1;
+    public static final int EXIT_2 = 2;
+    public static final int EXIT_3 = 3;
+    public static final int EXIT_4 = 4;
+    public static final int EXIT_5 = 5;
 
     /** checks if graphics have been loaded */
     private boolean loaded = false;
@@ -329,7 +336,7 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
 
         Gdx.input.setInputProcessor( this );
         stage = new Stage();
-        buttonState = 1;
+        buttonState = 0;
         currLevel = 0;
     }
 
@@ -470,7 +477,7 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
                     buttons.get(3).setChecked(false);
                     currLevel = 2;
                     if (2 <= unlocked){
-                        buttonState = EXIT_1;
+                        buttonState = EXIT_2;
                     }
                 }
             };
@@ -536,7 +543,7 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
         }
         Gdx.input.setInputProcessor(null);
         populateMenu();
-        buttonState = 1;
+        buttonState = 0;
         isReady = false;
     }
 
@@ -569,6 +576,9 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
         }
 
         menuCaravan.update(currLevel);
+        if (buttonState != EXIT_MAIN){
+            buttonState = menuCaravan.getCurrLevel();
+        }
 
 
     }
@@ -613,7 +623,7 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
             draw();
 
             // We are are ready, notify our listener
-            if (buttonState > -1 && listener != null) {
+            if (buttonState > -2 && listener != null) {
                 // System.out.println("exit from level select");
                 if (isReady){
                     listener.exitScreen(this, buttonState);

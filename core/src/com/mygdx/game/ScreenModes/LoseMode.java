@@ -1,34 +1,9 @@
-/*
- * LoadingMode.java
- *
- * Asset loading is a really tricky problem.  If you have a lot of sound or images,
- * it can take a long time to decompress them and load them into memory.  If you just
- * have code at the start to load all your assets, your game will look like it is hung
- * at the start.
- *
- * The alternative is asynchronous asset loading.  In asynchronous loading, you load a
- * little bit of the assets at a time, but still animate the game while you are loading.
- * This way the player knows the game is not hung, even though he or she cannot do
- * anything until loading is complete. You know those loading screens with the inane tips
- * that want to be helpful?  That is asynchronous loading.
- *
- * This player mode provides a basic loading screen.  While you could adapt it for
- * between level loading, it is currently designed for loading all assets at the
- * start of the game.
- *
- * Author: Walker M. White
- * Based on original PhysicsDemo Lab by Don Holden, 2007
- * Updated asset version, 2/6/2021
- */
 package com.mygdx.game.ScreenModes;
 
-import assets.*;
+import assets.AssetDirectory;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.ControllerListener;
 import com.badlogic.gdx.controllers.ControllerMapping;
@@ -37,83 +12,15 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.game.GameCanvas;
-import com.mygdx.game.InputController;
 import util.ScreenListener;
 
-import static com.badlogic.gdx.scenes.scene2d.actions.Actions.alpha;
-import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeIn;
-
-
-/**
- * Class that provides a main menu screen to start the game.
- */
-public class MainMenuMode implements Screen, InputProcessor, ControllerListener {
-    class Cloud {
-        /** Texture to be used for the cloud */
-        private Texture cloudTexture;
-        /** x position of the cloud on screen */
-        private float x;
-        /** y position of the cloud on screen */
-        private float y;
-        /** Movement rate of cloud*/
-        private float rate;
-        /** Scaling of clouds */
-        private float cloudScale;
-        /** How much the cloud has moved from origin */
-        private float movement;
-        /** If the cloud is currently moving right */
-        private boolean isMovingRight;
-        /** Maximum distance for clouds to move right before moving back left */
-        private float maxRight;
-
-        public Cloud(Texture ctexture, float x, float y, float rate, float maxRight, float cScale){
-            this.cloudTexture = ctexture;
-            this.x = x;
-            this.y = y;
-            this.rate = rate;
-            this.cloudScale = cScale;
-            this.maxRight = maxRight;
-            isMovingRight = true;
-            movement = 0;
-        }
-
-        /** Updates the positioning of the clouds to move across screen */
-        private void update(){
-            // Move according to desired direction
-            if (isMovingRight){
-                movement += rate;
-            }
-            else {
-                movement -= rate;
-            }
-            x += rate;
-
-            // Check if reached maximum movement direction
-            if (movement >= maxRight){
-                isMovingRight = false;
-                movement = 0;
-                rate = -rate;
-            }
-            else if (movement <= -30){
-                isMovingRight = true;
-                movement = 0;
-                rate = -rate;
-            }
-        }
-
-        private void draw(GameCanvas canvas){
-            canvas.draw(cloudTexture, Color.WHITE, cloudTexture.getWidth()/2, cloudTexture.getHeight()/2, x, y, 0, cloudScale, cloudScale);
-        }
-
-    }
-
+public class LoseMode implements Screen, InputProcessor, ControllerListener {
     /**
      * Class representing buttons or titles to be placed on screen.
      */
@@ -167,29 +74,22 @@ public class MainMenuMode implements Screen, InputProcessor, ControllerListener 
     private Table table;
     /** The button to click on */
     private Array<TextButton> buttons;
-    /** Texture for play option */
-    private Texture play;
-    private Texture playDown;
-    /** Texture for levels option */
-    private Texture levels;
-    /** Texture for settings option */
-    private Texture settings;
-    private Texture settingsDown;
+    /** All tables used for UI */
+    private Array<Table> tables;
     /** Texture for exit option */
-    private Texture exit;
-    private Texture exitDown;
-    private Texture continueUp;
-    private Texture continueDown;
-    private Texture newGame;
-    private Texture newGameDown;
-    /** Texture for small cloud */
-    private Texture smallCloud;
-    /** Texture for medium cloud */
-    private Texture mediumCloud;
-    /** Texture for large cloud */
-    private Texture largeCloud;
-    /** Texture for cursor*/
-    private Texture cursor;
+    private Texture egg;
+    private Texture goldEgg;
+    private Texture nextLevel;
+    private Texture nextLevelDown;
+    private Texture retry;
+    private Texture retryDown;
+    private Texture victory;
+
+
+    private Texture textBox;
+    private Texture empty;
+
+
     private float cursorScale = 0.15f;
     /** Texture for title */
     private Texture title;
@@ -210,9 +110,10 @@ public class MainMenuMode implements Screen, InputProcessor, ControllerListener 
     /** Scaling factor for when the student changes the resolution. */
     private float scale;
     /** Scaling factor for the title. */
-    private float titleScale = 0.8f;
+    private float titleScale = 0.55f;
     /** Scaling factor for the text. */
     private float textScale = 0.6f;
+    private float eggScale = 0.6f;
     /** The current state of the play button */
     private int   pressState;
     /** Whether or not this player mode is still active */
@@ -230,11 +131,7 @@ public class MainMenuMode implements Screen, InputProcessor, ControllerListener 
     private float SETTINGS_Y;
     private float _Y;
     /** Array of text */
-    private Array<Text> text;
-    /** Array for all clouds */
-    private Array<Cloud> clouds;
-    /** Number of clouds to be drawn */
-    private final int NUM_CLOUDS = 5;
+    private Array<LoseMode.Text> text;
     /** X center of play button */
     private float centerX;
     /** Y center of play button */
@@ -244,16 +141,9 @@ public class MainMenuMode implements Screen, InputProcessor, ControllerListener 
     /** the state of which button was pressed (0=none, 1=play, 2=levels, 3=settings, 4=exit) */
     private int buttonState;
     private boolean populated = false;
-    public final int EXIT_CONTINUE = 1;
-    public final int EXIT_SETTINGS = 2;
-    public final int EXIT_QUIT = 3;
-    public final int EXIT_NEW_GAME = 4;
-
-    private Sound select;
-
-    private Music titleMusic;
-
-    private InputController input;
+    private float sliderScales = 0.5f;
+    public final int EXIT_RETRY = 1;
+    public final int EXIT_NEXT_LEVEL = 2;
 
 
     /**
@@ -287,7 +177,7 @@ public class MainMenuMode implements Screen, InputProcessor, ControllerListener 
      *
      * @param canvas 	The game canvas to draw to
      */
-    public MainMenuMode(GameCanvas canvas) {
+    public LoseMode(GameCanvas canvas) {
         this.canvas  = canvas;
 
         // Compute the dimensions from the canvas
@@ -295,19 +185,21 @@ public class MainMenuMode implements Screen, InputProcessor, ControllerListener 
 
         pressState = 0;
 
-        clouds = new Array<Cloud>();
-        text = new Array<Text>();
+
+        text = new Array<LoseMode.Text>();
         pressState = 0;
         appearTime = 0;
 
-        Gdx.input.setInputProcessor( this );
+        Gdx.input.setInputProcessor(this);
         stage = new Stage();
         table = new Table();
         buttonState = 0;
-        input = new InputController();
+
 
 
     }
+
+
 
     /**
      * Gather the assets for the main menu.
@@ -319,162 +211,153 @@ public class MainMenuMode implements Screen, InputProcessor, ControllerListener 
      */
     public void gatherAssets(AssetDirectory directory) {
         // Allocate the main menu assets
-        background = directory.getEntry("mainMenu:background", Texture.class);
-        title = directory.getEntry("mainMenu:title", Texture.class);
-        play = directory.getEntry("mainMenu:play", Texture.class);
-        playDown = directory.getEntry("mainMenu:playDown", Texture.class);
-        continueUp = directory.getEntry("mainMenu:continue", Texture.class);
-        continueDown = directory.getEntry("mainMenu:continueDown", Texture.class);
-        newGame = directory.getEntry("mainMenu:newGame", Texture.class);
-        newGameDown = directory.getEntry("mainMenu:newGameDown", Texture.class);
-        settingsDown = directory.getEntry("mainMenu:settingsDown", Texture.class);
-        exitDown = directory.getEntry("mainMenu:exitDown", Texture.class);
-        levels = directory.getEntry("mainMenu:levels", Texture.class);
-        settings = directory.getEntry("mainMenu:settings", Texture.class);
-        cursor = directory.getEntry("mainMenu:cursor", Texture.class);
-        exit = directory.getEntry("mainMenu:exit", Texture.class);
-        largeCloud = directory.getEntry("mainMenu:largeCloud", Texture.class);
-        mediumCloud = directory.getEntry("mainMenu:mediumCloud", Texture.class);
-        smallCloud = directory.getEntry("mainMenu:smallCloud", Texture.class);
+        background = directory.getEntry("settings:background", Texture.class);
+        title = directory.getEntry("lose:youLose", Texture.class);
+        egg = directory.getEntry("lose:eggBroken", Texture.class);
+        goldEgg = directory.getEntry("victory:goldEgg", Texture.class);
+        nextLevel = directory.getEntry("lose:levelSelect", Texture.class);
+        nextLevelDown = directory.getEntry("lose:levelSelectDown", Texture.class);
+        retry = directory.getEntry("victory:retry", Texture.class);
+        retryDown = directory.getEntry("victory:retryDown", Texture.class);
+        empty = directory.getEntry("settings:textBoxEmpty" ,Texture.class);
         nullFont = directory.getEntry("shared:retro" ,BitmapFont.class);
-        select = directory.getEntry("sounds:select", Sound.class);
-        titleMusic = directory.getEntry("titlemusic", Music.class);
+
     }
     /** Populates the menu with clouds */
     public void populateMenu(){
-        System.out.println("Main Menu populated");
-        if (!titleMusic.isPlaying()) {
-            titleMusic.play();
-            titleMusic.setLooping(true);
-        }
+        System.out.println("Settings Menu populated");
         // Initialize the clouds to be drawn on screen
         // Order: [large, med, med, small, small]
-        float startX = RIGHT_SPACING + 10;
+        float startX = RIGHT_SPACING + 30;
         float startY = canvas.getHeight()*.05f;
         if (!populated){
-            clouds.add(new Cloud(largeCloud, canvas.getWidth()*0.95f, canvas.getHeight()*0.32f, 0.05f, 50.0f, 0.9f));
-            clouds.add(new Cloud(mediumCloud, clouds.get(0).x - 450, clouds.get(0).y - 90, 0.1f, 100.0f,0.6f));
-            clouds.add(new Cloud(mediumCloud, clouds.get(1).x + 220, clouds.get(1).y + 360, 0.08f, 100.0f, 0.6f));
-            clouds.add(new Cloud(smallCloud, clouds.get(1).x - 100, clouds.get(1).y, 0.12f, 150.0f,0.6f));
-            clouds.add(new Cloud(smallCloud, clouds.get(2).x - 100, clouds.get(2).y+ 100, 0.12f, 150.0f,0.6f));
-
-            text.add(new Text(title, RIGHT_SPACING, canvas.getHeight()*.95f, false));
+            text.add(new LoseMode.Text(title, RIGHT_SPACING+290, canvas.getHeight()*.95f, false));
+            //text.add(new VictoryMode.Text(egg, RIGHT_SPACING, canvas.getHeight()*.85f, false));
         }
 
 
         // Initialize the buttons/titles to be drawn on screen
+        tables = new Array<Table>();
 
-        // text.add(new Text(play, startX, startY, false));
-
-        // Add skins
-        //Skin skin = new Skin();
-        //skin.add("play", play);
 
         // playSkin.addRegions(new TextureAtlas(play));
 
+        float table1X = RIGHT_SPACING + 530;
+        float table1Y = canvas.getHeight()*.2f;
         //table.setFillParent(true);
-        table.setPosition(startX, startY);
-        table.setWidth(600.0f);
-        table.setHeight(400.0f);
-        table.setDebug(false);
+        Table table1 = new Table();
+        tables.add(table1);
+        table1.setPosition(table1X, table1Y);
+        table1.setWidth(600.0f);
+        table1.setHeight(400.0f);
+        table1.setDebug(false);
+
+        float table2X = startX;
+        float table2Y = table1Y - 270;
+        //table.setFillParent(true);
+        Table table2 = new Table();
+        tables.add(table2);
+        table2.setPosition(RIGHT_SPACING+290, table2Y-100);
+        table2.setWidth(600.0f);
+        table2.setHeight(400.0f);
+        table2.setDebug(false);
+
+
 
         Gdx.input.setInputProcessor(stage);
-//        buttons = new Array<ImageButton>();
-        // Initialize play button
-        //buttons.add(new ImageButton(skin));
-        //buttons.get(0).setSize(play.getWidth(), play.getHeight());
-        //TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
-//        textButtonStyle.font = nullFont;
-
-
         buttons = new Array<TextButton>();
-        // Continue button
+
+
+        // Egg image
         TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
         textButtonStyle.font = nullFont;
-        textButtonStyle.up   = new TextureRegionDrawable(continueUp);
-        textButtonStyle.down = new TextureRegionDrawable(continueDown);
-        textButtonStyle.checked = new TextureRegionDrawable(continueUp);
-        // textButtonStyle.over = new TextureRegionDrawable(playDown);
+        textButtonStyle.up   = new TextureRegionDrawable(egg);
+        textButtonStyle.down = new TextureRegionDrawable(egg);
+        textButtonStyle.checked = new TextureRegionDrawable(egg);
         buttons.add(new TextButton("", textButtonStyle));
-        table.add(buttons.get(0)).spaceBottom(40.0f).left().size(continueUp.getWidth()*textScale, continueUp.getHeight()*textScale);
-        table.row();
-        // New game button
+        table1.add(buttons.get(0)).left().size(egg.getWidth()*eggScale, egg.getHeight()*eggScale);
+
+        // table 2
         textButtonStyle = new TextButton.TextButtonStyle();
         textButtonStyle.font = nullFont;
-        textButtonStyle.up   = new TextureRegionDrawable(newGame);
-        textButtonStyle.down = new TextureRegionDrawable(newGameDown);
-        textButtonStyle.checked = new TextureRegionDrawable(newGame);
-        // textButtonStyle.over = new TextureRegionDrawable(playDown);
+        textButtonStyle.up   = new TextureRegionDrawable(retry);
+        textButtonStyle.down = new TextureRegionDrawable(retryDown);
+        textButtonStyle.checked = new TextureRegionDrawable(retry);
         buttons.add(new TextButton("", textButtonStyle));
-        table.add(buttons.get(1)).spaceBottom(40.0f).left().size(newGame.getWidth()*textScale, newGame.getHeight()*textScale);
-        table.row();
-        // Settings button
+        table2.add(buttons.get(1)).left().spaceRight(400).size(retry.getWidth()*textScale, retry.getHeight()*textScale);
+
         textButtonStyle = new TextButton.TextButtonStyle();
         textButtonStyle.font = nullFont;
-        textButtonStyle.up   = new TextureRegionDrawable(settings);
-        textButtonStyle.down = new TextureRegionDrawable(settingsDown);
-        textButtonStyle.checked = new TextureRegionDrawable(settings);
+        textButtonStyle.up   = new TextureRegionDrawable(nextLevel);
+        textButtonStyle.down = new TextureRegionDrawable(nextLevelDown);
+        textButtonStyle.checked = new TextureRegionDrawable(nextLevel);
         buttons.add(new TextButton("", textButtonStyle));
-        table.add(buttons.get(2)).spaceBottom(40.0f).left().size(settings.getWidth()*textScale, settings.getHeight()*textScale);
-        table.row();
-        // Exit button
-        textButtonStyle = new TextButton.TextButtonStyle();
-        textButtonStyle.font = nullFont;
-        textButtonStyle.up   = new TextureRegionDrawable(exit);
-        textButtonStyle.down = new TextureRegionDrawable(exitDown);
-        textButtonStyle.checked = new TextureRegionDrawable(exit);
-        buttons.add(new TextButton("", textButtonStyle));
-        table.add(buttons.get(3)).spaceBottom(40.0f).left().size(exit.getWidth()*textScale, exit.getHeight()*textScale);
-
-
-        table.left().top();
-        stage.addActor(table);
+        table2.add(buttons.get(2)).left().size(nextLevel.getWidth()*textScale, nextLevel.getHeight()*textScale);
 
 
 
+        table1.left().top();
+        stage.addActor(table1);
+        table2.left().top();
+        stage.addActor(table2);
 
 
 
         // Hook up the buttons
-        // Play button
-        buttons.get(0).addListener( new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                if (buttons.get(0).isChecked()) {
-                    buttons.get(0).setChecked(false);
-                    buttonState = 1;
-                    select.play();
-                    System.out.println("Play buttons pressed");
-                }
-            };
-        } );
+        // Retry button
         buttons.get(1).addListener( new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 if (buttons.get(1).isChecked()) {
                     buttons.get(1).setChecked(false);
-                    buttonState = EXIT_NEW_GAME;
-                    select.play();
-                    System.out.println("Play buttons pressed");
+                    buttonState = EXIT_RETRY;
                 }
             };
         } );
-        // Settings button
         buttons.get(2).addListener( new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 if (buttons.get(2).isChecked()) {
                     buttons.get(2).setChecked(false);
-                    buttonState = 2;
-                    select.play();
-                    System.out.println("Settings buttons pressed");
+                    buttonState = EXIT_NEXT_LEVEL;
+                    canvas.camera.zoom = 1.0f;
+                    canvas.camera.position.x = canvas.getWidth()/2;
+                    canvas.camera.position.y = canvas.getHeight()/2;
+                    canvas.camera.update();
                 }
             };
         } );
 
+
         populated = true;
 
 
+
+    }
+    /**
+     * Adds a button to a table.
+     * @param table table used to hold all pause buttons
+     * @param up the up texture for the button
+     * @param down the down texture for the button
+     * @param num the number of the button in table order
+     */
+    private void addButton(Table table, Texture up, Texture down, int num){
+        TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
+        textButtonStyle.font = nullFont;
+        textButtonStyle.up   = new TextureRegionDrawable(up);
+        textButtonStyle.checked = new TextureRegionDrawable(up);
+        textButtonStyle.down = new TextureRegionDrawable(down);
+        buttons.add(new TextButton("", textButtonStyle));
+        table.add(buttons.get(num)).spaceBottom(50f).spaceRight(150f).left().size(up.getWidth()*textScale, up.getHeight()*textScale);
+    }
+    private void addButtonHorizontal(Table table, Texture up, Texture down, int num, String text, float scale){
+        TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
+        textButtonStyle.font = nullFont;
+        textButtonStyle.up   = new TextureRegionDrawable(up);
+        textButtonStyle.checked = new TextureRegionDrawable(up);
+        textButtonStyle.down = new TextureRegionDrawable(down);
+        buttons.add(new TextButton(text, textButtonStyle));
+        table.add(buttons.get(num)).spaceRight(40).top().left().size(up.getWidth()*scale, up.getHeight()*scale);
 
     }
 
@@ -492,12 +375,13 @@ public class MainMenuMode implements Screen, InputProcessor, ControllerListener 
      */
     public void reset() {
         stage.clear();
-        if (table != null){
-            table.clearActions();
-            table.clearListeners();
-            table.clear();
-            stage = new Stage();
-            table = new Table();
+        if (tables != null){
+            for (Table t : tables){
+                t.clearActions();
+                t.clearListeners();
+                t.clear();
+                stage = new Stage();
+            }
         }
         Gdx.input.setInputProcessor(null);
         populateMenu();
@@ -514,13 +398,6 @@ public class MainMenuMode implements Screen, InputProcessor, ControllerListener 
      * @param delta Number of seconds since last animation frame
      */
     private void update(float delta) {
-        input.readInput();
-        if (input.didClearSaveData())
-        {
-            Preferences prefs = Gdx.app.getPreferences("save data");
-            prefs.clear();
-            prefs.flush();
-        }
         // Update cloud positions
         stage.act();
         if (appearTime <= APPEAR_TIME)
@@ -532,9 +409,6 @@ public class MainMenuMode implements Screen, InputProcessor, ControllerListener 
 
         }
 
-        for (Cloud cloud : clouds){
-            cloud.update();
-        }
     }
 
     /**
@@ -551,34 +425,11 @@ public class MainMenuMode implements Screen, InputProcessor, ControllerListener 
         // color.a  = appearTime/ APPEAR_TIME;
         // System.out.println(color.a);
 
-        // Draw clouds
-        for (int i = NUM_CLOUDS-1; i >= 0; i--) {
-            clouds.get(i).draw(canvas);
-        }
-        float titleY = canvas.getHeight() * 0.70f;
-//        System.out.println("--------------------");
-//        System.out.println("titleY: " + titleY);
-//        System.out.println("canvas height: " + canvas.getHeight());
-//        System.out.println("--------------------");
-//        if(canvas.isFullscreen()){
-//            System.out.println("FullScreen Mode entered");
-//        }
-
         // Draw buttons/title
-        for (Text t: text){
+        for (LoseMode.Text t: text) {
+            System.out.println("text array size: " + text.size);
             t.draw(canvas);
         }
-        //float anchorY = 0.0f;
-        //canvas.draw(title, color, 0, title.getHeight() * textScale, RIGHT_SPACING, anchorY + titleY, 0, textScale, textScale);
-//        canvas.draw(title, Color.WHITE, 0,0, canvas.getWidth()/3, canvas.getHeight()/3);
-//        canvas.draw(play, Color.WHITE, 0, canvas.getHeight()/3, canvas.getWidth()/5, canvas.getHeight()/6);
-        Color tint = (pressState == 1 ? Color.GRAY : color);
-//        canvas.draw(play, tint, 0, play.getHeight(), RIGHT_SPACING + 10, Gdx.graphics.getHeight() - TOP_SPACING - 300, 0, textScale, textScale);
-        centerX = RIGHT_SPACING + 10 + play.getWidth() / 2;
-        centerY = canvas.getHeight() - TOP_SPACING - 300 - play.getHeight() / 2;
-
-        // Draw cursor based on which button mouse input is closest to
-        // canvas.draw(cursor, Color.VIOLET, 0, cursor.getHeight()/2, RIGHT_SPACING + 10 + play.getWidth(), canvas.getHeight() - TOP_SPACING - 300 - (play.getHeight()/2)+10, 0, cursorScale, cursorScale);
 
         // Draw the stage of UI elements
         stage.draw();
@@ -604,7 +455,7 @@ public class MainMenuMode implements Screen, InputProcessor, ControllerListener 
             // We are are ready, notify our listener
             if (buttonState > 0 && listener != null) {
                 System.out.println(buttonState);
-                System.out.println("Exit main menu");
+                System.out.println("Go to level select screen");
                 listener.exitScreen(this, buttonState);
             }
         }
@@ -703,16 +554,16 @@ public class MainMenuMode implements Screen, InputProcessor, ControllerListener 
             return true;
         }
 //
-//        // Flip to match graphics coordinates
-//        screenY = heightY-screenY;
-//
-//        // TODO: Fix scaling
-//        // Play button is a rectangle.
-        float radius = textScale*scale*play.getWidth()/2.0f;
-        float dist = (screenX-centerX)*(screenX-centerX)+(screenY-centerY)*(screenY-centerY);
-        if (dist < radius*radius) {
-            pressState = 1;
-        }
+////        // Flip to match graphics coordinates
+////        screenY = heightY-screenY;
+////
+////        // TODO: Fix scaling
+////        // Play button is a rectangle.
+////        float radius = textScale*scale*play.getWidth()/2.0f;
+//        float dist = (screenX-centerX)*(screenX-centerX)+(screenY-centerY)*(screenY-centerY);
+//        if (dist < radius*radius) {
+//            pressState = 1;
+//        }
         return false;
     }
 
@@ -875,5 +726,4 @@ public class MainMenuMode implements Screen, InputProcessor, ControllerListener 
     public boolean axisMoved (Controller controller, int axisCode, float value) {
         return true;
     }
-
 }
