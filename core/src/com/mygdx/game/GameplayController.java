@@ -33,6 +33,7 @@ import com.mygdx.game.EnemyControllers.ScoutEnemyController;
 import com.mygdx.game.Obstacles.*;
 import com.mygdx.game.Obstacles.Enemies.*;
 import com.badlogic.gdx.Screen;
+import com.mygdx.game.ScreenModes.LevelSelectMode;
 import com.mygdx.game.ScreenModes.PauseMenuMode;
 import com.mygdx.game.Obstacles.Items.Item;
 import com.mygdx.game.Obstacles.Items.Torch;
@@ -241,6 +242,7 @@ public class GameplayController implements Screen {
 	private boolean pausing = false;
 	private boolean unpausing = false;
 	private boolean paused = false;
+	private LevelSelectMode levelSelect;
 	private int curLevel = 0;
 	private int maxLevels = 12;
 	private int level;
@@ -482,11 +484,12 @@ public class GameplayController implements Screen {
 	 * @param bounds  The game bounds in Box2d coordinates
 	 * @param gravity The gravitational force on this Box2d world
 	 */
-	protected GameplayController(Rectangle bounds, Vector2 gravity, PauseMenuMode pauseMenu) {
+	protected GameplayController(Rectangle bounds, Vector2 gravity, PauseMenuMode pauseMenu, LevelSelectMode levelSelect) {
 		world = new World(gravity, false);
 		this.bounds = new Rectangle(bounds);
 		this.scale = new Vector2(1, 1);
 		this.pauseMenu = pauseMenu;
+		this.levelSelect = levelSelect;
 		this.assetTextures = new HashMap<>();
 		complete = false;
 		failed = false;
@@ -500,8 +503,8 @@ public class GameplayController implements Screen {
 	 *
 	 * The game has default gravity and other settings
 	 */
-	public GameplayController(GameCanvas canvas, PauseMenuMode pauseMenu) {
-		this(new Rectangle(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT), new Vector2(0, DEFAULT_GRAVITY), pauseMenu);
+	public GameplayController(GameCanvas canvas, PauseMenuMode pauseMenu, LevelSelectMode levelSelect) {
+		this(new Rectangle(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT), new Vector2(0, DEFAULT_GRAVITY), pauseMenu, levelSelect);
 		setComplete(false);
 		setFailure(false);
 		// world.setContactListener(this);
@@ -519,7 +522,7 @@ public class GameplayController implements Screen {
 		cameraZoom = 0.4f;
 		numRescued = 0;
 
-		level = 1;
+		curLevel = this.levelSelect.getCurrLevel();
 	}
 
 	/**
@@ -933,6 +936,7 @@ public class GameplayController implements Screen {
 
 	public void reset(int level){
 		this.level = level;
+		curLevel = level;
 		reset();
 	}
 
@@ -1691,7 +1695,7 @@ public class GameplayController implements Screen {
 //		if (caravan.isInteractable() && input.didDropSurvivors()) {
 		if (caravan.getCurrentCapacity() == caravan.getMaxCapacity()) {
 			setComplete(true);
-			if (prefs.getInteger("unlocked", 1) <= curLevel) {
+			if (prefs.getInteger("unlocked", 0) <= curLevel) {
 				prefs.putInteger("unlocked", curLevel + 1);
 			}
 			if (!prefs.getBoolean("level" + curLevel + "complete", false)) {

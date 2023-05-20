@@ -454,6 +454,9 @@ public class MainMenuMode implements Screen, InputProcessor, ControllerListener 
                 if (buttons.get(1).isChecked()) {
                     buttons.get(1).setChecked(false);
                     buttonState = EXIT_NEW_GAME;
+                    Preferences prefs = Gdx.app.getPreferences("save data");
+                    prefs.clear();
+                    prefs.flush();
                     select.play();
                     System.out.println("Play buttons pressed");
                 }

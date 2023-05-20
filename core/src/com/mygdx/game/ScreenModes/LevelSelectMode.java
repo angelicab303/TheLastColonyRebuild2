@@ -274,7 +274,7 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
     private boolean populated = false;
     private Preferences prefs = Gdx.app.getPreferences("save data");
     /** Represents the current level that is unlocked */
-    private int unlocked = prefs.getInteger("unlocked", 1);
+    private int unlocked = prefs.getInteger("unlocked", 0);
     private int currLevel;
     private int numLevels = 6;
     private MenuCaravan menuCaravan;
@@ -372,6 +372,7 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
     }
     /** Populates the menu with clouds */
     public void populateMenu(){
+        unlocked = prefs.getInteger("unlocked", 0);
         if (!titleMusic.isPlaying())
         {
             titleMusic.play();
@@ -516,6 +517,8 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
         tableLevels.add(buttons.get(level+1)).spaceRight(92.0f).left().size(up.getWidth()*buttonScale, up.getHeight()*buttonScale);
         //tableLevels.row();
     }
+
+    public int getCurrLevel() { return currLevel; }
 
 
     /**
