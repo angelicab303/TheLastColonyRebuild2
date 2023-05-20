@@ -34,6 +34,7 @@ public class MyGdxGame extends Game implements ScreenListener {
 	private MainMenuMode mainMenu;
 	/** Player mode for the level select menu */
 	private LevelSelectMode levelSelect;
+	private LevelSelectMode2 levelSelect2;
 	/** Player mode for the settings select menu */
 	private SettingsMenuMode settingsMenu;
 	/** Player mode for the pause menu */
@@ -49,6 +50,7 @@ public class MyGdxGame extends Game implements ScreenListener {
 	private Screen controllerScreen;
 	/** Input Controller **/
 	private InputController input = new InputController();
+	private int levelSelectPhase = 1;
 
 //	private AudioSource samples[];
 //	private AudioEngine engine;
@@ -65,6 +67,7 @@ public class MyGdxGame extends Game implements ScreenListener {
 		canvas  = new GameCanvas();
 		loading = new LoadingMode("assets.json",canvas,1);
 		levelSelect = new LevelSelectMode(canvas);
+		levelSelect2 = new LevelSelectMode2(canvas);
 		settingsMenu = new SettingsMenuMode(canvas);
 		victoryMenu = new VictoryMode(canvas);
 		pauseMenu = new PauseMenuMode(0, 0);
@@ -159,6 +162,9 @@ public class MyGdxGame extends Game implements ScreenListener {
 			levelSelect.gatherAssets(directory);
 			levelSelect.setScreenListener(this);
 			levelSelect.setCanvas(canvas);
+			levelSelect2.gatherAssets(directory);
+			levelSelect2.setScreenListener(this);
+			levelSelect2.setCanvas(canvas);
 			// gather assets for settings select menu
 			settingsMenu.gatherAssets(directory);
 			settingsMenu.setScreenListener(this);
@@ -196,8 +202,14 @@ public class MyGdxGame extends Game implements ScreenListener {
 			// Need exit codes for main menu
 			if (exitCode == mainMenu.EXIT_CONTINUE){
 				System.out.println("Go to level select from main menu");
-				levelSelect.reset();
-				setScreen(levelSelect);
+				if (levelSelectPhase == 1){
+					levelSelect.reset();
+					setScreen(levelSelect);
+				}
+				else if (levelSelectPhase == 2){
+					levelSelect2.reset();
+					setScreen(levelSelect2);
+				}
 			}
 			else if (exitCode == mainMenu.EXIT_NEW_GAME){
 				// Need to add code to reset pref
@@ -216,8 +228,34 @@ public class MyGdxGame extends Game implements ScreenListener {
 				System.out.println("main menu repopulate from exit");
 				mainMenu.reset();
 				setScreen(mainMenu);
+				levelSelectPhase = 1;
+			}
+			else if (exitCode == levelSelect.EXIT_PHASE2){
+				System.out.println("Level select 2 is chosen");
+				levelSelect2.reset();
+				setScreen(levelSelect2);
+				levelSelectPhase = 2;
 			}
 			else{
+				System.out.println("Set game screen from levelSelect");
+				controller.reset(exitCode);
+				setScreen(controller);
+				pauseMenu.populateMenu();
+			}
+		}
+		else if (screen == levelSelect2) {
+			// Need exit codes for level select
+			if (exitCode == levelSelect2.EXIT_MAIN) {
+				System.out.println("main menu repopulate from exit");
+				mainMenu.reset();
+				setScreen(mainMenu);
+				levelSelectPhase = 2;
+			} else if (exitCode == levelSelect2.EXIT_PHASE1) {
+				System.out.println("Level select 1 is chosen");
+				levelSelect.reset();
+				setScreen(levelSelect);
+				levelSelectPhase = 1;
+			} else {
 				System.out.println("Set game screen from levelSelect");
 				controller.reset(exitCode);
 				setScreen(controller);
@@ -263,8 +301,14 @@ public class MyGdxGame extends Game implements ScreenListener {
 				setScreen(controller);
 			}
 			else if (exitCode == victoryMenu.EXIT_NEXT_LEVEL){
-				levelSelect.reset();
-				setScreen(levelSelect);
+				if (levelSelectPhase == 1){
+					levelSelect.reset();
+					setScreen(levelSelect);
+				}
+				else if (levelSelectPhase == 2){
+					levelSelect2.reset();
+					setScreen(levelSelect2);
+				}
 			}
 		}
 		else if (screen == loseMenu){
@@ -273,8 +317,14 @@ public class MyGdxGame extends Game implements ScreenListener {
 				setScreen(controller);
 			}
 			else if (exitCode == loseMenu.EXIT_NEXT_LEVEL){
-				levelSelect.reset();
-				setScreen(levelSelect);
+				if (levelSelectPhase == 1){
+					levelSelect.reset();
+					setScreen(levelSelect);
+				}
+				else if (levelSelectPhase == 2){
+					levelSelect2.reset();
+					setScreen(levelSelect2);
+				}
 			}
 		}
 //		else if (exitCode == WorldController.EXIT_NEXT) {

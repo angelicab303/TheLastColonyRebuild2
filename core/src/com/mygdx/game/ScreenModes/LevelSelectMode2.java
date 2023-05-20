@@ -25,7 +25,7 @@ import com.mygdx.game.InputController;
 import util.FilmStrip;
 import util.ScreenListener;
 
-public class LevelSelectMode implements Screen, InputProcessor, ControllerListener {
+public class LevelSelectMode2 implements Screen, InputProcessor, ControllerListener {
     /**
      * Class representing buttons or titles to be placed on screen.
      */
@@ -126,12 +126,12 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
             this.texture = texture;
             startX = x;
             this.y = y;
-            this.x = -150;
+            this.x = x;
             goalX = 0;
             isMoving = false;
-            currLevel = 0;
+            currLevel = 6;
             movingRight = true;
-            loadingIn = true;
+            loadingIn = false;
 
             animator = new FilmStrip(texture, 1, NUM_ANIM_FRAMES);
             aframe = 0;
@@ -141,11 +141,11 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
         }
 
         private void update(int currLevel){
-            if (loadingIn){
-                loadingIn = false;
-                isMoving = true;
-                goalX = startX;
-            }
+//            if (loadingIn){
+//                loadingIn = false;
+//                isMoving = true;
+//                goalX = startX;
+//            }
             if (this.currLevel != currLevel){
                 isMoving = true;
                 if (currLevel > this.currLevel){
@@ -155,7 +155,7 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
                     movingRight = false;
                 }
                 this.currLevel = currLevel;
-                goalX = startX + currLevel*220;
+                goalX = startX + (currLevel-6)*220;
             }
             if (isMoving){
                 if (movingRight){
@@ -232,7 +232,7 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
             this.x = x;
             goalX = x;
             isMoving = false;
-            wallCurrLevel = 4;
+            wallCurrLevel = 10;
             movingRight = true;
         }
         private int getCurrLevel(){
@@ -286,7 +286,6 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
     private Texture backDown;
     private Texture level1;
     private Texture level2;
-    private SmogWall menuWall;
     private Texture level1Down;
     private Texture level2Down;
     private Texture arrowRight;
@@ -347,14 +346,15 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
     /** Exit state for returning back to main menu */
     public static final int EXIT_MAIN = -1;
     /** Exit state for level 0 */
-    public static final int EXIT_0 = 0;
+    public static final int EXIT_6 = 6;
     /** Exit state for level 1 */
-    public static final int EXIT_1 = 1;
-    public static final int EXIT_2 = 2;
-    public static final int EXIT_3 = 3;
-    public static final int EXIT_4 = 4;
-    public static final int EXIT_5 = 5;
-    public static final int EXIT_PHASE2 = 6;
+    public static final int EXIT_7 = 7;
+    public static final int EXIT_8 = 8;
+    public static final int EXIT_9 = 9;
+    public static final int EXIT_10 = 10;
+    public static final int EXIT_11 = 11;
+    public static final int EXIT_PHASE1 = 1;
+
 
     /** checks if graphics have been loaded */
     private boolean loaded = false;
@@ -367,6 +367,7 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
     private int currLevel;
     private int numLevels = 6;
     private MenuCaravan menuCaravan;
+    private SmogWall menuWall;
     /** Input Controller **/
     public InputController input;
     /** Whether we are ready to switch screens */
@@ -378,6 +379,7 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
 
     private Music titleMusic;
     private int phase;
+    private boolean caravanSpawn;
 
 
     /**
@@ -411,7 +413,7 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
      *
      * @param canvas 	The game canvas to draw to
      */
-    public LevelSelectMode(GameCanvas canvas) {
+    public LevelSelectMode2(GameCanvas canvas) {
         this.canvas  = canvas;
 
         // Compute the dimensions from the canvas
@@ -427,8 +429,9 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
         Gdx.input.setInputProcessor( this );
         stage = new Stage();
         buttonState = 0;
-        currLevel = 0;
+        currLevel = unlocked;
         phase = 0;
+        caravanSpawn = false;
     }
 
     /**
@@ -441,7 +444,7 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
      */
     public void gatherAssets(AssetDirectory directory) {
         // Allocate the main menu assets
-        background = directory.getEntry("levelSelect:background", Texture.class);
+        background = directory.getEntry("levelSelect:background2", Texture.class);
         title = directory.getEntry("images:empty", Texture.class);
         level1 = directory.getEntry("levelSelect:1", Texture.class);
         level2 = directory.getEntry("levelSelect:2", Texture.class);
@@ -518,18 +521,25 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
 
 
         // Levels
-        for (int i = 0; i < numLevels; i++){
+        for (int i = 6; i < numLevels+6; i++){
             addLevel(tableLevels, mushroom, mushroomDown, i);
         }
 
         // table for arrows
-        Table arrowTable = new Table();
-        tables.add(arrowTable);
+//        Table arrowTableR = new Table();
+//        tables.add(arrowTableR);
+        Table arrowTableL = new Table();
+        tables.add(arrowTableL);
         //table.setFillParent(true);
-        arrowTable.setPosition(canvas.getWidth()*.94f, startY+120);
-        arrowTable.setWidth(600.0f);
-        arrowTable.setHeight(400.0f);
-        arrowTable.setDebug(false);
+//        arrowTableR.setPosition(canvas.getWidth()*.94f, startY+120);
+//        arrowTableR.setWidth(600.0f);
+//        arrowTableR.setHeight(400.0f);
+//        arrowTableR.setDebug(false);
+
+        arrowTableL.setPosition(canvas.getWidth()*.06f, startY+120);
+        arrowTableL.setWidth(600.0f);
+        arrowTableL.setHeight(400.0f);
+        arrowTableL.setDebug(false);
 
         // Right Arrow
         textButtonStyle = new TextButton.TextButtonStyle();
@@ -538,15 +548,26 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
         textButtonStyle.down = new TextureRegionDrawable(arrowRightDown);
         textButtonStyle.checked = new TextureRegionDrawable(arrowRight);
         buttons.add(new TextButton("", textButtonStyle));
-        arrowTable.add(buttons.get(7)).left().size(arrowRight.getWidth()*1.2f, arrowRight.getHeight()*1.2f);
+//        arrowTableR.add(buttons.get(7)).left().size(arrowRight.getWidth()*1.2f, arrowRight.getHeight()*1.2f);
+
+        // Left Arrow
+        textButtonStyle = new TextButton.TextButtonStyle();
+        textButtonStyle.font = nullFont;
+        textButtonStyle.up   = new TextureRegionDrawable(arrowLeft);
+        textButtonStyle.down = new TextureRegionDrawable(arrowLeftDown);
+        textButtonStyle.checked = new TextureRegionDrawable(arrowLeft);
+        buttons.add(new TextButton("", textButtonStyle));
+        arrowTableL.add(buttons.get(8)).left().size(arrowLeft.getWidth()*1.2f, arrowLeft.getHeight()*1.2f);
 
 
         tableLevels.left().top();
         backTable.left().top();
-        arrowTable.left().top();
+//        arrowTableR.left().top();
+        arrowTableL.left().top();
         stage.addActor(tableLevels);
         stage.addActor(backTable);
-        stage.addActor(arrowTable);
+//        stage.addActor(arrowTableR);
+        stage.addActor(arrowTableL);
 
 
         // Hook up the buttons
@@ -568,9 +589,9 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
             public void clicked(InputEvent event, float x, float y) {
                 if (buttons.get(1).isChecked()) {
                     buttons.get(1).setChecked(false);
-                    if (0 <= unlocked){
-                        currLevel = 0;
-                        buttonState = EXIT_0;
+                    if (6 <= unlocked){
+                        currLevel = 6;
+                        buttonState = EXIT_6;
                     }
                 }
             };
@@ -581,9 +602,9 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
             public void clicked(InputEvent event, float x, float y) {
                 if (buttons.get(2).isChecked()) {
                     buttons.get(2).setChecked(false);
-                    currLevel = 1;
-                    if (1 <= unlocked){
-                        buttonState = EXIT_1;
+                    if (7 <= unlocked){
+                        currLevel = 7;
+                        buttonState = EXIT_7;
                     }
                 }
             };
@@ -594,9 +615,9 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
             public void clicked(InputEvent event, float x, float y) {
                 if (buttons.get(3).isChecked()) {
                     buttons.get(3).setChecked(false);
-                    currLevel = 2;
-                    if (2 <= unlocked){
-                        buttonState = EXIT_2;
+                    if (8 <= unlocked){
+                        currLevel = 8;
+                        buttonState = EXIT_8;
                     }
                 }
             };
@@ -607,9 +628,9 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
             public void clicked(InputEvent event, float x, float y) {
                 if (buttons.get(4).isChecked()) {
                     buttons.get(4).setChecked(false);
-                    currLevel = 3;
-                    if (3 <= unlocked){
-                        buttonState = EXIT_3;
+                    if (9 <= unlocked){
+                        currLevel = 9;
+                        buttonState = EXIT_9;
                     }
                 }
             };
@@ -620,9 +641,9 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
             public void clicked(InputEvent event, float x, float y) {
                 if (buttons.get(5).isChecked()) {
                     buttons.get(5).setChecked(false);
-                    currLevel = 4;
-                    if (4 <= unlocked){
-                        buttonState = EXIT_4;
+                    if (10 <= unlocked){
+                        currLevel = 10;
+                        buttonState = EXIT_10;
                     }
                 }
             };
@@ -633,44 +654,46 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
             public void clicked(InputEvent event, float x, float y) {
                 if (buttons.get(6).isChecked()) {
                     buttons.get(6).setChecked(false);
-                    currLevel = 5;
-                    if (5 <= unlocked){
-                        buttonState = EXIT_5;
+                    if (11 <= unlocked){
+                        currLevel = 11;
+                        buttonState = EXIT_11;
                     }
                 }
             };
         } );
-        // Right arrow button
-        buttons.get(7).addListener( new ClickListener() {
+        // Arrow left button
+        buttons.get(8).addListener( new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                if (buttons.get(7).isChecked()) {
-                    buttons.get(7).setChecked(false);
-                    buttonState = EXIT_PHASE2;
+                if (buttons.get(8).isChecked()) {
+                    buttons.get(8).setChecked(false);
+                    buttonState = EXIT_PHASE1;
                     isReady = true;
-                }
+                    }
+
             };
-        } );
+        });
 
         if (!populated){
             populated = true;
             menuCaravan = new MenuCaravan(caravan, tables.get(1).getX()+buttons.get(0).getX()-25, tables.get(1).getHeight()+buttons.get(0).getY()+40);
             int wallLevel = 0;
-            if (unlocked >= 6){
+            if (unlocked >= 12){
                 wallLevel = 3;
             }
-            else if (unlocked == 5) {
+            else if (unlocked == 11) {
                 wallLevel = 2;
             }
-            else if (unlocked == 4){
+            else if (unlocked == 10){
                 wallLevel = 1;
             }
             menuWall = new SmogWall(smogWall, tables.get(1).getX()+buttons.get(0).getX()+330 + (220*wallLevel), tables.get(1).getHeight()+buttons.get(0).getY()+450);
 
+
         }
 
         // Add caravan
-        // menuCaravan = new MenuCaravan(caravan, tables.get(1).getX()+buttons.get(0).getX()-25, tables.get(1).getHeight()+buttons.get(0).getY()+40);
+        //menuCaravan = new MenuCaravan(caravan, tables.get(1).getX()+buttons.get(0).getX()-25, tables.get(1).getHeight()+buttons.get(0).getY()+40);
 
 
     }
@@ -695,7 +718,8 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
         }
         textButtonStyle.down = new TextureRegionDrawable(down);
         buttons.add(new TextButton("", textButtonStyle));
-        tableLevels.add(buttons.get(level+1)).spaceRight(92.0f).left().size(up.getWidth()*buttonScale, up.getHeight()*buttonScale);
+        int levelHolder = level - 6;
+        tableLevels.add(buttons.get(levelHolder+1)).spaceRight(92.0f).left().size(up.getWidth()*buttonScale, up.getHeight()*buttonScale);
         //tableLevels.row();
     }
 
@@ -742,31 +766,42 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
      */
     private void update(float delta) {
         input.readInput();
-        System.out.println("Unlocked: " + unlocked);
-        if (!menuCaravan.isMoving){
-            if (input.didPressRightArrow() && currLevel < MAX_LEVEL){
-                if (currLevel+1 <= unlocked){
-                    currLevel++;
-                }
 
-            }
-            if (input.didPressLeftArrow() && currLevel > MIN_LEVEL){
-                currLevel--;
-            }
-            if (input.didPressEnter()) {
-                titleMusic.stop();
-                titleMusic.setLooping(false);
-                isReady = true;
-            }
+        currLevel = unlocked;
+        if (currLevel >= 6){
+            System.out.println("Level is 6 or greater");
+            caravanSpawn = true;
         }
 
-        menuCaravan.update(currLevel);
+        if (caravanSpawn){
+            if (!menuCaravan.isMoving){
+                if (input.didPressRightArrow() && currLevel < MAX_LEVEL + 6){
+                    if (currLevel+1 <= unlocked){
+                        currLevel++;
+                    }
+
+                }
+                if (input.didPressLeftArrow() && currLevel > MIN_LEVEL + 6){
+                    currLevel--;
+                }
+                if (input.didPressEnter()) {
+                    titleMusic.stop();
+                    titleMusic.setLooping(false);
+                    isReady = true;
+                }
+//                menuCaravan.update(currLevel);
+            }
+            menuCaravan.update(currLevel);
+
+
+//            menuWall.update(unlocked);
+//            if (buttonState != EXIT_MAIN && buttonState != EXIT_PHASE1){
+//                buttonState = menuCaravan.getCurrLevel();
+            }
         menuWall.update(unlocked);
-        if (buttonState != EXIT_MAIN && buttonState != EXIT_PHASE2){
+        if (buttonState != EXIT_MAIN && buttonState != EXIT_PHASE1){
             buttonState = menuCaravan.getCurrLevel();
         }
-
-
     }
 
     /**
@@ -788,9 +823,10 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
         // color.a  = appearTime/ APPEAR_TIME;
         // System.out.println(color.a);
         stage.draw();
-        menuCaravan.draw(canvas);
+        if (caravanSpawn){
+            menuCaravan.draw(canvas);
+        }
         menuWall.draw(canvas);
-
 
         canvas.end();
     }
