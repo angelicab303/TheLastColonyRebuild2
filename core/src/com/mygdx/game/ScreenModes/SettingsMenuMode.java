@@ -267,8 +267,8 @@ public class SettingsMenuMode implements Screen, InputProcessor, ControllerListe
         buttonState = 0;
         soundVolume = 100;
         musicVolume = 100;
-        fireControl = "left click";
-        absorbControl = "right click";
+        fireControl = "right click";
+        absorbControl = "left click";
 
         fromGame = false;
 
@@ -417,7 +417,14 @@ public class SettingsMenuMode implements Screen, InputProcessor, ControllerListe
 
         // table 2
         addButton(table2, fireWeapon, fireWeapon, 10);
-        addButtonHorizontal(table2, empty, empty, 11, "Left Click", sliderScales);
+        textButtonStyle = new TextButton.TextButtonStyle();
+        textButtonStyle.font = nullFont;
+        textButtonStyle.up   = new TextureRegionDrawable(empty);
+        textButtonStyle.checked = new TextureRegionDrawable(empty);
+        textButtonStyle.down = new TextureRegionDrawable(empty);
+        buttons.add(new TextButton(fireControl, textButtonStyle));
+        table2.add(buttons.get(11)).spaceRight(40).top().left().size(empty.getWidth()*scale, empty.getHeight()*scale);
+        //addButtonHorizontal(table2, empty, empty, 11, "Left Click", sliderScales);
 
 
 //        table.row();
@@ -513,6 +520,20 @@ public class SettingsMenuMode implements Screen, InputProcessor, ControllerListe
                         soundVolume += 10;
                     }
                     buttons.get(7).setText("" + soundVolume);
+                }
+            };
+        } );buttons.get(11).addListener( new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                if (buttons.get(11).isChecked()) {
+                    buttons.get(11).setChecked(false);
+                    if (fireControl == "right click"){
+                        fireControl = "shift + left click";
+                    }
+                    else {
+                        fireControl = "right click";
+                    }
+                    buttons.get(11).setText(fireControl);
                 }
             };
         } );
