@@ -399,8 +399,6 @@ public class SettingsMenuMode implements Screen, InputProcessor, ControllerListe
                     buttons.get(0).setChecked(false);
                     if (fromGame){
                         backSound.play();
-                        titleMusic.stop();
-                        titleMusic.setLooping(false);
                         buttonState = 2;
                         setFromGame(false);
                     }

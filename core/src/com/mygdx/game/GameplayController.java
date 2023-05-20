@@ -447,6 +447,10 @@ public class GameplayController implements Screen {
 
 	private boolean isDead;
 
+	private Music titleMusic;
+
+	private Sound itemSound;
+
 	/**
 	 * Creates a new game world
 	 *
@@ -736,6 +740,8 @@ public class GameplayController implements Screen {
 		chaserGrowl = directory.getEntry("sounds:chasergrowl", Sound.class);
 		chaserAttack = directory.getEntry("sounds:chaserattack", Sound.class);
 		death = directory.getEntry("sounds:shriekerattack", Sound.class);
+		titleMusic = directory.getEntry("titlemusic", Music.class);
+		itemSound = directory.getEntry("sounds:item", Sound.class);
 	}
 
 	/**
@@ -1203,6 +1209,10 @@ public class GameplayController implements Screen {
 			pauseMenu.reset();
 
 			if (!paused && !unpausing) {
+				if (!titleMusic.isPlaying()) {
+					titleMusic.play();
+					titleMusic.setLooping(true);
+				}
 				paused = true;
 				pausing = true;
 				for (int i = 0; i < enemyArr.size; i++) {
@@ -1219,6 +1229,8 @@ public class GameplayController implements Screen {
 				}
 				return;
 			} else if (paused && !pausing) {
+				titleMusic.stop();
+				titleMusic.setLooping(false);
 				paused = false;
 				unpausing = true;
 				for (int i = 0; i < enemyArr.size; i++) {
@@ -1538,9 +1550,11 @@ public class GameplayController implements Screen {
 			if (itemArr.get(i).isInteractable() && input.didPickUpItem()) {
 				itemArr.get(i).setInteractable(false);
 				if (itemArr.get(i).getItemType() == Item.ItemType.TORCH) {
+					itemSound.play(1, 2, 0);
 					player.collectTorch();
 					itemArr.get(i).collect();
 				} else if (itemArr.get(i).getItemType() == Item.ItemType.KEY) {
+					itemSound.play(1, 2, 0);
 					itemArr.get(i).setInteractable(true);
 					player.collectKey();
 					itemArr.get(i).collect();
@@ -1560,6 +1574,7 @@ public class GameplayController implements Screen {
 				Torch torch = new Torch((player.getX() / tileSize)*tileSize,(player.getY() / tileSize)*tileSize,torchTexture, displayFontInteract, SCALE);
 				addObject(torch);
 				itemArr.add(torch);
+				itemSound.play(1, 2, 0);
 				player.useTorch();
 			} else {
 				// I'd like to display a message saying the following but it would require having a specific draw

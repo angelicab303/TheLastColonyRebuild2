@@ -83,6 +83,8 @@ public class PauseMenuMode {
 
     private Sound select;
 
+    private Music titleMusic;
+
 
     public PauseMenuMode(float x, float y){
         //this.background = background;
@@ -118,6 +120,7 @@ public class PauseMenuMode {
         restartDown = directory.getEntry("pauseMenu:restartDown", Texture.class);
         nullFont = directory.getEntry("shared:retro" ,BitmapFont.class);
         select = directory.getEntry("sounds:select", Sound.class);
+        titleMusic = directory.getEntry("titlemusic", Music.class);
         loaded = true;
     }
     public void setMenuPosition(float x, float y){
@@ -214,6 +217,8 @@ public class PauseMenuMode {
                 if (buttons.get(2).isChecked()) {
                     buttonState = EXIT_RESTART;
                     buttons.get(2).setChecked(false);
+                    titleMusic.stop();
+                    titleMusic.setLooping(false);
                     select.play();
                 }
             };
