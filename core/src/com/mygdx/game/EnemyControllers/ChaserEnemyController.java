@@ -31,6 +31,7 @@ public class ChaserEnemyController extends com.mygdx.game.EnemyControllers.Enemy
 
     boolean startedAttacking;
 
+
     public ChaserEnemyController(boolean[][] board, int tileSize, int tileOffset, ChaserEnemy enemy, Player player) {
         super(board, tileSize, tileOffset, enemy, player);
         target = new Vector2(player.getX(), player.getY());
@@ -44,7 +45,7 @@ public class ChaserEnemyController extends com.mygdx.game.EnemyControllers.Enemy
         target.y = player.getY();
         if (!player.getSurvivorsFollowing().isEmpty()) {
             for (int i = 0; i < player.getSurvivorsFollowing().size; i++) {
-                if (!player.getSurvivorsFollowing().get(i).isTargetOfEnemy() && player.getSurvivorsFollowing().get(i).canLoseLife()) {
+                if (!player.getSurvivorsFollowing().get(i).isTargetOfEnemy()) {
                     target.x = player.getSurvivorsFollowing().get(i).getX();
                     target.y = player.getSurvivorsFollowing().get(i).getY();
                     survivorTarget = player.getSurvivorsFollowing().get(i);

@@ -55,6 +55,8 @@ public class Enemy extends Shadow implements GameObstacle {
     /** Time enemy must wait before attacking again */
     protected final float ATTACK_COOLDOWN = 300;
 
+    protected final float DAMAGE_COOLDOWN = 100;
+
     /** Filmstrip for the enemy */
     protected FilmStrip[] animator;
     protected FilmStrip[] movementStrips;
@@ -112,7 +114,7 @@ public class Enemy extends Shadow implements GameObstacle {
     protected final float MAX_WAKE_TIME = 200.0f;
     /** Whether the enemy has woken up for first time */
     protected boolean wokeOnce;
-
+protected int numHits;
 
     float height;
     float width;
@@ -214,6 +216,9 @@ public class Enemy extends Shadow implements GameObstacle {
         return scale;
     }
 
+    public void setNumHits(int num) {numHits = num;}
+
+    public int getNumHits() {return numHits;}
 
 
     /**
@@ -245,6 +250,7 @@ public class Enemy extends Shadow implements GameObstacle {
         wakeTime = 0;
         direction = Enemy.Direction.RIGHT;
         wokeOnce = false;
+        numHits = 0;
 
         if (filter == null){
             filter = new Filter();
@@ -326,6 +332,10 @@ public class Enemy extends Shadow implements GameObstacle {
 
     protected float getAttackCooldown(){
         return ATTACK_COOLDOWN;
+    }
+
+    protected float getDamageCooldown() {
+        return DAMAGE_COOLDOWN;
     }
 
     protected void calculateMovement(int action){
