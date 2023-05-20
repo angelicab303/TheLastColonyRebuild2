@@ -105,7 +105,7 @@ public class FloatingEnemy extends Enemy {
             currentAnimator.setFrame(0);
         }
         else{
-            System.out.println("aframe: " + aframe);
+//            System.out.println("aframe: " + aframe);
             currentAnimator.setFrame((int)aframe);
         }
 //        System.out.println((body.getWorldCenter().x*drawScale.x - currentAnimator.getRegionWidth()*scale/2) + ", " + (body.getWorldCenter().y*drawScale.y- currentAnimator.getRegionHeight()*scale/2));

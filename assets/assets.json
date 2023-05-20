@@ -425,6 +425,96 @@
         }
       }
     },
+    "images:chaserMovementRight": {
+      "file" : "images/enemies/chaserMoveRight.png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 6
+        }
+      }
+    },
+    "images:chaserMovementLeft": {
+      "file" : "images/enemies/chaserMoveLeft.png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 6
+        }
+      }
+    },
+    "images:chaserIdleLeft": {
+      "file" : "images/enemies/ChaserIdle_Left.png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 6
+        }
+      }
+    },
+    "images:chaserIdleRight": {
+      "file" : "images/enemies/ChaserIdle_Right.png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 6
+        }
+      }
+    },
+    "images:chaserAttackRight": {
+      "file" : "images/enemies/chaserMoveRight.png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 6
+        }
+      }
+    },
+    "images:chaserAttackLeft": {
+      "file" : "images/enemies/chaserMoveLeft.png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 6
+        }
+      }
+    },
+    "images:chaserStunLeft": {
+      "file" : "images/enemies/chaserStunLeft.png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 6
+        }
+      }
+    },
+    "images:chaserStunRight": {
+      "file" : "images/enemies/chaserStunRight.png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 6
+        }
+      }
+    },
+    "images:chaserWakeRight": {
+      "file" : "images/enemies/ChaserIdle_Right.png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 6
+        }
+      }
+    },
+    "images:chaserWakeLeft": {
+      "file" : "images/enemies/ChaserIdle_Left.png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 6
+        }
+      }
+    },
     "images:scoutMovementRight": {
       "file" : "images/enemies/scoutMoveRight.png",
       "sprites" : {

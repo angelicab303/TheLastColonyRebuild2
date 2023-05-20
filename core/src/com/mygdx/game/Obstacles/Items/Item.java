@@ -82,10 +82,10 @@ public class Item extends BoxObstacle implements GameObstacle {
     }
 
     public void update() {
-        if (displayTorchExplanation && ticks < 600) {
+        if (displayTorchExplanation && ticks < 300) {
             ticks++;
         } else {
-            if (ticks >= 600) {
+            if (ticks >= 300) {
                 player.setSeenTorchInstructions(true);
             }
             displayTorchExplanation = false;
