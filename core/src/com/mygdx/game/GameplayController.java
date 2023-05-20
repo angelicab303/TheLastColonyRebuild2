@@ -27,6 +27,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.Sort;
+import com.mygdx.game.EnemyControllers.ChaserEnemyController;
 import com.mygdx.game.EnemyControllers.EnemyController;
 import com.mygdx.game.EnemyControllers.ScoutEnemyController;
 import com.mygdx.game.Obstacles.*;
@@ -428,11 +429,7 @@ public class GameplayController implements Screen {
 
 	private Sound chaserGrowl;
 
-	private boolean startedChaserGrowl;
-
 	private Sound chaserAttack;
-
-	private boolean startedChaserAttack;
 
 	private Sound death;
 
@@ -1110,6 +1107,9 @@ public class GameplayController implements Screen {
 			lowHealth.stop(lowHealthId);
 			lowHealth.setLooping(lowHealthId, false);
 		}
+		else {
+			isDead = false;
+		}
 
 		if (input.didPause()) {
 			if (!paused && !unpausing) {
@@ -1262,7 +1262,7 @@ public class GameplayController implements Screen {
 				ChaserEnemy chaser = (ChaserEnemy) enemyArr.get(i);
 				if (enemyControllers.get(i).getState() == EnemyController.FSMState.IDLE)
 				{
-					if (!startedDistantChaser && Math.random() < 0.2f)
+					if (!startedDistantChaser && Math.random() < 0.5f)
 					{
 						startedDistantChaser = true;
 						distantChaserId = distantChaser.play();
@@ -1284,34 +1284,23 @@ public class GameplayController implements Screen {
 				else {
 					distantChaser.stop();
 					startedDistantChaser = false;
-				}
-				if (enemyControllers.get(i).getState() == EnemyController.FSMState.CHASE)
-				{
-					if (!startedChaserGrowl)
+					ChaserEnemyController controller = (ChaserEnemyController) enemyControllers.get(i);
+					if (controller.startedChasing())
 					{
-						startedChaserGrowl = true;
-						if (Vector2.dst(chaser.getX(), chaser.getY(), player.getX(), player.getY()) <= player.getHearing())
+						if (player.isAlive() && Vector2.dst(chaser.getX(), chaser.getY(), player.getX(), player.getY()) <= player.getHearing())
 						{
+							chaserGrowl.stop();
 							chaserGrowl.play((player.getHearing() - Vector2.dst(chaser.getX(), chaser.getY(), player.getX(), player.getY()))/player.getHearing(), 1, 0);
 						}
 					}
-				}
-				else {
-					startedChaserGrowl = false;
-				}
-				if (enemyControllers.get(i).getState() == EnemyController.FSMState.ATTACK)
-				{
-					if (!startedChaserAttack)
+					else if (controller.startedAttacking())
 					{
-						startedChaserAttack = true;
-						if (Vector2.dst(chaser.getX(), chaser.getY(), player.getX(), player.getY()) <= player.getHearing())
+						if (player.isAlive() && Vector2.dst(chaser.getX(), chaser.getY(), player.getX(), player.getY()) <= player.getHearing())
 						{
+							chaserAttack.stop();
 							chaserAttack.play((player.getHearing() - Vector2.dst(chaser.getX(), chaser.getY(), player.getX(), player.getY()))/player.getHearing(), 1, 0);
 						}
 					}
-				}
-				else {
-					startedChaserAttack = false;
 				}
 			}
 			if (enemyArr.get(i) instanceof FloatingEnemy)
@@ -1319,7 +1308,7 @@ public class GameplayController implements Screen {
 				FloatingEnemy floater = (FloatingEnemy) enemyArr.get(i);
 				if (enemyControllers.get(i).getState() == EnemyController.FSMState.IDLE)
 				{
-					if (!startedDistantFloater && Math.random() < 0.2f)
+					if (!startedDistantFloater && Math.random() < 0.5f)
 					{
 						startedDistantFloater = true;
 						distantFloaterId = distantFloater.play();
@@ -1345,7 +1334,8 @@ public class GameplayController implements Screen {
 					{
 						if (!startedFloaterAttack) {
 							startedFloaterAttack = true;
-							if (Vector2.dst(floater.getX(), floater.getY(), player.getX(), player.getY()) <= player.getHearing()) {
+							if (player.isAlive() && Vector2.dst(floater.getX(), floater.getY(), player.getX(), player.getY()) <= player.getHearing()) {
+								floaterAttack.stop();
 								floaterAttack.play((player.getHearing() - Vector2.dst(floater.getX(), floater.getY(), player.getX(), player.getY()))/player.getHearing(), 1, 0);
 							}
 						}
@@ -1363,7 +1353,7 @@ public class GameplayController implements Screen {
 					if (!startedScoutGrowl)
 					{
 						startedScoutGrowl = true;
-						if (Vector2.dst(scout.getX(), scout.getY(), player.getX(), player.getY()) <= player.getHearing()) {
+						if (player.isAlive() && Vector2.dst(scout.getX(), scout.getY(), player.getX(), player.getY()) <= player.getHearing()) {
 							scoutGrowl.play((player.getHearing() - Vector2.dst(scout.getX(), scout.getY(), player.getX(), player.getY()))/player.getHearing(), 1, 0);
 						}
 					}
@@ -1376,7 +1366,7 @@ public class GameplayController implements Screen {
 						if (!startedScoutAttack)
 						{
 							startedScoutAttack = true;
-							if (Vector2.dst(scout.getX(), scout.getY(), player.getX(), player.getY()) <= player.getHearing()) {
+							if (player.isAlive() && Vector2.dst(scout.getX(), scout.getY(), player.getX(), player.getY()) <= player.getHearing()) {
 								scoutAttack.play((player.getHearing() - Vector2.dst(scout.getX(), scout.getY(), player.getX(), player.getY()))/player.getHearing(), 1, 0);
 							}
 						}
@@ -1394,7 +1384,7 @@ public class GameplayController implements Screen {
 						startedShrieking = true;
 						shriekId = shriek.play();
 					}
-					if (Vector2.dst(shrieker.getX(), shrieker.getY(), player.getX(), player.getY()) <= player.getHearing()) {
+					if (player.isAlive() && Vector2.dst(shrieker.getX(), shrieker.getY(), player.getX(), player.getY()) <= player.getHearing()) {
 						shriek.setVolume(shriekId, (player.getHearing() - Vector2.dst(shrieker.getX(), shrieker.getY(), player.getX(), player.getY()))/player.getHearing());
 					}
 					else {
@@ -1537,6 +1527,9 @@ public class GameplayController implements Screen {
 				lowHealthId = lowHealth.play();
 				lowHealth.setLooping(lowHealthId, true);
 			}
+		}
+		else {
+			startedDying = false;
 		}
 
 	}
