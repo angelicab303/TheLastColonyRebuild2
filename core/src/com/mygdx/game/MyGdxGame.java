@@ -234,6 +234,7 @@ public class MyGdxGame extends Game implements ScreenListener {
 				System.out.println("Level select 2 is chosen");
 				levelSelect2.reset();
 				setScreen(levelSelect2);
+				levelSelectPhase = 2;
 			}
 			else{
 				System.out.println("Set game screen from levelSelect");
@@ -253,6 +254,7 @@ public class MyGdxGame extends Game implements ScreenListener {
 				System.out.println("Level select 1 is chosen");
 				levelSelect.reset();
 				setScreen(levelSelect);
+				levelSelectPhase = 1;
 			} else {
 				System.out.println("Set game screen from levelSelect");
 				controller.reset(exitCode);
@@ -299,8 +301,14 @@ public class MyGdxGame extends Game implements ScreenListener {
 				setScreen(controller);
 			}
 			else if (exitCode == victoryMenu.EXIT_NEXT_LEVEL){
-				levelSelect.reset();
-				setScreen(levelSelect);
+				if (levelSelectPhase == 1){
+					levelSelect.reset();
+					setScreen(levelSelect);
+				}
+				else if (levelSelectPhase == 2){
+					levelSelect2.reset();
+					setScreen(levelSelect2);
+				}
 			}
 		}
 		else if (screen == loseMenu){
@@ -309,8 +317,14 @@ public class MyGdxGame extends Game implements ScreenListener {
 				setScreen(controller);
 			}
 			else if (exitCode == loseMenu.EXIT_NEXT_LEVEL){
-				levelSelect.reset();
-				setScreen(levelSelect);
+				if (levelSelectPhase == 1){
+					levelSelect.reset();
+					setScreen(levelSelect);
+				}
+				else if (levelSelectPhase == 2){
+					levelSelect2.reset();
+					setScreen(levelSelect2);
+				}
 			}
 		}
 //		else if (exitCode == WorldController.EXIT_NEXT) {

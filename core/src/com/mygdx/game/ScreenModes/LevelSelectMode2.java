@@ -602,8 +602,8 @@ public class LevelSelectMode2 implements Screen, InputProcessor, ControllerListe
             public void clicked(InputEvent event, float x, float y) {
                 if (buttons.get(2).isChecked()) {
                     buttons.get(2).setChecked(false);
-                    currLevel = 7;
                     if (7 <= unlocked){
+                        currLevel = 7;
                         buttonState = EXIT_7;
                     }
                 }
@@ -615,8 +615,8 @@ public class LevelSelectMode2 implements Screen, InputProcessor, ControllerListe
             public void clicked(InputEvent event, float x, float y) {
                 if (buttons.get(3).isChecked()) {
                     buttons.get(3).setChecked(false);
-                    currLevel = 8;
                     if (8 <= unlocked){
+                        currLevel = 8;
                         buttonState = EXIT_8;
                     }
                 }
@@ -628,8 +628,8 @@ public class LevelSelectMode2 implements Screen, InputProcessor, ControllerListe
             public void clicked(InputEvent event, float x, float y) {
                 if (buttons.get(4).isChecked()) {
                     buttons.get(4).setChecked(false);
-                    currLevel = 9;
                     if (9 <= unlocked){
+                        currLevel = 9;
                         buttonState = EXIT_9;
                     }
                 }
@@ -641,8 +641,8 @@ public class LevelSelectMode2 implements Screen, InputProcessor, ControllerListe
             public void clicked(InputEvent event, float x, float y) {
                 if (buttons.get(5).isChecked()) {
                     buttons.get(5).setChecked(false);
-                    currLevel = 10;
                     if (10 <= unlocked){
+                        currLevel = 10;
                         buttonState = EXIT_10;
                     }
                 }
@@ -654,8 +654,8 @@ public class LevelSelectMode2 implements Screen, InputProcessor, ControllerListe
             public void clicked(InputEvent event, float x, float y) {
                 if (buttons.get(6).isChecked()) {
                     buttons.get(6).setChecked(false);
-                    currLevel = 11;
                     if (11 <= unlocked){
+                        currLevel = 11;
                         buttonState = EXIT_11;
                     }
                 }
@@ -769,6 +769,7 @@ public class LevelSelectMode2 implements Screen, InputProcessor, ControllerListe
 
         currLevel = unlocked;
         if (currLevel >= 6){
+            System.out.println("Level is 6 or greater");
             caravanSpawn = true;
         }
 
