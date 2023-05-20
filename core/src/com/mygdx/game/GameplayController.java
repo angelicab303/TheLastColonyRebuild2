@@ -35,10 +35,7 @@ import com.badlogic.gdx.Screen;
 import com.mygdx.game.ScreenModes.PauseMenuMode;
 import com.mygdx.game.Obstacles.Items.Item;
 import com.mygdx.game.Obstacles.Items.Torch;
-import com.mygdx.game.UI.AirBar;
-import com.mygdx.game.UI.Heart;
-import com.mygdx.game.UI.TorchUI;
-import com.mygdx.game.UI.TutorialPrompt;
+import com.mygdx.game.UI.*;
 import obstacle.BoxObstacle;
 import obstacle.Obstacle;
 import util.*;
@@ -152,6 +149,7 @@ public class GameplayController implements Screen {
 	/** Texture asset for the mushroom texture */
 	private TextureRegion mushroomTexture;
 	private TextureRegion torchTexture;
+	private TextureRegion keyTexture;
 
 	// *************************** UI Textures ***************************
 	/** Texture asset for the full heart texture */
@@ -304,6 +302,7 @@ public class GameplayController implements Screen {
 	protected AirBar airBar;
 
 	protected TorchUI torch;
+	protected KeyUI keyCounter;
 	/** Heart list **/
 	protected Array<Heart> heartArr;
 
@@ -534,11 +533,12 @@ public class GameplayController implements Screen {
 		// pureAirTexture = new TextureRegion(directory.getEntry("images:smog1",
 		// Texture.class));
 //		pureAirTexture = directory.getEntry("images:testSmog", Texture.class);
-		torchTexture = new TextureRegion(directory.getEntry("tiles:9a_torch", Texture.class));
 
 		// UI Textures
 		fHeartTexture = directory.getEntry("images:fullHeart", Texture.class);
 		sHeartTexture = directory.getEntry("images:slashedHeart", Texture.class);
+		torchTexture = new TextureRegion(directory.getEntry("tiles:9a_torch", Texture.class));
+		keyTexture = new TextureRegion(directory.getEntry("tiles:9b_key", Texture.class));
 
 		// Unnecessary atm?
 
@@ -1102,6 +1102,7 @@ public class GameplayController implements Screen {
 		}
 		airBar = new AirBar(airBarTexture, player.weapon.getMaxNumAmmo(), player.weapon.getNumAmmo(), canvas);
 		torch = new TorchUI(torchTexture, 0, displayFontTorch);
+		keyCounter = new KeyUI(keyTexture, 0, displayFontTorch);
 
 		// Hearts
 		int numLives = player.getHealth();
@@ -1291,6 +1292,7 @@ public class GameplayController implements Screen {
 		// Update UI elements
 		airBar.update(player.weapon.getNumAmmo());
 		torch.update(player.getNumTorches());
+		keyCounter.update(player.getNumKeys());
 		player.weapon.update(player.getPosition(), canvas.unproject(input.getMousePos()), input.getShootDir());
 
 		if (player.weapon.isAbsorbing())
@@ -2026,6 +2028,7 @@ public class GameplayController implements Screen {
 				heartArr.get(i).draw(canvas);
 			}
 			torch.draw(canvas);
+			keyCounter.draw(canvas);
 		}
 
 

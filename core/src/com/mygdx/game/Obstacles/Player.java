@@ -168,6 +168,7 @@ public class Player extends Shadow implements GameObstacle{
     public int getNumTorches() {
         return torch;
     }
+    public int getNumKeys() {return key;}
     /**
      * Create player at the given position.
      *
