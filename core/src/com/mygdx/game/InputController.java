@@ -65,6 +65,10 @@ public class InputController {
 	private static boolean pickedUpSurvivor;
 	/** Did we press E to drop off survivors? */
 	private static boolean droppedOffSurvivors;
+	/** Did we press E to pick up an item? */
+	private static boolean pickedUpItem;
+	/** Did we press E to place an item? */
+	private static boolean placedItem;
 	/** Did we press R to restart the level? */
 	private static boolean reset;
 	/** Did we press ESC to pause the game? */
@@ -172,6 +176,25 @@ public class InputController {
 		return droppedOffSurvivors;
 	}
 
+	/**
+	 * Returns whether the item pick-up button was pressed.
+	 *
+	 * @return whether the item pick-up button was pressed.
+	 */
+	public boolean didPickUpItem() {
+		return pickedUpItem;
+	}
+
+	/**
+	 <<<<<<< HEAD
+	 * Returns whether the item drop-off button was pressed.
+	 *
+	 * @return whether the item drop-off button was pressed.
+	 */
+	public boolean didPlaceItem() {
+		return placedItem;
+	}
+
 	/** Returns whether the reset button was pressed.
 	 * whether the reset button was pressed.
 	 * @return
@@ -240,7 +263,7 @@ public class InputController {
 			// Figure out, based on which player we are, which keys
 			// control our actions (depends on player).
 			int up, left, right, down, absorb, shoot, upshoot, leftshoot, rightshoot, downshoot,
-					pickUpSurvivor, shiftControls, restart, pause, next, enter, rightArrow, leftArrow;
+					pickUpSurvivor, pickUpItem, placeItem, shiftControls, restart, pause, next, enter, rightArrow, leftArrow;
 			up    = Input.Keys.W;
 			down  = Input.Keys.S;
 			left  = Input.Keys.A;
@@ -252,6 +275,8 @@ public class InputController {
 			leftshoot  = Input.Keys.LEFT;
 			rightshoot = Input.Keys.RIGHT;
 			pickUpSurvivor = Input.Keys.E;
+			placeItem = Input.Keys.Q;
+			pickUpItem = Input.Keys.E;
 			shiftControls = Input.Keys.SHIFT_LEFT;
 			restart = Input.Keys.R;
 			pause = Input.Keys.ESCAPE;
@@ -265,6 +290,8 @@ public class InputController {
 			pressedFire = false;
 			pickedUpSurvivor = false;
 			droppedOffSurvivors = false;
+			pickedUpItem = false;
+			placedItem = false;
 			reset = false;
 			paused = false;
 			nextLevel = false;
@@ -343,6 +370,14 @@ public class InputController {
 			if (Gdx.input.isKeyPressed(pickUpSurvivor) && !Gdx.input.isKeyPressed(pause)) {
 				pickedUpSurvivor = true;
 				droppedOffSurvivors = true;
+			}
+			// Picking up an Item
+			if (Gdx.input.isKeyPressed(pickUpItem) && !Gdx.input.isKeyPressed(pause)) {
+				pickedUpItem = true;
+			}
+			// Placing an Item
+			if (Gdx.input.isKeyPressed(placeItem) && !Gdx.input.isKeyPressed(pause)) {
+				placedItem = true;
 			}
 			// Resetting the level
 			if (Gdx.input.isKeyPressed(restart)) {

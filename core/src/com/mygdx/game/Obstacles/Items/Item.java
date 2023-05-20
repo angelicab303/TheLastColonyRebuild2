@@ -16,8 +16,11 @@ public class Item extends BoxObstacle implements GameObstacle {
 
     /**Filter for filtering */
     private static volatile Filter filter;
+    private Vector2 position;
 
     private float scale;
+    private boolean isInteractable;
+    private BitmapFont displayFontInteract;
 
     public enum ItemType{
         ITEM,
@@ -25,14 +28,18 @@ public class Item extends BoxObstacle implements GameObstacle {
         TORCH,
         COFFEE
     }
-    public Item(float x, float y, TextureRegion cvalue, float scale){
+    public Item(float x, float y, TextureRegion cvalue, BitmapFont font, float scale){
         super(x,y,cvalue.getRegionWidth()*scale, cvalue.getRegionHeight()*scale);
 
+        position = new Vector2(x, y);
         setDensity(1);
         setFriction(0);
         setRestitution(0.1f);
         setTexture(cvalue);
         this.scale = scale;
+
+        isInteractable = false;
+        displayFontInteract = font;
 
         if (filter == null){
             filter = new Filter();
@@ -67,6 +74,11 @@ public class Item extends BoxObstacle implements GameObstacle {
     public void draw(GameCanvas canvas) {
         canvas.draw(texture, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, 0.0f, scale,
                 scale);
+
+        if (isInteractable) {
+            String message = "(E) Pick Up";
+            canvas.drawText(message, displayFontInteract, position.x - 16.0f, position.y + 20.0f);
+        }
     }
 
     @Override
@@ -82,6 +94,22 @@ public class Item extends BoxObstacle implements GameObstacle {
     @Override
     public void incBehind(int inc) {
 
+    }
+
+    /**
+     * Sets whether the item can be interacted with.
+     */
+    public void setInteractable(Boolean interact) {
+        this.isInteractable = interact;
+    }
+
+    /**
+     * Returns whether or not the item is interactable.
+     *
+     * @return whether or not the item is interactable
+     */
+    public boolean isInteractable() {
+        return isInteractable;
     }
 
     public void collect(){

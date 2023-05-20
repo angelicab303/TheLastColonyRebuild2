@@ -32,6 +32,8 @@ import com.mygdx.game.EnemyControllers.ScoutEnemyController;
 import com.mygdx.game.Obstacles.*;
 import com.mygdx.game.Obstacles.Enemies.*;
 import com.badlogic.gdx.Screen;
+import com.mygdx.game.Obstacles.Items.Item;
+import com.mygdx.game.Obstacles.Items.Torch;
 import com.mygdx.game.UI.AirBar;
 import com.mygdx.game.UI.Heart;
 import com.mygdx.game.UI.TutorialPrompt;
@@ -144,6 +146,7 @@ public class GameplayController implements Screen {
 	private TextureRegion treeBallFadedTexture;
 	/** Texture asset for the mushroom texture */
 	private TextureRegion mushroomTexture;
+	private TextureRegion torchTexture;
 
 	// *************************** UI Textures ***************************
 	/** Texture asset for the full heart texture */
@@ -170,7 +173,6 @@ public class GameplayController implements Screen {
 	/** The weapon fire sound. We only want to play once. */
 	private Sound fireSound;
 	private long fireId = -1;//
-
 
 	/** The default sound volume */
 	private float volume;
@@ -214,6 +216,8 @@ public class GameplayController implements Screen {
 	private Array<Enemy> enemyArr;
 	/** Survivor list **/
 	private Array<Survivor> survivorArr;
+	/** Item list **/
+	private Array<Item> itemArr;
 	/** List of all tree positions **/
 	private Array<Vector2> treePos;
 	/** survivor controller list **/
@@ -231,6 +235,8 @@ public class GameplayController implements Screen {
 	private int curLevel = 0;
 	private int maxLevels = 12;
 	private int level;
+
+	private int torchPlacedCounter = 30;
 
 
 	//************* From world controller ******************
@@ -516,6 +522,7 @@ public class GameplayController implements Screen {
 		// pureAirTexture = new TextureRegion(directory.getEntry("images:smog1",
 		// Texture.class));
 //		pureAirTexture = directory.getEntry("images:testSmog", Texture.class);
+		torchTexture = new TextureRegion(directory.getEntry("tiles:9a_torch", Texture.class));
 
 		// UI Textures
 		fHeartTexture = directory.getEntry("images:fullHeart", Texture.class);
@@ -905,6 +912,7 @@ public class GameplayController implements Screen {
 		player = reader.getPlayer();
 		survivorArr = reader.getSurvivors();
 		enemyArr = reader.getEnemies();
+		itemArr = reader.getItems();
 		survivorControllers = reader.getSurvivorControllers();
 		enemyControllers = reader.getEnemyControllers();
 
@@ -1416,42 +1424,79 @@ public class GameplayController implements Screen {
 		for (int i = 0; i < survivorArr.size; i++) {
 			//System.out.println(caravan.getCurrentCapacity() + " " + caravan.getMaxCapacity());
 			if (!survivorArr.get(i).isRescued()) {
-			// This will be handled by collisionController in the future
-			survivorArr.get(i).update(survivorControllers.get(i).getAction());
-			if (survivorArr.get(i).getX() < 20) {
-				survivorArr.get(i).setPosition(20, survivorArr.get(i).getBody().getPosition().y);
-			}
-			if (survivorArr.get(i).getX() >= tileGrid.length * tileSize - 20) {
-				survivorArr.get(i).setPosition(tileGrid.length * tileSize - 20, survivorArr.get(i).getBody().getPosition().y);
-			}
-			if (survivorArr.get(i).getY() < 20) {
-				survivorArr.get(i).setPosition(survivorArr.get(i).getBody().getPosition().x, 20);
-			}
-			if (survivorArr.get(i).getY() >= tileGrid[0].length * tileSize - 20) {
-				survivorArr.get(i).setPosition(survivorArr.get(i).getBody().getPosition().x, tileGrid[0].length * tileSize - 20);
-			}
-			survivorArr.get(i).update();
-			if (survivorArr.get(i).isInteractable() && input.didCollectSurvivor()) {
-				survivorArr.get(i).setInteractable(false);
-				if (!survivorArr.get(i).isFollowing()) {
-					player.addToFollowing(survivorArr.get(i));
+				// This will be handled by collisionController in the future
+				survivorArr.get(i).update(survivorControllers.get(i).getAction());
+				if (survivorArr.get(i).getX() < 20) {
+					survivorArr.get(i).setPosition(20, survivorArr.get(i).getBody().getPosition().y);
 				}
-				survivorArr.get(i).follow();
-			}
-			if (!survivorArr.get(i).isAlive()) {
-				player.removeFromFollowing(survivorArr.get(i));
-				setFailure(true);
-			}
-			if (survivorArr.get(i).isRescued()) {
-				player.removeFromFollowing(survivorArr.get(i));
-				survivorArr.get(i).deactivatePhysics(world);
-					//survivorArr.removeIndex(i);
-				numRescued++;
-				caravan.incrCap();
-				caravan.setInteractable(false);
+				if (survivorArr.get(i).getX() >= tileGrid.length * tileSize - 20) {
+					survivorArr.get(i).setPosition(tileGrid.length * tileSize - 20, survivorArr.get(i).getBody().getPosition().y);
+				}
+				if (survivorArr.get(i).getY() < 20) {
+					survivorArr.get(i).setPosition(survivorArr.get(i).getBody().getPosition().x, 20);
+				}
+				if (survivorArr.get(i).getY() >= tileGrid[0].length * tileSize - 20) {
+					survivorArr.get(i).setPosition(survivorArr.get(i).getBody().getPosition().x, tileGrid[0].length * tileSize - 20);
+				}
+				survivorArr.get(i).update();
+				if (survivorArr.get(i).isInteractable() && input.didCollectSurvivor()) {
+					survivorArr.get(i).setInteractable(false);
+					if (!survivorArr.get(i).isFollowing()) {
+						player.addToFollowing(survivorArr.get(i));
+					}
+					survivorArr.get(i).follow();
+				}
+				if (!survivorArr.get(i).isAlive()) {
+					player.removeFromFollowing(survivorArr.get(i));
+					setFailure(true);
+				}
+				if (survivorArr.get(i).isRescued()) {
+					player.removeFromFollowing(survivorArr.get(i));
+					survivorArr.get(i).deactivatePhysics(world);
+						//survivorArr.removeIndex(i);
+					numRescued++;
+					caravan.incrCap();
+					caravan.setInteractable(false);
+				}
 			}
 		}
 
+		// Check through the items just like the survivors to see if we need to show "E to collect"
+		for (int i = 0; i < itemArr.size; i++) {
+			if (itemArr.get(i).isInteractable() && input.didPickUpItem()) {
+				itemArr.get(i).setInteractable(false);
+				if (itemArr.get(i).getItemType() == Item.ItemType.TORCH) {
+					player.collectTorch();
+					itemArr.get(i).collect();
+				} else if (itemArr.get(i).getItemType() == Item.ItemType.KEY) {
+					itemArr.get(i).setInteractable(true);
+					player.collectKey();
+					itemArr.get(i).collect();
+				}
+				// Coffee doesn't do anything currently
+			}
+		}
+
+		if (torchPlacedCounter == 0) {
+			torchPlacedCounter = 30;
+		} else if (torchPlacedCounter != 30) {
+			torchPlacedCounter--;
+		}
+		if (input.didPlaceItem() && player.hasTorch()) {
+			if (!tileGrid[(int)(player.getX() / tileSize)][(int)(player.getY() / tileSize)] && torchPlacedCounter == 30) {
+				torchPlacedCounter--;
+				Torch torch = new Torch((player.getX() / tileSize)*tileSize,(player.getY() / tileSize)*tileSize,torchTexture, displayFontInteract, SCALE);
+				addObject(torch);
+				itemArr.add(torch);
+				player.useTorch();
+			} else {
+				// I'd like to display a message saying the following but it would require having a specific draw
+				// 	statement to every tile since there is no torch entity yet and the player's location could be on
+				// 	a wall, tree, floor, etc.
+				
+//				String message = "Cannot place\ntorch here";
+//				canvas.drawText(message, displayFontInteract, (player.getX() / tileSize)*tileSize,(player.getY() / tileSize)*tileSize);
+			}
 		}
 
 		caravan.update();

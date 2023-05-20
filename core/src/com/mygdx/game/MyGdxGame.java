@@ -144,7 +144,7 @@ public class MyGdxGame extends Game implements ScreenListener {
 			mainMenu.gatherAssets(directory);
 			mainMenu.setScreenListener(this);
 
-//			samples[0] = directory.getEntry( "The_Last_Colony_-_Title_Screen.mp3", AudioSource.class );
+//			samples[0] = directory.getEntry( "The Last Colony - Title Screen.ogg", AudioSource.class );
 //
 //			AudioEngine engine = (AudioEngine)Gdx.audio;
 //			music = engine.newMusicBuffer( false, 44100 );

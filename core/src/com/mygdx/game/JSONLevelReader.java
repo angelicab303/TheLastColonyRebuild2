@@ -14,6 +14,7 @@ import com.badlogic.gdx.utils.*;
 import com.mygdx.game.EnemyControllers.*;
 import com.mygdx.game.Obstacles.*;
 import com.mygdx.game.Obstacles.Enemies.*;
+import com.mygdx.game.Obstacles.Items.Item;
 import com.mygdx.game.Obstacles.Items.Key;
 import com.mygdx.game.Obstacles.Items.Torch;
 import obstacle.Obstacle;
@@ -73,6 +74,8 @@ public class JSONLevelReader {
     private int[] placeableIDs = new int[numPlaceableIDs];
     private Array<Obstacles> placeableArr = new Array<Obstacles>();
     private int mushroomID;
+    private int torchID;
+    private Array<Item> itemArr;
 
     private int[] tIDs = new int[numBeforeFloors + numFloorIDs + numWallIDs + numObstacleIDs + numSmogIDs + numPlaceableIDs];
 
@@ -219,6 +222,8 @@ public class JSONLevelReader {
             shriekerArr = new Array<ShriekerEnemy>();
             survivorControllers = new Array<SurvivorController>();
             enemyControllers = new Array<EnemyController>();
+
+            itemArr = new Array<Item>();
 
              /**
               * Out of date ---- more dynamic system implemented - V
@@ -484,10 +489,6 @@ public class JSONLevelReader {
         else {
             System.out.println("Error - ID " + id + " tile not found");
         }
-
-
-
-
     }
 
     public TextureRegion getTextureRegionKey(int id) {
@@ -547,10 +548,19 @@ public class JSONLevelReader {
     }
 
     public void createKey(int x, int y, int id, float scale) {
-        addObject(new Key(x*tileSize,y*tileSize,getTextureRegionKey(id), scale));
+        Key key = new Key(x*tileSize,y*tileSize,getTextureRegionKey(id), displayFontInteract, scale);
+        addObject(key);
+        itemArr.add(key);
     }
     public void createTorch(int x, int y, int id, float scale) {
-        addObject(new Torch(x*tileSize,y*tileSize,getTextureRegionKey(id), scale));
+        Torch torch = new Torch(x*tileSize,y*tileSize,getTextureRegionKey(id), displayFontInteract, scale);
+        addObject(torch);
+        itemArr.add(torch);
+        torchID = id;
+    }
+
+    public Array<Item> getItems() {
+        return itemArr;
     }
          
     public void createPlayer(int x, int y, float scale) {
