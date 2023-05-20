@@ -14,6 +14,7 @@ import com.badlogic.gdx.utils.*;
 import com.mygdx.game.EnemyControllers.*;
 import com.mygdx.game.Obstacles.*;
 import com.mygdx.game.Obstacles.Enemies.*;
+import com.mygdx.game.Obstacles.Items.Item;
 import com.mygdx.game.Obstacles.Items.Key;
 import com.mygdx.game.Obstacles.Items.Torch;
 import obstacle.Obstacle;
@@ -73,6 +74,8 @@ public class JSONLevelReader {
     private int[] placeableIDs = new int[numPlaceableIDs];
     private Array<Obstacles> placeableArr = new Array<Obstacles>();
     private int mushroomID;
+    private int torchID;
+    private Array<Item> itemArr;
 
     private int[] tIDs = new int[numBeforeFloors + numFloorIDs + numWallIDs + numObstacleIDs + numSmogIDs + numPlaceableIDs];
 
@@ -196,13 +199,13 @@ public class JSONLevelReader {
             // JsonValue.class)));
 
             JsonValue levelStr = new JsonValue(false);
-            if(level < 6){
-                //levelStr = directory.getEntry("Level" + (level+1), JsonValue.class);
+            if(level <= 10){
+                levelStr = directory.getEntry("Level" + (level+1), JsonValue.class);
             }else{
                 levelStr = directory.getEntry("Level13", JsonValue.class);
             }
 
-            levelStr = directory.getEntry("Level13", JsonValue.class);
+            //levelStr = directory.getEntry("Level13", JsonValue.class);
             Vector2 levelBounds = new Vector2(levelStr.get("layers").get(0).getInt("width"),levelStr.get("layers").get(0).getInt("height"));
 
             //gets the file of the tileset
@@ -224,6 +227,8 @@ public class JSONLevelReader {
             survivorControllers = new Array<SurvivorController>();
             enemyControllers = new Array<EnemyController>();
 
+            itemArr = new Array<Item>();
+
              /**
               * Out of date ---- more dynamic system implemented - V
              * This is the order of the naming system for the files:
@@ -238,21 +243,27 @@ public class JSONLevelReader {
              **/
 
 
-            tiles = new JsonValue[tileIDs.size];
+             //importing by id instead cause I give up on editing
+
+
+            int maxTiles = tileIDs.get(tileIDs.size-1).getInt("id");
+
+            tiles = new JsonValue[maxTiles+1];
 
             int caravanID = 0;
             int playerID = 0;
             int altCaravanID = 0;
             for(int i = 0; i < tileIDs.size; i++){
-                tiles[i] = tileIDs.get(i);
-                String type = tiles[i].get("properties").get(0).getString("name");
+                int id = tileIDs.get(i).getInt("id");
+                tiles[id] = tileIDs.get(i);
+                String type = tiles[id].get("properties").get(0).getString("name");
                 if(type.equals("Player")){
-                    playerID = i;
+                    playerID = id;
                 }else if(type.equals("Caravan")){
                     if(caravanID == 0){
-                        caravanID = i;
+                        caravanID = id;
                     }else {
-                        altCaravanID = i;
+                        altCaravanID = id;
                     }
 
                 }
@@ -466,9 +477,9 @@ public class JSONLevelReader {
             createSurvivor(x, y, id, scale);
         } else if (type.equals("FloatingEnemy") || type.equals("ScoutEnemy") || type.equals("ShriekerEnemy") || type.equals("ChaserEnemy")) {//Remember to ask kenny to do enemy types (I'm sorry) - V
             createEnemy(x, y, type, scale);
-        } else if (type.equals("Floor")) {
+        } else if (type.equals("Floor") || type.equals("Tutorial")) {
             createFloor(x, y, id, scale);
-        }else if(type.equals("Obstacle") || type.equals("Door")) {//IDK how doors are going to be implemented, so Imma hold off on this for now -V
+        }else if(type.equals("Obstacle") || type.equals("Door") || type.equals("Fence")) {//IDK how doors are going to be implemented, so Imma hold off on this for now -V
             createObstacle(x, y, id, scale, type.equals("Door"));
         }else if(type.equals("Smog")){
             createSmog(x, y, id, scale);
@@ -482,10 +493,6 @@ public class JSONLevelReader {
         else {
             System.out.println("Error - ID " + id + " tile not found");
         }
-
-
-
-
     }
 
     public TextureRegion getTextureRegionKey(int id) {
@@ -545,10 +552,19 @@ public class JSONLevelReader {
     }
 
     public void createKey(int x, int y, int id, float scale) {
-        addObject(new Key(x*tileSize,y*tileSize,getTextureRegionKey(id), scale));
+        Key key = new Key(x*tileSize,y*tileSize,getTextureRegionKey(id), displayFontInteract, scale);
+        addObject(key);
+        itemArr.add(key);
     }
     public void createTorch(int x, int y, int id, float scale) {
-        addObject(new Torch(x*tileSize,y*tileSize,getTextureRegionKey(id), scale));
+        Torch torch = new Torch(x*tileSize,y*tileSize,getTextureRegionKey(id), displayFontInteract, scale);
+        addObject(torch);
+        itemArr.add(torch);
+        torchID = id;
+    }
+
+    public Array<Item> getItems() {
+        return itemArr;
     }
          
     public void createPlayer(int x, int y, float scale) {
@@ -664,16 +680,16 @@ public class JSONLevelReader {
         obstacleArr.add(obstacleTemp);
         if(x >= 0 && y >= 0 && x < width && y < height){
             tileGrid[(int)x ][(int)y] = true;
-            if (id == 47 || id == 50)
-            {
-                tileGrid[(int)(x-1) ][(int)y] = true;
-                tileGrid[(int)(x-1)][(int)(y+1)] = true;
-            }
-            if (id == 48)
-            {
-                tileGrid[(int)(x+1)][(int)y] = true;
-                tileGrid[(int)(x+1)][(int)(y+1)] = true;
-            }
+//            if (id == 47 || id == 50)
+//            {
+//                tileGrid[(int)(x-1) ][(int)y] = true;
+//                tileGrid[(int)(x-1)][(int)(y+1)] = true;
+//            }
+//            if (id == 48)
+//            {
+//                tileGrid[(int)(x+1)][(int)y] = true;
+//                tileGrid[(int)(x+1)][(int)(y+1)] = true;
+//            }
         }
         addObject(obstacleTemp);
     }
@@ -689,11 +705,7 @@ public class JSONLevelReader {
     }
 
     public void createSmog(int x, int y, int id, float scale) {
-        try{
-            smogTiles[(int)x+1][(int)y+1] = true;
-        }catch (Exception e){
-            System.out.println("Smog id: " + id);
-        }
+        smogTiles[(int)x+1][(int)y+1] = true;
 
 //        System.out.println("Smog id: " + id);
     }

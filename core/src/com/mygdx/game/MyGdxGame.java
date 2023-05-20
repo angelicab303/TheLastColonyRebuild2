@@ -1,9 +1,15 @@
 package com.mygdx.game;
 
+import audio.*;
+import audio.AudioSource;
+import audio.MusicQueue;
+import com.badlogic.gdx.*;
+import com.badlogic.gdx.Audio;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.utils.JsonValue;
 import com.mygdx.game.ScreenModes.LevelSelectMode;
 import com.mygdx.game.ScreenModes.LoadingMode;
 import com.mygdx.game.ScreenModes.MainMenuMode;
@@ -34,6 +40,10 @@ public class MyGdxGame extends Game implements ScreenListener {
 	/** Input Controller **/
 	private InputController input = new InputController();
 
+//	private AudioSource samples[];
+//	private AudioEngine engine;
+//	private MusicQueue music;
+
 	public MyGdxGame () { }
 	
 	@Override
@@ -44,14 +54,16 @@ public class MyGdxGame extends Game implements ScreenListener {
 
 		canvas  = new GameCanvas();
 		loading = new LoadingMode("assets.json",canvas,1);
-		mainMenu = new MainMenuMode(canvas);
 		levelSelect = new LevelSelectMode(canvas);
 		pauseMenu = new PauseMenuMode(0, 0);
 		//Gdx.graphics.setContinuousRendering(false);
+		mainMenu = new MainMenuMode(canvas);
 
 		 //Initialize the three game worlds
 		 //controllers = new WorldController[1];
 		controller = new GameplayController(canvas, pauseMenu);
+
+//		samples = new AudioSource[1];
 
 		 //Initialize the first game world
 		//controllers[0] = new RocketController();
@@ -139,6 +151,13 @@ public class MyGdxGame extends Game implements ScreenListener {
 			// gather assets for pause menu
 			pauseMenu.gatherAssets(directory);
 
+//			samples[0] = directory.getEntry( "The Last Colony - Title Screen.ogg", AudioSource.class );
+//
+//			AudioEngine engine = (AudioEngine)Gdx.audio;
+//			music = engine.newMusicBuffer( false, 44100 );
+//			music.addSource( samples[0] );
+//			music.play();
+
 			mainMenu.reset();
 			mainMenu.setCanvas(canvas);
 
@@ -172,6 +191,8 @@ public class MyGdxGame extends Game implements ScreenListener {
 				pauseMenu.reset();
 				mainMenu.reset();
 				setScreen(mainMenu);
+//				music.stop();
+//				music.reset();
 			}
 		}
 //		else if (exitCode == WorldController.EXIT_NEXT) {

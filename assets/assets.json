@@ -667,6 +667,12 @@
       }
     },
 
+    "tiles:Tutorial_1":"images/dude.png",
+    "tiles:Tutorial_2":"images/dude.png",
+    "tiles:Tutorial_3":"images/dude.png",
+    "tiles:Tutorial_4":"images/dude.png",
+    "tiles:Tutorial_5":"images/dude.png",
+
     "tiles:6a_mediumTree": "tiles/6a_mediumTree.png",
     "tiles:6b_tallTree": "tiles/6b_tallTree.png",
     "tiles:6c_shortTree": "tiles/6c_shortTree.png",
@@ -715,22 +721,22 @@
     "5:16 TileSet.tsx": "tiles/516_TileSet..tsj",
     "5:5 TileSet.tsx": "tiles/LastColonyTiles510.tsj",
     "LastColonyTileset.tsx": "tiles/LastColonyTileset.json",
-    "5:18 TileSet.tsj": "tiles/518_TileSet.tsj",
+    "5:18 TileSet.tsj": "tiles/5_18 TileSet.tsj",
     "5:18 TileSet..tsj": "tiles/518_TileSet.tsj"
   },
   "levels": {
-    "tutorialLevel1": "levels/LastColonyTutorial1.json",
-    "tutorialLevel2": "levels/LastColonyTutorial2.json",
-    "tutorialLevel3": "levels/LastColonyTutorial3.json",
-    "tutorialLevel4": "levels/LastColonyTutorial4.json",
-    "tutorialLevel5": "levels/LastColonyTutorial5.json",
+    "Level1": "levels/NEWLevel_0.tmj",
+    "Level2": "levels/NEWLevel_1.tmj",
+    "Level3": "levels/NEWLevel_2.tmj",
+    "Level4": "levels/NEWLevel_3.tmj",
+    "Level5": "levels/NEWLevel_4.tmj",
     "mediumLevel": "levels/LastColonyMedLevel.json",
     "Level7": "levels/Level_7.tmj"
   },
   "jsons": {
     "5:5 TileSet.tsx": "tiles/LastColonyTiles510.tsj",
     "5:16 TileSet.tsx": "tiles/516_TileSet..tsj",
-    "5:18 TileSet.tsj": "tiles/518_TileSet.tsj",
+    "5:18 TileSet.tsj": "tiles/5_18 TileSet.tsj",
     "5:18 TileSet..tsj": "tiles/518_TileSet.tsj",
     "LastColonyTileset.tsx": "tiles/LastColonyTileset.json",
     "Level1": "levels/NEWLevel_0.tmj",
@@ -738,8 +744,11 @@
     "Level3": "levels/NEWLevel_2.tmj",
     "Level4": "levels/NEWLevel_3.tmj",
     "Level5": "levels/NEWLevel_4.tmj",
-    "Level6": "levels/LastColonyMedLevel.json",
-    "Level7": "levels/Level_7.tmj",
+    "Level6": "levels/NEWLevel_5.tmj",
+    "Level7": "levels/NEWLevel_6.tmj",
+    "Level8": "levels/NEWLevel_7.tmj",
+    "Level9": "levels/NEWLevel_8.tmj",
+    "Level10": "levels/NEWLevel_9.tmj",
     "Level13": "levels/Level_13.tmj"
   },
   "sounds": {
@@ -753,8 +762,30 @@
     "ragdoll:glub1": "ragdoll/bubble01.mp3",
     "ragdoll:glub2": "ragdoll/bubble02.mp3",
     "ragdoll:glub3": "ragdoll/bubble03.mp3",
-    "ragdoll:glub4": "ragdoll/bubble04.mp3"
+    "ragdoll:glub4": "ragdoll/bubble04.mp3",
+    "sounds:select": "sounds/Select.wav",
+    "sounds:back": "sounds/GoBack.wav",
+    "sounds:suck": "sounds/VacuumSuck.wav",
+    "sounds:blow": "sounds/Protagonist_Shooting.wav",
+    "sounds:walk": "sounds/Walk16.wav",
+    "sounds:ambience": "sounds/IndoorAmbience.wav",
+    "sounds:chase": "sounds/HeartBeatChase.wav",
+    "sounds:damage": "sounds/Damage_Sound.wav",
+    "sounds:lowhealth": "sounds/HeartbeatAfterTakingDamage_.wav",
+    "sounds:shriek": "sounds/ShrikerShort_16.wav",
+    "sounds:distantchaser": "sounds/DistantMonster.wav",
+    "sounds:distantfloater": "sounds/DistantMonster2_16.wav",
+    "sounds:chasergrowl": "sounds/CreatureGrowl1_16.wav",
+    "sounds:scoutgrowl": "sounds/CreatureGrowl2_16.wav",
+    "sounds:chaserattack": "sounds/CreatureAttack1_16.wav",
+    "sounds:floaterattack": "sounds/CreatureAttack2_16.wav",
+    "sounds:scoutattack": "sounds/CreatureAttack3_16.wav",
+    "sounds:shriekerattack": "sounds/ShriekerAttack1_16.wav",
+    "sounds:bean": "sounds/Bean_Picku_16p.wav"
   },
+  "music":{
+    "titlemusic": "sounds/The_Last_Colony_-_Title_Screen.ogg"
+    },
   "fonts": {
     "shared:retro": {
       "file": "shared/RetroGame.ttf",

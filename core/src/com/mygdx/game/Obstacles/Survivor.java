@@ -111,6 +111,14 @@ public class Survivor extends Shadow implements GameObstacle {
 
     private int nextAction;
 
+    private final int DEFAULT_NOISE = 0;
+
+    private final int MAX_NOISE = 60;
+
+    private float noise;
+
+    private Light light;
+
     private Vector2[] smogDetectionVertices;
     private boolean[] directionVacant;
 
@@ -241,6 +249,7 @@ public class Survivor extends Shadow implements GameObstacle {
         isRescued = false;
         isAlive = true;
         isTargetOfEnemy = false;
+        noise = DEFAULT_NOISE;
         behind = 0;
         lives = 3;
         damageCooldown = 0;
@@ -482,12 +491,17 @@ public class Survivor extends Shadow implements GameObstacle {
 
     public void setTargetOfEnemy(boolean value) {isTargetOfEnemy = value;}
 
+    public float getNoise() { return noise; }
+
     /**
      * Sets the survivor to be rescued and isFollowing to false.
      */
     public void rescue() {
         if(torchLight != null){
             torchLight.remove();
+        }
+        if(light != null){
+            light.remove();
         }
         this.isRescued = true;
         this.isFollowing = false;
@@ -639,10 +653,14 @@ public class Survivor extends Shadow implements GameObstacle {
 
         //geometry.setUserData("survivor");
         setFilterData(filter);
+        light = Lights.createPointLight(Color.BLACK, noise, 0,0);
+        attachLightToSurvivor(light);
         setAwake(true);
         getBody().setUserData(this);
         return true;
     }
+
+    public void attachLightToSurvivor(Light light){ light.attachToBody(body); }
 
     /**
      * Reset or cool down the survivor's damage intake (i.e. discretized life loss).
@@ -788,6 +806,27 @@ public class Survivor extends Shadow implements GameObstacle {
             hVelocity = -1;
             vVelocity = -1;
         }
+
+        // update survivor noise
+
+        if (hVelocity == 0 && vVelocity == 0)
+        {
+            noise -= 0.5f;
+            if (noise < DEFAULT_NOISE)
+            {
+                noise = DEFAULT_NOISE;
+            }
+        }
+        else
+        {
+            noise++;
+            if (noise > MAX_NOISE)
+            {
+                noise = MAX_NOISE;
+            }
+        }
+
+        light.setDistance(noise);
 
         velocity.x = hVelocity * MOVE_SPEED;
         velocity.y = vVelocity * MOVE_SPEED;

@@ -6,12 +6,7 @@ import com.mygdx.game.Obstacles.Enemies.*;
 import com.mygdx.game.Obstacles.Player;
 import com.mygdx.game.Obstacles.Survivor;
 import com.mygdx.game.Tile;
-import com.mygdx.game.TileGraph;
 import com.mygdx.game.VineTileGraph;
-import com.badlogic.gdx.utils.Array;
-import com.mygdx.game.Obstacles.Enemies.Enemy;
-import com.mygdx.game.Obstacles.Player;
-import com.mygdx.game.Obstacles.Survivor;
 import com.mygdx.game.Obstacles.Enemies.ShriekerEnemy;
 
 public class ScoutEnemyController extends com.mygdx.game.EnemyControllers.EnemyController {
@@ -37,7 +32,7 @@ public class ScoutEnemyController extends com.mygdx.game.EnemyControllers.EnemyC
 
     boolean followingSurvivor;
 
-    private enum FSMState {
+    public enum FSMState {
         /**
          * The enemy just spawned and is stationary
          */
@@ -217,12 +212,13 @@ public class ScoutEnemyController extends com.mygdx.game.EnemyControllers.EnemyC
                     player.getSurvivorsFollowing().get(i).setTargetOfEnemy(true);
                 }
             }
-        }
-        else {
+        } else {
             target.x = player.getX();
             target.y = player.getY();
         }
     }
+
+    public FSMState getScoutState() { return state; }
 
     public int getAction() {
 //        if (enemy.isExtendingVines) {
