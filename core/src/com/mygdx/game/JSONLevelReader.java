@@ -116,6 +116,7 @@ public class JSONLevelReader {
     private FilmStrip[][] playerDirectionTextures;
     private FilmStrip[][] floaterDirectionTextures;
     private FilmStrip[][] scoutDirectionTextures;
+    private FilmStrip[][] chaserDirectionTextures;
     private FilmStrip[] survivorDirectionTextures;
     private FilmStrip[][] enemyDirectionTextures;
     private FilmStrip[][] shriekerTextures;
@@ -161,7 +162,7 @@ public class JSONLevelReader {
             int tileOffset, int smogTileSize, int smogTileOffset, FilmStrip[][] playerDirectionTextures,
             FilmStrip[] survivorDirectionTextures, FilmStrip[][] shriekerTextures,
             FilmStrip[][] floaterDirectionTextures, FilmStrip[][] scoutDirectionTextures,
-            FilmStrip[][] enemyDirectionTextures, Texture[] vineTextures, Texture[] directionTextures,
+            FilmStrip[][] chaserDirectionTextures, Texture[] vineTextures, Texture[] directionTextures,
             ToxicQueue toxicAir,
             Texture survivorITexture, Map<String, TextureRegion> assetTextures, BitmapFont displayFontInteractive, BitmapFont displayFontYellow,
             Texture heart, Player player, Weapon weapon) {
@@ -187,8 +188,9 @@ public class JSONLevelReader {
         this.shriekerTextures = shriekerTextures;
         this.floaterDirectionTextures = floaterDirectionTextures;
         this.scoutDirectionTextures = scoutDirectionTextures;
+        this.chaserDirectionTextures = chaserDirectionTextures;
         this.survivorDirectionTextures = survivorDirectionTextures;
-        this.enemyDirectionTextures = enemyDirectionTextures;
+//        this.enemyDirectionTextures = enemyDirectionTextures;
         this.toxicAir = toxicAir;
         this.survivorITexture = survivorITexture;
         this.displayFontInteract = displayFontInteractive;
@@ -693,7 +695,7 @@ public class JSONLevelReader {
                 break;
             case "ChaserEnemy":
                 enemyTemp = new ChaserEnemy(x * tileSize + tileOffset, y * tileSize + tileOffset,
-                        floaterDirectionTextures, scale, imageTileSize);
+                        chaserDirectionTextures, scale, imageTileSize);
                 enemyArr.add(enemyTemp);
                 addObject(enemyTemp);
                 enemyControllers.add(
