@@ -321,21 +321,21 @@ public class CollisionController{
                         player = (Player) objB;
                         item = ((Item) objA);
                     }
-                    switch (item.getItemType()){
-                        case KEY:
-                            player.collectKey();
-                            item.markRemoved(true);
-                            break;
-                        case TORCH:
-                            player.collectTorch();
-                            item.markRemoved(true);
-                            break;
-                        case COFFEE:
-                            break;
-
-                    }
-
+                    item.setInteractable(true);
                     break;
+//                    switch (item.getItemType()){
+//                        case KEY:
+//                            item.setInteractable(true);
+//                            player.collectKey();
+//                            item.collect();
+//                            break;
+//                        case TORCH:
+//                            player.collectTorch();
+//                            item.collect();
+//                            break;
+//                        case COFFEE:
+//                            break;
+//                    }
                 case GameObstacle.CATEGORY_SURVIVOR | GameObstacle.CATEGORY_SMOG:
                     Smog smog;
                     if (objA.getType() == GameObstacle.ObstacleType.SURVIVOR){
@@ -359,6 +359,7 @@ public class CollisionController{
                             && ((Item) objB).getItemType() == Item.ItemType.TORCH){
                         ((Smog)objA).setCanReappear(false);
                     }
+                    break;
                 case GameObstacle.CATEGORY_SURVIVOR | GameObstacle.CATEGORY_TOXIC:
                     if (objA.getType() == GameObstacle.ObstacleType.SURVIVOR){
                         survivor = (Survivor) objA;
@@ -441,6 +442,16 @@ public class CollisionController{
                     else {
                         ((Survivor) objB).setInteractable(false);
                     }
+                    break;
+                case GameObstacle.CATEGORY_PLAYER | GameObstacle.CATEGORY_ITEM:
+                    Item item;
+                    if (objA.getType() == GameObstacle.ObstacleType.PLAYER){
+                        item = ((Item) objB);
+                    }
+                    else {
+                        item = ((Item) objA);
+                    }
+                    item.setInteractable(false);
                     break;
                 case GameObstacle.CATEGORY_SMOG | GameObstacle.CATEGORY_SURVIVOR:
                     if (objA.getType() == GameObstacle.ObstacleType.SURVIVOR){

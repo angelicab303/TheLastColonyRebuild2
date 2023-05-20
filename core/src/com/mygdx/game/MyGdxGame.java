@@ -1,10 +1,21 @@
 package com.mygdx.game;
 
+import audio.*;
+import audio.AudioSource;
+import audio.MusicQueue;
+import com.badlogic.gdx.*;
+import com.badlogic.gdx.Audio;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.mygdx.game.ScreenModes.*;
+import com.badlogic.gdx.utils.JsonValue;
+import com.mygdx.game.ScreenModes.LevelSelectMode;
+import com.mygdx.game.ScreenModes.LoadingMode;
+import com.mygdx.game.ScreenModes.MainMenuMode;
+import com.mygdx.game.ScreenModes.PauseMenuMode;
+
 import util.*;
 import assets.*;
 
@@ -37,6 +48,10 @@ public class MyGdxGame extends Game implements ScreenListener {
 	/** Input Controller **/
 	private InputController input = new InputController();
 
+//	private AudioSource samples[];
+//	private AudioEngine engine;
+//	private MusicQueue music;
+
 	public MyGdxGame () { }
 	
 	@Override
@@ -47,7 +62,6 @@ public class MyGdxGame extends Game implements ScreenListener {
 
 		canvas  = new GameCanvas();
 		loading = new LoadingMode("assets.json",canvas,1);
-		mainMenu = new MainMenuMode(canvas);
 		levelSelect = new LevelSelectMode(canvas);
 		settingsMenu = new SettingsMenuMode(canvas);
 		pauseMenu = new PauseMenuMode(0, 0);
@@ -56,11 +70,14 @@ public class MyGdxGame extends Game implements ScreenListener {
 		settingsScreen = settingsMenu;
 
 		//Gdx.graphics.setContinuousRendering(false);
+		mainMenu = new MainMenuMode(canvas);
 
 		 //Initialize the three game worlds
 		 //controllers = new WorldController[1];
 		controller = new GameplayController(canvas, pauseMenu);
 		controllerScreen = controller;
+
+//		samples = new AudioSource[1];
 
 		 //Initialize the first game world
 		//controllers[0] = new RocketController();
@@ -152,6 +169,13 @@ public class MyGdxGame extends Game implements ScreenListener {
 			// gather assets for pause menu
 			pauseMenu.gatherAssets(directory);
 
+//			samples[0] = directory.getEntry( "The Last Colony - Title Screen.ogg", AudioSource.class );
+//
+//			AudioEngine engine = (AudioEngine)Gdx.audio;
+//			music = engine.newMusicBuffer( false, 44100 );
+//			music.addSource( samples[0] );
+//			music.play();
+
 			mainMenu.reset();
 			mainMenu.setCanvas(canvas);
 
@@ -159,54 +183,57 @@ public class MyGdxGame extends Game implements ScreenListener {
 
 			loading.dispose();
 			loading = null;
-		} else if (screen == mainMenuScreen){
+		} else if (screen == mainMenu){
+			System.out.println("main menu: " + exitCode);
 			// Need exit codes for main menu
 			if (exitCode == mainMenu.EXIT_LEVEL_SELECT){
 				System.out.println("Go to level select from main menu");
 				levelSelect.reset();
-				setScreen(levelSelectScreen);
+				setScreen(levelSelect);
 			}
 			else if (exitCode == mainMenu.EXIT_SETTINGS){
 				//mainMenu.reset();
 				settingsMenu.reset();
-				setScreen(settingsScreen);
+				setScreen(settingsMenu);
 			}
 		}
-		else if (screen == levelSelectScreen){
+		else if (screen == levelSelect){
 			// Need exit codes for level select
 			if (exitCode == levelSelect.EXIT_MAIN){
 				System.out.println("main menu repopulate from exit");
 				mainMenu.reset();
-				setScreen(mainMenuScreen);
+				setScreen(mainMenu);
 			}
 			else{
 				System.out.println("Set game screen from levelSelect");
 				controller.reset(exitCode);
-				setScreen(controllerScreen);
+				setScreen(controller);
 				pauseMenu.populateMenu();
 			}
 		}
-		else if (screen == controllerScreen){
+		else if (screen == controller){
 			if (exitCode == pauseMenu.EXIT_MAINMENU){
 				System.out.println("Set main menu from game screen");
 				pauseMenu.reset();
 				mainMenu.reset();
-				setScreen(mainMenuScreen);
+				setScreen(mainMenu);
 			}
 			else if (exitCode == pauseMenu.EXIT_SETTINGS){
 				settingsMenu.setFromGame(true);
 				settingsMenu.reset();
-				setScreen(settingsScreen);
+				setScreen(settingsMenu);
 			}
 		}
-		else if (screen == settingsScreen){
+		else if (screen == settingsMenu){
 			if (exitCode == settingsMenu.EXIT_MAIN_MENU){
 				mainMenu.reset();
-				setScreen(mainMenuScreen);
+				setScreen(mainMenu);
 			}
 			else if (exitCode == settingsMenu.EXIT_GAME){
 				pauseMenu.populateMenu();
-				setScreen(controllerScreen);
+				setScreen(controller);
+//				music.stop();
+//				music.reset();
 			}
 		}
 //		else if (exitCode == WorldController.EXIT_NEXT) {

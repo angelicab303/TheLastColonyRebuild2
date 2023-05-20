@@ -16,7 +16,7 @@ import com.mygdx.game.TileGraph;
 public class EnemyController {
     /** Enum to encode the finite state machine */
 
-    protected enum FSMState {
+    public enum FSMState {
         /** The enemy just spawned and is stationary */
         SPAWN,
         /** The enemy is aware of player and waking */
@@ -194,6 +194,8 @@ public class EnemyController {
 //        this(board, tileSize, tileOffset, enemy, player);
 //        this.shriekerArr = shriekArr;
 //    }
+
+    public FSMState getState() { return state; }
 
     /** Returns an int value representing the enemy's next movement action:
      * 0 = no move, 1 = right, 2 = left, 3 = up, 4 = down,
