@@ -255,6 +255,8 @@ public class MainMenuMode implements Screen, InputProcessor, ControllerListener 
 
     private InputController input;
 
+    private Preferences prefs = Gdx.app.getPreferences("save data");
+
 
     /**
      * Returns the asset directory produced by this loading screen
@@ -344,6 +346,7 @@ public class MainMenuMode implements Screen, InputProcessor, ControllerListener 
     public void populateMenu(){
         System.out.println("Main Menu populated");
         if (!titleMusic.isPlaying()) {
+            titleMusic.setVolume(prefs.getFloat("musicvolume", 100)/100);
             titleMusic.play();
             titleMusic.setLooping(true);
         }
@@ -443,7 +446,7 @@ public class MainMenuMode implements Screen, InputProcessor, ControllerListener 
                 if (buttons.get(0).isChecked()) {
                     buttons.get(0).setChecked(false);
                     buttonState = 1;
-                    select.play();
+                    select.play(prefs.getFloat("soundvolume", 100)/100);
                     System.out.println("Play buttons pressed");
                 }
             };
@@ -454,7 +457,10 @@ public class MainMenuMode implements Screen, InputProcessor, ControllerListener 
                 if (buttons.get(1).isChecked()) {
                     buttons.get(1).setChecked(false);
                     buttonState = EXIT_NEW_GAME;
-                    select.play();
+                    Preferences prefs = Gdx.app.getPreferences("save data");
+                    prefs.clear();
+                    prefs.flush();
+                    select.play(prefs.getFloat("soundvolume", 100)/100);
                     System.out.println("Play buttons pressed");
                 }
             };
@@ -466,7 +472,7 @@ public class MainMenuMode implements Screen, InputProcessor, ControllerListener 
                 if (buttons.get(2).isChecked()) {
                     buttons.get(2).setChecked(false);
                     buttonState = 2;
-                    select.play();
+                    select.play(prefs.getFloat("soundvolume", 100)/100);
                     System.out.println("Settings buttons pressed");
                 }
             };

@@ -3,6 +3,7 @@ package com.mygdx.game.ScreenModes;
 import assets.AssetDirectory;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
@@ -84,6 +85,8 @@ public class PauseMenuMode {
     private Sound select;
 
     private Music titleMusic;
+
+    Preferences prefs = Gdx.app.getPreferences("save data");
 
 
     public PauseMenuMode(float x, float y){
@@ -204,7 +207,7 @@ public class PauseMenuMode {
                 if (buttons.get(1).isChecked()) {
                     buttons.get(1).setChecked(false);
                     buttonState = EXIT_GAME;
-                    select.play();
+                    select.play(prefs.getFloat("soundvolume", 100)/100);
 //                    isReady = true;
                 }
             };
@@ -219,7 +222,7 @@ public class PauseMenuMode {
                     buttons.get(2).setChecked(false);
                     titleMusic.stop();
                     titleMusic.setLooping(false);
-                    select.play();
+                    select.play(prefs.getFloat("soundvolume", 100)/100);
                 }
             };
         } );
@@ -231,7 +234,7 @@ public class PauseMenuMode {
                     buttons.get(3).setChecked(false);
                     System.out.println("Go to settings from pause menu");
                     buttonState = EXIT_SETTINGS;
-                    select.play();
+                    select.play(prefs.getFloat("soundvolume", 100)/100);
                 }
             };
         } );
@@ -242,7 +245,7 @@ public class PauseMenuMode {
                 if (buttons.get(4).isChecked()) {
                     buttons.get(4).setChecked(false);
                     buttonState = EXIT_MAINMENU;
-                    select.play();
+                    select.play(prefs.getFloat("soundvolume", 100)/100);
                 }
             };
         } );

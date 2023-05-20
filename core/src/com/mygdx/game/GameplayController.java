@@ -33,6 +33,7 @@ import com.mygdx.game.EnemyControllers.ScoutEnemyController;
 import com.mygdx.game.Obstacles.*;
 import com.mygdx.game.Obstacles.Enemies.*;
 import com.badlogic.gdx.Screen;
+import com.mygdx.game.ScreenModes.LevelSelectMode;
 import com.mygdx.game.ScreenModes.PauseMenuMode;
 import com.mygdx.game.Obstacles.Items.Item;
 import com.mygdx.game.Obstacles.Items.Torch;
@@ -63,6 +64,7 @@ public class GameplayController implements Screen {
 	private FilmStrip[][] playerDirectionTextures;
 	private FilmStrip[][] floaterDirectionTextures;
 	private FilmStrip[][] scoutDirectionTextures;
+	private FilmStrip[][] chaserDirectionTextures;
 	private FilmStrip[][] shriekerTextures;
 	private Texture sampleTutorial;
 	private TutorialPrompt sample;
@@ -241,6 +243,7 @@ public class GameplayController implements Screen {
 	private boolean pausing = false;
 	private boolean unpausing = false;
 	private boolean paused = false;
+	private LevelSelectMode levelSelect;
 	private int curLevel = 0;
 	private int maxLevels = 12;
 	private int level;
@@ -482,11 +485,12 @@ public class GameplayController implements Screen {
 	 * @param bounds  The game bounds in Box2d coordinates
 	 * @param gravity The gravitational force on this Box2d world
 	 */
-	protected GameplayController(Rectangle bounds, Vector2 gravity, PauseMenuMode pauseMenu) {
+	protected GameplayController(Rectangle bounds, Vector2 gravity, PauseMenuMode pauseMenu, LevelSelectMode levelSelect) {
 		world = new World(gravity, false);
 		this.bounds = new Rectangle(bounds);
 		this.scale = new Vector2(1, 1);
 		this.pauseMenu = pauseMenu;
+		this.levelSelect = levelSelect;
 		this.assetTextures = new HashMap<>();
 		complete = false;
 		failed = false;
@@ -500,8 +504,8 @@ public class GameplayController implements Screen {
 	 *
 	 * The game has default gravity and other settings
 	 */
-	public GameplayController(GameCanvas canvas, PauseMenuMode pauseMenu) {
-		this(new Rectangle(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT), new Vector2(0, DEFAULT_GRAVITY), pauseMenu);
+	public GameplayController(GameCanvas canvas, PauseMenuMode pauseMenu, LevelSelectMode levelSelect) {
+		this(new Rectangle(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT), new Vector2(0, DEFAULT_GRAVITY), pauseMenu, levelSelect);
 		setComplete(false);
 		setFailure(false);
 		// world.setContactListener(this);
@@ -519,7 +523,7 @@ public class GameplayController implements Screen {
 		cameraZoom = 0.4f;
 		numRescued = 0;
 
-		level = 1;
+		curLevel = this.levelSelect.getCurrLevel();
 	}
 
 	/**
@@ -564,6 +568,7 @@ public class GameplayController implements Screen {
 		playerDirectionTextures = importPlayerFilmstrip();
 		floaterDirectionTextures = importFloaterFilmstrip();
 		scoutDirectionTextures = importScoutFilmstrip();
+		chaserDirectionTextures = importChaserFilmStrip();
 		shriekerTextures = importShriekerFilmstrips();
 		survivorDirectionTextures = importCharacterFilmstrip("survivorP");
 		enemyDirectionTextures = importEnemyFilmstrips();
@@ -889,6 +894,18 @@ public class GameplayController implements Screen {
 		return floaterFilmStrip;
 	}
 
+	private FilmStrip[][] importChaserFilmStrip(){
+		FilmStrip[][] floaterFilmStrip = new FilmStrip[5][2];
+		//String[] directions = {"Up", "Down", "Right", "Left"};
+		String[] actions = {"Movement", "Idle", "Attack", "Stun", "Wake"};
+		for (int i = 0; i < 5; i++){
+			FilmStrip right = directory.getEntry("images:chaser" + actions[i] + "Right.fire", FilmStrip.class );
+			FilmStrip left = directory.getEntry("images:chaser" + actions[i] + "Left.fire", FilmStrip.class );
+			floaterFilmStrip[i] = new FilmStrip[] {right, left};
+		}
+		return floaterFilmStrip;
+	}
+
 	/**
 	 * Resets the status of the game so that we can play again.
 	 *
@@ -933,6 +950,7 @@ public class GameplayController implements Screen {
 
 	public void reset(int level){
 		this.level = level;
+		curLevel = level;
 		reset();
 	}
 
@@ -987,7 +1005,7 @@ public class GameplayController implements Screen {
 		// Here we will instantiate the objects in the level using the JSONLevelReader.
 		JSONLevelReader reader = new JSONLevelReader(directory, bounds, world, level, canvas.camera, input,
 				objects, smogBorderTexture, floorArr, SCALE, tileGrid, smogTiles, smogGrid, tileSize, tileOffset, smogTileSize, smogTileOffset,
-				playerDirectionTextures, survivorDirectionTextures, shriekerTextures, floaterDirectionTextures, scoutDirectionTextures, enemyDirectionTextures, vineTextures, survivorDirections, toxicAir, survivorITexture, assetTextures,
+				playerDirectionTextures, survivorDirectionTextures, shriekerTextures, floaterDirectionTextures, scoutDirectionTextures, chaserDirectionTextures, vineTextures, survivorDirections, toxicAir, survivorITexture, assetTextures,
 				displayFontInteract, displayFontYellow, fHeartTexture, player, null);
 
 //		if (caravan.getX() < 400f) {
@@ -1246,7 +1264,7 @@ public class GameplayController implements Screen {
 		if (!player.isAlive()) {
 			if (!isDead) {
 				isDead = true;
-				death.play();
+				death.play(prefs.getFloat("soundvolume", 100)/100);
 			}
 			lowHealth.stop(lowHealthId);
 			lowHealth.setLooping(lowHealthId, false);
@@ -1262,6 +1280,7 @@ public class GameplayController implements Screen {
 			if (!paused && !unpausing) {
 				shriek.pause(shriekId);
 				if (!titleMusic.isPlaying()) {
+					titleMusic.setVolume(prefs.getFloat("musicvolume", 100)/100);
 					titleMusic.play();
 					titleMusic.setLooping(true);
 				}
@@ -1331,10 +1350,10 @@ public class GameplayController implements Screen {
 		{
 			if (!startedMoving) {
 				startedMoving = true;
-				walkId = walk.play(player.getNoise()/100);
+				walkId = walk.play(player.getNoise()/100 * prefs.getFloat("soundvolume", 100)/100);
 				walk.setLooping(walkId, true);
 			}
-			walk.setVolume(walkId, player.getNoise()/100);
+			walk.setVolume(walkId, player.getNoise()/100 * prefs.getFloat("soundvolume", 100)/100);
 			if (!player.isRevealed())
 			{
 				walk.setPitch(walkId, 0.75f);
@@ -1358,7 +1377,7 @@ public class GameplayController implements Screen {
 		if (player.weapon.isAbsorbing())
 		{
 			vacuumSuck.stop();
-			vacuumSuck.play(player.getNoise()/100);
+			vacuumSuck.play(player.getNoise()/100 * prefs.getFloat("soundvolume", 100)/100);
 		}
 		else {
 			vacuumSuck.stop();
@@ -1424,7 +1443,7 @@ public class GameplayController implements Screen {
 						distantChaserId = distantChaser.play();
 					}
 					if (Vector2.dst(chaser.getX(), chaser.getY(), player.getX(), player.getY()) <= player.getHearing()) {
-						distantChaser.setVolume(distantChaserId, (player.getHearing() - Vector2.dst(chaser.getX(), chaser.getY(), player.getX(), player.getY()))/player.getHearing());
+						distantChaser.setVolume(distantChaserId, (player.getHearing() - Vector2.dst(chaser.getX(), chaser.getY(), player.getX(), player.getY()))/player.getHearing() * prefs.getFloat("soundvolume", 100)/100);
 					}
 					else {
 						distantChaser.setVolume(distantChaserId, 0);
@@ -1446,7 +1465,7 @@ public class GameplayController implements Screen {
 						if (player.isAlive() && Vector2.dst(chaser.getX(), chaser.getY(), player.getX(), player.getY()) <= player.getHearing())
 						{
 							chaserGrowl.stop();
-							chaserGrowl.play((player.getHearing() - Vector2.dst(chaser.getX(), chaser.getY(), player.getX(), player.getY()))/player.getHearing(), 1, 0);
+							chaserGrowl.play((player.getHearing() - Vector2.dst(chaser.getX(), chaser.getY(), player.getX(), player.getY()))/player.getHearing() * prefs.getFloat("soundvolume", 100)/100, 1, 0);
 						}
 					}
 					else if (controller.startedAttacking())
@@ -1454,7 +1473,7 @@ public class GameplayController implements Screen {
 						if (player.isAlive() && Vector2.dst(chaser.getX(), chaser.getY(), player.getX(), player.getY()) <= player.getHearing())
 						{
 							chaserAttack.stop();
-							chaserAttack.play((player.getHearing() - Vector2.dst(chaser.getX(), chaser.getY(), player.getX(), player.getY()))/player.getHearing(), 1, 0);
+							chaserAttack.play((player.getHearing() - Vector2.dst(chaser.getX(), chaser.getY(), player.getX(), player.getY()))/player.getHearing() * prefs.getFloat("soundvolume", 100)/100, 1, 0);
 						}
 					}
 				}
@@ -1470,7 +1489,7 @@ public class GameplayController implements Screen {
 						distantFloaterId = distantFloater.play();
 					}
 					if (Vector2.dst(floater.getX(), floater.getY(), player.getX(), player.getY()) <= player.getHearing()) {
-						distantFloater.setVolume(distantFloaterId, (player.getHearing() - Vector2.dst(floater.getX(), floater.getY(), player.getX(), player.getY()))/player.getHearing());
+						distantFloater.setVolume(distantFloaterId, (player.getHearing() - Vector2.dst(floater.getX(), floater.getY(), player.getX(), player.getY()))/player.getHearing() * prefs.getFloat("soundvolume", 100)/100);
 					}
 					else {
 						distantFloater.setVolume(distantFloaterId, 0);
@@ -1492,7 +1511,7 @@ public class GameplayController implements Screen {
 							startedFloaterAttack = true;
 							if (player.isAlive() && Vector2.dst(floater.getX(), floater.getY(), player.getX(), player.getY()) <= player.getHearing()) {
 								floaterAttack.stop();
-								floaterAttack.play((player.getHearing() - Vector2.dst(floater.getX(), floater.getY(), player.getX(), player.getY()))/player.getHearing(), 1, 0);
+								floaterAttack.play((player.getHearing() - Vector2.dst(floater.getX(), floater.getY(), player.getX(), player.getY()))/player.getHearing() * prefs.getFloat("soundvolume", 100)/100, 1, 0);
 							}
 						}
 					}
@@ -1510,7 +1529,7 @@ public class GameplayController implements Screen {
 					{
 						startedScoutGrowl = true;
 						if (player.isAlive() && Vector2.dst(scout.getX(), scout.getY(), player.getX(), player.getY()) <= player.getHearing()) {
-							scoutGrowl.play((player.getHearing() - Vector2.dst(scout.getX(), scout.getY(), player.getX(), player.getY()))/player.getHearing(), 1, 0);
+							scoutGrowl.play((player.getHearing() - Vector2.dst(scout.getX(), scout.getY(), player.getX(), player.getY()))/player.getHearing() * prefs.getFloat("soundvolume", 100)/100, 1, 0);
 						}
 					}
 				}
@@ -1523,7 +1542,7 @@ public class GameplayController implements Screen {
 						{
 							startedScoutAttack = true;
 							if (player.isAlive() && Vector2.dst(scout.getX(), scout.getY(), player.getX(), player.getY()) <= player.getHearing()) {
-								scoutAttack.play((player.getHearing() - Vector2.dst(scout.getX(), scout.getY(), player.getX(), player.getY()))/player.getHearing(), 1, 0);
+								scoutAttack.play((player.getHearing() - Vector2.dst(scout.getX(), scout.getY(), player.getX(), player.getY()))/player.getHearing() * prefs.getFloat("soundvolume", 100)/100, 1, 0);
 							}
 						}
 					}
@@ -1541,7 +1560,7 @@ public class GameplayController implements Screen {
 						shriekId = shriek.play();
 					}
 					if (player.isAlive() && Vector2.dst(shrieker.getX(), shrieker.getY(), player.getX(), player.getY()) <= player.getHearing()) {
-						shriek.setVolume(shriekId, (player.getHearing() - Vector2.dst(shrieker.getX(), shrieker.getY(), player.getX(), player.getY()))/player.getHearing());
+						shriek.setVolume(shriekId, (player.getHearing() - Vector2.dst(shrieker.getX(), shrieker.getY(), player.getX(), player.getY()))/player.getHearing() * prefs.getFloat("soundvolume", 100)/100);
 					}
 					else {
 						shriek.setVolume(shriekId, 0);
@@ -1595,10 +1614,10 @@ public class GameplayController implements Screen {
 					numRescued++;
 					caravan.incrCap();
 					if (caravan.getCurrentCapacity() == caravan.getMaxCapacity()) {
-						victory.play();
+						victory.play(prefs.getFloat("soundvolume", 100)/100);
 					}
 					else {
-						survivorRescue.play();
+						survivorRescue.play(prefs.getFloat("soundvolume", 100)/100);
 					}
 					caravan.setInteractable(false);
 				}
@@ -1623,16 +1642,16 @@ public class GameplayController implements Screen {
 			if (itemArr.get(i).isInteractable() && input.didPickUpItem()) {
 				itemArr.get(i).setInteractable(false);
 				if (itemArr.get(i).getItemType() == Item.ItemType.TORCH) {
-					itemSound.play(1, 2, 0);
+					itemSound.play(prefs.getFloat("soundvolume", 100)/100, 2, 0);
 					player.collectTorch();
 					itemArr.get(i).collect();
 				} else if (itemArr.get(i).getItemType() == Item.ItemType.KEY) {
-					itemSound.play(1, 2, 0);
+					itemSound.play(prefs.getFloat("soundvolume", 100)/100, 2, 0);
 					itemArr.get(i).setInteractable(true);
 					player.collectKey();
 					itemArr.get(i).collect();
 				} else if (itemArr.get(i).getItemType() == Item.ItemType.COFFEE) {
-					beanSound.play();
+					beanSound.play(prefs.getFloat("soundvolume", 100)/100);
 					player.collectBean();
 					itemArr.get(i).collect();
 				}
@@ -1651,7 +1670,7 @@ public class GameplayController implements Screen {
 				Torch torch = new Torch((player.getX() / tileSize)*tileSize,(player.getY() / tileSize)*tileSize,torchTexture, displayFontInteract, displayFontYellow, SCALE, player);
 				addObject(torch);
 				itemArr.add(torch);
-				itemSound.play(1, 2, 0);
+				itemSound.play(prefs.getFloat("soundvolume", 100)/100, 2, 0);
 				player.useTorch();
 			} else {
 				// I'd like to display a message saying the following but it would require having a specific draw
@@ -1672,7 +1691,7 @@ public class GameplayController implements Screen {
 					doorArr.get(i).unlock();
 				} else {
 					if (!startedCantOpen) {
-						cantOpen.play(player.getNoise() / 100);
+						cantOpen.play(player.getNoise() / 100 * prefs.getFloat("soundvolume", 100)/100);
 						startedCantOpen = true;
 					}
 				}
@@ -1691,7 +1710,7 @@ public class GameplayController implements Screen {
 //		if (caravan.isInteractable() && input.didDropSurvivors()) {
 		if (caravan.getCurrentCapacity() == caravan.getMaxCapacity()) {
 			setComplete(true);
-			if (prefs.getInteger("unlocked", 1) <= curLevel) {
+			if (prefs.getInteger("unlocked", 0) <= curLevel) {
 				prefs.putInteger("unlocked", curLevel + 1);
 			}
 			if (!prefs.getBoolean("level" + curLevel + "complete", false)) {
@@ -1752,7 +1771,7 @@ public class GameplayController implements Screen {
 		if (!player.canLoseLife()) {
 			if (!startedTakingDamage) {
 				startedTakingDamage = true;
-				damage.play();
+				damage.play(prefs.getFloat("soundvolume", 100)/100);
 			}
 		}
 		else {
@@ -1763,7 +1782,7 @@ public class GameplayController implements Screen {
 		{
 			if (!startedDying) {
 				startedDying = true;
-				lowHealthId = lowHealth.play();
+				lowHealthId = lowHealth.play(prefs.getFloat("soundvolume", 100)/100);
 				lowHealth.setLooping(lowHealthId, true);
 			}
 		}

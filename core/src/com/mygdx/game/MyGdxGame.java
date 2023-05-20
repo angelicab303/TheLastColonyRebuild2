@@ -75,7 +75,7 @@ public class MyGdxGame extends Game implements ScreenListener {
 
 		 //Initialize the three game worlds
 		 //controllers = new WorldController[1];
-		controller = new GameplayController(canvas, pauseMenu);
+		controller = new GameplayController(canvas, pauseMenu, levelSelect);
 
 //		samples = new AudioSource[1];
 

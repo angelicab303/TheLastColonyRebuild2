@@ -477,8 +477,8 @@ public class ScoutEnemy extends Enemy{
     public void update(int action)
     {
         if (isAttacking){
-            System.out.println("Scout is attacking");
-            System.out.println("Aframes: " + aframe);
+//            System.out.println("Scout is attacking");
+//            System.out.println("Aframes: " + aframe);
             if (aframe >= ATTACK_NUM_ANIM_FRAMES) {
                 aframe = 6;
             }
@@ -549,7 +549,7 @@ public class ScoutEnemy extends Enemy{
 
     @Override
     public void draw(GameCanvas canvas) {
-        System.out.println("Scout frames: " + (int)aframe);
+//        System.out.println("Scout frames: " + (int)aframe);
         currentAnimator.setFrame((int)aframe);
 ////        System.out.println((body.getWorldCenter().x*drawScale.x - currentAnimator.getRegionWidth()*scale/2) + ", " + (body.getWorldCenter().y*drawScale.y- currentAnimator.getRegionHeight()*scale/2));
         if (stunCooldown > 0 && stunCooldown % 10 == 0)

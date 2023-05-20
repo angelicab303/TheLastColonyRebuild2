@@ -374,8 +374,10 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
     }
     /** Populates the menu with clouds */
     public void populateMenu(){
+        unlocked = prefs.getInteger("unlocked", 0);
         if (!titleMusic.isPlaying())
         {
+            titleMusic.setVolume(prefs.getFloat("musicvolume", 100)/100);
             titleMusic.play();
             titleMusic.setLooping(true);
         }
@@ -441,7 +443,7 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
             public void clicked(InputEvent event, float x, float y) {
                 if (buttons.get(0).isChecked()) {
                     buttonState = EXIT_MAIN;
-                    backSound.play();
+                    backSound.play(prefs.getFloat("soundvolume", 100)/100);
                     isReady = true;
                 }
             };
@@ -518,6 +520,8 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
         tableLevels.add(buttons.get(level+1)).spaceRight(92.0f).left().size(up.getWidth()*buttonScale, up.getHeight()*buttonScale);
         //tableLevels.row();
     }
+
+    public int getCurrLevel() { return currLevel; }
 
 
     /**

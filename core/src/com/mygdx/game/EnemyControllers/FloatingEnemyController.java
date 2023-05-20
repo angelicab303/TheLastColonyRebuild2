@@ -35,6 +35,7 @@ public class FloatingEnemyController extends EnemyController {
         this.toxicQueue = toxicQueue;
         target = new Vector2(player.getX(), player.getY());
         super.initTiles(target);
+
         shootingSurvivor = false;
         survivorTarget = null;
         impulse = new Vector2();
