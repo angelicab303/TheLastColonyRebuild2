@@ -397,9 +397,11 @@ public class CollisionController{
                             obstacle = (Obstacles) objB;
                         }
                     }
-                    if(player != null && obstacle !=null && obstacle.getIsDoor() && player.useKey()){
+                    if(player != null && obstacle !=null && obstacle.getIsDoor()){
+                        obstacle.setInteractable(true);
+
                         //use key already decrements the key count
-                        obstacle.unlock();
+//                        obstacle.unlock();
                     }
                     break;
                 case GameObstacle.CATEGORY_ENV | GameObstacle.CATEGORY_ENEMY:
@@ -473,6 +475,21 @@ public class CollisionController{
                     }
                     break;
                 case GameObstacle.CATEGORY_ENV | GameObstacle.CATEGORY_PLAYER:
+                    Obstacles obstacle = null;
+                    if(objA.getType() == GameObstacle.ObstacleType.OBSTACLE){
+                        if (contact.getFixtureA().isSensor()){
+                            obstacle = (Obstacles) objA;
+                        }
+                    }
+                    else {
+                        if (contact.getFixtureB().isSensor()){
+                            obstacle = (Obstacles) objB;
+                        }
+                    }
+                    if(obstacle !=null && obstacle.getIsDoor()){
+                        obstacle.setInteractable(false);
+                    }
+                    break;
                 case GameObstacle.CATEGORY_ENV | GameObstacle.CATEGORY_ENEMY:
                 case GameObstacle.CATEGORY_ENV | GameObstacle.CATEGORY_SURVIVOR:
                     if(objA.getType() == GameObstacle.ObstacleType.OBSTACLE){

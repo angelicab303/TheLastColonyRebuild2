@@ -616,7 +616,8 @@
     "sounds:floaterattack": "sounds/CreatureAttack2_16.wav",
     "sounds:scoutattack": "sounds/CreatureAttack3_16.wav",
     "sounds:shriekerattack": "sounds/ShriekerAttack1_16.wav",
-    "sounds:bean": "sounds/Bean_Picku_16p.wav"
+    "sounds:bean": "sounds/Bean_Picku_16p.wav",
+    "sounds:cant open door": "sounds/cant open door.wav"
   },
   "music":{
     "titlemusic": "sounds/The_Last_Colony_-_Title_Screen.ogg"

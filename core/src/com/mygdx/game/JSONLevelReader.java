@@ -76,6 +76,7 @@ public class JSONLevelReader {
     private int mushroomID;
     private int torchID;
     private Array<Item> itemArr;
+    private Array<Obstacles> doorArr;
 
     private int[] tIDs = new int[numBeforeFloors + numFloorIDs + numWallIDs + numObstacleIDs + numSmogIDs + numPlaceableIDs];
 
@@ -224,6 +225,7 @@ public class JSONLevelReader {
             enemyControllers = new Array<EnemyController>();
 
             itemArr = new Array<Item>();
+            doorArr = new Array<Obstacles>();
 
              /**
               * Out of date ---- more dynamic system implemented - V
@@ -668,12 +670,13 @@ public class JSONLevelReader {
 
 
     public void createObstacle(float x, float y, int id, float scale, boolean isDoor) {
+        obstacleTemp = new Obstacles(x * tileSize  , y * tileSize, getTextureRegionKey(id), displayFontInteract, scale, isDoor);
+        obstacleArr.add(obstacleTemp);
         if(isDoor){
             System.out.println("Creating door");
+            doorArr.add(obstacleTemp);
         }
 
-        obstacleTemp = new Obstacles(x * tileSize  , y * tileSize, getTextureRegionKey(id), scale, isDoor);
-        obstacleArr.add(obstacleTemp);
         if(x >= 0 && y >= 0 && x < width && y < height){
             tileGrid[(int)x ][(int)y] = true;
 //            if (id == 47 || id == 50)
@@ -692,12 +695,16 @@ public class JSONLevelReader {
 
     public void createObstacle(float x, float y, TextureRegion textureRegion, float scale, boolean isDoor) {
 //        System.out.println("Creating obstacle (tree / fence)");
-        obstacleTemp = new Obstacles(x * tileSize  , y * tileSize, textureRegion, scale, isDoor);
+        obstacleTemp = new Obstacles(x * tileSize  , y * tileSize, textureRegion, displayFontInteract, scale, isDoor);
         obstacleArr.add(obstacleTemp);
         if(x >= 0 && y >= 0 && x < width && y < height){
             tileGrid[(int)x ][(int)y] = true;
         }
         addObject(obstacleTemp);
+    }
+
+    public Array<Obstacles> getDoorArr() {
+        return doorArr;
     }
 
     public void createSmog(int x, int y, int id, float scale) {

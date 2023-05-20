@@ -218,6 +218,8 @@ public class GameplayController implements Screen {
 	private Array<Survivor> survivorArr;
 	/** Item list **/
 	private Array<Item> itemArr;
+	/** Door list **/
+	private Array<Obstacles> doorArr;
 	/** List of all tree positions **/
 	private Array<Vector2> treePos;
 	/** survivor controller list **/
@@ -441,6 +443,8 @@ public class GameplayController implements Screen {
 	private boolean startedChaserAttack;
 
 	private Sound death;
+	private Sound cantOpen;
+	private boolean startedCantOpen;
 
 	private boolean isDead;
 
@@ -729,6 +733,7 @@ public class GameplayController implements Screen {
 		chaserGrowl = directory.getEntry("sounds:chasergrowl", Sound.class);
 		chaserAttack = directory.getEntry("sounds:chaserattack", Sound.class);
 		death = directory.getEntry("sounds:shriekerattack", Sound.class);
+		cantOpen = directory.getEntry("sounds:cant open door", Sound.class);
 	}
 
 	/**
@@ -913,6 +918,7 @@ public class GameplayController implements Screen {
 		survivorArr = reader.getSurvivors();
 		enemyArr = reader.getEnemies();
 		itemArr = reader.getItems();
+		doorArr = reader.getDoorArr();
 		survivorControllers = reader.getSurvivorControllers();
 		enemyControllers = reader.getEnemyControllers();
 
@@ -1497,6 +1503,23 @@ public class GameplayController implements Screen {
 //				String message = "Cannot place\ntorch here";
 //				canvas.drawText(message, displayFontInteract, (player.getX() / tileSize)*tileSize,(player.getY() / tileSize)*tileSize);
 			}
+		}
+
+		// Check through the doors just like the items to see if we need to show "E to open"
+		for (int i = 0; i < doorArr.size; i++) {
+			if (doorArr.get(i).isInteractable() && input.didPickUpItem()) {
+//				doorArr.get(i).setInteractable(false);
+				if (player.hasKey()) {
+					player.useKey();
+					doorArr.get(i).unlock();
+				} else {
+					if (!startedCantOpen) {
+						cantOpen.play(player.getNoise() / 100);
+						startedCantOpen = true;
+					}
+				}
+			}
+//			startedCantOpen = false;
 		}
 
 		caravan.update();
