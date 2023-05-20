@@ -207,8 +207,11 @@ public class JSONLevelReader {
             // JsonValue.class)));
 
             JsonValue levelStr = new JsonValue(false);
+//            if (level == 0) {
+//                levelStr = directory.getEntry("Level" + (level - 1), JsonValue.class);
+//            }
             if (level <= 10) {
-                levelStr = directory.getEntry("Level" + (level + 1), JsonValue.class);
+                levelStr = directory.getEntry("Level" + (level), JsonValue.class);
             } else {
                 levelStr = directory.getEntry("Level13", JsonValue.class);
             }

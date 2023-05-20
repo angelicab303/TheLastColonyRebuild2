@@ -740,6 +740,7 @@
     "5:18 TileSet..tsj": "tiles/518_TileSet.tsj"
   },
   "levels": {
+    "Level0": "levels/NEWLevel_-1.tmj",
     "Level1": "levels/NEWLevel_0.tmj",
     "Level2": "levels/NEWLevel_1.tmj",
     "Level3": "levels/NEWLevel_2.tmj",
@@ -754,6 +755,7 @@
     "5:18 TileSet.tsj": "tiles/5_18 TileSet.tsj",
     "5:18 TileSet..tsj": "tiles/518_TileSet.tsj",
     "LastColonyTileset.tsx": "tiles/LastColonyTileset.json",
+    "Level0": "levels/NEWLevel_-1.tmj",
     "Level1": "levels/NEWLevel_0.tmj",
     "Level2": "levels/NEWLevel_1.tmj",
     "Level3": "levels/NEWLevel_2.tmj",
