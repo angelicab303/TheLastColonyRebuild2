@@ -152,6 +152,8 @@ public class GameplayController implements Screen {
 	private TextureRegion torchTexture;
 	private TextureRegion keyTexture;
 
+	private TextureRegion beanTexture;
+
 	// *************************** UI Textures ***************************
 	/** Texture asset for the full heart texture */
 	private Texture fHeartTexture;
@@ -466,6 +468,8 @@ public class GameplayController implements Screen {
 
 	private Sound victory;
 
+	private Sound beanSound;
+
 	/**
 	 * Creates a new game world
 	 *
@@ -551,6 +555,7 @@ public class GameplayController implements Screen {
 		sHeartTexture = directory.getEntry("images:slashedHeart", Texture.class);
 		torchTexture = new TextureRegion(directory.getEntry("tiles:9a_torch", Texture.class));
 		keyTexture = new TextureRegion(directory.getEntry("tiles:9b_key", Texture.class));
+		beanTexture = new TextureRegion(directory.getEntry("tiles:9c_bean", Texture.class));
 
 		// Unnecessary atm?
 
@@ -667,6 +672,8 @@ public class GameplayController implements Screen {
 		key = "tiles:9b_key";
 		assetTextures.put(key , new TextureRegion(directory.getEntry(key, Texture.class)));
 
+		key = "tiles:9c_bean";
+		assetTextures.put(key, new TextureRegion(directory.getEntry(key, Texture.class)));
 
 		key = "tiles:8_doorOpen";
 		assetTextures.put(key, new TextureRegion(directory.getEntry(key, Texture.class)));
@@ -764,6 +771,7 @@ public class GameplayController implements Screen {
 		survivorRescue = directory.getEntry("sounds:survivorrescue", Sound.class);
 		victory = directory.getEntry("sounds:victory", Sound.class);
 		cantOpen = directory.getEntry("sounds:cant open door", Sound.class);
+		beanSound = directory.getEntry("sounds:bean", Sound.class);
 	}
 
 	/**
@@ -1620,6 +1628,10 @@ public class GameplayController implements Screen {
 					itemSound.play(1, 2, 0);
 					itemArr.get(i).setInteractable(true);
 					player.collectKey();
+					itemArr.get(i).collect();
+				} else if (itemArr.get(i).getItemType() == Item.ItemType.COFFEE) {
+					beanSound.play();
+					player.collectBean();
 					itemArr.get(i).collect();
 				}
 				// Coffee doesn't do anything currently

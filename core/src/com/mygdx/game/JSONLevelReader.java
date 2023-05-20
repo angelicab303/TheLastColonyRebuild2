@@ -13,6 +13,7 @@ import com.badlogic.gdx.utils.*;
 import com.mygdx.game.EnemyControllers.*;
 import com.mygdx.game.Obstacles.*;
 import com.mygdx.game.Obstacles.Enemies.*;
+import com.mygdx.game.Obstacles.Items.Coffee;
 import com.mygdx.game.Obstacles.Items.Item;
 import com.mygdx.game.Obstacles.Items.Key;
 import com.mygdx.game.Obstacles.Items.Torch;
@@ -526,7 +527,9 @@ public class JSONLevelReader {
             createTorch(x, y, id, scale, player);
         } else if (type.equals("Key")) {
             createKey(x, y, id, scale, player);
-        } else {
+        } else if (type.equals("Bean")) {
+            createBean(x, y, id, scale, player);
+        }else {
 //            System.out.println("Error - ID " + id + " tile not found");
         }
     }
@@ -601,6 +604,12 @@ public class JSONLevelReader {
         addObject(torch);
         itemArr.add(torch);
         torchID = id;
+    }
+
+    public void createBean(int x, int y, int id, float scale, Player player) {
+        Coffee bean = new Coffee(x * tileSize, y * tileSize, getTextureRegionKey(id), displayFontInteract, displayFontYellow, scale, player);
+        addObject(bean);
+        itemArr.add(bean);
     }
 
     public Array<Item> getItems() {

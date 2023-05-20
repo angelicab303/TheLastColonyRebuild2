@@ -662,6 +662,7 @@
     "tiles:9a_torch": "tiles/9a_torch.png",
     "tiles:9a_mushroom": "tiles/9a_mushroom.png",
     "tiles:9b_key": "tiles/9b_key.png",
+    "tiles:9c_bean": "tiles/9c_bean.png",
     "tiles:8_doorOpen" :"tiles/DoorOpen.png",
     "tiles:8_doorClosed": {
       "file" : "tiles/DoorFilmStrip.png",

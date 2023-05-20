@@ -130,6 +130,8 @@ public class Player extends Shadow implements GameObstacle{
     private int torch;
     private int key;
 
+    private int bean;
+
     private final int HEARING_RANGE = 600;
 
     private final int SMOG_HEARING_RANGE = 300;
@@ -227,6 +229,7 @@ public class Player extends Shadow implements GameObstacle{
         behind = 0;
         key = 0;
         torch = 0;
+        bean = 0;
         noise = DEFAULT_NOISE;
         hearing = 400;
 
@@ -284,6 +287,8 @@ public class Player extends Shadow implements GameObstacle{
         }
         return false;
     }
+
+    public void collectBean() { bean++; }
 
 
 //    /**
