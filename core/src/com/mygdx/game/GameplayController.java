@@ -36,9 +36,7 @@ import com.badlogic.gdx.Screen;
 import com.mygdx.game.ScreenModes.PauseMenuMode;
 import com.mygdx.game.Obstacles.Items.Item;
 import com.mygdx.game.Obstacles.Items.Torch;
-import com.mygdx.game.UI.AirBar;
-import com.mygdx.game.UI.Heart;
-import com.mygdx.game.UI.TutorialPrompt;
+import com.mygdx.game.UI.*;
 import obstacle.BoxObstacle;
 import obstacle.Obstacle;
 import util.*;
@@ -152,6 +150,7 @@ public class GameplayController implements Screen {
 	/** Texture asset for the mushroom texture */
 	private TextureRegion mushroomTexture;
 	private TextureRegion torchTexture;
+	private TextureRegion keyTexture;
 
 	// *************************** UI Textures ***************************
 	/** Texture asset for the full heart texture */
@@ -198,6 +197,7 @@ public class GameplayController implements Screen {
 	// private AirBar airBar;
 	/** Reference to the goalDoor (for collision detection) */
 	private BoxObstacle goalDoor;
+	private BitmapFont displayFont;
 	private float SCALE = 0.1f;
 
 	/** Size of each tile in pixels **/
@@ -255,11 +255,14 @@ public class GameplayController implements Screen {
 	/** The texture for the exit condition */
 	protected TextureRegion goalTile;
 	/** The font for giving messages to the player */
-	protected BitmapFont displayFont;
+
 	/** The font for giving sub-messages to the player */
 	protected BitmapFont displayFontSub;
 	/** The font for progress bar title */
 	protected BitmapFont displayFontInteract;
+	protected BitmapFont displayFontTorch;
+
+	protected BitmapFont displayFontYellow;
 	/** The actual assets to be loaded */
 	protected AssetDirectory assets;
 	/** Stun animation for enemies */
@@ -302,6 +305,9 @@ public class GameplayController implements Screen {
 
 	/** Reference to the air bar asset */
 	protected AirBar airBar;
+
+	protected TorchUI torch;
+	protected KeyUI keyCounter;
 	/** Heart list **/
 	protected Array<Heart> heartArr;
 
@@ -531,11 +537,12 @@ public class GameplayController implements Screen {
 		// pureAirTexture = new TextureRegion(directory.getEntry("images:smog1",
 		// Texture.class));
 //		pureAirTexture = directory.getEntry("images:testSmog", Texture.class);
-		torchTexture = new TextureRegion(directory.getEntry("tiles:9a_torch", Texture.class));
 
 		// UI Textures
 		fHeartTexture = directory.getEntry("images:fullHeart", Texture.class);
 		sHeartTexture = directory.getEntry("images:slashedHeart", Texture.class);
+		torchTexture = new TextureRegion(directory.getEntry("tiles:9a_torch", Texture.class));
+		keyTexture = new TextureRegion(directory.getEntry("tiles:9b_key", Texture.class));
 
 		// Unnecessary atm?
 
@@ -723,6 +730,9 @@ public class GameplayController implements Screen {
 		displayFont = directory.getEntry("shared:retro", BitmapFont.class);
 		displayFontSub = directory.getEntry("shared:retroSub", BitmapFont.class);
 		displayFontInteract = directory.getEntry("shared:light", BitmapFont.class);
+		displayFontTorch = directory.getEntry("shared:retroMed", BitmapFont.class);
+		displayFontYellow = directory.getEntry("shared:retroMedYellow", BitmapFont.class);
+		displayFontYellow.setColor(Color.YELLOW);
 
 		constants = directory.getEntry("platform:constants", JsonValue.class);
 
@@ -956,7 +966,7 @@ public class GameplayController implements Screen {
 		JSONLevelReader reader = new JSONLevelReader(directory, bounds, world, level, canvas.camera, input,
 				objects, smogBorderTexture, floorArr, SCALE, tileGrid, smogTiles, smogGrid, tileSize, tileOffset, smogTileSize, smogTileOffset,
 				playerDirectionTextures, survivorDirectionTextures, shriekerTextures, floaterDirectionTextures, scoutDirectionTextures, enemyDirectionTextures, vineTextures, survivorDirections, toxicAir, survivorITexture, assetTextures,
-				displayFontInteract, fHeartTexture, player, null);
+				displayFontInteract, displayFontYellow, fHeartTexture, player, null);
 
 //		if (caravan.getX() < 400f) {
 //			int i = 0;
@@ -1100,6 +1110,8 @@ public class GameplayController implements Screen {
 
 		}
 		airBar = new AirBar(airBarTexture, player.weapon.getMaxNumAmmo(), player.weapon.getNumAmmo(), canvas);
+		torch = new TorchUI(torchTexture, 0, displayFontTorch);
+		keyCounter = new KeyUI(keyTexture, 0, displayFontTorch);
 
 		// Hearts
 		int numLives = player.getHealth();
@@ -1294,7 +1306,8 @@ public class GameplayController implements Screen {
 
 		// Update UI elements
 		airBar.update(player.weapon.getNumAmmo());
-
+		torch.update(player.getNumTorches());
+		keyCounter.update(player.getNumKeys());
 		player.weapon.update(player.getPosition(), canvas.unproject(input.getMousePos()), input.getShootDir());
 
 		if (player.weapon.isAbsorbing())
@@ -1543,6 +1556,19 @@ public class GameplayController implements Screen {
 		}
 		// Check through the items just like the survivors to see if we need to show "E to collect"
 		for (int i = 0; i < itemArr.size; i++) {
+			if (itemArr.get(i).getItemType() == Item.ItemType.TORCH) {
+				itemArr.get(i).update();
+				if (player.acquiredTorch() && !player.placedTorch()) {
+					itemArr.get(i).setDisplayTorchInstruction(true);
+				} else {
+					itemArr.get(i).setDisplayTorchInstruction(false);
+				}
+				if (player.placedTorch() && !player.seenTorchInstruction()) {
+					itemArr.get(i).setDisplayTorchExplanation(true);
+				} else {
+					itemArr.get(i).setDisplayTorchExplanation(false);
+				}
+			}
 			if (itemArr.get(i).isInteractable() && input.didPickUpItem()) {
 				itemArr.get(i).setInteractable(false);
 				if (itemArr.get(i).getItemType() == Item.ItemType.TORCH) {
@@ -1565,7 +1591,7 @@ public class GameplayController implements Screen {
 		if (input.didPlaceItem() && player.hasTorch()) {
 			if (!tileGrid[(int)(player.getX() / tileSize)][(int)(player.getY() / tileSize)] && torchPlacedCounter == 30) {
 				torchPlacedCounter--;
-				Torch torch = new Torch((player.getX() / tileSize)*tileSize,(player.getY() / tileSize)*tileSize,torchTexture, displayFontInteract, SCALE);
+				Torch torch = new Torch((player.getX() / tileSize)*tileSize,(player.getY() / tileSize)*tileSize,torchTexture, displayFontInteract, displayFontYellow, SCALE, player);
 				addObject(torch);
 				itemArr.add(torch);
 				player.useTorch();
@@ -2043,6 +2069,8 @@ public class GameplayController implements Screen {
 			for (int i = 0; i < heartArr.size; i++) {
 				heartArr.get(i).draw(canvas);
 			}
+			torch.draw(canvas);
+			keyCounter.draw(canvas);
 		}
 
 

@@ -8,6 +8,7 @@ import com.badlogic.gdx.physics.box2d.Filter;
 import com.badlogic.gdx.physics.box2d.World;
 import com.mygdx.game.GameCanvas;
 import com.mygdx.game.Obstacles.GameObstacle;
+import com.mygdx.game.Obstacles.Player;
 import obstacle.BoxObstacle;
 import obstacle.SimpleObstacle;
 
@@ -20,7 +21,14 @@ public class Item extends BoxObstacle implements GameObstacle {
 
     private float scale;
     private boolean isInteractable;
+    private boolean displayTorchInstruction;
+    private boolean displayTorchExplanation;
     private BitmapFont displayFontInteract;
+    private BitmapFont displayFontInteractYellow;
+
+    private Player player;
+
+    private int ticks;
 
     public enum ItemType{
         ITEM,
@@ -28,18 +36,21 @@ public class Item extends BoxObstacle implements GameObstacle {
         TORCH,
         COFFEE
     }
-    public Item(float x, float y, TextureRegion cvalue, BitmapFont font, float scale){
+    public Item(float x, float y, TextureRegion cvalue, BitmapFont font, BitmapFont yellowFont, float scale, Player player){
         super(x,y,cvalue.getRegionWidth()*scale, cvalue.getRegionHeight()*scale);
-
+        this.player = player;
         position = new Vector2(x, y);
         setDensity(1);
         setFriction(0);
         setRestitution(0.1f);
         setTexture(cvalue);
         this.scale = scale;
+        ticks = 0;
 
         isInteractable = false;
         displayFontInteract = font;
+        displayFontInteractYellow = yellowFont;
+//        yellowFont.setColor(Color.YELLOW);
 
         if (filter == null){
             filter = new Filter();
@@ -70,6 +81,17 @@ public class Item extends BoxObstacle implements GameObstacle {
         return true;
     }
 
+    public void update() {
+        if (displayTorchExplanation && ticks < 600) {
+            ticks++;
+        } else {
+            if (ticks >= 600) {
+                player.setSeenTorchInstructions(true);
+            }
+            displayTorchExplanation = false;
+        }
+    }
+
     @Override
     public void draw(GameCanvas canvas) {
         canvas.draw(texture, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, 0.0f, scale,
@@ -78,6 +100,18 @@ public class Item extends BoxObstacle implements GameObstacle {
         if (isInteractable) {
             String message = "(E) Pick Up";
             canvas.drawText(message, displayFontInteract, position.x - 16.0f, position.y + 20.0f);
+        }
+        if (displayTorchInstruction) {
+            displayFontInteractYellow.setColor(Color.YELLOW);
+            String message = "(Q) Place Down Torch";
+            canvas.drawText(message, displayFontInteractYellow, player.getX() - 32.0f, player.getY() + 40.0f);
+            displayFontInteractYellow.setColor(Color.WHITE);
+        }
+        if (displayTorchExplanation) {
+            displayFontInteractYellow.setColor(Color.YELLOW);
+            String message = "Torches prevent smog\n\n from creeping back!";
+            canvas.drawText(message, displayFontInteractYellow, player.getX() - 32.0f, player.getY() + 40.0f);
+            displayFontInteractYellow.setColor(Color.WHITE);
         }
     }
 
@@ -116,4 +150,11 @@ public class Item extends BoxObstacle implements GameObstacle {
         markRemoved(true);
     }
 
+    public void setDisplayTorchInstruction(boolean display) {
+        displayTorchInstruction = display;
+    }
+
+    public void setDisplayTorchExplanation(boolean display) {
+        displayTorchExplanation = display;
+    }
 }

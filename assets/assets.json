@@ -813,6 +813,14 @@
       "file": "shared/RetroGame.ttf",
       "size": 20
     },
+    "shared:retroMed": {
+      "file": "shared/RetroGame.ttf",
+      "size": 11
+    },
+    "shared:retroMedYellow": {
+      "file": "shared/LightPixel7.ttf",
+      "size": 5
+    },
     "shared:light": {
       "file": "shared/LightPixel7.ttf",
       "size": 5

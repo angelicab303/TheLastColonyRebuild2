@@ -1,6 +1,7 @@
 package com.mygdx.game;
 
 import assets.AssetDirectory;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -120,6 +121,7 @@ public class JSONLevelReader {
     private ToxicQueue toxicAir;
     private Texture survivorITexture;
     private BitmapFont displayFontInteract;
+    private BitmapFont displayFontYellow;
     private Texture heart;
     private Texture vineTextureVertical;
     private Texture vineTextureHorizontal;
@@ -160,7 +162,7 @@ public class JSONLevelReader {
             FilmStrip[][] floaterDirectionTextures, FilmStrip[][] scoutDirectionTextures,
             FilmStrip[][] enemyDirectionTextures, Texture[] vineTextures, Texture[] directionTextures,
             ToxicQueue toxicAir,
-            Texture survivorITexture, Map<String, TextureRegion> assetTextures, BitmapFont displayFontInteractive,
+            Texture survivorITexture, Map<String, TextureRegion> assetTextures, BitmapFont displayFontInteractive, BitmapFont displayFontYellow,
             Texture heart, Player player, Weapon weapon) {
         this.directory = directory;
         this.bounds = bounds;
@@ -189,6 +191,8 @@ public class JSONLevelReader {
         this.toxicAir = toxicAir;
         this.survivorITexture = survivorITexture;
         this.displayFontInteract = displayFontInteractive;
+        this.displayFontYellow = displayFontYellow;
+//        displayFontYellow.setColor(Color.YELLOW);
         this.assetTextures = assetTextures;
         this.heart = heart;
         this.player = player;
@@ -519,9 +523,9 @@ public class JSONLevelReader {
         } else if (type.equals("Mushroom")) {
             createMushroom(x, y, id, scale);
         } else if (type.equals("Torch")) {
-            createTorch(x, y, id, scale);
+            createTorch(x, y, id, scale, player);
         } else if (type.equals("Key")) {
-            createKey(x, y, id, scale);
+            createKey(x, y, id, scale, player);
         } else {
 //            System.out.println("Error - ID " + id + " tile not found");
         }
@@ -575,6 +579,7 @@ public class JSONLevelReader {
         if (didCreateCaravan) {
             return;
         }
+        displayFontInteract.setColor(Color.WHITE);
         caravan = new Caravan(x * tileSize, y * tileSize, getSurvivors().size, getTextureRegionKey(0), scale,
                 displayFontInteract);
         addObject(caravan);
@@ -585,14 +590,14 @@ public class JSONLevelReader {
         return caravan;
     }
 
-    public void createKey(int x, int y, int id, float scale) {
-        Key key = new Key(x * tileSize, y * tileSize, getTextureRegionKey(id), displayFontInteract, scale);
+    public void createKey(int x, int y, int id, float scale, Player player) {
+        Key key = new Key(x * tileSize, y * tileSize, getTextureRegionKey(id), displayFontInteract, displayFontYellow, scale, player);
         addObject(key);
         itemArr.add(key);
     }
 
-    public void createTorch(int x, int y, int id, float scale) {
-        Torch torch = new Torch(x * tileSize, y * tileSize, getTextureRegionKey(id), displayFontInteract, scale);
+    public void createTorch(int x, int y, int id, float scale, Player player) {
+        Torch torch = new Torch(x * tileSize, y * tileSize, getTextureRegionKey(id), displayFontInteract, displayFontYellow, scale, player);
         addObject(torch);
         itemArr.add(torch);
         torchID = id;
