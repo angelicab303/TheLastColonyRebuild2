@@ -13,7 +13,12 @@
     "mainMenu:cursor": "images/mainMenu/SimpleCursor.png",
     "mainMenu:smallCloud": "images/mainMenu/SmallCloud.png",
     "mainMenu:levels": "images/mainMenu/Levels.png",
+    "mainMenu:newGame": "images/mainMenu/NEW_GAME.png",
+    "mainMenu:newGameDown": "images/mainMenu/NEW_GAMEDownt.png",
+    "mainMenu:continue": "images/mainMenu/CONTINUE.png",
+    "mainMenu:continueDown": "images/mainMenu/CONTINUEDown.png",
     "levelSelect:background": "images/levelSelect/Levels0-5.png",
+    "levelSelect:background2": "images/levelSelect/Levels6-11.png",
     "levelSelect:1": "images/levelSelect/1.png",
     "levelSelect:2": "images/levelSelect/2.png",
     "levelSelect:1Down": "images/levelSelect/1Down.png",
@@ -25,6 +30,10 @@
     "levelSelect:mushroomDown": "images/levelSelect/MushroomDown.png",
     "levelSelect:caravan": "images/levelSelect/LevelSelectCaravan.png",
     "levelSelect:enter": "images/levelSelect/Enter_Button.png",
+    "levelSelect:arrowRight": "images/levelSelect/arrowRight.png",
+    "levelSelect:arrowLeft": "images/levelSelect/arrowLeft.png",
+    "levelSelect:arrowRightDown": "images/levelSelect/arrowRightDown.png",
+    "levelSelect:arrowLeftDown": "images/levelSelect/arrowLeftDown.png",
     "pauseMenu:background": "images/pauseMenu/Backdrop.png",
     "pauseMenu:hurry": "images/pauseMenu/HURRY.png",
     "pauseMenu:hurryDark": "images/pauseMenu/HURRYdark.png",
@@ -48,6 +57,24 @@
     "settings:music": "images/settings/Music.png",
     "settings:settings": "images/settings/Settings.png",
     "settings:soundEffects": "images/settings/SoundEffects.png",
+    "settings:plus": "images/settings/plus.png",
+    "settings:minus": "images/settings/minus.png",
+    "settings:plusDown": "images/settings/plusDown.png",
+    "settings:minusDown": "images/settings/minusDown.png",
+    "settings:textBox": "images/settings/TextBox.png",
+    "settings:textBoxEmpty": "images/settings/TextBoxEmpty.png",
+    "settings:placeTorch": "images/settings/PLACE_TORCH.png",
+    "victory:egg": "images/victoryScreen/Egg.png",
+    "victory:goldEgg": "images/victoryScreen/GOLD_Egg.png",
+    "victory:nextLevel": "images/victoryScreen/NEXT_LEVEL.png",
+    "victory:nextLevelDown": "images/victoryScreen/NEXT_LEVELDown.png",
+    "victory:retry": "images/victoryScreen/RETRY.png",
+    "victory:retryDown": "images/victoryScreen/RETRYDown.png",
+    "victory:victory": "images/victoryScreen/Victory.png",
+    "lose:eggBroken": "images/loseScreen/eggBroken.png",
+    "lose:levelSelect": "images/loseScreen/LEVEL_SELECT.png",
+    "lose:levelSelectDown": "images/loseScreen/LEVEL_SELECTDown.png",
+    "lose:youLose": "images/loseScreen/YOU_LOSE_2.png",
 
     "shared:earth": {
       "file": "shared/earthtile.png",
@@ -403,6 +430,96 @@
         }
       }
     },
+    "images:chaserMovementRight": {
+      "file" : "images/enemies/chaserMoveRight.png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 6
+        }
+      }
+    },
+    "images:chaserMovementLeft": {
+      "file" : "images/enemies/chaserMoveLeft.png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 6
+        }
+      }
+    },
+    "images:chaserIdleLeft": {
+      "file" : "images/enemies/ChaserIdle_Left.png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 6
+        }
+      }
+    },
+    "images:chaserIdleRight": {
+      "file" : "images/enemies/ChaserIdle_Right.png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 6
+        }
+      }
+    },
+    "images:chaserAttackRight": {
+      "file" : "images/enemies/chaserMoveRight.png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 6
+        }
+      }
+    },
+    "images:chaserAttackLeft": {
+      "file" : "images/enemies/chaserMoveLeft.png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 6
+        }
+      }
+    },
+    "images:chaserStunLeft": {
+      "file" : "images/enemies/chaserStunLeft.png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 6
+        }
+      }
+    },
+    "images:chaserStunRight": {
+      "file" : "images/enemies/chaserStunRight.png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 6
+        }
+      }
+    },
+    "images:chaserWakeRight": {
+      "file" : "images/enemies/ChaserIdle_Right.png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 6
+        }
+      }
+    },
+    "images:chaserWakeLeft": {
+      "file" : "images/enemies/ChaserIdle_Left.png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 6
+        }
+      }
+    },
     "images:scoutMovementRight": {
       "file" : "images/enemies/scoutMoveRight.png",
       "sprites" : {
@@ -542,7 +659,12 @@
     "images:cliff2": "images/cliff2.png",
     "images:cliff3": "images/9x9Indoor2.png",
     "images:cliff4": "images/cliff-1a.png",
-    "images:sampleTutorial": "images/sampleTutorial.png",
+    "images:sampleTutorial1": "images/tutorialSample.png",
+    "images:sampleTutorial2": "images/smog absorbtion tutorial.png",
+    "images:sampleTutorial3": "images/right click attack.png",
+    "images:sampleTutorial4": "images/small sound tutorial.png",
+    "images:sampleTutorial5": "images/large sound tutorial.png",
+
     "images:smog1": "images/SmogSprite2.png",
     "images:smog2": "images/SmogSprite3.png",
     "images:caravan1": "images/caravan-1.png",
@@ -657,6 +779,7 @@
     "tiles:9a_torch": "tiles/9a_torch.png",
     "tiles:9a_mushroom": "tiles/9a_mushroom.png",
     "tiles:9b_key": "tiles/9b_key.png",
+    "tiles:9c_bean": "images/goldEggSingle.png",
     "tiles:8_doorOpen" :"tiles/DoorOpen.png",
     "tiles:8_doorClosed": {
       "file" : "tiles/DoorFilmStrip.png",
@@ -735,6 +858,7 @@
     "5:18 TileSet..tsj": "tiles/518_TileSet.tsj"
   },
   "levels": {
+    "Level0": "levels/NEWLevel_-1.tmj",
     "Level1": "levels/NEWLevel_0.tmj",
     "Level2": "levels/NEWLevel_1.tmj",
     "Level3": "levels/NEWLevel_2.tmj",
@@ -749,6 +873,7 @@
     "5:18 TileSet.tsj": "tiles/5_18 TileSet.tsj",
     "5:18 TileSet..tsj": "tiles/518_TileSet.tsj",
     "LastColonyTileset.tsx": "tiles/LastColonyTileset.json",
+    "Level0": "levels/NEWLevel_-1.tmj",
     "Level1": "levels/NEWLevel_0.tmj",
     "Level2": "levels/NEWLevel_1.tmj",
     "Level3": "levels/NEWLevel_2.tmj",
@@ -759,7 +884,8 @@
     "Level8": "levels/NEWLevel_7.tmj",
     "Level9": "levels/NEWLevel_8.tmj",
     "Level10": "levels/NEWLevel_9.tmj",
-    "Level13": "levels/Level_13.tmj"
+    "Level11": "levels/NEWLevel_10.tmj",
+    "Level12": "levels/NEWLevel_11.tmj"
   },
   "sounds": {
     "rocket:bump": "rocket/bump.mp3",
@@ -791,7 +917,11 @@
     "sounds:floaterattack": "sounds/CreatureAttack2_16.wav",
     "sounds:scoutattack": "sounds/CreatureAttack3_16.wav",
     "sounds:shriekerattack": "sounds/ShriekerAttack1_16.wav",
-    "sounds:bean": "sounds/Bean_Picku_16p.wav"
+    "sounds:bean": "sounds/Bean_Picku_16p.wav",
+    "sounds:item": "sounds/Move.wav",
+    "sounds:survivorrescue": "sounds/SurvivorAtCaravan16.wav",
+    "sounds:victory": "sounds/VictorySound16.wav",
+    "sounds:cant open door": "sounds/cant open door.wav"
   },
   "music":{
     "titlemusic": "sounds/The_Last_Colony_-_Title_Screen.ogg"
@@ -799,11 +929,19 @@
   "fonts": {
     "shared:retro": {
       "file": "shared/RetroGame.ttf",
-      "size": 64
+      "size": 32
     },
     "shared:retroSub": {
       "file": "shared/RetroGame.ttf",
       "size": 20
+    },
+    "shared:retroMed": {
+      "file": "shared/RetroGame.ttf",
+      "size": 11
+    },
+    "shared:retroMedYellow": {
+      "file": "shared/LightPixel7.ttf",
+      "size": 5
     },
     "shared:light": {
       "file": "shared/LightPixel7.ttf",
