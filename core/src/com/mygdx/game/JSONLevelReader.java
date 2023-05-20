@@ -15,6 +15,7 @@ import com.mygdx.game.Obstacles.Enemies.*;
 import com.mygdx.game.Obstacles.Items.Item;
 import com.mygdx.game.Obstacles.Items.Key;
 import com.mygdx.game.Obstacles.Items.Torch;
+import com.mygdx.game.UI.TutorialPrompt;
 import obstacle.Obstacle;
 import util.FilmStrip;
 import util.PooledList;
@@ -55,7 +56,7 @@ public class JSONLevelReader {
     private int numFloorIDs = 25;
     private int[] floorIDs = new int[numFloorIDs];
     private Array<FloorTile> floorArr = new Array<>();
-    private Array<FloorTile> tutorialArr = new Array<>();
+    private Array<TutorialPrompt> tutorialArr = new Array<>();
 
     private Array<FloorTile> mushArr = new Array<>();
     private int numWallIDs = 14;
@@ -687,29 +688,29 @@ public class JSONLevelReader {
         // System.out.println("Creating floor");
         if (tiles[id].get("properties").get(0).getString("name") == "Tutorial1") {
             // WASD
-            floorTemp = new FloorTile(x * tileSize, y * tileSize, new TextureRegion(directory.getEntry("images:sampleTutorial1", Texture.class)), scale);
-            tutorialArr.add(floorTemp);
-            addFloor(floorTemp);
+//            floorTemp = new FloorTile(x * tileSize, y * tileSize, new TextureRegion(directory.getEntry("images:sampleTutorial1", Texture.class)), scale);
+            TutorialPrompt tutorial = new TutorialPrompt(directory.getEntry("images:sampleTutorial1", Texture.class), x * tileSize, y * tileSize);
+            tutorialArr.add(tutorial);
         } else if (tiles[id].get("properties").get(0).getString("name") == "Tutorial2") {
             //Absorbing smog
-            floorTemp = new FloorTile(x * tileSize, y * tileSize, new TextureRegion(directory.getEntry("images:sampleTutorial2", Texture.class)), scale);
-            tutorialArr.add(floorTemp);
-            addFloor(floorTemp);
+//            floorTemp = new FloorTile(x * tileSize, y * tileSize, new TextureRegion(directory.getEntry("images:sampleTutorial2", Texture.class)), scale);
+            TutorialPrompt tutorial = new TutorialPrompt(directory.getEntry("images:sampleTutorial1", Texture.class), x * tileSize, y * tileSize);
+            tutorialArr.add(tutorial);
         } else if (tiles[id].get("properties").get(0).getString("name") == "Tutorial3") {
             // Shooting smog
-            floorTemp = new FloorTile(x * tileSize, y * tileSize, new TextureRegion(directory.getEntry("images:sampleTutorial3", Texture.class)), scale);
-            tutorialArr.add(floorTemp);
-            addFloor(floorTemp);
+//            floorTemp = new FloorTile(x * tileSize, y * tileSize, new TextureRegion(directory.getEntry("images:sampleTutorial3", Texture.class)), scale);
+            TutorialPrompt tutorial = new TutorialPrompt(directory.getEntry("images:sampleTutorial1", Texture.class), x * tileSize, y * tileSize);
+            tutorialArr.add(tutorial);
         } else if (tiles[id].get("properties").get(0).getString("name") == "Tutorial4") {
             // small sound radius
-            floorTemp = new FloorTile(x * tileSize, y * tileSize, new TextureRegion(directory.getEntry("images:sampleTutorial4", Texture.class)), scale);
-            tutorialArr.add(floorTemp);
-            addFloor(floorTemp);
+//            floorTemp = new FloorTile(x * tileSize, y * tileSize, new TextureRegion(directory.getEntry("images:sampleTutorial4", Texture.class)), scale);
+            TutorialPrompt tutorial = new TutorialPrompt(directory.getEntry("images:sampleTutorial1", Texture.class), x * tileSize, y * tileSize);
+            tutorialArr.add(tutorial);
         } else if (tiles[id].get("properties").get(0).getString("name") == "Tutorial5") {
             // Large sound radius - enemy alerted
-            floorTemp = new FloorTile(x * tileSize, y * tileSize, new TextureRegion(directory.getEntry("images:sampleTutorial5", Texture.class)), scale);
-            tutorialArr.add(floorTemp);
-            addFloor(floorTemp);
+//            floorTemp = new FloorTile(x * tileSize, y * tileSize, new TextureRegion(directory.getEntry("images:sampleTutorial5", Texture.class)), scale);
+            TutorialPrompt tutorial = new TutorialPrompt(directory.getEntry("images:sampleTutorial1", Texture.class), x * tileSize, y * tileSize);
+            tutorialArr.add(tutorial);
         } else {
 
             floorTemp = new FloorTile(x * tileSize, y * tileSize, getTextureRegionKey(id), scale);
@@ -720,7 +721,7 @@ public class JSONLevelReader {
         }
     }
 
-    public Array<FloorTile> getTutorialArr() {
+    public Array<TutorialPrompt> getTutorialArr() {
         return tutorialArr;
     }
 

@@ -340,7 +340,7 @@ public class GameplayController implements Screen {
 	/** All of the smog objects in the world **DO NOT COMBINE, NEEDED FOR CORRECT RENDERING */
 	protected PooledList<Smog> smogs = new PooledList<Smog>();
 	protected Array<FloorTile> floorArr = new Array<FloorTile>();
-	protected Array<FloorTile> tutorialArr = new Array<FloorTile>();
+	protected Array<TutorialPrompt> tutorialArr = new Array<TutorialPrompt>();
 	/** Queue for adding objects */
 	protected PooledList<Obstacle> addQueue = new PooledList<Obstacle>();
 	/**
@@ -2015,7 +2015,7 @@ public class GameplayController implements Screen {
 		for (Obstacle obj : smogs) {
 			obj.draw(canvas);
 		}
-		for (FloorTile tutorial : tutorialArr) {
+		for (TutorialPrompt tutorial : tutorialArr) {
 //			sample = new TutorialPrompt(tutorial, player.getX(), player.getY()-30);
 			tutorial.draw(canvas);
 		}
