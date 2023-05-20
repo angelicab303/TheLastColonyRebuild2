@@ -54,6 +54,14 @@
     "settings:minusDown": "images/settings/minusDown.png",
     "settings:textBox": "images/settings/TextBox.png",
     "settings:textBoxEmpty": "images/settings/TextBoxEmpty.png",
+    "settings:placeTorch": "images/settings/PLACE_TORCH.png",
+    "victory:egg": "images/victoryScreen/Egg.png",
+    "victory:goldEgg": "images/victoryScreen/GOLD_Egg.png",
+    "victory:nextLevel": "images/victoryScreen/NEXT_LEVEL.png",
+    "victory:nextLevelDown": "images/victoryScreen/NEXT_LEVELDown.png",
+    "victory:retry": "images/victoryScreen/RETRY.png",
+    "victory:retryDown": "images/victoryScreen/RETRYDown.png",
+    "victory:victory": "images/victoryScreen/Victory.png",
 
     "shared:earth": {
       "file": "shared/earthtile.png",

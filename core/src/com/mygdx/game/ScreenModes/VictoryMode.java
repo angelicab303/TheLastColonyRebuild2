@@ -20,65 +20,7 @@ import com.badlogic.gdx.utils.Array;
 import com.mygdx.game.GameCanvas;
 import util.ScreenListener;
 
-public class SettingsMenuMode implements Screen, InputProcessor, ControllerListener {
-    class Cloud {
-        /** Texture to be used for the cloud */
-        private Texture cloudTexture;
-        /** x position of the cloud on screen */
-        private float x;
-        /** y position of the cloud on screen */
-        private float y;
-        /** Movement rate of cloud*/
-        private float rate;
-        /** Scaling of clouds */
-        private float cloudScale;
-        /** How much the cloud has moved from origin */
-        private float movement;
-        /** If the cloud is currently moving right */
-        private boolean isMovingRight;
-        /** Maximum distance for clouds to move right before moving back left */
-        private float maxRight;
-
-        public Cloud(Texture ctexture, float x, float y, float rate, float maxRight, float cScale){
-            this.cloudTexture = ctexture;
-            this.x = x;
-            this.y = y;
-            this.rate = rate;
-            this.cloudScale = cScale;
-            this.maxRight = maxRight;
-            isMovingRight = true;
-            movement = 0;
-        }
-
-        /** Updates the positioning of the clouds to move across screen */
-        private void update(){
-            // Move according to desired direction
-            if (isMovingRight){
-                movement += rate;
-            }
-            else {
-                movement -= rate;
-            }
-            x += rate;
-
-            // Check if reached maximum movement direction
-            if (movement >= maxRight){
-                isMovingRight = false;
-                movement = 0;
-                rate = -rate;
-            }
-            else if (movement <= -30){
-                isMovingRight = true;
-                movement = 0;
-                rate = -rate;
-            }
-        }
-
-        private void draw(GameCanvas canvas){
-            canvas.draw(cloudTexture, Color.WHITE, cloudTexture.getWidth()/2, cloudTexture.getHeight()/2, x, y, 0, cloudScale, cloudScale);
-        }
-
-    }
+public class VictoryMode implements Screen, InputProcessor, ControllerListener {
 
     /**
      * Class representing buttons or titles to be placed on screen.
@@ -136,27 +78,18 @@ public class SettingsMenuMode implements Screen, InputProcessor, ControllerListe
     /** All tables used for UI */
     private Array<Table> tables;
     /** Texture for exit option */
-    private Texture back;
-    private Texture backDown;
-    private Texture absorb;
-    private Texture cloud1;
-    private Texture cloud2;
-    private Texture cloud3;
-    private Texture fireWeapon;
-    private Texture keyBindings;
-    private Texture music;
-    private Texture soundEffects;
-    private Texture plus;
-    private Texture minus;
-    private Texture plusDown;
-    private Texture minusDown;
+    private Texture egg;
+    private Texture goldEgg;
+    private Texture nextLevel;
+    private Texture nextLevelDown;
+    private Texture retry;
+    private Texture retryDown;
+    private Texture victory;
+
+
     private Texture textBox;
     private Texture empty;
-    private Texture placeTorch;
-    private int soundVolume;
-    private int musicVolume;
-    private String fireControl;
-    private String absorbControl;
+
 
     private float cursorScale = 0.15f;
     /** Texture for title */
@@ -178,9 +111,10 @@ public class SettingsMenuMode implements Screen, InputProcessor, ControllerListe
     /** Scaling factor for when the student changes the resolution. */
     private float scale;
     /** Scaling factor for the title. */
-    private float titleScale = 0.8f;
+    private float titleScale = 0.55f;
     /** Scaling factor for the text. */
-    private float textScale = 0.8f;
+    private float textScale = 0.6f;
+    private float eggScale = 1.0f;
     /** The current state of the play button */
     private int   pressState;
     /** Whether or not this player mode is still active */
@@ -198,11 +132,7 @@ public class SettingsMenuMode implements Screen, InputProcessor, ControllerListe
     private float SETTINGS_Y;
     private float _Y;
     /** Array of text */
-    private Array<SettingsMenuMode.Text> text;
-    /** Array for all clouds */
-    private Array<SettingsMenuMode.Cloud> clouds;
-    /** Number of clouds to be drawn */
-    private final int NUM_CLOUDS = 5;
+    private Array<VictoryMode.Text> text;
     /** X center of play button */
     private float centerX;
     /** Y center of play button */
@@ -213,9 +143,8 @@ public class SettingsMenuMode implements Screen, InputProcessor, ControllerListe
     private int buttonState;
     private boolean populated = false;
     private float sliderScales = 0.5f;
-    private boolean fromGame;
-    public final int EXIT_MAIN_MENU = 1;
-    public final int EXIT_GAME = 2;
+    public final int EXIT_RETRY = 1;
+    public final int EXIT_NEXT_LEVEL = 2;
 
 
     /**
@@ -249,7 +178,7 @@ public class SettingsMenuMode implements Screen, InputProcessor, ControllerListe
      *
      * @param canvas 	The game canvas to draw to
      */
-    public SettingsMenuMode(GameCanvas canvas) {
+    public VictoryMode(GameCanvas canvas) {
         this.canvas  = canvas;
 
         // Compute the dimensions from the canvas
@@ -257,8 +186,8 @@ public class SettingsMenuMode implements Screen, InputProcessor, ControllerListe
 
         pressState = 0;
 
-        clouds = new Array<SettingsMenuMode.Cloud>();
-        text = new Array<SettingsMenuMode.Text>();
+
+        text = new Array<VictoryMode.Text>();
         pressState = 0;
         appearTime = 0;
 
@@ -266,44 +195,12 @@ public class SettingsMenuMode implements Screen, InputProcessor, ControllerListe
         stage = new Stage();
         table = new Table();
         buttonState = 0;
-        soundVolume = 100;
-        musicVolume = 100;
-        fireControl = "right click";
-        absorbControl = "left click";
 
-        fromGame = false;
 
 
     }
 
-    public void setFromGame(boolean fromGame){
-        this.fromGame = fromGame;
-    }
 
-    public void setMusicVolume(int volume){
-        this.musicVolume = volume;
-    }
-    public int getMusicVolume(){
-        return musicVolume;
-    }
-    public void setSoundVolume(int volume){
-        this.soundVolume = volume;
-    }
-    public int getSoundVolume(){
-        return soundVolume;
-    }
-    public void setFireControl(String control){
-        this.fireControl = control.toLowerCase();
-    }
-    public String getFireControl(){
-        return fireControl;
-    }
-    public void setAbsorbControl(String control){
-        this.absorbControl = control.toLowerCase();
-    }
-    public String getAbsorbControlControl(){
-        return absorbControl;
-    }
 
     /**
      * Gather the assets for the main menu.
@@ -316,25 +213,16 @@ public class SettingsMenuMode implements Screen, InputProcessor, ControllerListe
     public void gatherAssets(AssetDirectory directory) {
         // Allocate the main menu assets
         background = directory.getEntry("settings:background", Texture.class);
-        title = directory.getEntry("settings:settings", Texture.class);
-        absorb = directory.getEntry("settings:absorb", Texture.class);
-        fireWeapon = directory.getEntry("settings:fireWeapon", Texture.class);
-        keyBindings = directory.getEntry("settings:keyBindings", Texture.class);
-        music = directory.getEntry("settings:music", Texture.class);
-        soundEffects = directory.getEntry("settings:soundEffects", Texture.class);
-        back = directory.getEntry("levelSelect:back", Texture.class);
-        backDown = directory.getEntry("levelSelect:backDown", Texture.class);
-        cloud1 = directory.getEntry("settings:cloud1", Texture.class);
-        cloud2 = directory.getEntry("settings:cloud2", Texture.class);
-        cloud3 = directory.getEntry("settings:cloud3", Texture.class);
-        nullFont = directory.getEntry("shared:retro" ,BitmapFont.class);
-        plus = directory.getEntry("settings:plus" ,Texture.class);
-        minus = directory.getEntry("settings:minus" ,Texture.class);
-        plusDown = directory.getEntry("settings:plusDown" ,Texture.class);
-        minusDown = directory.getEntry("settings:minusDown" ,Texture.class);
-        textBox = directory.getEntry("settings:textBox" ,Texture.class);
+        title = directory.getEntry("victory:victory", Texture.class);
+        egg = directory.getEntry("victory:egg", Texture.class);
+        goldEgg = directory.getEntry("victory:goldEgg", Texture.class);
+        nextLevel = directory.getEntry("victory:nextLevel", Texture.class);
+        nextLevelDown = directory.getEntry("victory:nextLevelDown", Texture.class);
+        retry = directory.getEntry("victory:retry", Texture.class);
+        retryDown = directory.getEntry("victory:retryDown", Texture.class);
         empty = directory.getEntry("settings:textBoxEmpty" ,Texture.class);
-        placeTorch = directory.getEntry("settings:placeTorch" ,Texture.class);
+        nullFont = directory.getEntry("shared:retro" ,BitmapFont.class);
+
     }
     /** Populates the menu with clouds */
     public void populateMenu(){
@@ -344,13 +232,8 @@ public class SettingsMenuMode implements Screen, InputProcessor, ControllerListe
         float startX = RIGHT_SPACING + 30;
         float startY = canvas.getHeight()*.05f;
         if (!populated){
-//            clouds.add(new MainMenuMode.Cloud(largeCloud, canvas.getWidth()*0.95f, canvas.getHeight()*0.32f, 0.05f, 50.0f, 0.9f));
-//            clouds.add(new MainMenuMode.Cloud(mediumCloud, clouds.get(0).x - 450, clouds.get(0).y - 90, 0.1f, 100.0f,0.6f));
-//            clouds.add(new MainMenuMode.Cloud(mediumCloud, clouds.get(1).x + 220, clouds.get(1).y + 360, 0.08f, 100.0f, 0.6f));
-//            clouds.add(new MainMenuMode.Cloud(smallCloud, clouds.get(1).x - 100, clouds.get(1).y, 0.12f, 150.0f,0.6f));
-//            clouds.add(new MainMenuMode.Cloud(smallCloud, clouds.get(2).x - 100, clouds.get(2).y+ 100, 0.12f, 150.0f,0.6f));
-
-            text.add(new SettingsMenuMode.Text(title, RIGHT_SPACING, canvas.getHeight()*.85f, false));
+            text.add(new VictoryMode.Text(title, RIGHT_SPACING+290, canvas.getHeight()*.95f, false));
+            //text.add(new VictoryMode.Text(egg, RIGHT_SPACING, canvas.getHeight()*.85f, false));
         }
 
 
@@ -358,18 +241,10 @@ public class SettingsMenuMode implements Screen, InputProcessor, ControllerListe
         tables = new Array<Table>();
 
 
-        // Table for back button
-        Table backTable = new Table();
-        tables.add(backTable);
-        backTable.setPosition(startX-10, canvas.getHeight()*0.90f);
-        backTable.setWidth(back.getWidth());
-        backTable.setHeight(back.getHeight());
-        backTable.setDebug(false);
-
         // playSkin.addRegions(new TextureAtlas(play));
 
-        float table1X = RIGHT_SPACING + 200;
-        float table1Y = canvas.getHeight()*.12f;
+        float table1X = RIGHT_SPACING + 530;
+        float table1Y = canvas.getHeight()*.2f;
         //table.setFillParent(true);
         Table table1 = new Table();
         tables.add(table1);
@@ -378,12 +253,12 @@ public class SettingsMenuMode implements Screen, InputProcessor, ControllerListe
         table1.setHeight(400.0f);
         table1.setDebug(false);
 
-        float table2X = table1X + 60;
+        float table2X = startX;
         float table2Y = table1Y - 270;
         //table.setFillParent(true);
         Table table2 = new Table();
         tables.add(table2);
-        table2.setPosition(table2X, table2Y);
+        table2.setPosition(RIGHT_SPACING+290, table2Y-100);
         table2.setWidth(600.0f);
         table2.setHeight(400.0f);
         table2.setDebug(false);
@@ -394,161 +269,66 @@ public class SettingsMenuMode implements Screen, InputProcessor, ControllerListe
         buttons = new Array<TextButton>();
 
 
-        // Back button
+        // Egg image
         TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
         textButtonStyle.font = nullFont;
-        textButtonStyle.up   = new TextureRegionDrawable(back);
-        textButtonStyle.down = new TextureRegionDrawable(backDown);
-        textButtonStyle.checked = new TextureRegionDrawable(back);
+        textButtonStyle.up   = new TextureRegionDrawable(egg);
+        textButtonStyle.down = new TextureRegionDrawable(egg);
+        textButtonStyle.checked = new TextureRegionDrawable(egg);
         buttons.add(new TextButton("", textButtonStyle));
-        backTable.add(buttons.get(0)).left().size(back.getWidth()*textScale, back.getHeight()*textScale);
-
-        // table 1
-        addButton(table1, music, music, 1);
-        addButtonHorizontal(table1, minus, minusDown, 2, "", sliderScales);
-        addButtonHorizontal(table1, textBox, textBox, 3, "" + musicVolume, sliderScales);
-        addButtonHorizontal(table1, plus, plusDown, 4, "", sliderScales);
-        table1.row();
-        addButton(table1, soundEffects, soundEffects, 5);
-        addButtonHorizontal(table1, minus, minusDown, 6, "", sliderScales);
-        addButtonHorizontal(table1, textBox, textBox, 7, "" + soundVolume, sliderScales);
-        addButtonHorizontal(table1, plus, plusDown, 8, "", sliderScales);
-        table1.row();
-        addButton(table1, keyBindings, keyBindings, 9);
-        //addButtonHorizontal(table1, fireWeapon, fireWeapon, 10, "", textScale);
+        table1.add(buttons.get(0)).left().size(egg.getWidth()*eggScale, egg.getHeight()*eggScale);
 
         // table 2
-        addButton(table2, fireWeapon, fireWeapon, 10);
         textButtonStyle = new TextButton.TextButtonStyle();
         textButtonStyle.font = nullFont;
-        textButtonStyle.up   = new TextureRegionDrawable(empty);
-        textButtonStyle.checked = new TextureRegionDrawable(empty);
-        textButtonStyle.down = new TextureRegionDrawable(empty);
-        buttons.add(new TextButton(fireControl, textButtonStyle));
-        table2.add(buttons.get(11)).spaceRight(40).top().left().size(empty.getWidth()*scale, empty.getHeight()*scale);
-        table2.row();
-        addButton(table2, placeTorch, placeTorch, 12);
+        textButtonStyle.up   = new TextureRegionDrawable(retry);
+        textButtonStyle.down = new TextureRegionDrawable(retryDown);
+        textButtonStyle.checked = new TextureRegionDrawable(retry);
+        buttons.add(new TextButton("", textButtonStyle));
+        table2.add(buttons.get(1)).left().spaceRight(400).size(retry.getWidth()*textScale, retry.getHeight()*textScale);
+
         textButtonStyle = new TextButton.TextButtonStyle();
         textButtonStyle.font = nullFont;
-        textButtonStyle.up   = new TextureRegionDrawable(empty);
-        textButtonStyle.checked = new TextureRegionDrawable(empty);
-        textButtonStyle.down = new TextureRegionDrawable(empty);
-        buttons.add(new TextButton("Q", textButtonStyle));
-        table2.add(buttons.get(13)).spaceRight(40).top().left().size(empty.getWidth()*scale, empty.getHeight()*scale);
+        textButtonStyle.up   = new TextureRegionDrawable(nextLevel);
+        textButtonStyle.down = new TextureRegionDrawable(nextLevelDown);
+        textButtonStyle.checked = new TextureRegionDrawable(nextLevel);
+        buttons.add(new TextButton("", textButtonStyle));
+        table2.add(buttons.get(2)).left().size(nextLevel.getWidth()*textScale, nextLevel.getHeight()*textScale);
 
-        //addButtonHorizontal(table2, empty, empty, 11, "Left Click", sliderScales);
-
-
-//        table.row();
-//        // Settings button
-//        textButtonStyle = new TextButton.TextButtonStyle();
-//        textButtonStyle.font = nullFont;
-//        textButtonStyle.up   = new TextureRegionDrawable(settings);
-//        textButtonStyle.down = new TextureRegionDrawable(settingsDown);
-//        textButtonStyle.checked = new TextureRegionDrawable(settings);
-//        buttons.add(new TextButton("", textButtonStyle));
-//        table.add(buttons.get(1)).spaceBottom(40.0f).left().size(settings.getWidth()*textScale, settings.getHeight()*textScale);
-//        table.row();
-//        // Exit button
-//        textButtonStyle = new TextButton.TextButtonStyle();
-//        textButtonStyle.font = nullFont;
-//        textButtonStyle.up   = new TextureRegionDrawable(exit);
-//        textButtonStyle.down = new TextureRegionDrawable(exitDown);
-//        textButtonStyle.checked = new TextureRegionDrawable(exit);
-//        buttons.add(new TextButton("", textButtonStyle));
-//        table.add(buttons.get(2)).spaceBottom(40.0f).left().size(exit.getWidth()*textScale, exit.getHeight()*textScale);
 
 
         table1.left().top();
         stage.addActor(table1);
-        backTable.left().top();
         table2.left().top();
         stage.addActor(table2);
-        stage.addActor(backTable);
 
 
 
         // Hook up the buttons
-        // Back button
-        buttons.get(0).addListener( new ClickListener() {
+        // Retry button
+        buttons.get(1).addListener( new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                if (buttons.get(0).isChecked()) {
-                    buttons.get(0).setChecked(false);
-                    if (fromGame){
-                        buttonState = 2;
-                        setFromGame(false);
-                    }
-                    else{
-                        buttonState = 1;
-                    }
-                    System.out.println("Back buttons pressed");
+                if (buttons.get(1).isChecked()) {
+                    buttons.get(1).setChecked(false);
+                    buttonState = EXIT_RETRY;
                 }
             };
         } );
-        // Back button
         buttons.get(2).addListener( new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 if (buttons.get(2).isChecked()) {
                     buttons.get(2).setChecked(false);
-                    if (musicVolume > 0){
-                        musicVolume -= 10;
-                    }
-                    buttons.get(3).setText("" + musicVolume);
+                    buttonState = EXIT_NEXT_LEVEL;
+                    canvas.camera.zoom = 1.0f;
+                    canvas.camera.position.x = canvas.getWidth()/2;
+                    canvas.camera.position.y = canvas.getHeight()/2;
+                    canvas.camera.update();
                 }
             };
         } );
-        buttons.get(4).addListener( new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                if (buttons.get(4).isChecked()) {
-                    buttons.get(4).setChecked(false);
-                    if (musicVolume < 100){
-                        musicVolume += 10;
-                    }
-                    buttons.get(3).setText("" + musicVolume);
-                }
-            };
-        } );
-        buttons.get(6).addListener( new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                if (buttons.get(6).isChecked()) {
-                    buttons.get(6).setChecked(false);
-                    if (soundVolume > 0){
-                        soundVolume -= 10;
-                    }
-                    buttons.get(7).setText("" + soundVolume);
-                }
-            };
-        } );
-        buttons.get(8).addListener( new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                if (buttons.get(8).isChecked()) {
-                    buttons.get(8).setChecked(false);
-                    if (soundVolume < 100){
-                        soundVolume += 10;
-                    }
-                    buttons.get(7).setText("" + soundVolume);
-                }
-            };
-        } );buttons.get(11).addListener( new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                if (buttons.get(11).isChecked()) {
-                    buttons.get(11).setChecked(false);
-                    if (fireControl == "right click"){
-                        fireControl = "shift + left click";
-                    }
-                    else {
-                        fireControl = "right click";
-                    }
-                    buttons.get(11).setText(fireControl);
-                }
-            };
-        } );
+
 
         populated = true;
 
@@ -630,9 +410,6 @@ public class SettingsMenuMode implements Screen, InputProcessor, ControllerListe
 
         }
 
-//        for (MainMenuMode.Cloud cloud : clouds){
-//            cloud.update();
-//        }
     }
 
     /**
@@ -649,13 +426,9 @@ public class SettingsMenuMode implements Screen, InputProcessor, ControllerListe
         // color.a  = appearTime/ APPEAR_TIME;
         // System.out.println(color.a);
 
-        // Draw clouds
-//        for (int i = NUM_CLOUDS-1; i >= 0; i--) {
-//            clouds.get(i).draw(canvas);
-//        }
-
         // Draw buttons/title
-        for (SettingsMenuMode.Text t: text) {
+        for (VictoryMode.Text t: text) {
+            System.out.println("text array size: " + text.size);
             t.draw(canvas);
         }
 
@@ -954,5 +727,4 @@ public class SettingsMenuMode implements Screen, InputProcessor, ControllerListe
     public boolean axisMoved (Controller controller, int axisCode, float value) {
         return true;
     }
-
 }

@@ -38,6 +38,7 @@ public class MyGdxGame extends Game implements ScreenListener {
 	private SettingsMenuMode settingsMenu;
 	/** Player mode for the pause menu */
 	private PauseMenuMode pauseMenu;
+	private VictoryMode victoryMenu;
 	private int current;
 	/** List of all WorldControllers */
 	private GameplayController controller;
@@ -64,10 +65,8 @@ public class MyGdxGame extends Game implements ScreenListener {
 		loading = new LoadingMode("assets.json",canvas,1);
 		levelSelect = new LevelSelectMode(canvas);
 		settingsMenu = new SettingsMenuMode(canvas);
+		victoryMenu = new VictoryMode(canvas);
 		pauseMenu = new PauseMenuMode(0, 0);
-		mainMenuScreen = mainMenu;
-		levelSelectScreen = levelSelect;
-		settingsScreen = settingsMenu;
 
 		//Gdx.graphics.setContinuousRendering(false);
 		mainMenu = new MainMenuMode(canvas);
@@ -75,7 +74,6 @@ public class MyGdxGame extends Game implements ScreenListener {
 		 //Initialize the three game worlds
 		 //controllers = new WorldController[1];
 		controller = new GameplayController(canvas, pauseMenu);
-		controllerScreen = controller;
 
 //		samples = new AudioSource[1];
 
@@ -163,6 +161,10 @@ public class MyGdxGame extends Game implements ScreenListener {
 			settingsMenu.gatherAssets(directory);
 			settingsMenu.setScreenListener(this);
 			settingsMenu.setCanvas(canvas);
+			// gather assets for victory menu
+			victoryMenu.gatherAssets(directory);
+			victoryMenu.setScreenListener(this);
+			victoryMenu.setCanvas(canvas);
 			// gather assets for main menu
 			mainMenu.gatherAssets(directory);
 			mainMenu.setScreenListener(this);
@@ -223,6 +225,10 @@ public class MyGdxGame extends Game implements ScreenListener {
 				settingsMenu.reset();
 				setScreen(settingsMenu);
 			}
+			else if (exitCode == controller.EXIT_VICTORY){
+				victoryMenu.reset();
+				setScreen(victoryMenu);
+			}
 		}
 		else if (screen == settingsMenu){
 			if (exitCode == settingsMenu.EXIT_MAIN_MENU){
@@ -234,6 +240,16 @@ public class MyGdxGame extends Game implements ScreenListener {
 				setScreen(controller);
 //				music.stop();
 //				music.reset();
+			}
+		}
+		else if (screen == victoryMenu){
+			if (exitCode == victoryMenu.EXIT_RETRY){
+				controller.reset();
+				setScreen(controller);
+			}
+			else if (exitCode == victoryMenu.EXIT_NEXT_LEVEL){
+				levelSelect.reset();
+				setScreen(levelSelect);
 			}
 		}
 //		else if (exitCode == WorldController.EXIT_NEXT) {
