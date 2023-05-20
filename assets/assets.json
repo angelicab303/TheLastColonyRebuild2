@@ -13,6 +13,10 @@
     "mainMenu:cursor": "images/mainMenu/SimpleCursor.png",
     "mainMenu:smallCloud": "images/mainMenu/SmallCloud.png",
     "mainMenu:levels": "images/mainMenu/Levels.png",
+    "mainMenu:newGame": "images/mainMenu/NEW_GAME.png",
+    "mainMenu:newGameDown": "images/mainMenu/NEW_GAMEDownt.png",
+    "mainMenu:continue": "images/mainMenu/CONTINUE.png",
+    "mainMenu:continueDown": "images/mainMenu/CONTINUEDown.png",
     "levelSelect:background": "images/levelSelect/Levels0-5.png",
     "levelSelect:1": "images/levelSelect/1.png",
     "levelSelect:2": "images/levelSelect/2.png",
@@ -820,7 +824,7 @@
     "sounds:bean": "sounds/Bean_Picku_16p.wav",
     "sounds:item": "sounds/Move.wav",
     "sounds:survivorrescue": "sounds/SurvivorAtCaravan16.wav",
-    "sounds:victory": "sounds/VictorySound16.wav"
+    "sounds:victory": "sounds/VictorySound16.wav",
     "sounds:cant open door": "sounds/cant open door.wav"
   },
   "music":{

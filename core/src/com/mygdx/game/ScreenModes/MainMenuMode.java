@@ -178,6 +178,10 @@ public class MainMenuMode implements Screen, InputProcessor, ControllerListener 
     /** Texture for exit option */
     private Texture exit;
     private Texture exitDown;
+    private Texture continueUp;
+    private Texture continueDown;
+    private Texture newGame;
+    private Texture newGameDown;
     /** Texture for small cloud */
     private Texture smallCloud;
     /** Texture for medium cloud */
@@ -240,8 +244,10 @@ public class MainMenuMode implements Screen, InputProcessor, ControllerListener 
     /** the state of which button was pressed (0=none, 1=play, 2=levels, 3=settings, 4=exit) */
     private int buttonState;
     private boolean populated = false;
-    public final int EXIT_LEVEL_SELECT = 1;
+    public final int EXIT_CONTINUE = 1;
     public final int EXIT_SETTINGS = 2;
+    public final int EXIT_QUIT = 3;
+    public final int EXIT_NEW_GAME = 4;
 
     private Sound select;
 
@@ -317,6 +323,10 @@ public class MainMenuMode implements Screen, InputProcessor, ControllerListener 
         title = directory.getEntry("mainMenu:title", Texture.class);
         play = directory.getEntry("mainMenu:play", Texture.class);
         playDown = directory.getEntry("mainMenu:playDown", Texture.class);
+        continueUp = directory.getEntry("mainMenu:continue", Texture.class);
+        continueDown = directory.getEntry("mainMenu:continueDown", Texture.class);
+        newGame = directory.getEntry("mainMenu:newGame", Texture.class);
+        newGameDown = directory.getEntry("mainMenu:newGameDown", Texture.class);
         settingsDown = directory.getEntry("mainMenu:settingsDown", Texture.class);
         exitDown = directory.getEntry("mainMenu:exitDown", Texture.class);
         levels = directory.getEntry("mainMenu:levels", Texture.class);
@@ -378,15 +388,25 @@ public class MainMenuMode implements Screen, InputProcessor, ControllerListener 
 
 
         buttons = new Array<TextButton>();
-        // Play button
+        // Continue button
         TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
         textButtonStyle.font = nullFont;
-        textButtonStyle.up   = new TextureRegionDrawable(play);
-        textButtonStyle.down = new TextureRegionDrawable(playDown);
-        textButtonStyle.checked = new TextureRegionDrawable(play);
+        textButtonStyle.up   = new TextureRegionDrawable(continueUp);
+        textButtonStyle.down = new TextureRegionDrawable(continueDown);
+        textButtonStyle.checked = new TextureRegionDrawable(continueUp);
         // textButtonStyle.over = new TextureRegionDrawable(playDown);
         buttons.add(new TextButton("", textButtonStyle));
-        table.add(buttons.get(0)).spaceBottom(40.0f).left().size(play.getWidth()*textScale, play.getHeight()*textScale);
+        table.add(buttons.get(0)).spaceBottom(40.0f).left().size(continueUp.getWidth()*textScale, continueUp.getHeight()*textScale);
+        table.row();
+        // New game button
+        textButtonStyle = new TextButton.TextButtonStyle();
+        textButtonStyle.font = nullFont;
+        textButtonStyle.up   = new TextureRegionDrawable(newGame);
+        textButtonStyle.down = new TextureRegionDrawable(newGameDown);
+        textButtonStyle.checked = new TextureRegionDrawable(newGame);
+        // textButtonStyle.over = new TextureRegionDrawable(playDown);
+        buttons.add(new TextButton("", textButtonStyle));
+        table.add(buttons.get(1)).spaceBottom(40.0f).left().size(newGame.getWidth()*textScale, newGame.getHeight()*textScale);
         table.row();
         // Settings button
         textButtonStyle = new TextButton.TextButtonStyle();
@@ -395,7 +415,7 @@ public class MainMenuMode implements Screen, InputProcessor, ControllerListener 
         textButtonStyle.down = new TextureRegionDrawable(settingsDown);
         textButtonStyle.checked = new TextureRegionDrawable(settings);
         buttons.add(new TextButton("", textButtonStyle));
-        table.add(buttons.get(1)).spaceBottom(40.0f).left().size(settings.getWidth()*textScale, settings.getHeight()*textScale);
+        table.add(buttons.get(2)).spaceBottom(40.0f).left().size(settings.getWidth()*textScale, settings.getHeight()*textScale);
         table.row();
         // Exit button
         textButtonStyle = new TextButton.TextButtonStyle();
@@ -404,7 +424,7 @@ public class MainMenuMode implements Screen, InputProcessor, ControllerListener 
         textButtonStyle.down = new TextureRegionDrawable(exitDown);
         textButtonStyle.checked = new TextureRegionDrawable(exit);
         buttons.add(new TextButton("", textButtonStyle));
-        table.add(buttons.get(2)).spaceBottom(40.0f).left().size(exit.getWidth()*textScale, exit.getHeight()*textScale);
+        table.add(buttons.get(3)).spaceBottom(40.0f).left().size(exit.getWidth()*textScale, exit.getHeight()*textScale);
 
 
         table.left().top();
@@ -428,12 +448,23 @@ public class MainMenuMode implements Screen, InputProcessor, ControllerListener 
                 }
             };
         } );
-        // Settings button
         buttons.get(1).addListener( new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 if (buttons.get(1).isChecked()) {
                     buttons.get(1).setChecked(false);
+                    buttonState = EXIT_NEW_GAME;
+                    select.play();
+                    System.out.println("Play buttons pressed");
+                }
+            };
+        } );
+        // Settings button
+        buttons.get(2).addListener( new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                if (buttons.get(2).isChecked()) {
+                    buttons.get(2).setChecked(false);
                     buttonState = 2;
                     select.play();
                     System.out.println("Settings buttons pressed");

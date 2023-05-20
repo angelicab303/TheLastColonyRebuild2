@@ -194,8 +194,13 @@ public class MyGdxGame extends Game implements ScreenListener {
 		} else if (screen == mainMenu){
 			System.out.println("main menu: " + exitCode);
 			// Need exit codes for main menu
-			if (exitCode == mainMenu.EXIT_LEVEL_SELECT){
+			if (exitCode == mainMenu.EXIT_CONTINUE){
 				System.out.println("Go to level select from main menu");
+				levelSelect.reset();
+				setScreen(levelSelect);
+			}
+			else if (exitCode == mainMenu.EXIT_NEW_GAME){
+				// Need to add code to reset pref
 				levelSelect.reset();
 				setScreen(levelSelect);
 			}
