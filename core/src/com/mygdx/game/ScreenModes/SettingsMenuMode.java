@@ -3,6 +3,7 @@ package com.mygdx.game.ScreenModes;
 import assets.AssetDirectory;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
@@ -155,10 +156,12 @@ public class SettingsMenuMode implements Screen, InputProcessor, ControllerListe
     private Texture textBox;
     private Texture empty;
     private Texture placeTorch;
-    private int soundVolume;
-    private int musicVolume;
+    private float soundVolume;
+    private float musicVolume;
     private String fireControl;
     private String absorbControl;
+
+    private Preferences prefs = Gdx.app.getPreferences("save data");
 
     private float cursorScale = 0.15f;
     /** Texture for title */
@@ -272,8 +275,8 @@ public class SettingsMenuMode implements Screen, InputProcessor, ControllerListe
         stage = new Stage();
         table = new Table();
         buttonState = 0;
-        soundVolume = 100;
-        musicVolume = 100;
+        soundVolume = prefs.getFloat("soundvolume", 100);
+        musicVolume = prefs.getFloat("musicvolume", 100);
         fireControl = "right click";
         absorbControl = "left click";
 
@@ -289,13 +292,13 @@ public class SettingsMenuMode implements Screen, InputProcessor, ControllerListe
     public void setMusicVolume(int volume){
         this.musicVolume = volume;
     }
-    public int getMusicVolume(){
+    public float getMusicVolume(){
         return musicVolume;
     }
     public void setSoundVolume(int volume){
         this.soundVolume = volume;
     }
-    public int getSoundVolume(){
+    public float getSoundVolume(){
         return soundVolume;
     }
     public void setFireControl(String control){
@@ -348,6 +351,7 @@ public class SettingsMenuMode implements Screen, InputProcessor, ControllerListe
     public void populateMenu(){
         if (!titleMusic.isPlaying())
         {
+            titleMusic.setVolume(prefs.getFloat("musicvolume", 100)/100);
             titleMusic.play();
             titleMusic.setLooping(true);
         }
@@ -489,12 +493,12 @@ public class SettingsMenuMode implements Screen, InputProcessor, ControllerListe
                 if (buttons.get(0).isChecked()) {
                     buttons.get(0).setChecked(false);
                     if (fromGame){
-                        backSound.play();
+                        backSound.play(prefs.getFloat("soundvolume", 100)/100);
                         buttonState = 2;
                         setFromGame(false);
                     }
                     else{
-                        backSound.play();
+                        backSound.play(prefs.getFloat("soundvolume", 100)/100);
                         buttonState = 1;
                     }
                     System.out.println("Back buttons pressed");
@@ -509,6 +513,9 @@ public class SettingsMenuMode implements Screen, InputProcessor, ControllerListe
                     buttons.get(2).setChecked(false);
                     if (musicVolume > 0){
                         musicVolume -= 10;
+                        titleMusic.setVolume(musicVolume/100);
+                        prefs.putFloat("musicvolume", musicVolume);
+                        prefs.flush();
                     }
                     buttons.get(3).setText("" + musicVolume);
                 }
@@ -521,6 +528,9 @@ public class SettingsMenuMode implements Screen, InputProcessor, ControllerListe
                     buttons.get(4).setChecked(false);
                     if (musicVolume < 100){
                         musicVolume += 10;
+                        titleMusic.setVolume(musicVolume/100);
+                        prefs.putFloat("musicvolume", musicVolume);
+                        prefs.flush();
                     }
                     buttons.get(3).setText("" + musicVolume);
                 }
@@ -533,6 +543,8 @@ public class SettingsMenuMode implements Screen, InputProcessor, ControllerListe
                     buttons.get(6).setChecked(false);
                     if (soundVolume > 0){
                         soundVolume -= 10;
+                        prefs.putFloat("soundvolume", soundVolume);
+                        prefs.flush();
                     }
                     buttons.get(7).setText("" + soundVolume);
                 }
@@ -545,6 +557,8 @@ public class SettingsMenuMode implements Screen, InputProcessor, ControllerListe
                     buttons.get(8).setChecked(false);
                     if (soundVolume < 100){
                         soundVolume += 10;
+                        prefs.putFloat("soundvolume", soundVolume);
+                        prefs.flush();
                     }
                     buttons.get(7).setText("" + soundVolume);
                 }
