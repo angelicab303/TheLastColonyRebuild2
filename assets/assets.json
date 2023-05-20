@@ -48,6 +48,12 @@
     "settings:music": "images/settings/Music.png",
     "settings:settings": "images/settings/Settings.png",
     "settings:soundEffects": "images/settings/SoundEffects.png",
+    "settings:plus": "images/settings/plus.png",
+    "settings:minus": "images/settings/minus.png",
+    "settings:plusDown": "images/settings/plusDown.png",
+    "settings:minusDown": "images/settings/minusDown.png",
+    "settings:textBox": "images/settings/TextBox.png",
+    "settings:textBoxEmpty": "images/settings/TextBoxEmpty.png",
 
     "shared:earth": {
       "file": "shared/earthtile.png",
@@ -799,7 +805,7 @@
   "fonts": {
     "shared:retro": {
       "file": "shared/RetroGame.ttf",
-      "size": 64
+      "size": 32
     },
     "shared:retroSub": {
       "file": "shared/RetroGame.ttf",

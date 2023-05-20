@@ -146,6 +146,16 @@ public class SettingsMenuMode implements Screen, InputProcessor, ControllerListe
     private Texture keyBindings;
     private Texture music;
     private Texture soundEffects;
+    private Texture plus;
+    private Texture minus;
+    private Texture plusDown;
+    private Texture minusDown;
+    private Texture textBox;
+    private Texture empty;
+    private int soundVolume;
+    private int musicVolume;
+    private String fireControl;
+    private String absorbControl;
 
     private float cursorScale = 0.15f;
     /** Texture for title */
@@ -201,6 +211,7 @@ public class SettingsMenuMode implements Screen, InputProcessor, ControllerListe
     /** the state of which button was pressed (0=none, 1=play, 2=levels, 3=settings, 4=exit) */
     private int buttonState;
     private boolean populated = false;
+    private float sliderScales = 0.5f;
     private boolean fromGame;
     public final int EXIT_MAIN_MENU = 1;
     public final int EXIT_GAME = 2;
@@ -254,6 +265,10 @@ public class SettingsMenuMode implements Screen, InputProcessor, ControllerListe
         stage = new Stage();
         table = new Table();
         buttonState = 0;
+        soundVolume = 100;
+        musicVolume = 100;
+        fireControl = "left click";
+        absorbControl = "right click";
 
         fromGame = false;
 
@@ -262,6 +277,31 @@ public class SettingsMenuMode implements Screen, InputProcessor, ControllerListe
 
     public void setFromGame(boolean fromGame){
         this.fromGame = fromGame;
+    }
+
+    public void setMusicVolume(int volume){
+        this.musicVolume = volume;
+    }
+    public int getMusicVolume(){
+        return musicVolume;
+    }
+    public void setSoundVolume(int volume){
+        this.soundVolume = volume;
+    }
+    public int getSoundVolume(){
+        return soundVolume;
+    }
+    public void setFireControl(String control){
+        this.fireControl = control.toLowerCase();
+    }
+    public String getFireControl(){
+        return fireControl;
+    }
+    public void setAbsorbControl(String control){
+        this.absorbControl = control.toLowerCase();
+    }
+    public String getAbsorbControlControl(){
+        return absorbControl;
     }
 
     /**
@@ -287,6 +327,12 @@ public class SettingsMenuMode implements Screen, InputProcessor, ControllerListe
         cloud2 = directory.getEntry("settings:cloud2", Texture.class);
         cloud3 = directory.getEntry("settings:cloud3", Texture.class);
         nullFont = directory.getEntry("shared:retro" ,BitmapFont.class);
+        plus = directory.getEntry("settings:plus" ,Texture.class);
+        minus = directory.getEntry("settings:minus" ,Texture.class);
+        plusDown = directory.getEntry("settings:plusDown" ,Texture.class);
+        minusDown = directory.getEntry("settings:minusDown" ,Texture.class);
+        textBox = directory.getEntry("settings:textBox" ,Texture.class);
+        empty = directory.getEntry("settings:textBoxEmpty" ,Texture.class);
     }
     /** Populates the menu with clouds */
     public void populateMenu(){
@@ -330,6 +376,16 @@ public class SettingsMenuMode implements Screen, InputProcessor, ControllerListe
         table1.setHeight(400.0f);
         table1.setDebug(false);
 
+        float table2X = table1X + 60;
+        float table2Y = table1Y - 270;
+        //table.setFillParent(true);
+        Table table2 = new Table();
+        tables.add(table2);
+        table2.setPosition(table2X, table2Y);
+        table2.setWidth(600.0f);
+        table2.setHeight(400.0f);
+        table2.setDebug(false);
+
 
 
         Gdx.input.setInputProcessor(stage);
@@ -347,8 +403,22 @@ public class SettingsMenuMode implements Screen, InputProcessor, ControllerListe
 
         // table 1
         addButton(table1, music, music, 1);
-        addButton(table1, soundEffects, soundEffects, 2);
-        addButton(table1, keyBindings, keyBindings, 3);
+        addButtonHorizontal(table1, minus, minusDown, 2, "", sliderScales);
+        addButtonHorizontal(table1, textBox, textBox, 3, "" + musicVolume, sliderScales);
+        addButtonHorizontal(table1, plus, plusDown, 4, "", sliderScales);
+        table1.row();
+        addButton(table1, soundEffects, soundEffects, 5);
+        addButtonHorizontal(table1, minus, minusDown, 6, "", sliderScales);
+        addButtonHorizontal(table1, textBox, textBox, 7, "" + soundVolume, sliderScales);
+        addButtonHorizontal(table1, plus, plusDown, 8, "", sliderScales);
+        table1.row();
+        addButton(table1, keyBindings, keyBindings, 9);
+        //addButtonHorizontal(table1, fireWeapon, fireWeapon, 10, "", textScale);
+
+        // table 2
+        addButton(table2, fireWeapon, fireWeapon, 10);
+        addButtonHorizontal(table2, empty, empty, 11, "Left Click", sliderScales);
+
 
 //        table.row();
 //        // Settings button
@@ -373,6 +443,8 @@ public class SettingsMenuMode implements Screen, InputProcessor, ControllerListe
         table1.left().top();
         stage.addActor(table1);
         backTable.left().top();
+        table2.left().top();
+        stage.addActor(table2);
         stage.addActor(backTable);
 
 
@@ -392,6 +464,55 @@ public class SettingsMenuMode implements Screen, InputProcessor, ControllerListe
                         buttonState = 1;
                     }
                     System.out.println("Back buttons pressed");
+                }
+            };
+        } );
+        // Back button
+        buttons.get(2).addListener( new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                if (buttons.get(2).isChecked()) {
+                    buttons.get(2).setChecked(false);
+                    if (musicVolume > 0){
+                        musicVolume -= 10;
+                    }
+                    buttons.get(3).setText("" + musicVolume);
+                }
+            };
+        } );
+        buttons.get(4).addListener( new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                if (buttons.get(4).isChecked()) {
+                    buttons.get(4).setChecked(false);
+                    if (musicVolume < 100){
+                        musicVolume += 10;
+                    }
+                    buttons.get(3).setText("" + musicVolume);
+                }
+            };
+        } );
+        buttons.get(6).addListener( new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                if (buttons.get(6).isChecked()) {
+                    buttons.get(6).setChecked(false);
+                    if (soundVolume > 0){
+                        soundVolume -= 10;
+                    }
+                    buttons.get(7).setText("" + soundVolume);
+                }
+            };
+        } );
+        buttons.get(8).addListener( new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                if (buttons.get(8).isChecked()) {
+                    buttons.get(8).setChecked(false);
+                    if (soundVolume < 100){
+                        soundVolume += 10;
+                    }
+                    buttons.get(7).setText("" + soundVolume);
                 }
             };
         } );
@@ -415,8 +536,17 @@ public class SettingsMenuMode implements Screen, InputProcessor, ControllerListe
         textButtonStyle.checked = new TextureRegionDrawable(up);
         textButtonStyle.down = new TextureRegionDrawable(down);
         buttons.add(new TextButton("", textButtonStyle));
-        table.add(buttons.get(num)).spaceBottom(50f).left().size(up.getWidth()*textScale, up.getHeight()*textScale);
-        table.row();
+        table.add(buttons.get(num)).spaceBottom(50f).spaceRight(150f).left().size(up.getWidth()*textScale, up.getHeight()*textScale);
+    }
+    private void addButtonHorizontal(Table table, Texture up, Texture down, int num, String text, float scale){
+        TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
+        textButtonStyle.font = nullFont;
+        textButtonStyle.up   = new TextureRegionDrawable(up);
+        textButtonStyle.checked = new TextureRegionDrawable(up);
+        textButtonStyle.down = new TextureRegionDrawable(down);
+        buttons.add(new TextButton(text, textButtonStyle));
+        table.add(buttons.get(num)).spaceRight(40).top().left().size(up.getWidth()*scale, up.getHeight()*scale);
+
     }
 
     /**
