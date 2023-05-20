@@ -171,7 +171,7 @@ public class Player extends Shadow implements GameObstacle{
      * @param y The initial y-coordinate of the player in box2d units
      */
     public Player(float x, float y, FilmStrip[][] player, InputController input, float scale, float tileSize) {
-        super(x, y, player[0][0].getRegionWidth()*scale, player[0][0].getRegionHeight()*scale, ShadowShape.CIRCLE, false);
+        super(x, y, player[0][0].getRegionWidth()*scale, player[0][0].getRegionHeight()*scale, ShadowShape.CIRCLE, false, false, "");
         this.height = player[0][0].getRegionHeight();
         this.width = player[0][0].getRegionWidth();
         // setTexture(value);

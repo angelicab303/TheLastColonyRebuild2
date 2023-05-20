@@ -39,8 +39,8 @@ public class Obstacles extends Shadow implements GameObstacle {
      * @param x The initial x-coordinate of the tree
      * @param y The initial y-coordinate of the tree
      */
-    public Obstacles(float x, float y, TextureRegion value, float scale, boolean isDoor, boolean isFence, boolean isTree) {
-        super(x, y, value.getRegionWidth() * scale, value.getRegionHeight() * scale, isTree ? ShadowShape.CIRCLE : ShadowShape.SQUARE, isTree);
+    public Obstacles(float x, float y, TextureRegion value, float scale, boolean isDoor, boolean isTree, boolean isFence, String fenceId) {
+        super(x, y, value.getRegionWidth() * scale, value.getRegionHeight() * scale, isTree ? ShadowShape.CIRCLE : ShadowShape.SQUARE, isTree, isFence, fenceId);
         setTexture(value);
         setBodyType(BodyDef.BodyType.StaticBody);
         // setDimension(value.getRegionWidth()*scale, value.getRegionHeight()*scale);

@@ -207,7 +207,7 @@ public class Survivor extends Shadow implements GameObstacle {
      *
      */
     public Survivor(int id, float x, float y, FilmStrip[] survivor, Texture heart, BitmapFont font, float scale, Texture[] directions) {
-        super(x, y, survivor[0].getRegionWidth()*scale, survivor[0].getRegionHeight()*scale, ShadowShape.CIRCLE, false);
+        super(x, y, survivor[0].getRegionWidth()*scale, survivor[0].getRegionHeight()*scale, ShadowShape.CIRCLE, false, false, "");
         this.width = survivor[0].getRegionWidth();
         this.height = survivor[0].getRegionHeight();
         setDensity(0);

@@ -266,7 +266,7 @@ public class ToxicQueue {
 
         public void drawDebug(GameCanvas canvas) {
             //canvas.beginDebug();
-            canvas.drawPhysics(shape, Color.RED, getX()*drawScale.x, getY()*drawScale.y, getAngle(), drawScale.x, drawScale.y);
+            //canvas.drawPhysics(shape, Color.RED, getX()*drawScale.x, getY()*drawScale.y, getAngle(), drawScale.x, drawScale.y);
             //canvas.endDebug();
         }
     }
@@ -438,34 +438,34 @@ public class ToxicQueue {
     }
 
     public void drawDebug(GameCanvas canvas) {
-        if (texture == null) {
-            return;
-        }
-
-        Color tint = Color.CYAN;
-        tint.a = 0.5f;
-        // Step through each active photon in the queue.
-        for (int ii = 0; ii < size; ii++) {
-            // Find the position of this photon.
-            int idx = ((head + ii) % MAX_PHOTONS);
-
-            ToxicAir air = queue[idx];
-
-            // How big to make the photon.  Decreases with age.
-            //float scale = (1.25f - (float)queue[idx].age * 0.5f / (float)MAX_AGE)*queue[idx].scale;
-            //float ratio = (float)queue[idx].age/(float)MAX_AGE;
-            //tint.set((float)100*ratio,(float)250*ratio,(float)250*ratio,(float)1*(1-ratio));
-
-            // Use this information to draw.
-            air.animator.setFrame((int)air.aframe);
-            air.collisionAnimator.setFrame((int)air.aframeCollision);
-            if(air.age >= MAX_AGE) {
-                canvas.draw(air.collisionAnimator,Color.WHITE,air.getOrigin().x,air.getOrigin().y,air.getPosition().x,air.getPosition().y,0,air.scale,air.scale);
-            }
-            else {
-                canvas.draw(air.animator,Color.WHITE,air.getOrigin().x,air.getOrigin().y,air.getPosition().x,air.getPosition().y,0,air.scale,air.scale);
-            }
-        }
+//        if (texture == null) {
+//            return;
+//        }
+//
+//        Color tint = Color.CYAN;
+//        tint.a = 0.5f;
+//        // Step through each active photon in the queue.
+//        for (int ii = 0; ii < size; ii++) {
+//            // Find the position of this photon.
+//            int idx = ((head + ii) % MAX_PHOTONS);
+//
+//            ToxicAir air = queue[idx];
+//
+//            // How big to make the photon.  Decreases with age.
+//            //float scale = (1.25f - (float)queue[idx].age * 0.5f / (float)MAX_AGE)*queue[idx].scale;
+//            //float ratio = (float)queue[idx].age/(float)MAX_AGE;
+//            //tint.set((float)100*ratio,(float)250*ratio,(float)250*ratio,(float)1*(1-ratio));
+//
+//            // Use this information to draw.
+//            air.animator.setFrame((int)air.aframe);
+//            air.collisionAnimator.setFrame((int)air.aframeCollision);
+//            if(air.age >= MAX_AGE) {
+//                canvas.draw(air.collisionAnimator,Color.WHITE,air.getOrigin().x,air.getOrigin().y,air.getPosition().x,air.getPosition().y,0,air.scale,air.scale);
+//            }
+//            else {
+//                canvas.draw(air.animator,Color.WHITE,air.getOrigin().x,air.getOrigin().y,air.getPosition().x,air.getPosition().y,0,air.scale,air.scale);
+//            }
+//        }
     }
 }
 
