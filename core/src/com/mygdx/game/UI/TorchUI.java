@@ -2,11 +2,13 @@ package com.mygdx.game.UI;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.mygdx.game.GameCanvas;
 import util.FilmStrip;
 
-public class Torch {
+public class TorchUI {
+    protected BitmapFont displayFont;
     private float xPos;
     /** Y position on screen */
     private float yPos;
@@ -27,16 +29,20 @@ public class Torch {
 
     private int count;
 
-    public Torch(float x, float y, TextureRegion texture, int count) {
+    public TorchUI(TextureRegion texture, int count, BitmapFont font) {
         this.texture = texture;
         this.count = count;
+        displayFont = font;
     }
 
     public void draw(GameCanvas canvas) {
         // animator.setFrame((int)aframe);
-        xPos = canvas.camera.position.x - (canvas.camera.viewportWidth*cameraZoom)/2.0f + (33.0f * cameraZoom);
-        yPos = canvas.camera.position.y + (canvas.camera.viewportHeight*cameraZoom)*0.8f/2.0f - (15.0f * cameraZoom) - texture.getRegionHeight()*scale;
-        canvas.draw(texture, new Color(255, 255, 255, 0.75f), texture.getRegionWidth()*scale, texture.getRegionHeight()*scale/2, xPos, yPos, 0.0f, scale*0.5f, scale*0.5f);
+        String message = count + "x";
+        xPos = canvas.camera.position.x - (canvas.camera.viewportWidth*cameraZoom)/2.0f + (220.0f * cameraZoom);
+        yPos = canvas.camera.position.y + ((canvas.camera.viewportHeight*cameraZoom)/2.0f) - (105.0f * cameraZoom);
+        //yPos = canvas.camera.position.y + (canvas.camera.viewportHeight*cameraZoom)*0.8f/2.0f - (15.0f * cameraZoom) - texture.getRegionHeight()*scale;
+        canvas.draw(texture, new Color(255, 255, 255, 0.75f), texture.getRegionWidth()*scale, texture.getRegionHeight()*scale/2, xPos, yPos, 0.0f, scale*1.5f, scale*1.5f);
+        canvas.drawText(message, displayFont, xPos + (70.0f * cameraZoom), yPos + (20f * cameraZoom));
 //        xPos = canvas.camera.position.x + (canvas.getWidth()*cameraZoom)/2.0f - (90.0f * cameraZoom) - spacing;
 //        yPos = canvas.camera.position.y + (canvas.getHeight()*cameraZoom)/2.0f - (40.0f * cameraZoom) - texture.getHeight()*scale;
     }

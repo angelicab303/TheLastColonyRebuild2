@@ -37,6 +37,7 @@ import com.mygdx.game.Obstacles.Items.Item;
 import com.mygdx.game.Obstacles.Items.Torch;
 import com.mygdx.game.UI.AirBar;
 import com.mygdx.game.UI.Heart;
+import com.mygdx.game.UI.TorchUI;
 import com.mygdx.game.UI.TutorialPrompt;
 import obstacle.BoxObstacle;
 import obstacle.Obstacle;
@@ -197,6 +198,7 @@ public class GameplayController implements Screen {
 	// private AirBar airBar;
 	/** Reference to the goalDoor (for collision detection) */
 	private BoxObstacle goalDoor;
+	private BitmapFont displayFont;
 	private float SCALE = 0.1f;
 
 	/** Size of each tile in pixels **/
@@ -252,11 +254,12 @@ public class GameplayController implements Screen {
 	/** The texture for the exit condition */
 	protected TextureRegion goalTile;
 	/** The font for giving messages to the player */
-	protected BitmapFont displayFont;
+
 	/** The font for giving sub-messages to the player */
 	protected BitmapFont displayFontSub;
 	/** The font for progress bar title */
 	protected BitmapFont displayFontInteract;
+	protected BitmapFont displayFontTorch;
 	/** The actual assets to be loaded */
 	protected AssetDirectory assets;
 	/** Stun animation for enemies */
@@ -300,7 +303,7 @@ public class GameplayController implements Screen {
 	/** Reference to the air bar asset */
 	protected AirBar airBar;
 
-	protected Torch torch;
+	protected TorchUI torch;
 	/** Heart list **/
 	protected Array<Heart> heartArr;
 
@@ -723,6 +726,7 @@ public class GameplayController implements Screen {
 		displayFont = directory.getEntry("shared:retro", BitmapFont.class);
 		displayFontSub = directory.getEntry("shared:retroSub", BitmapFont.class);
 		displayFontInteract = directory.getEntry("shared:light", BitmapFont.class);
+		displayFontTorch = directory.getEntry("shared:retroMed", BitmapFont.class);
 
 		constants = directory.getEntry("platform:constants", JsonValue.class);
 
@@ -1097,6 +1101,7 @@ public class GameplayController implements Screen {
 
 		}
 		airBar = new AirBar(airBarTexture, player.weapon.getMaxNumAmmo(), player.weapon.getNumAmmo(), canvas);
+		torch = new TorchUI(torchTexture, 0, displayFontTorch);
 
 		// Hearts
 		int numLives = player.getHealth();
@@ -2020,6 +2025,7 @@ public class GameplayController implements Screen {
 			for (int i = 0; i < heartArr.size; i++) {
 				heartArr.get(i).draw(canvas);
 			}
+			torch.draw(canvas);
 		}
 
 
