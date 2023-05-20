@@ -21,7 +21,7 @@ public class ShriekerEnemy extends Enemy {
     /** Time shrieker takes to fully wake */
     private float wakeTime = 0;
     /** Time shrieker must wait to shriek when waking */
-    private float WAKE_TIME = 300;
+    private float WAKE_TIME = 150;
     /** Whether or not the shrieker can alert other enemies */
     private boolean canShriek;
     /** Time shrieker must wait before being able to alert again */
@@ -284,7 +284,12 @@ public class ShriekerEnemy extends Enemy {
             canvas.draw(currentAnimator, Color.CLEAR, origin.x, origin.y, body.getWorldCenter().x*drawScale.x - currentAnimator.getRegionWidth()*scale/2, body.getWorldCenter().y*drawScale.y- currentAnimator.getRegionHeight()*scale/2, 0.0f, scale, scale);
         }
         else if (isStunned()){
-            canvas.draw(currentAnimator, Color.PINK, origin.x, origin.y, body.getWorldCenter().x * drawScale.x - currentAnimator.getRegionWidth() * getScale() / 2, body.getWorldCenter().y * drawScale.y - currentAnimator.getRegionHeight() * getScale() / 2, 0.0f, getScale(), getScale());
+            canvas.draw(currentAnimator, Color.GRAY, origin.x, origin.y, body.getWorldCenter().x * drawScale.x - currentAnimator.getRegionWidth() * getScale() / 2, body.getWorldCenter().y * drawScale.y - currentAnimator.getRegionHeight() * getScale() / 2, 0.0f, getScale(), getScale());
+            if(stunAnimation != null){
+//                System.out.println(stunTime % 4);
+                stunAnimation.setFrame(((int)stunTime/5) % 4); //4 frames of animation, 5 frame rate reduction
+                canvas.draw(stunAnimation, Color.GRAY, origin.x, origin.y, body.getWorldCenter().x * drawScale.x - width*scale/2, body.getWorldCenter().y * drawScale.y, 0.0f, scale, scale);
+            }
         }
         else if (justShrieked){
             canvas.draw(currentAnimator, Color.GRAY, origin.x, origin.y, body.getWorldCenter().x * drawScale.x - currentAnimator.getRegionWidth() * getScale() / 2, body.getWorldCenter().y * drawScale.y - currentAnimator.getRegionHeight() * getScale() / 2, 0.0f, getScale(), getScale());

@@ -205,7 +205,7 @@ public class Player extends Shadow implements GameObstacle{
         velocity = new Vector2();
         lastVelocity = new Vector2();
         zerovector = new Vector2(0,0);
-        health = 5;
+        health = 4;
         movementStrips = player[0];
         idleStrips = player[1];
         attackIdleStrips = player[2];
@@ -216,7 +216,7 @@ public class Player extends Shadow implements GameObstacle{
         controller = input;
         direction = Direction.IDLE;
         prevPosition = position;
-        maxHealth = 5;
+        maxHealth = 4;
         blinkTime = 0;
         pressFire = false;
         doneFiring = true;
