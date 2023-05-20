@@ -149,7 +149,8 @@ public class Player extends Shadow implements GameObstacle{
     private float noise;
 
     private Light light;
-
+    private boolean acquiredTorch;
+    private boolean placedTorch;
 
     private Array<Survivor> survivorsFollowing;
 
@@ -169,6 +170,11 @@ public class Player extends Shadow implements GameObstacle{
         return torch;
     }
     public int getNumKeys() {return key;}
+
+    public boolean acquiredTorch() {return acquiredTorch;}
+    public boolean placedTorch() {return placedTorch;}
+
+
     /**
      * Create player at the given position.
      *
@@ -204,6 +210,8 @@ public class Player extends Shadow implements GameObstacle{
         pressFire = false;
         doneFiring = true;
         revealed = true;
+        acquiredTorch = false;
+        placedTorch = false;
 
         behind = 0;
         key = 0;
@@ -230,6 +238,7 @@ public class Player extends Shadow implements GameObstacle{
 
 
     public void collectTorch(){
+        acquiredTorch = true;
         torch++;
     }
 
@@ -240,6 +249,7 @@ public class Player extends Shadow implements GameObstacle{
     /**Returns whether a torch was successfully used*/
     public boolean useTorch(){
         if(torch > 0){
+            placedTorch = true;
             torch--;
             return true;
         }

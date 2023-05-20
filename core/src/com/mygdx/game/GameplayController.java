@@ -1550,6 +1550,13 @@ public class GameplayController implements Screen {
 		}
 		// Check through the items just like the survivors to see if we need to show "E to collect"
 		for (int i = 0; i < itemArr.size; i++) {
+			if (itemArr.get(i).getItemType() == Item.ItemType.TORCH) {
+				if (player.acquiredTorch() && !player.placedTorch()) {
+					itemArr.get(i).setDisplayTorchInstruction(true);
+				} else {
+					itemArr.get(i).setDisplayTorchInstruction(false);
+				}
+			}
 			if (itemArr.get(i).isInteractable() && input.didPickUpItem()) {
 				itemArr.get(i).setInteractable(false);
 				if (itemArr.get(i).getItemType() == Item.ItemType.TORCH) {
@@ -1572,7 +1579,7 @@ public class GameplayController implements Screen {
 		if (input.didPlaceItem() && player.hasTorch()) {
 			if (!tileGrid[(int)(player.getX() / tileSize)][(int)(player.getY() / tileSize)] && torchPlacedCounter == 30) {
 				torchPlacedCounter--;
-				Torch torch = new Torch((player.getX() / tileSize)*tileSize,(player.getY() / tileSize)*tileSize,torchTexture, displayFontInteract, SCALE);
+				Torch torch = new Torch((player.getX() / tileSize)*tileSize,(player.getY() / tileSize)*tileSize,torchTexture, displayFontInteract, SCALE, player);
 				addObject(torch);
 				itemArr.add(torch);
 				player.useTorch();

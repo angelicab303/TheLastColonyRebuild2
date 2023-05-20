@@ -520,9 +520,9 @@ public class JSONLevelReader {
         } else if (type.equals("Mushroom")) {
             createMushroom(x, y, id, scale);
         } else if (type.equals("Torch")) {
-            createTorch(x, y, id, scale);
+            createTorch(x, y, id, scale, player);
         } else if (type.equals("Key")) {
-            createKey(x, y, id, scale);
+            createKey(x, y, id, scale, player);
         } else {
             System.out.println("Error - ID " + id + " tile not found");
         }
@@ -586,14 +586,14 @@ public class JSONLevelReader {
         return caravan;
     }
 
-    public void createKey(int x, int y, int id, float scale) {
-        Key key = new Key(x * tileSize, y * tileSize, getTextureRegionKey(id), displayFontInteract, scale);
+    public void createKey(int x, int y, int id, float scale, Player player) {
+        Key key = new Key(x * tileSize, y * tileSize, getTextureRegionKey(id), displayFontInteract, scale, player);
         addObject(key);
         itemArr.add(key);
     }
 
-    public void createTorch(int x, int y, int id, float scale) {
-        Torch torch = new Torch(x * tileSize, y * tileSize, getTextureRegionKey(id), displayFontInteract, scale);
+    public void createTorch(int x, int y, int id, float scale, Player player) {
+        Torch torch = new Torch(x * tileSize, y * tileSize, getTextureRegionKey(id), displayFontInteract, scale, player);
         addObject(torch);
         itemArr.add(torch);
         torchID = id;

@@ -8,6 +8,7 @@ import com.badlogic.gdx.physics.box2d.Filter;
 import com.badlogic.gdx.physics.box2d.World;
 import com.mygdx.game.GameCanvas;
 import com.mygdx.game.Obstacles.GameObstacle;
+import com.mygdx.game.Obstacles.Player;
 import obstacle.BoxObstacle;
 import obstacle.SimpleObstacle;
 
@@ -20,7 +21,11 @@ public class Item extends BoxObstacle implements GameObstacle {
 
     private float scale;
     private boolean isInteractable;
+    private boolean displayTorchInstruction;
+    private boolean displayTorchExplanation;
     private BitmapFont displayFontInteract;
+
+    private Player player;
 
     public enum ItemType{
         ITEM,
@@ -28,9 +33,9 @@ public class Item extends BoxObstacle implements GameObstacle {
         TORCH,
         COFFEE
     }
-    public Item(float x, float y, TextureRegion cvalue, BitmapFont font, float scale){
+    public Item(float x, float y, TextureRegion cvalue, BitmapFont font, float scale, Player player){
         super(x,y,cvalue.getRegionWidth()*scale, cvalue.getRegionHeight()*scale);
-
+        this.player = player;
         position = new Vector2(x, y);
         setDensity(1);
         setFriction(0);
@@ -79,6 +84,14 @@ public class Item extends BoxObstacle implements GameObstacle {
             String message = "(E) Pick Up";
             canvas.drawText(message, displayFontInteract, position.x - 16.0f, position.y + 20.0f);
         }
+        if (displayTorchInstruction) {
+            String message = "(Q) Place Down Torch";
+            canvas.drawText(message, displayFontInteract, player.getX() - 32.0f, player.getY() + 40.0f);
+        }
+        if (displayTorchExplanation) {
+            String message = "Torches repel smog creeping back!";
+            canvas.drawText(message, displayFontInteract, position.x - 32.0f, position.y + 40.0f);
+        }
     }
 
     @Override
@@ -116,4 +129,11 @@ public class Item extends BoxObstacle implements GameObstacle {
         markRemoved(true);
     }
 
+    public void setDisplayTorchInstruction(boolean display) {
+        displayTorchInstruction = display;
+    }
+
+    public void setDisplayTorchExplanation(boolean display) {
+        displayTorchExplanation = display;
+    }
 }
