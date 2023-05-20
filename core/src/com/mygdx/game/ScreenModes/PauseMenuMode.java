@@ -4,6 +4,8 @@ import assets.AssetDirectory;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.controllers.ControllerListener;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -79,7 +81,9 @@ public class PauseMenuMode {
     /** Exit state for returning back to game */
     public static final int EXIT_RESTART = 4;
 
+    private Sound select;
 
+    private Music titleMusic;
 
 
     public PauseMenuMode(float x, float y){
@@ -115,6 +119,8 @@ public class PauseMenuMode {
         restart = directory.getEntry("pauseMenu:restart", Texture.class);
         restartDown = directory.getEntry("pauseMenu:restartDown", Texture.class);
         nullFont = directory.getEntry("shared:retro" ,BitmapFont.class);
+        select = directory.getEntry("sounds:select", Sound.class);
+        titleMusic = directory.getEntry("titlemusic", Music.class);
         loaded = true;
     }
     public void setMenuPosition(float x, float y){
@@ -198,6 +204,7 @@ public class PauseMenuMode {
                 if (buttons.get(1).isChecked()) {
                     buttons.get(1).setChecked(false);
                     buttonState = EXIT_GAME;
+                    select.play();
 //                    isReady = true;
                 }
             };
@@ -210,6 +217,9 @@ public class PauseMenuMode {
                 if (buttons.get(2).isChecked()) {
                     buttonState = EXIT_RESTART;
                     buttons.get(2).setChecked(false);
+                    titleMusic.stop();
+                    titleMusic.setLooping(false);
+                    select.play();
                 }
             };
         } );
@@ -221,6 +231,7 @@ public class PauseMenuMode {
                     buttons.get(3).setChecked(false);
                     System.out.println("Go to settings from pause menu");
                     buttonState = EXIT_SETTINGS;
+                    select.play();
                 }
             };
         } );
@@ -231,6 +242,7 @@ public class PauseMenuMode {
                 if (buttons.get(4).isChecked()) {
                     buttons.get(4).setChecked(false);
                     buttonState = EXIT_MAINMENU;
+                    select.play();
                 }
             };
         } );

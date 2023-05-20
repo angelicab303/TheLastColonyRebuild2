@@ -81,19 +81,19 @@ public class ChaserEnemyController extends com.mygdx.game.EnemyControllers.Enemy
         int action = 0;
         if (state == FSMState.CHASE)
         {
-            if (firstMove)
-            {
-                action = getMove();
-                firstMove = false;
-            }
-            else {
-                if (goalReached() || moveTime > 30) {
-                    moveTime = 0;
-                    action = getMove();
-                } else {
-                    action = prevAction;
-                }
-            }
+//            if (firstMove)
+//            {
+//                action = getMove();
+//                firstMove = false;
+//            }
+//            else {
+//                if (goalReached() || moveTime > 30) {
+//                    moveTime = 0;
+//                    action = getMove();
+//                } else {
+//                    action = prevAction;
+//                }
+//            }
             action = getMove();
         }
         return action;
@@ -184,7 +184,7 @@ public class ChaserEnemyController extends com.mygdx.game.EnemyControllers.Enemy
                 break;
             case ATTACK:
                 if (enemy.canAttack()) {
-                    if (!followingSurvivor) {
+                    if (!followingSurvivor && player.canLoseLife()) {
                         player.setHealth(player.getHealth() - 1);
                         player.coolDown(false);
                     }

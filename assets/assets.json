@@ -27,7 +27,7 @@
     "levelSelect:enter": "images/levelSelect/Enter_Button.png",
     "pauseMenu:background": "images/pauseMenu/Backdrop.png",
     "pauseMenu:hurry": "images/pauseMenu/HURRY.png",
-    "pauseMenu:hurryDark": "images/pauseMenu/HURRYDark.png",
+    "pauseMenu:hurryDark": "images/pauseMenu/HURRYdark.png",
     "pauseMenu:resume": "images/pauseMenu/Resume.png",
     "pauseMenu:resumeDown": "images/pauseMenu/ResumeDown.png",
     "pauseMenu:settings": "images/pauseMenu/Setting.png",
@@ -472,7 +472,7 @@
       }
     },
     "images:scoutIdleLeft": {
-      "file" : "images/enemies/scoutIdlet.png",
+      "file" : "images/enemies/ScoutIdlet.png",
       "sprites" : {
         "fire": {
           "rows": 1,
@@ -481,7 +481,7 @@
       }
     },
     "images:scoutIdleRight": {
-      "file" : "images/enemies/scoutIdlet.png",
+      "file" : "images/enemies/ScoutIdlet.png",
       "sprites" : {
         "fire": {
           "rows": 1,
@@ -556,7 +556,12 @@
     "images:cliff2": "images/cliff2.png",
     "images:cliff3": "images/9x9Indoor2.png",
     "images:cliff4": "images/cliff-1a.png",
-    "images:sampleTutorial": "images/sampleTutorial.png",
+    "images:sampleTutorial1": "images/tutorialSample.png",
+    "images:sampleTutorial2": "images/smog absorbtion tutorial.png",
+    "images:sampleTutorial3": "images/right click attack.png",
+    "images:sampleTutorial4": "images/small sound tutorial.png",
+    "images:sampleTutorial5": "images/large sound tutorial.png",
+
     "images:smog1": "images/SmogSprite2.png",
     "images:smog2": "images/SmogSprite3.png",
     "images:caravan1": "images/caravan-1.png",
@@ -671,6 +676,7 @@
     "tiles:9a_torch": "tiles/9a_torch.png",
     "tiles:9a_mushroom": "tiles/9a_mushroom.png",
     "tiles:9b_key": "tiles/9b_key.png",
+    "tiles:9c_bean": "tiles/9c_bean.png",
     "tiles:8_doorOpen" :"tiles/DoorOpen.png",
     "tiles:8_doorClosed": {
       "file" : "tiles/DoorFilmStrip.png",
@@ -749,6 +755,7 @@
     "5:18 TileSet..tsj": "tiles/518_TileSet.tsj"
   },
   "levels": {
+    "Level0": "levels/NEWLevel_-1.tmj",
     "Level1": "levels/NEWLevel_0.tmj",
     "Level2": "levels/NEWLevel_1.tmj",
     "Level3": "levels/NEWLevel_2.tmj",
@@ -763,6 +770,7 @@
     "5:18 TileSet.tsj": "tiles/5_18 TileSet.tsj",
     "5:18 TileSet..tsj": "tiles/518_TileSet.tsj",
     "LastColonyTileset.tsx": "tiles/LastColonyTileset.json",
+    "Level0": "levels/NEWLevel_-1.tmj",
     "Level1": "levels/NEWLevel_0.tmj",
     "Level2": "levels/NEWLevel_1.tmj",
     "Level3": "levels/NEWLevel_2.tmj",
@@ -806,6 +814,9 @@
     "sounds:scoutattack": "sounds/CreatureAttack3_16.wav",
     "sounds:shriekerattack": "sounds/ShriekerAttack1_16.wav",
     "sounds:bean": "sounds/Bean_Picku_16p.wav",
+    "sounds:item": "sounds/Move.wav",
+    "sounds:survivorrescue": "sounds/SurvivorAtCaravan16.wav",
+    "sounds:victory": "sounds/VictorySound16.wav"
     "sounds:cant open door": "sounds/cant open door.wav"
   },
   "music":{
@@ -819,6 +830,14 @@
     "shared:retroSub": {
       "file": "shared/RetroGame.ttf",
       "size": 20
+    },
+    "shared:retroMed": {
+      "file": "shared/RetroGame.ttf",
+      "size": 11
+    },
+    "shared:retroMedYellow": {
+      "file": "shared/LightPixel7.ttf",
+      "size": 5
     },
     "shared:light": {
       "file": "shared/LightPixel7.ttf",

@@ -365,7 +365,7 @@ public class EnemyController {
         }
         else { return 0; }
 
-        if (goalReached() || moveTime > 30) {
+        if (goalReached() || moveTime > 60) {
             moveTime = 0;
             nextTile = next;
             goalLoc = setGoal(nextTile);

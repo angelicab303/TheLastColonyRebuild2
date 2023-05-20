@@ -36,9 +36,7 @@ import com.badlogic.gdx.Screen;
 import com.mygdx.game.ScreenModes.PauseMenuMode;
 import com.mygdx.game.Obstacles.Items.Item;
 import com.mygdx.game.Obstacles.Items.Torch;
-import com.mygdx.game.UI.AirBar;
-import com.mygdx.game.UI.Heart;
-import com.mygdx.game.UI.TutorialPrompt;
+import com.mygdx.game.UI.*;
 import obstacle.BoxObstacle;
 import obstacle.Obstacle;
 import util.*;
@@ -152,6 +150,9 @@ public class GameplayController implements Screen {
 	/** Texture asset for the mushroom texture */
 	private TextureRegion mushroomTexture;
 	private TextureRegion torchTexture;
+	private TextureRegion keyTexture;
+
+	private TextureRegion beanTexture;
 
 	// *************************** UI Textures ***************************
 	/** Texture asset for the full heart texture */
@@ -198,6 +199,7 @@ public class GameplayController implements Screen {
 	// private AirBar airBar;
 	/** Reference to the goalDoor (for collision detection) */
 	private BoxObstacle goalDoor;
+	private BitmapFont displayFont;
 	private float SCALE = 0.1f;
 
 	/** Size of each tile in pixels **/
@@ -255,11 +257,14 @@ public class GameplayController implements Screen {
 	/** The texture for the exit condition */
 	protected TextureRegion goalTile;
 	/** The font for giving messages to the player */
-	protected BitmapFont displayFont;
+
 	/** The font for giving sub-messages to the player */
 	protected BitmapFont displayFontSub;
 	/** The font for progress bar title */
 	protected BitmapFont displayFontInteract;
+	protected BitmapFont displayFontTorch;
+
+	protected BitmapFont displayFontYellow;
 	/** The actual assets to be loaded */
 	protected AssetDirectory assets;
 	/** Stun animation for enemies */
@@ -302,6 +307,9 @@ public class GameplayController implements Screen {
 
 	/** Reference to the air bar asset */
 	protected AirBar airBar;
+
+	protected TorchUI torch;
+	protected KeyUI keyCounter;
 	/** Heart list **/
 	protected Array<Heart> heartArr;
 
@@ -340,6 +348,7 @@ public class GameplayController implements Screen {
 	/** All of the smog objects in the world **DO NOT COMBINE, NEEDED FOR CORRECT RENDERING */
 	protected PooledList<Smog> smogs = new PooledList<Smog>();
 	protected Array<FloorTile> floorArr = new Array<FloorTile>();
+	protected Array<TutorialPrompt> tutorialArr = new Array<TutorialPrompt>();
 	/** Queue for adding objects */
 	protected PooledList<Obstacle> addQueue = new PooledList<Obstacle>();
 	/**
@@ -452,6 +461,16 @@ public class GameplayController implements Screen {
 	private boolean isDead;
 	public final int EXIT_VICTORY = 4;
 
+	private Music titleMusic;
+
+	private Sound itemSound;
+
+	private Sound survivorRescue;
+
+	private Sound victory;
+
+	private Sound beanSound;
+
 	/**
 	 * Creates a new game world
 	 *
@@ -518,7 +537,7 @@ public class GameplayController implements Screen {
 		// Player, Enemy, and Survivor Textures
 		survivorTexture = new TextureRegion(directory.getEntry("images:survivorSprite", Texture.class));
 		survivorITexture = directory.getEntry("images:sInteract", Texture.class);
-		sampleTutorial = directory.getEntry("images:sampleTutorial", Texture.class);
+		sampleTutorial = directory.getEntry("images:sampleTutorial1", Texture.class);
 
 
 		// Smog, Purified Air, and Air Bar Textures
@@ -531,11 +550,13 @@ public class GameplayController implements Screen {
 		// pureAirTexture = new TextureRegion(directory.getEntry("images:smog1",
 		// Texture.class));
 //		pureAirTexture = directory.getEntry("images:testSmog", Texture.class);
-		torchTexture = new TextureRegion(directory.getEntry("tiles:9a_torch", Texture.class));
 
 		// UI Textures
 		fHeartTexture = directory.getEntry("images:fullHeart", Texture.class);
 		sHeartTexture = directory.getEntry("images:slashedHeart", Texture.class);
+		torchTexture = new TextureRegion(directory.getEntry("tiles:9a_torch", Texture.class));
+		keyTexture = new TextureRegion(directory.getEntry("tiles:9b_key", Texture.class));
+		beanTexture = new TextureRegion(directory.getEntry("tiles:9c_bean", Texture.class));
 
 		// Unnecessary atm?
 
@@ -652,6 +673,8 @@ public class GameplayController implements Screen {
 		key = "tiles:9b_key";
 		assetTextures.put(key , new TextureRegion(directory.getEntry(key, Texture.class)));
 
+		key = "tiles:9c_bean";
+		assetTextures.put(key, new TextureRegion(directory.getEntry(key, Texture.class)));
 
 		key = "tiles:8_doorOpen";
 		assetTextures.put(key, new TextureRegion(directory.getEntry(key, Texture.class)));
@@ -723,6 +746,9 @@ public class GameplayController implements Screen {
 		displayFont = directory.getEntry("shared:retro", BitmapFont.class);
 		displayFontSub = directory.getEntry("shared:retroSub", BitmapFont.class);
 		displayFontInteract = directory.getEntry("shared:light", BitmapFont.class);
+		displayFontTorch = directory.getEntry("shared:retroMed", BitmapFont.class);
+		displayFontYellow = directory.getEntry("shared:retroMedYellow", BitmapFont.class);
+		displayFontYellow.setColor(Color.YELLOW);
 
 		constants = directory.getEntry("platform:constants", JsonValue.class);
 
@@ -741,7 +767,12 @@ public class GameplayController implements Screen {
 		chaserGrowl = directory.getEntry("sounds:chasergrowl", Sound.class);
 		chaserAttack = directory.getEntry("sounds:chaserattack", Sound.class);
 		death = directory.getEntry("sounds:shriekerattack", Sound.class);
+		titleMusic = directory.getEntry("titlemusic", Music.class);
+		itemSound = directory.getEntry("sounds:item", Sound.class);
+		survivorRescue = directory.getEntry("sounds:survivorrescue", Sound.class);
+		victory = directory.getEntry("sounds:victory", Sound.class);
 		cantOpen = directory.getEntry("sounds:cant open door", Sound.class);
+		beanSound = directory.getEntry("sounds:bean", Sound.class);
 	}
 
 	/**
@@ -790,7 +821,7 @@ public class GameplayController implements Screen {
 
 		FilmStrip shriekIdle = directory.getEntry("images:shriekerIdle.fire", FilmStrip.class );
 		FilmStrip shriekShriek = directory.getEntry("images:shriekerShriek.fire", FilmStrip.class );
-		System.out.println("Two assets loaded");
+//		System.out.println("Two assets loaded");
 		FilmStrip shriekTransform = directory.getEntry("images:shriekerTransform.fire", FilmStrip.class );
 		enemyStrips[0] = new FilmStrip[] {shriekIdle, shriekShriek, shriekTransform};
 
@@ -817,7 +848,7 @@ public class GameplayController implements Screen {
 
 		FilmStrip shriekIdle = directory.getEntry("images:shriekerIdle.fire", FilmStrip.class );
 		FilmStrip shriekShriek = directory.getEntry("images:shriekerShriek.fire", FilmStrip.class );
-		System.out.println("Two assets loaded");
+//		System.out.println("Two assets loaded");
 		FilmStrip shriekTransform = directory.getEntry("images:shriekerTransform.fire", FilmStrip.class );
 		FilmStrip[][] shriekerStrips = new FilmStrip[][] {{shriekIdle, shriekShriek, shriekTransform}};
 
@@ -956,7 +987,7 @@ public class GameplayController implements Screen {
 		JSONLevelReader reader = new JSONLevelReader(directory, bounds, world, level, canvas.camera, input,
 				objects, smogBorderTexture, floorArr, SCALE, tileGrid, smogTiles, smogGrid, tileSize, tileOffset, smogTileSize, smogTileOffset,
 				playerDirectionTextures, survivorDirectionTextures, shriekerTextures, floaterDirectionTextures, scoutDirectionTextures, enemyDirectionTextures, vineTextures, survivorDirections, toxicAir, survivorITexture, assetTextures,
-				displayFontInteract, fHeartTexture, player, null);
+				displayFontInteract, displayFontYellow, fHeartTexture, player, null);
 
 //		if (caravan.getX() < 400f) {
 //			int i = 0;
@@ -969,6 +1000,7 @@ public class GameplayController implements Screen {
 
 		objects = reader.getObjects();
 		floorArr = reader.getFloorArr();
+		tutorialArr = reader.getTutorialArr();
 		tileGrid = reader.getTileGrid();
 		smogTiles = reader.getSmogTiles();
 		smogGrid = reader.getSmogGrid();
@@ -981,6 +1013,21 @@ public class GameplayController implements Screen {
 		doorArr = reader.getDoorArr();
 		survivorControllers = reader.getSurvivorControllers();
 		enemyControllers = reader.getEnemyControllers();
+
+		ShriekerEnemy shrieker = null;
+
+		for (Enemy e : enemyArr) {
+			if (e instanceof ShriekerEnemy) {
+				shrieker = (ShriekerEnemy) e;
+				break;
+			}
+		}
+
+		if (shrieker != null) {
+			for (int i = 0; i < enemyArr.size; i++) {
+				enemyControllers.get(i).addShrieker(shrieker);
+			}
+		}
 
 		if (isInvincible) {
 			player.setHealth(10000);
@@ -1099,6 +1146,8 @@ public class GameplayController implements Screen {
 
 		}
 		airBar = new AirBar(airBarTexture, player.weapon.getMaxNumAmmo(), player.weapon.getNumAmmo(), canvas);
+		torch = new TorchUI(torchTexture, 0, displayFontTorch);
+		keyCounter = new KeyUI(keyTexture, 0, displayFontTorch);
 
 		// Hearts
 		int numLives = player.getHealth();
@@ -1114,7 +1163,7 @@ public class GameplayController implements Screen {
 			Heart tempHeart = new Heart(fEggTexture, heartX, heartY, spacing);
 			heartArr.add(tempHeart);
 		}
-		sample = new TutorialPrompt(sampleTutorial, player.getX(), player.getY()-30);
+//		sample = new TutorialPrompt(sampleTutorial, player.getX(), player.getY()-30);
 
 		ambienceId = ambience.play();
 		ambience.setLooping(ambienceId, true);
@@ -1210,6 +1259,11 @@ public class GameplayController implements Screen {
 			pauseMenu.reset();
 
 			if (!paused && !unpausing) {
+				shriek.pause(shriekId);
+				if (!titleMusic.isPlaying()) {
+					titleMusic.play();
+					titleMusic.setLooping(true);
+				}
 				paused = true;
 				pausing = true;
 				for (int i = 0; i < enemyArr.size; i++) {
@@ -1226,6 +1280,9 @@ public class GameplayController implements Screen {
 				}
 				return;
 			} else if (paused && !pausing) {
+				shriek.resume(shriekId);
+				titleMusic.stop();
+				titleMusic.setLooping(false);
 				paused = false;
 				unpausing = true;
 				for (int i = 0; i < enemyArr.size; i++) {
@@ -1293,7 +1350,8 @@ public class GameplayController implements Screen {
 
 		// Update UI elements
 		airBar.update(player.weapon.getNumAmmo());
-
+		torch.update(player.getNumTorches());
+		keyCounter.update(player.getNumKeys());
 		player.weapon.update(player.getPosition(), canvas.unproject(input.getMousePos()), input.getShootDir());
 
 		if (player.weapon.isAbsorbing())
@@ -1535,6 +1593,12 @@ public class GameplayController implements Screen {
 					//survivorArr.removeIndex(i);
 					numRescued++;
 					caravan.incrCap();
+					if (caravan.getCurrentCapacity() == caravan.getMaxCapacity()) {
+						victory.play();
+					}
+					else {
+						survivorRescue.play();
+					}
 					caravan.setInteractable(false);
 				}
 
@@ -1542,14 +1606,33 @@ public class GameplayController implements Screen {
 		}
 		// Check through the items just like the survivors to see if we need to show "E to collect"
 		for (int i = 0; i < itemArr.size; i++) {
+			if (itemArr.get(i).getItemType() == Item.ItemType.TORCH) {
+				itemArr.get(i).update();
+				if (player.acquiredTorch() && !player.placedTorch()) {
+					itemArr.get(i).setDisplayTorchInstruction(true);
+				} else {
+					itemArr.get(i).setDisplayTorchInstruction(false);
+				}
+				if (player.placedTorch() && !player.seenTorchInstruction()) {
+					itemArr.get(i).setDisplayTorchExplanation(true);
+				} else {
+					itemArr.get(i).setDisplayTorchExplanation(false);
+				}
+			}
 			if (itemArr.get(i).isInteractable() && input.didPickUpItem()) {
 				itemArr.get(i).setInteractable(false);
 				if (itemArr.get(i).getItemType() == Item.ItemType.TORCH) {
+					itemSound.play(1, 2, 0);
 					player.collectTorch();
 					itemArr.get(i).collect();
 				} else if (itemArr.get(i).getItemType() == Item.ItemType.KEY) {
+					itemSound.play(1, 2, 0);
 					itemArr.get(i).setInteractable(true);
 					player.collectKey();
+					itemArr.get(i).collect();
+				} else if (itemArr.get(i).getItemType() == Item.ItemType.COFFEE) {
+					beanSound.play();
+					player.collectBean();
 					itemArr.get(i).collect();
 				}
 				// Coffee doesn't do anything currently
@@ -1564,9 +1647,10 @@ public class GameplayController implements Screen {
 		if (input.didPlaceItem() && player.hasTorch()) {
 			if (!tileGrid[(int)(player.getX() / tileSize)][(int)(player.getY() / tileSize)] && torchPlacedCounter == 30) {
 				torchPlacedCounter--;
-				Torch torch = new Torch((player.getX() / tileSize)*tileSize,(player.getY() / tileSize)*tileSize,torchTexture, displayFontInteract, SCALE);
+				Torch torch = new Torch((player.getX() / tileSize)*tileSize,(player.getY() / tileSize)*tileSize,torchTexture, displayFontInteract, displayFontYellow, SCALE, player);
 				addObject(torch);
 				itemArr.add(torch);
+				itemSound.play(1, 2, 0);
 				player.useTorch();
 			} else {
 				// I'd like to display a message saying the following but it would require having a specific draw
@@ -2014,7 +2098,11 @@ public class GameplayController implements Screen {
 		for (Obstacle obj : smogs) {
 			obj.draw(canvas);
 		}
-		sample.draw(canvas);
+		for (TutorialPrompt tutorial : tutorialArr) {
+//			sample = new TutorialPrompt(tutorial, player.getX(), player.getY()-30);
+			tutorial.draw(canvas);
+		}
+//		sample.draw(canvas);
 
 
 		// END remove
@@ -2038,6 +2126,8 @@ public class GameplayController implements Screen {
 			for (int i = 0; i < heartArr.size; i++) {
 				heartArr.get(i).draw(canvas);
 			}
+			torch.draw(canvas);
+			keyCounter.draw(canvas);
 		}
 
 

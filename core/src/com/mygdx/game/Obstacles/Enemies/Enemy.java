@@ -240,7 +240,7 @@ public class Enemy extends Shadow implements GameObstacle {
         zerovector = new Vector2(0,0);
         this.scale = scale;
         stunned = false;
-        revealed = false;
+        revealed = true;
         isAttacking = false;
         wakeTime = 0;
         direction = Enemy.Direction.RIGHT;
