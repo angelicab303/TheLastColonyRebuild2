@@ -27,7 +27,7 @@
     "levelSelect:enter": "images/levelSelect/Enter_Button.png",
     "pauseMenu:background": "images/pauseMenu/Backdrop.png",
     "pauseMenu:hurry": "images/pauseMenu/HURRY.png",
-    "pauseMenu:hurryDark": "images/pauseMenu/HURRYDark.png",
+    "pauseMenu:hurryDark": "images/pauseMenu/HURRYdark.png",
     "pauseMenu:resume": "images/pauseMenu/Resume.png",
     "pauseMenu:resumeDown": "images/pauseMenu/ResumeDown.png",
     "pauseMenu:settings": "images/pauseMenu/Setting.png",
@@ -458,7 +458,7 @@
       }
     },
     "images:scoutIdleLeft": {
-      "file" : "images/enemies/scoutIdlet.png",
+      "file" : "images/enemies/ScoutIdlet.png",
       "sprites" : {
         "fire": {
           "rows": 1,
@@ -467,7 +467,7 @@
       }
     },
     "images:scoutIdleRight": {
-      "file" : "images/enemies/scoutIdlet.png",
+      "file" : "images/enemies/ScoutIdlet.png",
       "sprites" : {
         "fire": {
           "rows": 1,
