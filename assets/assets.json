@@ -25,6 +25,17 @@
     "levelSelect:mushroomDown": "images/levelSelect/MushroomDown.png",
     "levelSelect:caravan": "images/levelSelect/LevelSelectCaravan.png",
     "levelSelect:enter": "images/levelSelect/Enter_Button.png",
+    "pauseMenu:background": "images/pauseMenu/Backdrop.png",
+    "pauseMenu:hurry": "images/pauseMenu/HURRY.png",
+    "pauseMenu:hurryDark": "images/pauseMenu/HURRYDark.png",
+    "pauseMenu:resume": "images/pauseMenu/Resume.png",
+    "pauseMenu:resumeDown": "images/pauseMenu/ResumeDown.png",
+    "pauseMenu:settings": "images/pauseMenu/Setting.png",
+    "pauseMenu:settingsDown": "images/pauseMenu/SettingDown.png",
+    "pauseMenu:exit": "images/pauseMenu/Exit.png",
+    "pauseMenu:exitDown": "images/pauseMenu/ExitDown.png",
+    "pauseMenu:restart": "images/pauseMenu/Restart.png",
+    "pauseMenu:restartDown": "images/pauseMenu/RestartDown.png",
     "images:empty": "images/empty.png",
     "levelSelect:smogWall": "images/levelSelect/LevelSelectSmogAsset.png",
 
@@ -274,48 +285,201 @@
         }
       }
     },
-    "images:maskEnemyUp": {
-      "file" : "images/MaskUp-Sheet.png",
+    "images:floaterMovementRight": {
+      "file" : "images/enemies/newFloater_right.png",
       "sprites" : {
         "fire": {
           "rows": 1,
-          "cols": 12
+          "cols": 7
         }
       }
     },
-    "images:maskEnemyDown": {
-      "file" : "images/MaskDown-Sheet.png",
+    "images:floaterMovementLeft": {
+      "file" : "images/enemies/newFloater_left.png",
       "sprites" : {
         "fire": {
           "rows": 1,
-          "cols": 12
+          "cols": 7
         }
       }
     },
-    "images:maskEnemyRight": {
-      "file" : "images/MaskRight(Corrected).png",
+    "images:floaterIdleLeft": {
+      "file" : "images/enemies/FloaterIdle_left.png",
       "sprites" : {
         "fire": {
           "rows": 1,
-          "cols": 12
+          "cols": 7
         }
       }
     },
-    "images:maskEnemyLeft": {
-      "file" : "images/MaskLeft(Corrected).png",
+    "images:floaterIdleRight": {
+      "file" : "images/enemies/FloaterIdle_Right2.png",
       "sprites" : {
         "fire": {
           "rows": 1,
-          "cols": 12
+          "cols": 7
         }
       }
     },
-    "images:maskEnemyIdle": {
-      "file" : "images/MaskIdle-Sheet.png",
+    "images:floaterAttackRight": {
+      "file" : "images/enemies/newFloater_attackRight.png",
       "sprites" : {
         "fire": {
           "rows": 1,
-          "cols": 12
+          "cols": 7
+        }
+      }
+    },
+    "images:floaterAttackLeft": {
+      "file" : "images/enemies/newFloater_attackLeft.png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 7
+        }
+      }
+    },
+    "images:floaterStunLeft": {
+      "file" : "images/enemies/newFloater_stunLeft.png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 7
+        }
+      }
+    },
+    "images:floaterStunRight": {
+      "file" : "images/enemies/newFloater_stunRight.png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 7
+        }
+      }
+    },
+    "images:floaterWakeRight": {
+      "file" : "images/enemies/newFloater_wakeRight.png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 7
+        }
+      }
+    },
+    "images:floaterWakeLeft": {
+      "file" : "images/enemies/newFloater_wakeLeft.png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 7
+        }
+      }
+    },
+    "images:scoutWakeLeft": {
+      "file" : "images/enemies/scoutWakeLeft.png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 7
+        }
+      }
+    },
+    "images:scoutWakeRight": {
+      "file" : "images/enemies/scoutWakeRight.png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 7
+        }
+      }
+    },
+    "images:scoutMovementRight": {
+      "file" : "images/enemies/scoutMoveRight.png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 7
+        }
+      }
+    },
+    "images:scoutMovementLeft": {
+      "file" : "images/enemies/scoutMoveLeft.png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 7
+        }
+      }
+    },
+    "images:scoutAttackLeft": {
+      "file" : "images/enemies/scoutAttackLeftExtended.png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 7
+        }
+      }
+    },
+    "images:scoutAttackRight": {
+      "file" : "images/enemies/scoutAttackRightExtended.png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 7
+        }
+      }
+    },
+    "images:scoutDigRight": {
+      "file" : "images/enemies/scoutDigRight.png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 7
+        }
+      }
+    },
+    "images:scoutDigLeft": {
+      "file" : "images/enemies/scoutDigLeft.png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 7
+        }
+      }
+    },
+    "images:scoutIdleLeft": {
+      "file" : "images/enemies/scoutIdlet.png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 7
+        }
+      }
+    },
+    "images:scoutIdleRight": {
+      "file" : "images/enemies/scoutIdlet.png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 7
+        }
+      }
+    },
+    "images:scoutStunRight": {
+      "file" : "images/enemies/scoutStunRight.png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 7
+        }
+      }
+    },
+    "images:scoutStunLeft": {
+      "file" : "images/enemies/scoutStunLeft.png",
+      "sprites" : {
+        "fire": {
+          "rows": 1,
+          "cols": 7
         }
       }
     },
@@ -355,6 +519,7 @@
         }
       }
     },
+
 
     "images:shadow": "images/shadow.png",
     "images:cliff": "images/updatedCliff.png",
@@ -601,7 +766,7 @@
     "sounds:select": "sounds/Select.wav",
     "sounds:back": "sounds/GoBack.wav",
     "sounds:suck": "sounds/VacuumSuck.wav",
-    "sounds:blow": "sounds/VacuumBlow.wav",
+    "sounds:blow": "sounds/Protagonist_Shooting.wav",
     "sounds:walk": "sounds/Walk16.wav",
     "sounds:ambience": "sounds/IndoorAmbience.wav",
     "sounds:chase": "sounds/HeartBeatChase.wav",
@@ -618,6 +783,9 @@
     "sounds:shriekerattack": "sounds/ShriekerAttack1_16.wav",
     "sounds:bean": "sounds/Bean_Picku_16p.wav"
   },
+  "music":{
+    "titlemusic": "sounds/The_Last_Colony_-_Title_Screen.ogg"
+    },
   "fonts": {
     "shared:retro": {
       "file": "shared/RetroGame.ttf",

@@ -170,6 +170,7 @@ public class ScoutEnemyController extends com.mygdx.game.EnemyControllers.EnemyC
                     enemy.setShrinkVines(true);
                     clearContainsVine();
                     state = FSMState.EXTENDVINE;
+                    enemy.setAttacking(true);
                 }
                 break;
             case EXTENDVINE:
@@ -177,6 +178,7 @@ public class ScoutEnemyController extends com.mygdx.game.EnemyControllers.EnemyC
                     enemy.setShrinkVines(true);
                     clearContainsVine();
                     state = FSMState.PATROL;
+                    enemy.setAttacking(false);
                 } //else if (enemyTile.equals(targetTile) && enemy.canAttack() && player.canLoseLife()) {
                 else if (containsVine[(int) (player.getX() / tileSize)][(int) (player.getY() / tileSize)] && enemy.canAttack() && player.canLoseLife()) {
 //                    enemy.setShrinkVines(true);
@@ -186,6 +188,7 @@ public class ScoutEnemyController extends com.mygdx.game.EnemyControllers.EnemyC
             case ATTACK:
                 if (!enemy.isExtendingVines) {
                     state = FSMState.PATROL;
+                    enemy.setAttacking(false);
                 }
                 break;
             case STUNNED:

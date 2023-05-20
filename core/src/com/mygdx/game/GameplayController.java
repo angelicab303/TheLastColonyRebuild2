@@ -32,6 +32,9 @@ import com.mygdx.game.EnemyControllers.ScoutEnemyController;
 import com.mygdx.game.Obstacles.*;
 import com.mygdx.game.Obstacles.Enemies.*;
 import com.badlogic.gdx.Screen;
+import com.mygdx.game.ScreenModes.PauseMenuMode;
+import com.mygdx.game.Obstacles.Items.Item;
+import com.mygdx.game.Obstacles.Items.Torch;
 import com.mygdx.game.UI.AirBar;
 import com.mygdx.game.UI.Heart;
 import com.mygdx.game.UI.TutorialPrompt;
@@ -59,6 +62,9 @@ public class GameplayController implements Screen {
 	// ***************************
 	/** Texture assets for player avatar */
 	private FilmStrip[][] playerDirectionTextures;
+	private FilmStrip[][] floaterDirectionTextures;
+	private FilmStrip[][] scoutDirectionTextures;
+	private FilmStrip[][] shriekerTextures;
 	private Texture sampleTutorial;
 	private TutorialPrompt sample;
 	/** Texture assets for survivor avatar */
@@ -144,6 +150,7 @@ public class GameplayController implements Screen {
 	private TextureRegion treeBallFadedTexture;
 	/** Texture asset for the mushroom texture */
 	private TextureRegion mushroomTexture;
+	private TextureRegion torchTexture;
 
 	// *************************** UI Textures ***************************
 	/** Texture asset for the full heart texture */
@@ -170,7 +177,6 @@ public class GameplayController implements Screen {
 	/** The weapon fire sound. We only want to play once. */
 	private Sound fireSound;
 	private long fireId = -1;//
-
 
 	/** The default sound volume */
 	private float volume;
@@ -214,6 +220,8 @@ public class GameplayController implements Screen {
 	private Array<Enemy> enemyArr;
 	/** Survivor list **/
 	private Array<Survivor> survivorArr;
+	/** Item list **/
+	private Array<Item> itemArr;
 	/** List of all tree positions **/
 	private Array<Vector2> treePos;
 	/** survivor controller list **/
@@ -231,6 +239,8 @@ public class GameplayController implements Screen {
 	private int curLevel = 0;
 	private int maxLevels = 12;
 	private int level;
+
+	private int torchPlacedCounter = 30;
 
 
 	//************* From world controller ******************
@@ -338,6 +348,8 @@ public class GameplayController implements Screen {
 	public InputController input;
 	/** Listener that will update the player mode when we are done */
 	private ScreenListener listener;
+	/** Pause menu */
+	private PauseMenuMode pauseMenu;
 
 	/** The Box2D world */
 	protected World world;
@@ -448,10 +460,11 @@ public class GameplayController implements Screen {
 	 * @param bounds  The game bounds in Box2d coordinates
 	 * @param gravity The gravitational force on this Box2d world
 	 */
-	protected GameplayController(Rectangle bounds, Vector2 gravity) {
+	protected GameplayController(Rectangle bounds, Vector2 gravity, PauseMenuMode pauseMenu) {
 		world = new World(gravity, false);
 		this.bounds = new Rectangle(bounds);
 		this.scale = new Vector2(1, 1);
+		this.pauseMenu = pauseMenu;
 		this.assetTextures = new HashMap<>();
 		complete = false;
 		failed = false;
@@ -465,8 +478,8 @@ public class GameplayController implements Screen {
 	 *
 	 * The game has default gravity and other settings
 	 */
-	public GameplayController(GameCanvas canvas) {
-		this(new Rectangle(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT), new Vector2(0, DEFAULT_GRAVITY));
+	public GameplayController(GameCanvas canvas, PauseMenuMode pauseMenu) {
+		this(new Rectangle(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT), new Vector2(0, DEFAULT_GRAVITY), pauseMenu);
 		setComplete(false);
 		setFailure(false);
 		// world.setContactListener(this);
@@ -516,6 +529,7 @@ public class GameplayController implements Screen {
 		// pureAirTexture = new TextureRegion(directory.getEntry("images:smog1",
 		// Texture.class));
 //		pureAirTexture = directory.getEntry("images:testSmog", Texture.class);
+		torchTexture = new TextureRegion(directory.getEntry("tiles:9a_torch", Texture.class));
 
 		// UI Textures
 		fHeartTexture = directory.getEntry("images:fullHeart", Texture.class);
@@ -524,6 +538,9 @@ public class GameplayController implements Screen {
 		// Unnecessary atm?
 
 		playerDirectionTextures = importPlayerFilmstrip();
+		floaterDirectionTextures = importFloaterFilmstrip();
+		scoutDirectionTextures = importScoutFilmstrip();
+		shriekerTextures = importShriekerFilmstrips();
 		survivorDirectionTextures = importCharacterFilmstrip("survivorP");
 		enemyDirectionTextures = importEnemyFilmstrips();
 
@@ -786,6 +803,56 @@ public class GameplayController implements Screen {
 		}
 		return enemyStrips;
 	}
+	/**
+	 * Returns an array of all shrieker filmstrips to be passed into the json loader.
+	 * [0]: Shrieker idle
+	 * [1]: Shrieker alert
+	 * [2]: Shrieker scream
+	 * @return array of shrieker filmstrips
+	 */
+	private FilmStrip[][] importShriekerFilmstrips(){
+
+		FilmStrip shriekIdle = directory.getEntry("images:shriekerIdle.fire", FilmStrip.class );
+		FilmStrip shriekShriek = directory.getEntry("images:shriekerShriek.fire", FilmStrip.class );
+		System.out.println("Two assets loaded");
+		FilmStrip shriekTransform = directory.getEntry("images:shriekerTransform.fire", FilmStrip.class );
+		FilmStrip[][] shriekerStrips = new FilmStrip[][] {{shriekIdle, shriekShriek, shriekTransform}};
+
+		return shriekerStrips;
+	}
+	/**
+	 * Returns an array of all shrieker filmstrips to be passed into the json loader.
+	 * [0][i]: Floater movement
+	 * [1][i]: Floater idle
+	 * [2][i]: Floater attack
+	 * [3][i]: Floater stun
+	 * [4][i]: Floater wake
+	 * @return double array of floater filmstrips
+	 */
+	private FilmStrip[][] importFloaterFilmstrip(){
+
+		FilmStrip[][] floaterFilmStrip = new FilmStrip[5][2];
+		//String[] directions = {"Up", "Down", "Right", "Left"};
+		String[] actions = {"Movement", "Idle", "Attack", "Stun", "Wake"};
+		for (int i = 0; i < 5; i++){
+			FilmStrip right = directory.getEntry("images:floater" + actions[i] + "Right.fire", FilmStrip.class );
+			FilmStrip left = directory.getEntry("images:floater" + actions[i] + "Left.fire", FilmStrip.class );
+			floaterFilmStrip[i] = new FilmStrip[] {right, left};
+		}
+		return floaterFilmStrip;
+	}
+	private FilmStrip[][] importScoutFilmstrip(){
+
+		FilmStrip[][] floaterFilmStrip = new FilmStrip[5][2];
+		//String[] directions = {"Up", "Down", "Right", "Left"};
+		String[] actions = {"Movement", "Idle", "Attack", "Stun", "Wake"};
+		for (int i = 0; i < 5; i++){
+			FilmStrip right = directory.getEntry("images:scout" + actions[i] + "Right.fire", FilmStrip.class );
+			FilmStrip left = directory.getEntry("images:scout" + actions[i] + "Left.fire", FilmStrip.class );
+			floaterFilmStrip[i] = new FilmStrip[] {right, left};
+		}
+		return floaterFilmStrip;
+	}
 
 	/**
 	 * Resets the status of the game so that we can play again.
@@ -794,6 +861,7 @@ public class GameplayController implements Screen {
 	 */
 	public void reset() {
 		Vector2 gravity = new Vector2(world.getGravity());
+		paused = false;
 
 		for (Obstacle obj : objects) {
 			obj.deactivatePhysics(world);
@@ -806,6 +874,7 @@ public class GameplayController implements Screen {
 		survivorControllers.clear();
 		smogs.clear();
 		objects.clear();
+		addQueue.clear();
 		addQueue.clear();
 		canvas.disposeLights();
 		world.dispose();
@@ -883,7 +952,7 @@ public class GameplayController implements Screen {
 		// Here we will instantiate the objects in the level using the JSONLevelReader.
 		JSONLevelReader reader = new JSONLevelReader(directory, bounds, world, level, canvas.camera, input,
 				objects, smogBorderTexture, floorArr, SCALE, tileGrid, smogTiles, smogGrid, tileSize, tileOffset, smogTileSize, smogTileOffset,
-				playerDirectionTextures, survivorDirectionTextures, enemyDirectionTextures, vineTextures, survivorDirections, toxicAir, survivorITexture, assetTextures,
+				playerDirectionTextures, survivorDirectionTextures, shriekerTextures, floaterDirectionTextures, scoutDirectionTextures, enemyDirectionTextures, vineTextures, survivorDirections, toxicAir, survivorITexture, assetTextures,
 				displayFontInteract, fHeartTexture, player, null);
 
 //		if (caravan.getX() < 400f) {
@@ -905,6 +974,7 @@ public class GameplayController implements Screen {
 		player = reader.getPlayer();
 		survivorArr = reader.getSurvivors();
 		enemyArr = reader.getEnemies();
+		itemArr = reader.getItems();
 		survivorControllers = reader.getSurvivorControllers();
 		enemyControllers = reader.getEnemyControllers();
 
@@ -1073,7 +1143,9 @@ public class GameplayController implements Screen {
 		}
 
 		// Handle resets
-		if (input.didReset()) {
+		if (pauseMenu.getButtonState() == PauseMenuMode.EXIT_RESTART && paused) {
+			pauseMenu.resetButtonState();
+			pauseMenu.reset();
 			reset();
 		}
 
@@ -1102,6 +1174,18 @@ public class GameplayController implements Screen {
 		// Read input
 		input.readInput();
 
+
+		if (paused && pauseMenu.getButtonState() == PauseMenuMode.EXIT_MAINMENU){
+			paused = false;
+			pauseMenu.resetButtonState();
+			pauseMenu.reset();
+			canvas.camera.zoom = 1.0f;
+			canvas.camera.position.x = canvas.getWidth()/2;
+			canvas.camera.position.y = canvas.getHeight()/2;
+			canvas.camera.update();
+			listener.exitScreen(this, PauseMenuMode.EXIT_MAINMENU);
+		}
+
 		if (!player.isAlive()) {
 			if (!isDead) {
 				isDead = true;
@@ -1111,7 +1195,10 @@ public class GameplayController implements Screen {
 			lowHealth.setLooping(lowHealthId, false);
 		}
 
-		if (input.didPause()) {
+		if (input.didPause() || (pauseMenu.getButtonState() == PauseMenuMode.EXIT_GAME && paused)) {
+			pauseMenu.resetButtonState();
+			pauseMenu.reset();
+
 			if (!paused && !unpausing) {
 				paused = true;
 				pausing = true;
@@ -1450,8 +1537,45 @@ public class GameplayController implements Screen {
 					caravan.incrCap();
 					caravan.setInteractable(false);
 				}
-			}
 
+			}
+		}
+		// Check through the items just like the survivors to see if we need to show "E to collect"
+		for (int i = 0; i < itemArr.size; i++) {
+			if (itemArr.get(i).isInteractable() && input.didPickUpItem()) {
+				itemArr.get(i).setInteractable(false);
+				if (itemArr.get(i).getItemType() == Item.ItemType.TORCH) {
+					player.collectTorch();
+					itemArr.get(i).collect();
+				} else if (itemArr.get(i).getItemType() == Item.ItemType.KEY) {
+					itemArr.get(i).setInteractable(true);
+					player.collectKey();
+					itemArr.get(i).collect();
+				}
+				// Coffee doesn't do anything currently
+			}
+		}
+
+		if (torchPlacedCounter == 0) {
+			torchPlacedCounter = 30;
+		} else if (torchPlacedCounter != 30) {
+			torchPlacedCounter--;
+		}
+		if (input.didPlaceItem() && player.hasTorch()) {
+			if (!tileGrid[(int)(player.getX() / tileSize)][(int)(player.getY() / tileSize)] && torchPlacedCounter == 30) {
+				torchPlacedCounter--;
+				Torch torch = new Torch((player.getX() / tileSize)*tileSize,(player.getY() / tileSize)*tileSize,torchTexture, displayFontInteract, SCALE);
+				addObject(torch);
+				itemArr.add(torch);
+				player.useTorch();
+			} else {
+				// I'd like to display a message saying the following but it would require having a specific draw
+				// 	statement to every tile since there is no torch entity yet and the player's location could be on
+				// 	a wall, tree, floor, etc.
+				
+//				String message = "Cannot place\ntorch here";
+//				canvas.drawText(message, displayFontInteract, (player.getX() / tileSize)*tileSize,(player.getY() / tileSize)*tileSize);
+			}
 		}
 
 		caravan.update();
@@ -1567,7 +1691,22 @@ public class GameplayController implements Screen {
 				}
 				break;
 			case OBSTACLE:
-				((Obstacles)gob).update();
+				Obstacles obs = (Obstacles)gob;
+				obs.update();
+				if (obs.isUnlocked() && !obs.isNowUnlocked())
+				{
+					obs.setNowUnlocked();
+					tileGrid[(int)(obs.getX()/tileSize)][(int)(obs.getY()/tileSize)] = false;
+					tileGrid[(int)(obs.getX()/tileSize)-1][(int)(obs.getY()/tileSize)-1] = true;
+					tileGrid[(int)(obs.getX()/tileSize)+1][(int)(obs.getY()/tileSize)-1] = true;
+
+					for (int i = 0; i < survivorControllers.size; i++)
+					{
+						if (!survivorArr.get(i).isRescued()) {
+							survivorControllers.get(i).remakeGraph(tileGrid);
+						}
+					}
+				}
 		}
 
 	}
@@ -1842,22 +1981,20 @@ public class GameplayController implements Screen {
 		} else {
 			canvas.begin();
 		}
-//		System.out.println("Started canvas");
-		//canvas.draw(backgroundTexture, Color.BROWN, 0, 0, canvas.getWidth(), canvas.getHeight());
 
 		for (FloorTile flr : floorArr) {
 			flr.draw(canvas);
 		}
 
+
 		for (Obstacle obj : objects) {
 			obj.draw(canvas);
 		}
 
-		for (Obstacle obj : smogs){
+		for (Obstacle obj : smogs) {
 			obj.draw(canvas);
 		}
 		sample.draw(canvas);
-
 
 
 		// END remove
@@ -1874,13 +2011,15 @@ public class GameplayController implements Screen {
 		purifiedAir.draw(canvas);
 		toxicAir.draw(canvas);
 
-		// Draw air bar
-		airBar.draw(canvas);
-
 		// Draw hearts
-		for (int i = 0; i < heartArr.size; i++) {
-			heartArr.get(i).draw(canvas);
+		if (!paused) {
+			// Draw air bar
+			airBar.draw(canvas);
+			for (int i = 0; i < heartArr.size; i++) {
+				heartArr.get(i).draw(canvas);
+			}
 		}
+
 
 		String message = "ÆIR: ";
 		// canvas.drawText(message, displayFontBar, BAR_X - (width/2) + 5, BAR_Y + 38);
@@ -1902,6 +2041,7 @@ public class GameplayController implements Screen {
 			for (Obstacle obj : objects) {
 				obj.drawDebug(canvas);
 			}
+
 			for (Obstacle obj : smogs) {
 				//obj.drawDebug(canvas);
 			}
@@ -1911,8 +2051,13 @@ public class GameplayController implements Screen {
 			canvas.endDebug();
 		}
 		if (paused) {
-			displayFont.setColor(Color.GRAY);
-			canvas.drawText("PAUSED", displayFont, player.getX() - 150f, player.getY() + 25f);
+//			displayFont.setColor(Color.GRAY);
+//			canvas.drawText("PAUSED", displayFont, canvas.camera.position.x - 150f, canvas.camera.position.y + 25f);
+			pauseMenu.setMenuPosition(canvas.camera.position.x, canvas.camera.position.y);
+			pauseMenu.update();
+			pauseMenu.draw(canvas);
+
+
 		}
 		canvas.end();
 
@@ -1920,20 +2065,115 @@ public class GameplayController implements Screen {
 		if (complete && !failed) {
 			displayFont.setColor(Color.YELLOW);
 			canvas.begin(); // DO NOT SCALE
-			canvas.drawText("VICTORY!", displayFont, player.getX() - 195, player.getY());
+			canvas.drawText("VICTORY!", displayFont, canvas.camera.position.x - 195, canvas.camera.position.y);
 
-			canvas.drawText("Press 'R' to restart", displayFontSub, player.getX() - 120, player.getY() - 100);
+			canvas.drawText("Press 'N' for next level", displayFontSub, canvas.camera.position.x - 170, canvas.camera.position.y - 100);
 			canvas.end();
 		} else if (failed) {
 			displayFont.setColor(Color.RED);
 			canvas.begin(); // DO NOT SCALE
-			canvas.drawText("FAILURE!", displayFont, player.getX() - 195, player.getY());
-			canvas.drawText("Press 'R' to restart", displayFontSub, player.getX() - 120, player.getY() - 100);
+			canvas.drawText("FAILURE!", displayFont, canvas.camera.position.x - 195, canvas.camera.position.y);
+			canvas.drawText("Press 'R' to restart", displayFontSub, canvas.camera.position.x - 120, canvas.camera.position.y - 100);
 
 			canvas.end();
 		}
-//		System.out.println("Finished first draw");
 	}
+//		} else {
+//			//canvas.begin();
+//		}
+////		System.out.println("Started canvas");
+//		//canvas.draw(backgroundTexture, Color.BROWN, 0, 0, canvas.getWidth(), canvas.getHeight());
+//
+//
+//		for (FloorTile flr : floorArr) {
+//			flr.draw(canvas);
+//		}
+//
+//		for (Obstacle obj : objects) {
+//			obj.draw(canvas);
+//		}
+//
+//		for (Obstacle obj : smogs){
+//			obj.draw(canvas);
+//		}
+//		sample.draw(canvas);
+//
+//
+//
+//		// END remove
+//		// drawBar();
+//		canvas.end();
+//
+//
+//		canvas.renderLights();
+//
+//		// Top pass
+//
+//		canvas.begin();
+//
+//		purifiedAir.draw(canvas);
+//		toxicAir.draw(canvas);
+//
+//		// Draw air bar
+//		airBar.draw(canvas);
+//
+//		// Draw hearts
+//		for (int i = 0; i < heartArr.size; i++) {
+//			heartArr.get(i).draw(canvas);
+//		}
+//
+//		String message = "ÆIR: ";
+//		// canvas.drawText(message, displayFontBar, BAR_X - (width/2) + 5, BAR_Y + 38);
+//		// Remove later, testing progress movement for now
+//		if (isIncrementing) {
+//			progress += 0.01;
+//			if (progress > 1.0) {
+//				isIncrementing = false;
+//			}
+//		} else {
+//			progress -= 0.01;
+//			if (progress < 0) {
+//				isIncrementing = true;
+//			}
+//		}
+//
+//		if (debug) {
+//			canvas.beginDebug();
+//			for (Obstacle obj : objects) {
+//				obj.drawDebug(canvas);
+//			}
+//			for (Obstacle obj : smogs) {
+//				obj.drawDebug(canvas);
+//			}
+//			toxicAir.drawDebug(canvas);
+//
+//			player.weapon.draw(canvas);
+//			canvas.endDebug();
+//		}
+//		if (paused) {
+//			displayFont.setColor(Color.GRAY);
+//			canvas.drawText("PAUSED", displayFont, player.getX() - 150f, player.getY() + 25f);
+//		}
+//		canvas.end();
+//
+//		// Final message
+//		if (complete && !failed) {
+//			displayFont.setColor(Color.YELLOW);
+//			canvas.begin(); // DO NOT SCALE
+//			canvas.drawText("VICTORY!", displayFont, player.getX() - 195, player.getY());
+//
+//			canvas.drawText("Press 'R' to restart", displayFontSub, player.getX() - 120, player.getY() - 100);
+//			canvas.end();
+//		} else if (failed) {
+//			displayFont.setColor(Color.RED);
+//			canvas.begin(); // DO NOT SCALE
+//			canvas.drawText("FAILURE!", displayFont, player.getX() - 195, player.getY());
+//			canvas.drawText("Press 'R' to restart", displayFontSub, player.getX() - 120, player.getY() - 100);
+//
+//			canvas.end();
+//		}
+////		System.out.println("Finished first draw");
+//	}
 
 	/**
 	 * Method to ensure that a sound asset is only played once.

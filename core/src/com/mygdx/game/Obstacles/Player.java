@@ -228,6 +228,10 @@ public class Player extends Shadow implements GameObstacle{
         torch++;
     }
 
+    public boolean hasTorch() {
+        return torch > 0;
+    }
+
     /**Returns whether a torch was successfully used*/
     public boolean useTorch(){
         if(torch > 0){
