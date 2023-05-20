@@ -346,6 +346,7 @@ public class GameplayController implements Screen {
 	/** All of the smog objects in the world **DO NOT COMBINE, NEEDED FOR CORRECT RENDERING */
 	protected PooledList<Smog> smogs = new PooledList<Smog>();
 	protected Array<FloorTile> floorArr = new Array<FloorTile>();
+	protected Array<TutorialPrompt> tutorialArr = new Array<TutorialPrompt>();
 	/** Queue for adding objects */
 	protected PooledList<Obstacle> addQueue = new PooledList<Obstacle>();
 	/**
@@ -523,7 +524,7 @@ public class GameplayController implements Screen {
 		// Player, Enemy, and Survivor Textures
 		survivorTexture = new TextureRegion(directory.getEntry("images:survivorSprite", Texture.class));
 		survivorITexture = directory.getEntry("images:sInteract", Texture.class);
-		sampleTutorial = directory.getEntry("images:sampleTutorial", Texture.class);
+		sampleTutorial = directory.getEntry("images:sampleTutorial1", Texture.class);
 
 
 		// Smog, Purified Air, and Air Bar Textures
@@ -799,7 +800,7 @@ public class GameplayController implements Screen {
 
 		FilmStrip shriekIdle = directory.getEntry("images:shriekerIdle.fire", FilmStrip.class );
 		FilmStrip shriekShriek = directory.getEntry("images:shriekerShriek.fire", FilmStrip.class );
-		System.out.println("Two assets loaded");
+//		System.out.println("Two assets loaded");
 		FilmStrip shriekTransform = directory.getEntry("images:shriekerTransform.fire", FilmStrip.class );
 		enemyStrips[0] = new FilmStrip[] {shriekIdle, shriekShriek, shriekTransform};
 
@@ -826,7 +827,7 @@ public class GameplayController implements Screen {
 
 		FilmStrip shriekIdle = directory.getEntry("images:shriekerIdle.fire", FilmStrip.class );
 		FilmStrip shriekShriek = directory.getEntry("images:shriekerShriek.fire", FilmStrip.class );
-		System.out.println("Two assets loaded");
+//		System.out.println("Two assets loaded");
 		FilmStrip shriekTransform = directory.getEntry("images:shriekerTransform.fire", FilmStrip.class );
 		FilmStrip[][] shriekerStrips = new FilmStrip[][] {{shriekIdle, shriekShriek, shriekTransform}};
 
@@ -978,6 +979,7 @@ public class GameplayController implements Screen {
 
 		objects = reader.getObjects();
 		floorArr = reader.getFloorArr();
+		tutorialArr = reader.getTutorialArr();
 		tileGrid = reader.getTileGrid();
 		smogTiles = reader.getSmogTiles();
 		smogGrid = reader.getSmogGrid();
@@ -1125,7 +1127,7 @@ public class GameplayController implements Screen {
 			Heart tempHeart = new Heart(fEggTexture, heartX, heartY, spacing);
 			heartArr.add(tempHeart);
 		}
-		sample = new TutorialPrompt(sampleTutorial, player.getX(), player.getY()-30);
+//		sample = new TutorialPrompt(sampleTutorial, player.getX(), player.getY()-30);
 
 		ambienceId = ambience.play();
 		ambience.setLooping(ambienceId, true);
@@ -2039,7 +2041,11 @@ public class GameplayController implements Screen {
 		for (Obstacle obj : smogs) {
 			obj.draw(canvas);
 		}
-		sample.draw(canvas);
+		for (TutorialPrompt tutorial : tutorialArr) {
+//			sample = new TutorialPrompt(tutorial, player.getX(), player.getY()-30);
+			tutorial.draw(canvas);
+		}
+//		sample.draw(canvas);
 
 
 		// END remove

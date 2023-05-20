@@ -542,7 +542,12 @@
     "images:cliff2": "images/cliff2.png",
     "images:cliff3": "images/9x9Indoor2.png",
     "images:cliff4": "images/cliff-1a.png",
-    "images:sampleTutorial": "images/sampleTutorial.png",
+    "images:sampleTutorial1": "images/tutorialSample.png",
+    "images:sampleTutorial2": "images/smog absorbtion tutorial.png",
+    "images:sampleTutorial3": "images/right click attack.png",
+    "images:sampleTutorial4": "images/small sound tutorial.png",
+    "images:sampleTutorial5": "images/large sound tutorial.png",
+
     "images:smog1": "images/SmogSprite2.png",
     "images:smog2": "images/SmogSprite3.png",
     "images:caravan1": "images/caravan-1.png",
@@ -735,6 +740,7 @@
     "5:18 TileSet..tsj": "tiles/518_TileSet.tsj"
   },
   "levels": {
+    "Level0": "levels/NEWLevel_-1.tmj",
     "Level1": "levels/NEWLevel_0.tmj",
     "Level2": "levels/NEWLevel_1.tmj",
     "Level3": "levels/NEWLevel_2.tmj",
@@ -749,6 +755,7 @@
     "5:18 TileSet.tsj": "tiles/5_18 TileSet.tsj",
     "5:18 TileSet..tsj": "tiles/518_TileSet.tsj",
     "LastColonyTileset.tsx": "tiles/LastColonyTileset.json",
+    "Level0": "levels/NEWLevel_-1.tmj",
     "Level1": "levels/NEWLevel_0.tmj",
     "Level2": "levels/NEWLevel_1.tmj",
     "Level3": "levels/NEWLevel_2.tmj",
