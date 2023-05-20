@@ -62,6 +62,10 @@
     "victory:retry": "images/victoryScreen/RETRY.png",
     "victory:retryDown": "images/victoryScreen/RETRYDown.png",
     "victory:victory": "images/victoryScreen/Victory.png",
+    "lose:eggBroken": "images/loseScreen/eggBroken.png",
+    "lose:levelSelect": "images/loseScreen/LEVEL_SELECT.png",
+    "lose:levelSelectDown": "images/loseScreen/LEVEL_SELECTDown.png",
+    "lose:youLose": "images/loseScreen/YOU_LOSE_2.png",
 
     "shared:earth": {
       "file": "shared/earthtile.png",

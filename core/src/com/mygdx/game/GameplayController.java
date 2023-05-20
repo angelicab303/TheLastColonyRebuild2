@@ -460,6 +460,7 @@ public class GameplayController implements Screen {
 
 	private boolean isDead;
 	public final int EXIT_VICTORY = 4;
+	public final int EXIT_LOSE = 5;
 
 	private Music titleMusic;
 
@@ -923,7 +924,7 @@ public class GameplayController implements Screen {
 		lowHealth.stop(lowHealthId);
 		lowHealth.setLooping(lowHealthId, false);
 		// System.out.println(1);
-		populateLevel(curLevel);
+		populateLevel(level);
 		numRescued = 0;
 
 
@@ -1342,7 +1343,7 @@ public class GameplayController implements Screen {
 				walk.setPitch(walkId, 1);
 			}
 		}
-		else {
+		else{
 			walk.stop(walkId);
 			walk.setLooping(walkId, false);
 			startedMoving = false;
@@ -1698,6 +1699,9 @@ public class GameplayController implements Screen {
 			}
 			prefs.putBoolean("level" + curLevel + "complete", true);
 			prefs.flush();
+			// Play victory here
+			walk.stop(walkId);
+			listener.exitScreen(this, EXIT_VICTORY);
 		}
 //			for (int i = 0; i < survivorArr.size; i++) {
 //				if (survivorArr.get(i).isFollowing()) {
@@ -2179,16 +2183,18 @@ public class GameplayController implements Screen {
 //
 //			canvas.drawText("Press 'N' for next level", displayFontSub, canvas.camera.position.x - 170, canvas.camera.position.y - 100);
 //			canvas.end();
-			listener.exitScreen(this, EXIT_VICTORY);
+			// listener.exitScreen(this, EXIT_VICTORY);
 
 
 		} else if (failed) {
-			displayFont.setColor(Color.RED);
-			canvas.begin(); // DO NOT SCALE
-			canvas.drawText("FAILURE!", displayFont, canvas.camera.position.x - 195, canvas.camera.position.y);
-			canvas.drawText("Press 'R' to restart", displayFontSub, canvas.camera.position.x - 120, canvas.camera.position.y - 100);
-
-			canvas.end();
+//			displayFont.setColor(Color.RED);
+//			canvas.begin(); // DO NOT SCALE
+//			canvas.drawText("FAILURE!", displayFont, canvas.camera.position.x - 195, canvas.camera.position.y);
+//			canvas.drawText("Press 'R' to restart", displayFontSub, canvas.camera.position.x - 120, canvas.camera.position.y - 100);
+//
+//			canvas.end();
+			walk.stop(walkId);
+			listener.exitScreen(this, EXIT_LOSE);
 		}
 	}
 //		} else {

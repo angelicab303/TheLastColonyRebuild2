@@ -39,6 +39,7 @@ public class MyGdxGame extends Game implements ScreenListener {
 	/** Player mode for the pause menu */
 	private PauseMenuMode pauseMenu;
 	private VictoryMode victoryMenu;
+	private LoseMode loseMenu;
 	private int current;
 	/** List of all WorldControllers */
 	private GameplayController controller;
@@ -67,6 +68,7 @@ public class MyGdxGame extends Game implements ScreenListener {
 		settingsMenu = new SettingsMenuMode(canvas);
 		victoryMenu = new VictoryMode(canvas);
 		pauseMenu = new PauseMenuMode(0, 0);
+		loseMenu = new LoseMode(canvas);
 
 		//Gdx.graphics.setContinuousRendering(false);
 		mainMenu = new MainMenuMode(canvas);
@@ -165,6 +167,10 @@ public class MyGdxGame extends Game implements ScreenListener {
 			victoryMenu.gatherAssets(directory);
 			victoryMenu.setScreenListener(this);
 			victoryMenu.setCanvas(canvas);
+			// gather assets for lose menu
+			loseMenu.gatherAssets(directory);
+			loseMenu.setScreenListener(this);
+			loseMenu.setCanvas(canvas);
 			// gather assets for main menu
 			mainMenu.gatherAssets(directory);
 			mainMenu.setScreenListener(this);
@@ -229,6 +235,10 @@ public class MyGdxGame extends Game implements ScreenListener {
 				victoryMenu.reset();
 				setScreen(victoryMenu);
 			}
+			else if (exitCode == controller.EXIT_LOSE){
+				loseMenu.reset();
+				setScreen(loseMenu);
+			}
 		}
 		else if (screen == settingsMenu){
 			if (exitCode == settingsMenu.EXIT_MAIN_MENU){
@@ -248,6 +258,16 @@ public class MyGdxGame extends Game implements ScreenListener {
 				setScreen(controller);
 			}
 			else if (exitCode == victoryMenu.EXIT_NEXT_LEVEL){
+				levelSelect.reset();
+				setScreen(levelSelect);
+			}
+		}
+		else if (screen == loseMenu){
+			if (exitCode == loseMenu.EXIT_RETRY){
+				controller.reset();
+				setScreen(controller);
+			}
+			else if (exitCode == loseMenu.EXIT_NEXT_LEVEL){
 				levelSelect.reset();
 				setScreen(levelSelect);
 			}
