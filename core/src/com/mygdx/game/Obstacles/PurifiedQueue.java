@@ -25,6 +25,7 @@
 
 package com.mygdx.game.Obstacles;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -155,6 +156,11 @@ public class PurifiedQueue {
             aframe = 0;
             aframeCollision = 0;
             this.scale = scale;
+        }
+
+        @Override
+        public void drawDebug(GameCanvas canvas) {
+            super.drawDebug(canvas);
         }
 
         /**
@@ -465,6 +471,23 @@ public class PurifiedQueue {
             }
 
 
+        }
+    }
+
+    public void drawDebug(GameCanvas canvas) {
+        for (int ii = 0; ii < size; ii++) {
+            // Find the position of this photon.
+            int idx = ((head + ii) % MAX_PHOTONS);
+
+            PurifiedAir air = queue[idx];
+
+            // How big to make the photon.  Decreases with age.
+            //float scale = (1.25f - (float)queue[idx].age * 0.5f / (float)MAX_AGE)*queue[idx].scale;
+            //float ratio = (float)queue[idx].age/(float)MAX_AGE;
+            //tint.set((float)100*ratio,(float)250*ratio,(float)250*ratio,(float)1*(1-ratio));
+
+            // Use this information to draw.
+            (air).drawDebug(canvas);
         }
     }
 }

@@ -19,6 +19,8 @@ public class EnemyController {
     public enum FSMState {
         /** The enemy just spawned and is stationary */
         SPAWN,
+        /** The enemy is aware of player and waking */
+        WAKE,
         /** The enemy is idle and stationary, either not aware of the player or on cooldown */
         IDLE,
         /** The enemy has spotted the player and is chasing them */
@@ -111,7 +113,7 @@ public class EnemyController {
         firstMove = true;
         moveTime = 0;
 
-        state = FSMState.IDLE;
+        state = FSMState.SPAWN;
         ticks = 0;
     }
 

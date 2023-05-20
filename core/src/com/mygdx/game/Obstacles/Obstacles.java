@@ -31,14 +31,18 @@ public class Obstacles extends Shadow implements GameObstacle {
 
     PolygonShape sensorShape;
 
+    private boolean isFence;
+
+    private boolean isTree;
+
     /**
      * Create a cliff at the given position.
      *
      * @param x The initial x-coordinate of the tree
      * @param y The initial y-coordinate of the tree
      */
-    public Obstacles(float x, float y, TextureRegion value, float scale, boolean isDoor) {
-        super(x, y, value.getRegionWidth() * scale, value.getRegionHeight() * scale, ShadowShape.SQUARE);
+    public Obstacles(float x, float y, TextureRegion value, float scale, boolean isDoor, boolean isTree, boolean isFence, String fenceId) {
+        super(x, y, value.getRegionWidth() * scale, value.getRegionHeight() * scale, isTree ? ShadowShape.CIRCLE : ShadowShape.SQUARE, isTree, isFence, fenceId);
         setTexture(value);
         setBodyType(BodyDef.BodyType.StaticBody);
         // setDimension(value.getRegionWidth()*scale, value.getRegionHeight()*scale);
@@ -50,6 +54,8 @@ public class Obstacles extends Shadow implements GameObstacle {
         this.scale = scale;
         this.isBelow = false;
         this.isDoor = isDoor;
+        this.isFence = isFence;
+        this.isTree = isTree;
 
         if (filter == null) {
             filter = new Filter();

@@ -207,7 +207,7 @@ public class Survivor extends Shadow implements GameObstacle {
      *
      */
     public Survivor(int id, float x, float y, FilmStrip[] survivor, Texture heart, BitmapFont font, float scale, Texture[] directions) {
-        super(x, y, survivor[0].getRegionWidth()*scale, survivor[0].getRegionHeight()*scale, ShadowShape.CIRCLE);
+        super(x, y, survivor[0].getRegionWidth()*scale, survivor[0].getRegionHeight()*scale, ShadowShape.CIRCLE, false, false, "");
         this.width = survivor[0].getRegionWidth();
         this.height = survivor[0].getRegionHeight();
         setDensity(0);
@@ -715,10 +715,8 @@ public class Survivor extends Shadow implements GameObstacle {
             //canvas.draw(animator, Color.WHITE, animator.getRegionWidth()/2, 0, getX()+xspace, getY()+yspace, animator.getRegionWidth(), animator.getRegionHeight()) ;
         }
         if (isFollowing){
-            System.out.println("Draw hearts");
             float spacing = 0.0f;
             for (int i = 0; i < lives; i++){
-                System.out.println("Heart width: " + textureHeart.getWidth());
                 canvas.draw(textureHeart, Color.PURPLE, 0.0f, 0.0f, (getX() * drawScale.x - 20) + spacing, getY() * drawScale.y + currentAnimator.getRegionHeight()*scale/2 - 2, 0, 0.1f, 0.1f);
                 spacing += 8.0f;
             }

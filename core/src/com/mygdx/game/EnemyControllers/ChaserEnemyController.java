@@ -111,6 +111,37 @@ public class ChaserEnemyController extends com.mygdx.game.EnemyControllers.Enemy
             }
         }
         switch (state) {
+            case SPAWN:
+                if (enemy.isStunned())
+                {
+                    state = FSMState.STUNNED;
+                    enemy.setHasAwoken(true);
+                }
+                else if (enemy.isRevealed() && enemy.canAttack())
+                {
+                    state = FSMState.WAKE;
+                    enemy.setWaking(true);
+//                    if (enemy.canAttack())
+//                    {
+//                        state = FSMState.ATTACK;
+//                    }
+                }
+                else if (alertAllEnemies)
+                {
+                    Vector2 enemyLoc = new Vector2(enemy.getX(), enemy.getY());
+                    Vector2 shriekerLoc = new Vector2(activeShrieker.getX(), activeShrieker.getY());
+                    if (enemyLoc.dst(shriekerLoc) <= ALERT_DISTANCE){
+                        state = FSMState.WAKE;
+                        enemy.setWaking(true);
+                        target = new Vector2 (player.getX(), player.getY());
+                    }
+                }
+                break;
+            case WAKE:
+                if (enemy.getHasAwoken()){
+                    state = FSMState.IDLE;
+                }
+                break;
             case IDLE:
                 if (enemy.isStunned())
                 {
@@ -148,6 +179,7 @@ public class ChaserEnemyController extends com.mygdx.game.EnemyControllers.Enemy
                 {
                     startedAttacking = true;
                     state = FSMState.ATTACK;
+                    enemy.setAttacking(true);
                 }
                 break;
             case ATTACK:
@@ -169,6 +201,7 @@ public class ChaserEnemyController extends com.mygdx.game.EnemyControllers.Enemy
                     enemy.setAttack(false);
                 }
                 state = FSMState.IDLE;
+                enemy.setAttacking(false);
                 break;
             default:
                 super.changeStateIfApplicable();

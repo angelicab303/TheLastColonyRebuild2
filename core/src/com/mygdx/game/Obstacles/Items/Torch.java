@@ -1,13 +1,14 @@
 package com.mygdx.game.Obstacles.Items;
 
 import box2dLight.Light;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.mygdx.game.Lights;
 
 public class Torch extends Item{
     private Light torchLight;
-    public Torch(float x, float y, TextureRegion cvalue, float scale){
-        super(x,y,cvalue,scale);
+    public Torch(float x, float y, TextureRegion cvalue, BitmapFont font, float scale) {
+        super(x,y,cvalue, font, scale);
     }
 
     @Override
