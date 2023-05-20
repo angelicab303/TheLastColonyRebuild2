@@ -601,7 +601,7 @@
     "sounds:select": "sounds/Select.wav",
     "sounds:back": "sounds/GoBack.wav",
     "sounds:suck": "sounds/VacuumSuck.wav",
-    "sounds:blow": "sounds/VacuumBlow.wav",
+    "sounds:blow": "sounds/Protagonist_Shooting.wav",
     "sounds:walk": "sounds/Walk16.wav",
     "sounds:ambience": "sounds/IndoorAmbience.wav",
     "sounds:chase": "sounds/HeartBeatChase.wav",
@@ -618,6 +618,9 @@
     "sounds:shriekerattack": "sounds/ShriekerAttack1_16.wav",
     "sounds:bean": "sounds/Bean_Picku_16p.wav"
   },
+  "music":{
+    "titlemusic": "sounds/The_Last_Colony_-_Title_Screen.ogg"
+    },
   "fonts": {
     "shared:retro": {
       "file": "shared/RetroGame.ttf",

@@ -1612,7 +1612,22 @@ public class GameplayController implements Screen {
 				}
 				break;
 			case OBSTACLE:
-				((Obstacles)gob).update();
+				Obstacles obs = (Obstacles)gob;
+				obs.update();
+				if (obs.isUnlocked() && !obs.isNowUnlocked())
+				{
+					obs.setNowUnlocked();
+					tileGrid[(int)(obs.getX()/tileSize)][(int)(obs.getY()/tileSize)] = false;
+					tileGrid[(int)(obs.getX()/tileSize)-1][(int)(obs.getY()/tileSize)-1] = true;
+					tileGrid[(int)(obs.getX()/tileSize)+1][(int)(obs.getY()/tileSize)-1] = true;
+
+					for (int i = 0; i < survivorControllers.size; i++)
+					{
+						if (!survivorArr.get(i).isRescued()) {
+							survivorControllers.get(i).remakeGraph(tileGrid);
+						}
+					}
+				}
 		}
 
 	}
