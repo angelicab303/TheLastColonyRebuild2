@@ -55,6 +55,7 @@ public class JSONLevelReader {
     private int numFloorIDs = 25;
     private int[] floorIDs = new int[numFloorIDs];
     private Array<FloorTile> floorArr = new Array<>();
+    private Array<FloorTile> tutorialArr = new Array<>();
 
     private Array<FloorTile> mushArr = new Array<>();
     private int numWallIDs = 14;
@@ -497,23 +498,8 @@ public class JSONLevelReader {
             createEnemy(x, y, type, scale);
         } else if (type.equals("Floor") || type.equals("Tutorial")) {
             createFloor(x, y, id, scale);
-        } else if (type.equals("Obstacle") || type.equals("Door") || type.equals("Fence") || type.equals("Tree")) {// IDK
-                                                                                                                   // how
-                                                                                                                   // doors
-                                                                                                                   // are
-                                                                                                                   // going
-                                                                                                                   // to
-                                                                                                                   // be
-                                                                                                                   // implemented,
-                                                                                                                   // so
-                                                                                                                   // Imma
-                                                                                                                   // hold
-                                                                                                                   // off
-                                                                                                                   // on
-                                                                                                                   // this
-                                                                                                                   // for
-                                                                                                                   // now
-                                                                                                                   // -V
+        } else if (type.equals("Obstacle") || type.equals("Door") || type.equals("Fence") || type.equals("Tree")) {
+            // IDK how doors are going to be implemented, so Imma hold off on this for now -V
             createObstacle(x, y, id, scale, type.equals("Door"), type.equals("Tree"), type.equals("Fence"), fenceType);
         } else if (type.equals("Smog")) {
             createSmog(x, y, id, scale);
@@ -699,11 +685,43 @@ public class JSONLevelReader {
 
     public void createFloor(int x, int y, int id, float scale) {
         // System.out.println("Creating floor");
-        floorTemp = new FloorTile(x * tileSize, y * tileSize, getTextureRegionKey(id), scale);
-        floorArr.add(floorTemp);
-        // cliffTemp.setAwake(true);
-        // floorTemp.setBodyType(BodyDef.BodyType.StaticBody);
-        addFloor(floorTemp);
+        if (tiles[id].get("properties").get(0).getString("name") == "Tutorial1") {
+            // WASD
+            floorTemp = new FloorTile(x * tileSize, y * tileSize, new TextureRegion(directory.getEntry("images:sampleTutorial1", Texture.class)), scale);
+            tutorialArr.add(floorTemp);
+            addFloor(floorTemp);
+        } else if (tiles[id].get("properties").get(0).getString("name") == "Tutorial2") {
+            //Absorbing smog
+            floorTemp = new FloorTile(x * tileSize, y * tileSize, new TextureRegion(directory.getEntry("images:sampleTutorial2", Texture.class)), scale);
+            tutorialArr.add(floorTemp);
+            addFloor(floorTemp);
+        } else if (tiles[id].get("properties").get(0).getString("name") == "Tutorial3") {
+            // Shooting smog
+            floorTemp = new FloorTile(x * tileSize, y * tileSize, new TextureRegion(directory.getEntry("images:sampleTutorial3", Texture.class)), scale);
+            tutorialArr.add(floorTemp);
+            addFloor(floorTemp);
+        } else if (tiles[id].get("properties").get(0).getString("name") == "Tutorial4") {
+            // small sound radius
+            floorTemp = new FloorTile(x * tileSize, y * tileSize, new TextureRegion(directory.getEntry("images:sampleTutorial4", Texture.class)), scale);
+            tutorialArr.add(floorTemp);
+            addFloor(floorTemp);
+        } else if (tiles[id].get("properties").get(0).getString("name") == "Tutorial5") {
+            // Large sound radius - enemy alerted
+            floorTemp = new FloorTile(x * tileSize, y * tileSize, new TextureRegion(directory.getEntry("images:sampleTutorial5", Texture.class)), scale);
+            tutorialArr.add(floorTemp);
+            addFloor(floorTemp);
+        } else {
+
+            floorTemp = new FloorTile(x * tileSize, y * tileSize, getTextureRegionKey(id), scale);
+            floorArr.add(floorTemp);
+            // cliffTemp.setAwake(true);
+            // floorTemp.setBodyType(BodyDef.BodyType.StaticBody);
+            addFloor(floorTemp);
+        }
+    }
+
+    public Array<FloorTile> getTutorialArr() {
+        return tutorialArr;
     }
 
     public void createMushroom(int x, int y, int id, float scale) {

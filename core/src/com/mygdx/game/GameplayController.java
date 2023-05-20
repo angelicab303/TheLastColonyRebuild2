@@ -340,6 +340,7 @@ public class GameplayController implements Screen {
 	/** All of the smog objects in the world **DO NOT COMBINE, NEEDED FOR CORRECT RENDERING */
 	protected PooledList<Smog> smogs = new PooledList<Smog>();
 	protected Array<FloorTile> floorArr = new Array<FloorTile>();
+	protected Array<FloorTile> tutorialArr = new Array<FloorTile>();
 	/** Queue for adding objects */
 	protected PooledList<Obstacle> addQueue = new PooledList<Obstacle>();
 	/**
@@ -517,7 +518,7 @@ public class GameplayController implements Screen {
 		// Player, Enemy, and Survivor Textures
 		survivorTexture = new TextureRegion(directory.getEntry("images:survivorSprite", Texture.class));
 		survivorITexture = directory.getEntry("images:sInteract", Texture.class);
-		sampleTutorial = directory.getEntry("images:sampleTutorial", Texture.class);
+		sampleTutorial = directory.getEntry("images:sampleTutorial1", Texture.class);
 
 
 		// Smog, Purified Air, and Air Bar Textures
@@ -968,6 +969,7 @@ public class GameplayController implements Screen {
 
 		objects = reader.getObjects();
 		floorArr = reader.getFloorArr();
+		tutorialArr = reader.getTutorialArr();
 		tileGrid = reader.getTileGrid();
 		smogTiles = reader.getSmogTiles();
 		smogGrid = reader.getSmogGrid();
@@ -1113,7 +1115,7 @@ public class GameplayController implements Screen {
 			Heart tempHeart = new Heart(fEggTexture, heartX, heartY, spacing);
 			heartArr.add(tempHeart);
 		}
-		sample = new TutorialPrompt(sampleTutorial, player.getX(), player.getY()-30);
+//		sample = new TutorialPrompt(sampleTutorial, player.getX(), player.getY()-30);
 
 		ambienceId = ambience.play();
 		ambience.setLooping(ambienceId, true);
@@ -2013,7 +2015,11 @@ public class GameplayController implements Screen {
 		for (Obstacle obj : smogs) {
 			obj.draw(canvas);
 		}
-		sample.draw(canvas);
+		for (FloorTile tutorial : tutorialArr) {
+//			sample = new TutorialPrompt(tutorial, player.getX(), player.getY()-30);
+			tutorial.draw(canvas);
+		}
+//		sample.draw(canvas);
 
 
 		// END remove
