@@ -581,9 +581,9 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
             public void clicked(InputEvent event, float x, float y) {
                 if (buttons.get(2).isChecked()) {
                     buttons.get(2).setChecked(false);
-                    currLevel = 1;
                     if (1 <= unlocked){
                         buttonState = EXIT_1;
+                        currLevel = 1;
                     }
                 }
             };
@@ -594,8 +594,8 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
             public void clicked(InputEvent event, float x, float y) {
                 if (buttons.get(3).isChecked()) {
                     buttons.get(3).setChecked(false);
-                    currLevel = 2;
                     if (2 <= unlocked){
+                        currLevel = 2;
                         buttonState = EXIT_2;
                     }
                 }
@@ -607,8 +607,8 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
             public void clicked(InputEvent event, float x, float y) {
                 if (buttons.get(4).isChecked()) {
                     buttons.get(4).setChecked(false);
-                    currLevel = 3;
                     if (3 <= unlocked){
+                        currLevel = 3;
                         buttonState = EXIT_3;
                     }
                 }
@@ -620,8 +620,8 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
             public void clicked(InputEvent event, float x, float y) {
                 if (buttons.get(5).isChecked()) {
                     buttons.get(5).setChecked(false);
-                    currLevel = 4;
                     if (4 <= unlocked){
+                        currLevel = 4;
                         buttonState = EXIT_4;
                     }
                 }
@@ -633,8 +633,8 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
             public void clicked(InputEvent event, float x, float y) {
                 if (buttons.get(6).isChecked()) {
                     buttons.get(6).setChecked(false);
-                    currLevel = 5;
                     if (5 <= unlocked){
+                        currLevel = 5;
                         buttonState = EXIT_5;
                     }
                 }
